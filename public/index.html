@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="dnbhub">
+<head>
+	<title>Drum'n'Bass Hub: digital multimedia production & promotion</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+	<meta charset="utf-8"/>
+	<meta http-equiv="x-dns-prefetch-control" content="on"/>
+<!-- pinned sites for windows -->
+	<meta name="application-name" content="Drum'n'Bass Hub"/>
+	<meta name="msapplication-tooltip" content="Digital Multimedia Hub for Drum and Bass Production and Promotion."/>
+	<meta name="msapplication-starturl" content="http://dnbhub.com/index.html?pinned=true"/>
+	<meta name="msapplication-navbutton-color" content="red"/>
+	<meta name="msapplication-badge" content="frequency=30;polling-uri=http://www.dnbhub.com/msbadge.xml"/>
+	<meta name="msapplication-tap-highlight" content="no"/>
+<!-- facebook sharing data -->
+	<meta property="og:title" content="Drum'n'Bass Hub"/>
+	<meta property="og:description" content="Digital Multimedia Hub for Drum and Bass Production and Promotion."/>
+	<meta property="og:image" content="http://dnbhub.com/img/DH_logo.png"/>
+<!-- twitter sharing data -->
+	<meta name="twitter:card" content="summary"/>
+	<meta name="twitter:site" content="@dnbhub_com"/>
+	<meta name="twitter:creator" content="@dnbhub_com"/>
+	<meta name="twitter:url" content="http://dnbhub.com"/>
+	<meta name="twitter:title" content="Drum'n'Bass Hub"/>
+	<meta name="twitter:description" content="Digital Multimedia Hub for Drum and Bass Production and Promotion."/>
+	<meta name="twitter:image" content="http://dnbhub.com/img/DH_logo.png"/>
+<!-- app store ids -->
+	<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/APP_ID"/>
+	<meta name="apple-itunes-app" content="app-id=APP_ID,app-argument=SOME_TEXT"/>
+<!-- iOS capability -->
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+	<meta name="apple-mobile-web-app-title" content="Drum'n'Bass Hub"/>
+	<link rel="apple-touch-icon-precomposed" href="http://dnbhub.com/img/DH_logo.png"/>
+	<link rel="apple-touch-startup-image" media="(max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2)" href="img/startup-retina.png"/>
+	<meta name="format-detection" content="telephone=no"/>
+<!-- general -->
+	<link rel="shortlink" href="dnbhub.com"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<meta name="author" content="VS"/>
+	<meta name="description" content="Digital Multimedia Hub for Drum and Bass Production and Promotion."/>
+	<meta name="сopyright" content="VS - Drum'n'Bass Hub since 2011"/>
+	<meta name="google-site-verification" content="3HE_LWLP3o2xBuL1AzmNfBiGZNjk-hTio8omH_s1ZHw" /> <!-- dnbhub.com -->
+	<meta name="wot-verification" content="fb42835a1257f2ed129e"/> <!-- dnbhub.com -->
+	<meta name="webutation-site-verification" content="webutationd2dd3c76ae243842cd219e3b394fe85a"/> <!-- dnbhub.com -->
+	<meta name="p:domain_verify" content="bc4896082f3b1d927a8daf8022f64c11"/> <!-- pinterest dnbhub.com-->
+	<meta name="keywords" content="drum, bass, drum hub, bass hub, drumnbass, drum and bass, video, tune, track, singles, mix, mixtape, store, stream, digital, promotion, audio, electronic, breakbeat, music, events, management, production"/>
+	<link type="image/x-icon" rel="icon" href="http://dnbhub.com/favicon.ico"/>
+	<link type="image/x-icon" rel="shortcut icon" href="http://dnbhub.com/favicon.ico"/>
+	<link type="image/x-icon" rel="apple-touch-icon" href="http://dnbhub.com/favicon.ico"/>
+<!-- twitter bootstrap -->
+	<link rel="stylesheet" href="css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="css/bootstrap-theme.min.css"/>
+	<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!--[if lt IE]>
+		<script src="js/html5shiv.js"></script>
+		<script src="js/respond.min.js"></script>
+	<![endif]-->
+<!-- font awesome -->
+	<link rel="stylesheet" href="css/font-awesome.min.css">
+<!-- customized and extended styles - must be after twitter bootstrap -->
+	<link rel="stylesheet" href="css/style.css"/>
+<!-- Soundcloud connect -->
+	<script src="//connect.soundcloud.com/sdk.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+</head>
+<!--<body onload="getTracks();" ng-app="dnbhub">-->
+<body>
+
+	<base href="/">
+
+<!-- * NAVBAR * -->
+	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation" ng-controller="navCtrl">
+		<audio id="speaker"></audio> <!-- invisible speaker -->
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" title="{{title}}"><img class="logo" alt="logo" src="img/svg/DH_logo-round_bg.svg"/></a>
+			</div>
+			<div class="collapse navbar-collapse">
+				<ul class="nav navbar-nav navbar-right" id="tabs">
+					<li class="nav-tabs" ng-click="activateButton($event)">
+						<a ng-href="{{buttonHrefs.index}}" title="{{buttonTitles.index}}">
+							<span class="{{buttonGlyphicons.index}}" aria-hidden="true"></span> <span class="hidden-sm hidden-md hidden-lg">{{buttonNames.index}}</span>
+						</a>
+					</li>
+					<li class="nav-tabs" ng-click="activateButton($event)">
+						<a ng-href="{{buttonHrefs.singles}}" title="{{buttonTitles.singles}}">
+							<span class="{{buttonGlyphicons.singles}}" aria-hidden="true"></span> <span class="hidden-sm hidden-md hidden-lg">{{buttonNames.singles}}</span>
+						</a>
+					</li>
+					<li class="nav-tabs" ng-click="activateButton($event)">
+						<a ng-href="{{buttonHrefs.freedownloads}}" title="{{buttonTitles.freedownloads}}">
+							<span class="{{buttonGlyphicons.freedownloads}}" aria-hidden="true"></span> <span class="hidden-sm hidden-md hidden-lg">{{buttonNames.freedownloads}}</span>
+						</a>
+					</li>
+					<li class="nav-tabs" ng-click="activateButton($event)">
+						<a ng-href="{{buttonHrefs.reposts}}" title="{{buttonTitles.reposts}}">
+							<span class="{{buttonGlyphicons.reposts}}" aria-hidden="true"></span> <span class="hidden-sm hidden-md hidden-lg">{{buttonNames.reposts}}</span>
+						</a>
+					</li>
+					<li class="nav-tabs" ng-click="activateButton($event)">
+						<a ng-href="{{buttonHrefs.blog}}" title="{{buttonTitles.blog}}">
+							<span class="{{buttonGlyphicons.blog}}" aria-hidden="true"></span> <span class="hidden-sm hidden-md hidden-lg">{{buttonNames.blog}}</span>
+						</a>
+					</li>
+					<li class="nav-tabs" ng-click="activateButton($event)">
+						<a ng-href="{{buttonHrefs.contact}}" title="{{buttonTitles.contact}}">
+							<span class="{{buttonGlyphicons.contact}}" aria-hidden="true"></span> <span class="hidden-sm hidden-md hidden-lg">{{buttonNames.contact}}</span>
+						</a>
+					</li>
+					<li class="nav-tabs" ng-click="activateButton($event)">
+						<a ng-href="{{buttonHrefs.about}}" title="{{buttonTitles.about}}" class="about">
+							<span class="{{buttonGlyphicons.about}}" aria-hidden="true"></span> {{buttonNames.about}}
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<span class="spinner" us-spinner spinner-key="root-spinner"></span>
+	</nav>
+<!-- NAVBAR END -->
+
+	<div>
+		<div ng-view class="view-frame"></div>
+	</div>
+
+<!-- Pinterest dependency - pinIt for every image on the website - Please call pinit.js only once per page -->
+	<script async data-pin-hover="true" src="http://assets.pinterest.com/js/pinit.js"></script>
+<!-- bootstrap -->
+ 	<script src="js/bootstrap.min.js"></script>
+<!-- angular -->
+	<script src="js/angular-1.5.7/angular.js"></script>
+	<script src="js/angular-1.5.7/angular-animate.min.js"></script>
+	<script src="js/angular-1.5.7/angular-route.min.js"></script>
+	<script src="js/angular-1.5.7/angular-resource.min.js"></script>
+	<script src="js/angular-1.5.7/angular-sanitize.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-spinner/0.8.1/angular-spinner.js"></script> <!-- requires spin.js -->
+<!-- app -->
+	<script src="app/app.js"></script>
+	<script src="app/controllers.js"></script>
+	<script src="app/services.js"></script>
+<!-- mailchimp -->
+	<script src="//s3.amazonaws.com/downloads.mailchimp.com/js/signup-forms/popup/embed.js" data-dojo-config="usePlainJson: true, isDebug: false"></script><script type="text/javascript">require(["mojo/signup-forms/Loader"], function(L) { L.start({"baseUrl":"mc.us3.list-manage.com","uuid":"3eeba7cfe8388b91c662bdf95","lid":"8cca3229c8"}) })</script>
+
+</body>
+</html>

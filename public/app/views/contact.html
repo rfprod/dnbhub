@@ -1,0 +1,36 @@
+<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="zero-padding">
+	<form id="data-container" accept-charset="UTF-8">
+		<fieldset>
+			<legend class="alert-info alert-dismissible" ng-hide="sendMailResponse.error != '' || sendMailResponse.success != ''" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<p>{{instructions.intro}}</p>
+				<ul ng-bind-html="instructions.list"></ul>
+			</legend>
+			<legend class="alert-success alert-dismissible" ng-hide="sendMailResponse.success == ''" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<p>{{sendMailResponse.success}}</p>
+			</legend>
+			<legend class="alert-danger alert-dismissible" ng-hide="sendMailResponse.error == ''" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<p>{{sendMailResponse.error}}</p>
+			</legend>
+			<div class="input-group input-group-lg col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				<input class="form-control" type="text" name="email" ng-model="email" placeholder="your_e-mail@domain.com">
+			</div>
+			<div class="input-group input-group-lg col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				<input class="form-control" type="text" name="name" ng-model="name" placeholder="Your name">
+			</div>
+			<div class="input-group input-group-lg col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				<input class="form-control" type="text" name="header" ng-model="header" placeholder="Message header">
+			</div>
+			<div class="input-group input-group-lg col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				<input class="form-control" type="text" name="message" ng-model="message" placeholder="Message text">
+			</div>
+			<br/>
+			<div class="btn-group btn-group-lg btn-group-justified">
+				<a class="btn btn-warning" ng-click="resetForm()">{{buttonText.reset}}</a>
+				<a class="btn btn-success" ng-click="submitForm()" ng-class="{disabled: email == '' || name == '' || header == '' || message == ''}">{{buttonText.submit}}</a>
+			</div>
+		</fieldset>
+	</form>
+</div>

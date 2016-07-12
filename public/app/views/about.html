@@ -1,0 +1,51 @@
+<div class="col-xs-12 col-sm-12 col-md-12 col-lg-9" id="about">
+	<div id="data-container">
+		<div class="row heading">
+			<h4 class="col-xs-12 col-sm-12 col-md-5 col-lg-5">{{dnbhubDetails.title}}</h4>
+			<div class="links col-xs-12 col-sm-12 col-md-7 col-lg-7">
+				<a class="btn btn-small btn-info" ng-href="{{dnbhubDetails.links.soundcloud}}" target=_blank>
+					<i class="fa fa-soundcloud fa-2x" aria-hidden="true"></i>
+				</a>
+				<a class="btn btn-small btn-info" ng-href="{{dnbhubDetails.links.rss}}" target=_blank>
+					<i class="fa fa-rss fa-2x" aria-hidden="true"></i>
+				</a>
+				<a class="btn btn-small btn-info" ng-href="{{dnbhubDetails.links.twitter}}" target=_blank>
+					<i class="fa fa-twitter fa-2x" aria-hidden="true"></i>
+				</a>
+				<a class="btn btn-small btn-info" ng-href="{{dnbhubDetails.links.facebook}}" target=_blank>
+					<i class="fa fa-facebook fa-2x" aria-hidden="true"></i>
+				</a>
+				<a class="btn btn-small btn-info" ng-href="{{dnbhubDetails.links.youtube}}" target=_blank>
+					<i class="fa fa-youtube fa-2x" aria-hidden="true"></i>
+				</a>
+				<a class="btn btn-small btn-info" ng-href="{{dnbhubDetails.links.instagram}}" target=_blank>
+					<i class="fa fa-instagram fa-2x" aria-hidden="true"></i>
+				</a>
+				<a class="btn btn-small btn-info" ng-href="{{dnbhubDetails.links.bandcamp}}" target=_blank>
+					<img src="../img/logos/bandcamp-button-circle-line-white-28.png"/>
+				</a>
+			</div>
+		</div>
+		<div class="text col-xs-12 col-sm-12 col-md-12 col-lg-12" ng-bind-html="dnbhubDetails.text"></div>
+	</div>
+</div>
+<div class="hidden-xs hidden-sm hidden-md col-lg-3" id="showcase">
+	<!-- Begin MailChimp Signup Form -->
+	<link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
+	<div id="mc_embed_signup">
+		<form action="//dnbhub.us3.list-manage.com/subscribe/post?u=3eeba7cfe8388b91c662bdf95&amp;id=8cca3229c8" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+			<div id="mc_embed_signup_scroll">
+				<label for="mce-EMAIL">Join <span class="yellow">Drum'n'Bass Hub</span> Mailing List</label>
+				<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+				<!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+				<div style="position: absolute; left: -5000px;"><input type="text" name="b_3eeba7cfe8388b91c662bdf95_8cca3229c8" tabindex="-1" value=""></div>
+				<div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+			</div>
+		</form>
+	</div>
+	<!--End mc_embed_signup-->
+	<div id="powered_by">
+		<div class="powered-by-heading">POWERED BY</div>
+		<img class="powered-by-logo" title="{{item.name}}" ng-src="{{item.logo}}" ng-repeat="item in dnbhubDetails.poweredBy"/>
+	</div>
+</div>
