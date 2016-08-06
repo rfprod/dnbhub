@@ -1,6 +1,7 @@
 'use strict';
 
 /* Services */
+/* global angular */
 
 var dnbhubServices = angular.module('dnbhubServices', ['ngResource']);
 

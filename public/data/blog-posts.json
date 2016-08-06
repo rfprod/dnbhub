@@ -1,5 +1,6 @@
 [
   {
+    "code": "EMOTION038",
     "title": "Kelle & Juha - Mystery / Snowflakes - EMOTION038",
     "logo": "img/logos/Emotion-logo-200p.jpg",
     "links": {
@@ -16,6 +17,7 @@
     "text": "<p>The next release on E-Motion Records sees us very proudly welcome two new faces to the team, Kelle & Juha. Whether you know them for their face melting, dark neurofunk on Disturbed Recordings or their dance floor orientated releases on Ram’s sister label Program, these lads have a pretty hefty back catalogue and we are more than happy to be making an addition to it.</p><p>Their debut on E-Motion really highlights the duos versatility as a production outlet, as they focus more on the liquid, musical side of the genre with 2 beautifully crafted tracks entitled Mystery & Snowflakes.</p><p>First up, Mystery, a stunning piece of music reminiscent of that early Calibre sound we all know and love. Sublime keys float over warm sub bass notes as dream like vocal edits bellow in the background.</p><p>The flip side, Snowflakes, sees the duo continue on their journey of elegance with another stunningly formulated slice of Drum & Bass. Strings, guitar and piano combine to create elegant atmospherics, whilst the slick, sharp drums and resounding sub bass lay the foundations, all of which wrap up another fine release on E-Motion Records.</p><p><strong>Release Date:</strong> 05.08.2016</p>"
   },
   {
+    "code": "NSGNL012",
     "title": "Phace - So Excited / Lit Up - NSGNL012",
     "logo": "img/logos/Phace-logo-200p.jpg",
     "links": {
@@ -32,7 +34,8 @@
     "text": "<p>A single by Phace featuring So Excited & Lit Up, released by Neosignal Recordings.</p><p><strong>Release Date:</strong> 24.06.2016</p>"
   },
   {
-    "title": "Option - Blueshift / Section 9",
+    "code": "DA001",
+    "title": "Option - Blueshift / Section 9 - DA001",
     "logo": "img/logos/Detached-Audio-logo-600p.jpg",
     "links": {
       "website": "",

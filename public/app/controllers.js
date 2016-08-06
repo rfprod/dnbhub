@@ -1,6 +1,7 @@
 'use strict';
 
 /* Controllers */
+/* global angular, SC, $ */
 
 var dnbhubControllers = angular.module('dnbhubControllers', ['angularSpinner']);
 
@@ -221,8 +222,9 @@ dnbhubControllers.controller('repostsCtrl', ['$scope', 'usSpinnerService',
   }
 ]);
 
-dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', 'usSpinnerService', 'blogPostsService',
-  function($scope, $sce, $route, usSpinnerService, blogPostsService) {
+dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location', 'usSpinnerService', 'blogPostsService',
+  function($scope, $sce, $route, $location, usSpinnerService, blogPostsService) {
+    $scope.inputReleaseCode = undefined;
     $scope.blogPosts = [];
     $scope.selectedBlogPostId = 0;
     $scope.selectedBlogPost = {};
@@ -270,6 +272,14 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', 'usSpinner
   		$('.post .widget').height(h);
     	$('#sc_player').height(windowHeight-190); // 190 - rendered maichimp form height
     };
+    $scope.setProperSearchParam = function(){
+      var search = $location.search();
+      if ($scope.selectedBlogPost){
+        search.code = $scope.selectedBlogPost.code;
+        console.log('location.search: ',search);
+        $location.search(search);
+      }
+    };
     $scope.updateBlogPosts = function(){
       blogPostsService.query({}).$promise.then(function(response){
         $scope.blogPosts = [];
@@ -277,8 +287,19 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', 'usSpinner
           $scope.blogPosts.push(element);
         });
         //console.log($scope.blogPosts);
-        $scope.selectedBlogPost = $scope.blogPosts[$scope.selectedBlogPostId];
-        //console.log($scope.selectedBlogPost);
+        if ($scope.inputReleaseCode) {
+          $scope.blogPosts.forEach(function(value, index, array){
+            if (value.code === $scope.inputReleaseCode) {
+              $scope.selectedBlogPostId = index;
+            }
+          });
+          $scope.inputReleaseCode = undefined;
+          $scope.selectedBlogPost = $scope.blogPosts[$scope.selectedBlogPostId];
+          if ($scope.selectedBlogPostId === 0) { $scope.setProperSearchParam(); }
+        }else{
+          $scope.selectedBlogPost = $scope.blogPosts[$scope.selectedBlogPostId];
+          $scope.setProperSearchParam();
+        }
         $scope.getTracks($scope.selectedBlogPost.soundcloudUserId,function(){
           $scope.adaptInternalsOnLoad();
           usSpinnerService.stop('root-spinner');
@@ -286,27 +307,39 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', 'usSpinner
       });
     };
     $scope.selectBlogPost = function(){
-      usSpinnerService.spin('root-spinner');
-      $scope.selectedBlogPost = $scope.blogPosts[$scope.selectedBlogPostId];
-      //console.log($scope.selectedBlogPost);
-      $scope.getTracks($scope.selectedBlogPost.soundcloudUserId,function(){
-        usSpinnerService.stop('root-spinner');
-      });
+      if ($scope.blogPosts.length > 0){
+        usSpinnerService.spin('root-spinner');
+        $scope.selectedBlogPost = $scope.blogPosts[$scope.selectedBlogPostId];
+        //console.log('selectedBlogPost: ',$scope.selectedBlogPost);
+        $scope.setProperSearchParam();
+        $scope.getTracks($scope.selectedBlogPost.soundcloudUserId,function(){
+          usSpinnerService.stop('root-spinner');
+        });
+      }
     };
+    $scope.$watch('selectedBlogPostId', function(newVal){
+      console.log('selectedBlogPostId new val: ',newVal);
+      if ($scope.selectedBlogPost && !$scope.inputReleaseCode) { $scope.selectBlogPost(); }
+    });
     $scope.nextBlogPost = function(){
       if ($scope.selectedBlogPostId > 0) {
         $scope.selectedBlogPostId--;
-        $scope.selectBlogPost();
+        //$scope.selectBlogPost();
       }console.log('this is last blog post');
     };
     $scope.previousBlogPost = function(){
       if ($scope.selectedBlogPostId < $scope.blogPosts.length-1) {
         $scope.selectedBlogPostId++;
-        $scope.selectBlogPost();
+        //$scope.selectBlogPost();
       }console.log('this is first blog post');
     };
     $scope.$on('$viewContentLoaded', function(event) {
       console.log('blog view controller loaded');
+      var search = $location.search();
+      if (search.code) {
+        console.log('location.search: ',search);
+        $scope.inputReleaseCode = search.code;
+      }
       $scope.updateBlogPosts();
     });
     $scope.$on('$destroy', function(event) {

@@ -1,6 +1,7 @@
 'use strict';
 
 /* App Module */
+/* global angular */
 
 var dnbhub = angular.module('dnbhub', [
   'ngRoute',
@@ -18,7 +19,8 @@ dnbhub.config(['$routeProvider',
       }).
       when('/blog', {
         templateUrl: 'app/views/blog.html',
-        controller: 'blogCtrl'
+        controller: 'blogCtrl',
+        reloadOnSearch: false
       }).
       when('/singles', {
         templateUrl: 'app/views/singles.html',
