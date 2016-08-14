@@ -7,6 +7,7 @@ var dnbhub = angular.module('dnbhub', [
   'ngRoute',
   'ngSanitize',
   'dnbhubControllers',
+  'dnbhubDirectives',
   'dnbhubServices'
 ]);
 

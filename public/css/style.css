@@ -26,7 +26,6 @@ input {vertical-align:middle;}
 .width{width:100%;}
 .center{text-align:center;}
 .top{margin-top:10px;}
-.minwidth{min-width:100%;margin-top:75px;}
 
 /*
 *	navbar styling
@@ -63,7 +62,16 @@ input {vertical-align:middle;}
 /*
 *	index view
 */
-#spotlight {overflow:hidden;height:100vh;font-variant:small-caps;background-color:rgba(0, 0, 0, 0.5);padding-top:50px 0 0 0;}
+#spotlight { overflow:hidden;height:100vh;font-variant:small-caps;background-color:rgba(0, 0, 0, 0.5); }
+#facebook-group-widget {
+	margin-top:75px;
+	display:block;
+	position:relative;
+	border-radius:0;
+	border:none;
+	overflow:hidden;
+	font: 15px "Helvetica Neue",Roboto,"Segoe UI",Calibri,sans-serif;
+}
 #showcase {padding-left:0;padding-right:0;}
 /* custom embedded mailchimp subscribe form */
 #mc_embed_signup {background:#000000; height:auto!important; clear:left; font:12px Helvetica,Arial,sans-serif;padding:50px 0 0 0;}
@@ -76,6 +84,7 @@ input {vertical-align:middle;}
 /* custom soundcloud player */
 #sc_player {
 	display:block;
+	min-width:100%;
 	position:relative;
 	border-radius:0;
 	text-align:left;
