@@ -1,5 +1,3 @@
-'use strict';
-
 /* Controllers */
 /* global angular, SC, $ */
 
@@ -7,31 +5,32 @@ var dnbhubControllers = angular.module('dnbhubControllers', ['angularSpinner']);
 
 dnbhubControllers.config(['usSpinnerConfigProvider', function(usSpinnerConfigProvider){
   usSpinnerConfigProvider.setDefaults({
-      lines: 13 // The number of lines to draw
-    , length: 28 // The length of each line
-    , width: 14 // The line thickness
-    , radius: 42 // The radius of the inner circle
-    , scale: 1 // Scales overall size of the spinner
-    , corners: 1 // Corner roundness (0..1)
-    , color: '#fff' // #rgb or #rrggbb or array of colors
-    , opacity: 0.25 // Opacity of the lines
-    , rotate: 0 // The rotation offset
-    , direction: 1 // 1: clockwise, -1: counterclockwise
-    , speed: 1 // Rounds per second
-    , trail: 60 // Afterglow percentage
-    , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
-    , zIndex: 2e9 // The z-index (defaults to 2000000000)
-    , className: 'spinner' // The CSS class to assign to the spinner
-    , top: '50vh' // Top position relative to parent
-    , left: '50%' // Left position relative to parent
-    , shadow: true // Whether to render a shadow
-    , hwaccel: false // Whether to use hardware acceleration
-    , position: 'fixed' // Element positioning
+    lines: 13, // The number of lines to draw
+    length: 28, // The length of each line
+    width: 14, // The line thickness
+    radius: 42, // The radius of the inner circle
+    scale: 1, // Scales overall size of the spinner
+    corners: 1, // Corner roundness (0..1)
+    color: '#fff', // #rgb or #rrggbb or array of colors
+    opacity: 0.25, // Opacity of the lines
+    rotate: 0, // The rotation offset
+    direction: 1, // 1: clockwise, -1: counterclockwise
+    speed: 1, // Rounds per second
+    trail: 60, // Afterglow percentage
+    fps: 20, // Frames per second when using setTimeout() as a fallback for CSS
+    zIndex: 2e9, // The z-index (defaults to 2000000000)
+    className: 'spinner', // The CSS class to assign to the spinner
+    top: '50vh', // Top position relative to parent
+    left: '50%', // Left position relative to parent
+    shadow: true, // Whether to render a shadow
+    hwaccel: false, // Whether to use hardware acceleration
+    position: 'fixed' // Element positioning
   });
 }]);
 
 dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$location', 'usSpinnerService',
   function($scope, $document, $element, $location, usSpinnerService){
+    'use strict';
     $scope.title = 'Drum and Bass Hub';
     $scope.buttonTitles = {
       index: 'Index - Drum and Bass Hub index',
@@ -77,8 +76,8 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
       //console.log('location changed: ',previous,next);
       if ($scope.navButtons.length > 0){
         for (var i=0; i<$scope.navButtons.length; i++){
-          if ($scope.navButtons[i].innerHTML.indexOf(previous) != -1) { $scope.navButtons[i].setAttribute('class','nav-tabs'); }
-          if ($scope.navButtons[i].innerHTML.indexOf(next) != -1) { $scope.navButtons[i].setAttribute('class','nav-tabs active'); }
+          if ($scope.navButtons[i].innerHTML.indexOf(previous) !== -1) { $scope.navButtons[i].setAttribute('class','nav-tabs'); }
+          if ($scope.navButtons[i].innerHTML.indexOf(next) !== -1) { $scope.navButtons[i].setAttribute('class','nav-tabs active'); }
         }
       }
     });
@@ -89,11 +88,7 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 				$scope.speakerObj.play();
 			}, true);
 		};
-    $scope.activateButton = function($event){
-      //console.log($event);
-      $scope.playSound();
-    };
-    $document.ready(function(event){
+    $document.ready(function(){
       console.log('document ready');
       usSpinnerService.spin('root-spinner');
       //console.log($element);
@@ -101,7 +96,7 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
       $scope.navButtons = $element[0].children[1].querySelector('#tabs').querySelectorAll('li');
       if ($scope.navButtons.length > 0){
         for (var i=0; i<$scope.navButtons.length; i++){
-          if ($scope.navButtons[i].innerHTML.indexOf($location.path()) != -1) { $scope.navButtons[i].setAttribute('class','nav-tabs active'); }
+          if ($scope.navButtons[i].innerHTML.indexOf($location.path()) !== -1) { $scope.navButtons[i].setAttribute('class','nav-tabs active'); }
         }
       }
     });
@@ -110,15 +105,16 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 
 dnbhubControllers.controller('indexCtrl', ['$scope', '$route', 'usSpinnerService',
   function($scope, $route, usSpinnerService) {
+    'use strict';
     $scope.getTracks = function(callback){
       SC.initialize({ client_id: 'dc01ec1b4ea7d41793e61bac1dae13c5' });
       var trackSingle = '';
       var trackList = '<br/><iframe id="player_progress" name="player" src=""></iframe><br/><div id="header"><div></div><span id="stream_url"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></span><span id="download_url"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></span><span id="playback_count">plays</span><span id="favoritings_count">favoritings</span></div>';
       SC.get('http://api.soundcloud.com/users/1275637/tracks.json?client_id=dc01ec1b4ea7d41793e61bac1dae13c5', function(tracks) {
         for (var i = 0; i < tracks.length; i++) {
-          if (tracks[i].downloadable == true){
+          if (tracks[i].downloadable === true){
             // if the track is downloadable include download link
-            if (tracks[i].license == "all-rights-reserved"){
+            if (tracks[i].license === "all-rights-reserved"){
               // if license is all-rights-reserved - download preview
               trackSingle = '<div id="line"><div id="title">' + tracks[i].title + '</div><div id="genre" class="right">' + tracks[i].genre + '</div><span id="stream_url"><a href="' + tracks[i].stream_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target="player"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a></span><span id="download_url"><a href="' + tracks[i].download_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target=_blank><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a></span><span id="playback_count">' + tracks[i].playback_count + '</span><span id="favoritings_count">' + tracks[i].favoritings_count + '</span></div>';
             } else {
@@ -127,7 +123,7 @@ dnbhubControllers.controller('indexCtrl', ['$scope', '$route', 'usSpinnerService
           } else {
             // if the track is not downloadable
             // check if there's a purchase url
-            if (tracks[i].purchase_url != null){
+            if (tracks[i].purchase_url !== null){
               trackSingle = '<div id="line"><div id="title">' + tracks[i].title + '</div><div id="genre" class="right">' + tracks[i].genre + '</div><span id="stream_url"><a href="' + tracks[i].stream_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target="player"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a></span><span id="download_url"><a href="' + tracks[i].purchase_url + '" target=_blank><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a></span><span id="playback_count">' + tracks[i].playback_count + '</span><span id="favoritings_count">' + tracks[i].favoritings_count + '</span></div>';
             } else {
               trackSingle = '<div id="line"><div id="title">' + tracks[i].title + '</div><div id="genre">' + tracks[i].genre + '</div><span id="stream_url"><a href="' + tracks[i].stream_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target="player"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a></span><span id="download_url"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></span><span id="playback_count">' + tracks[i].playback_count + '</span><span id="favoritings_count">' + tracks[i].favoritings_count + '</span></div>';
@@ -143,14 +139,14 @@ dnbhubControllers.controller('indexCtrl', ['$scope', '$route', 'usSpinnerService
     $scope.adaptInternalsOnLoad = function(){
     	$('#sc_player').height($('html').height()-190); // 190 - rendered maichimp form height
     };
-    $scope.$on('$viewContentLoaded', function(event) {
+    $scope.$on('$viewContentLoaded', function() {
       console.log('index view controller loaded');
       $scope.getTracks(function(){
         $scope.adaptInternalsOnLoad();
         usSpinnerService.stop('root-spinner');
       });
     });
-    $scope.$on('$destroy', function(event) {
+    $scope.$on('$destroy', function() {
       console.log('index view controller destroyed');
       usSpinnerService.spin('root-spinner');
     });
@@ -164,11 +160,12 @@ dnbhubControllers.controller('indexCtrl', ['$scope', '$route', 'usSpinnerService
 
 dnbhubControllers.controller('singlesCtrl', ['$scope', 'usSpinnerService',
   function($scope, usSpinnerService) {
-    $scope.$on('$viewContentLoaded', function(event) {
+    'use strict';
+    $scope.$on('$viewContentLoaded', function() {
       console.log('singles view controller loaded');
       usSpinnerService.stop('root-spinner');
     });
-    $scope.$on('$destroy', function(event) {
+    $scope.$on('$destroy', function() {
       console.log('singles view controller destroyed');
       usSpinnerService.spin('root-spinner');
     });
@@ -177,6 +174,7 @@ dnbhubControllers.controller('singlesCtrl', ['$scope', 'usSpinnerService',
 
 dnbhubControllers.controller('freeDownloadsCtrl', ['$scope', '$sce', 'usSpinnerService', 'freedownloadsService',
   function($scope, $sce, usSpinnerService, freedownloadsService) {
+    'use strict';
     $scope.freedownloadsData = [];
     $scope.selectedIframeLink = '';
     $scope.returnSelectedIframeLink = function(){
@@ -194,15 +192,15 @@ dnbhubControllers.controller('freeDownloadsCtrl', ['$scope', '$sce', 'usSpinnerS
     };
     $scope.loadIframeUrl = function(event){
       console.log(event.currentTarget.id);
-      if ($scope.selectedIframeLink != $scope.freedownloadsData[event.currentTarget.id].iframeLink){
+      if ($scope.selectedIframeLink !== $scope.freedownloadsData[event.currentTarget.id].iframeLink){
         $scope.selectedIframeLink = $scope.freedownloadsData[event.currentTarget.id].iframeLink;
       }
     };
-    $scope.$on('$viewContentLoaded', function(event) {
+    $scope.$on('$viewContentLoaded', function() {
       console.log('free downloads view controller loaded');
       $scope.updateFreedownloadsData();
     });
-    $scope.$on('$destroy', function(event) {
+    $scope.$on('$destroy', function() {
       console.log('free downloads view controller destroyed');
       usSpinnerService.spin('root-spinner');
     });
@@ -211,11 +209,12 @@ dnbhubControllers.controller('freeDownloadsCtrl', ['$scope', '$sce', 'usSpinnerS
 
 dnbhubControllers.controller('repostsCtrl', ['$scope', 'usSpinnerService',
   function($scope, usSpinnerService) {
-    $scope.$on('$viewContentLoaded', function(event) {
+    'use strict';
+    $scope.$on('$viewContentLoaded', function() {
       console.log('reposts view controller loaded');
       usSpinnerService.stop('root-spinner');
     });
-    $scope.$on('$destroy', function(event) {
+    $scope.$on('$destroy', function() {
       console.log('reposts view controller destroyed');
       usSpinnerService.spin('root-spinner');
     });
@@ -224,6 +223,7 @@ dnbhubControllers.controller('repostsCtrl', ['$scope', 'usSpinnerService',
 
 dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location', 'usSpinnerService', 'blogPostsService',
   function($scope, $sce, $route, $location, usSpinnerService, blogPostsService) {
+    'use strict';
     $scope.inputReleaseCode = undefined;
     $scope.blogPosts = [];
     $scope.selectedBlogPostId = 0;
@@ -239,9 +239,9 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 			var trackList = '<br/><iframe id="player_progress" name="player" src=""></iframe><br/><div id="header"><div></div><span id="stream_url"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></span><span id="download_url"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></span><span id="playback_count">plays</span><span id="favoritings_count">favoritings</span></div>';
 			SC.get('http://api.soundcloud.com/users/'+soundcloudUserId+'/tracks.json?client_id=dc01ec1b4ea7d41793e61bac1dae13c5', function(tracks) {
 				for (var i = 0; i < tracks.length; i++) {
-					if (tracks[i].downloadable == true){
+					if (tracks[i].downloadable === true){
             // if the track is downloadable include download link
-						if (tracks[i].license == "all-rights-reserved"){
+						if (tracks[i].license === "all-rights-reserved"){
               // if license is all-rights-reserved - download preview
 							trackSingle = '<div id="line"><div id="title">' + tracks[i].title + '</div><div id="genre" class="right">' + tracks[i].genre + '</div><span id="stream_url"><a href="' + tracks[i].stream_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target="player"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a></span><span id="download_url"><a href="' + tracks[i].download_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target=_blank><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a></span><span id="playback_count">' + tracks[i].playback_count + '</span><span id="favoritings_count">' + tracks[i].favoritings_count + '</span></div>';
 						} else {
@@ -250,7 +250,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 					} else {
 					  // if the track is not downloadable
 						// check if there's a purchase url
-						if (tracks[i].purchase_url != null){
+						if (tracks[i].purchase_url !== null){
 							trackSingle = '<div id="line"><div id="title">' + tracks[i].title + '</div><div id="genre" class="right">' + tracks[i].genre + '</div><span id="stream_url"><a href="' + tracks[i].stream_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target="player"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a></span><span id="download_url"><a href="' + tracks[i].purchase_url + '" target=_blank><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a></span><span id="playback_count">' + tracks[i].playback_count + '</span><span id="favoritings_count">' + tracks[i].favoritings_count + '</span></div>';
 						} else {
 							trackSingle = '<div id="line"><div id="title">' + tracks[i].title + '</div><div id="genre">' + tracks[i].genre + '</div><span id="stream_url"><a href="' + tracks[i].stream_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target="player"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a></span><span id="download_url"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></span><span id="playback_count">' + tracks[i].playback_count + '</span><span id="favoritings_count">' + tracks[i].favoritings_count + '</span></div>';
@@ -288,7 +288,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
         });
         //console.log($scope.blogPosts);
         if ($scope.inputReleaseCode) {
-          $scope.blogPosts.forEach(function(value, index, array){
+          $scope.blogPosts.forEach(function(value, index){
             if (value.code === $scope.inputReleaseCode) {
               $scope.selectedBlogPostId = index;
             }
@@ -333,7 +333,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
         //$scope.selectBlogPost();
       }console.log('this is first blog post');
     };
-    $scope.$on('$viewContentLoaded', function(event) {
+    $scope.$on('$viewContentLoaded', function() {
       console.log('blog view controller loaded');
       var search = $location.search();
       if (search.code) {
@@ -342,7 +342,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
       }
       $scope.updateBlogPosts();
     });
-    $scope.$on('$destroy', function(event) {
+    $scope.$on('$destroy', function() {
       console.log('blog view controller destroyed');
       usSpinnerService.spin('root-spinner');
     });
@@ -356,6 +356,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 
 dnbhubControllers.controller('contactCtrl', ['$scope', '$timeout', 'usSpinnerService', 'submitFormService',
   function($scope, $timeout, usSpinnerService, submitFormService) {
+    'use strict';
     $scope.email = '';
     $scope.name = '';
     $scope.header = '';
@@ -393,11 +394,11 @@ dnbhubControllers.controller('contactCtrl', ['$scope', '$timeout', 'usSpinnerSer
         },5000);
       });
     };
-    $scope.$on('$viewContentLoaded', function(event) {
+    $scope.$on('$viewContentLoaded', function() {
       console.log('contact view controller loaded');
       usSpinnerService.stop('root-spinner');
     });
-    $scope.$on('$destroy', function(event) {
+    $scope.$on('$destroy', function() {
       console.log('contact view controller destroyed');
       usSpinnerService.spin('root-spinner');
     });
@@ -406,6 +407,7 @@ dnbhubControllers.controller('contactCtrl', ['$scope', '$timeout', 'usSpinnerSer
 
 dnbhubControllers.controller('aboutCtrl', ['$scope', '$route', 'usSpinnerService', 'dnbhubDetailsService',
   function($scope, $route, usSpinnerService, dnbhubDetailsService) {
+    'use strict';
     $scope.adaptInternalsOnLoad = function(){
       var navbarHeight = $('nav').height();
       var windowHeight = $('html').height();
@@ -429,11 +431,11 @@ dnbhubControllers.controller('aboutCtrl', ['$scope', '$route', 'usSpinnerService
         usSpinnerService.stop('root-spinner');
       });
     };
-    $scope.$on('$viewContentLoaded', function(event) {
+    $scope.$on('$viewContentLoaded', function() {
       console.log('about view controller loaded');
       $scope.updateDnbhubDetails();
     });
-    $scope.$on('$destroy', function(event) {
+    $scope.$on('$destroy', function() {
       console.log('about view controller destroyed');
       usSpinnerService.spin('root-spinner');
     });

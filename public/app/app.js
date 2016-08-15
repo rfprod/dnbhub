@@ -1,5 +1,3 @@
-'use strict';
-
 /* App Module */
 /* global angular */
 

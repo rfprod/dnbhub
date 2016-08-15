@@ -1,5 +1,3 @@
-'use strict';
-
 /* Services */
 /* global angular */
 
@@ -13,6 +11,7 @@ function setBaseUrl(host,absUrl){
 }
 
 dnbhubServices.factory('freedownloadsService', ['$resource', '$location', function($resource, $location){
+	'use strict';
 	var baseUrl = setBaseUrl($location.$$host, $location.$$absUrl);
 	console.log('abs base url '+baseUrl);
 	return $resource(baseUrl+'/data/freedownloads-data.json', {}, {
@@ -28,6 +27,7 @@ dnbhubServices.factory('freedownloadsService', ['$resource', '$location', functi
 }]);
 
 dnbhubServices.factory('blogPostsService', ['$resource', '$location', function($resource, $location){
+	'use strict';
 	var baseUrl = setBaseUrl($location.$$host, $location.$$absUrl);
 	console.log('abs base url '+baseUrl);
 	return $resource(baseUrl+'/data/blog-posts.json', {}, {
@@ -43,6 +43,7 @@ dnbhubServices.factory('blogPostsService', ['$resource', '$location', function($
 }]);
 
 dnbhubServices.factory('dnbhubDetailsService', ['$resource', '$location', function($resource, $location){
+	'use strict';
 	var baseUrl = setBaseUrl($location.$$host, $location.$$absUrl);
 	console.log('abs base url '+baseUrl);
 	return $resource(baseUrl+'/data/dnbhub-details.json', {}, {
@@ -58,6 +59,7 @@ dnbhubServices.factory('dnbhubDetailsService', ['$resource', '$location', functi
 }]);
 
 dnbhubServices.factory('submitFormService', ['$resource', '$location', function($resource, $location){
+	'use strict';
 	var baseUrl = setBaseUrl($location.$$host, $location.$$absUrl);
 	console.log('abs base url '+baseUrl);
 	return $resource(baseUrl+'/php/contact.php', {}, {

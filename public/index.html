@@ -84,37 +84,37 @@
 			</div>
 			<div class="collapse navbar-collapse">
 				<ul class="nav navbar-nav navbar-right" id="tabs">
-					<li class="nav-tabs" ng-click="activateButton($event)">
+					<li class="nav-tabs" ng-click="playSound()">
 						<a ng-href="{{buttonHrefs.index}}" title="{{buttonTitles.index}}">
 							<span class="{{buttonGlyphicons.index}}" aria-hidden="true"></span> <span class="hidden-sm hidden-md hidden-lg">{{buttonNames.index}}</span>
 						</a>
 					</li>
-					<li class="nav-tabs" ng-click="activateButton($event)">
+					<li class="nav-tabs" ng-click="playSound()">
 						<a ng-href="{{buttonHrefs.singles}}" title="{{buttonTitles.singles}}">
 							<span class="{{buttonGlyphicons.singles}}" aria-hidden="true"></span> <span class="hidden-sm hidden-md hidden-lg">{{buttonNames.singles}}</span>
 						</a>
 					</li>
-					<li class="nav-tabs" ng-click="activateButton($event)">
+					<li class="nav-tabs" ng-click="playSound()">
 						<a ng-href="{{buttonHrefs.freedownloads}}" title="{{buttonTitles.freedownloads}}">
 							<span class="{{buttonGlyphicons.freedownloads}}" aria-hidden="true"></span> <span class="hidden-sm hidden-md hidden-lg">{{buttonNames.freedownloads}}</span>
 						</a>
 					</li>
-					<li class="nav-tabs" ng-click="activateButton($event)">
+					<li class="nav-tabs" ng-click="playSound()">
 						<a ng-href="{{buttonHrefs.reposts}}" title="{{buttonTitles.reposts}}">
 							<span class="{{buttonGlyphicons.reposts}}" aria-hidden="true"></span> <span class="hidden-sm hidden-md hidden-lg">{{buttonNames.reposts}}</span>
 						</a>
 					</li>
-					<li class="nav-tabs" ng-click="activateButton($event)">
+					<li class="nav-tabs" ng-click="playSound()">
 						<a ng-href="{{buttonHrefs.blog}}" title="{{buttonTitles.blog}}">
 							<span class="{{buttonGlyphicons.blog}}" aria-hidden="true"></span> <span class="hidden-sm hidden-md hidden-lg">{{buttonNames.blog}}</span>
 						</a>
 					</li>
-					<li class="nav-tabs" ng-click="activateButton($event)">
+					<li class="nav-tabs" ng-click="playSound()">
 						<a ng-href="{{buttonHrefs.contact}}" title="{{buttonTitles.contact}}">
 							<span class="{{buttonGlyphicons.contact}}" aria-hidden="true"></span> <span class="hidden-sm hidden-md hidden-lg">{{buttonNames.contact}}</span>
 						</a>
 					</li>
-					<li class="nav-tabs" ng-click="activateButton($event)">
+					<li class="nav-tabs" ng-click="playSound()">
 						<a ng-href="{{buttonHrefs.about}}" title="{{buttonTitles.about}}" class="about">
 							<span class="{{buttonGlyphicons.about}}" aria-hidden="true"></span> {{buttonNames.about}}
 						</a>
@@ -142,11 +142,13 @@
 	<script src="js/angular-1.5.7/angular-sanitize.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-spinner/0.8.1/angular-spinner.js"></script> <!-- requires spin.js -->
-<!-- app -->
+<!-- app
 	<script src="app/app.js"></script>
 	<script src="app/controllers.js"></script>
 	<script src="app/directives.js"></script>
 	<script src="app/services.js"></script>
+-->
+	<script src="js/packed-app.min.js"></script>
 <!-- mailchimp -->
 	<script src="//s3.amazonaws.com/downloads.mailchimp.com/js/signup-forms/popup/embed.js" data-dojo-config="usePlainJson: true, isDebug: false"></script><script type="text/javascript">require(["mojo/signup-forms/Loader"], function(L) { L.start({"baseUrl":"mc.us3.list-manage.com","uuid":"3eeba7cfe8388b91c662bdf95","lid":"8cca3229c8"}) })</script>
 
