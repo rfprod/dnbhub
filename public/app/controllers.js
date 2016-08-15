@@ -113,7 +113,7 @@ dnbhubControllers.controller('indexCtrl', ['$scope', '$route', 'usSpinnerService
     $scope.getTracks = function(callback){
       SC.initialize({ client_id: 'dc01ec1b4ea7d41793e61bac1dae13c5' });
       var trackSingle = '';
-      var trackList = '<br/><iframe id="player_progress" name="player" src="#"></iframe><br/><div id="header"><div></div><span id="stream_url"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></span><span id="download_url"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></span><span id="playback_count">plays</span><span id="favoritings_count">favoritings</span></div>';
+      var trackList = '<br/><iframe id="player_progress" name="player" src=""></iframe><br/><div id="header"><div></div><span id="stream_url"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></span><span id="download_url"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></span><span id="playback_count">plays</span><span id="favoritings_count">favoritings</span></div>';
       SC.get('http://api.soundcloud.com/users/1275637/tracks.json?client_id=dc01ec1b4ea7d41793e61bac1dae13c5', function(tracks) {
         for (var i = 0; i < tracks.length; i++) {
           if (tracks[i].downloadable == true){
@@ -236,7 +236,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 				client_id: 'dc01ec1b4ea7d41793e61bac1dae13c5',
 			});
 			var trackSingle = '';
-			var trackList = '<br/><iframe id="player_progress" name="player" src="#"></iframe><br/><div id="header"><div></div><span id="stream_url"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></span><span id="download_url"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></span><span id="playback_count">plays</span><span id="favoritings_count">favoritings</span></div>';
+			var trackList = '<br/><iframe id="player_progress" name="player" src=""></iframe><br/><div id="header"><div></div><span id="stream_url"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></span><span id="download_url"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></span><span id="playback_count">plays</span><span id="favoritings_count">favoritings</span></div>';
 			SC.get('http://api.soundcloud.com/users/'+soundcloudUserId+'/tracks.json?client_id=dc01ec1b4ea7d41793e61bac1dae13c5', function(tracks) {
 				for (var i = 0; i < tracks.length; i++) {
 					if (tracks[i].downloadable == true){
