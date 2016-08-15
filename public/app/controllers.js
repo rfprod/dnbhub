@@ -363,6 +363,10 @@ dnbhubControllers.controller('contactCtrl', ['$scope', '$timeout', 'usSpinnerSer
     $scope.buttonText = {reset: 'Reset all fields', submit: 'Send message'};
     $scope.params = '';
     $scope.sendMailResponse = {error: '', success: ''};
+    $scope.hideInstructions = false;
+    $scope.switchInstructionsVisibility = function(){
+      $scope.hideInstructions = true;
+    };
     $scope.instructions = {
       intro: 'Use this contact form for any enquiries correlating with Drum\'n\'Bass Hub activities, for example:',
       list: '<li>make an info support request - have a blog post for your upcoming release;</li><li>make a collaboration or hire request - work with us in the context of audio production from scratch or remixing;</li><li>make a licencing request - use music, published by Dnbhub, for your needs;</li><li>make any other request - did we miss something?</li>'
