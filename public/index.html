@@ -8,14 +8,12 @@
 <!-- pinned sites for windows -->
 	<meta name="application-name" content="Drum'n'Bass Hub"/>
 	<meta name="msapplication-tooltip" content="Digital Multimedia Hub for Drum and Bass Production and Promotion."/>
-	<meta name="msapplication-starturl" content="http://dnbhub.com/index.html?pinned=true"/>
 	<meta name="msapplication-navbutton-color" content="red"/>
-	<meta name="msapplication-badge" content="frequency=30;polling-uri=http://www.dnbhub.com/msbadge.xml"/>
 	<meta name="msapplication-tap-highlight" content="no"/>
 <!-- facebook sharing data -->
 	<meta property="og:title" content="Drum'n'Bass Hub"/>
 	<meta property="og:description" content="Digital Multimedia Hub for Drum and Bass Production and Promotion."/>
-	<meta property="og:image" content="http://dnbhub.com/img/DH_logo.png"/>
+	<meta property="og:image" content="http://dnbhub.com/img/svg/DH_logo-round_bg.svg"/>
 <!-- twitter sharing data -->
 	<meta name="twitter:card" content="summary"/>
 	<meta name="twitter:site" content="@dnbhub_com"/>
@@ -23,7 +21,7 @@
 	<meta name="twitter:url" content="http://dnbhub.com"/>
 	<meta name="twitter:title" content="Drum'n'Bass Hub"/>
 	<meta name="twitter:description" content="Digital Multimedia Hub for Drum and Bass Production and Promotion."/>
-	<meta name="twitter:image" content="http://dnbhub.com/img/DH_logo.png"/>
+	<meta name="twitter:image" content="http://dnbhub.com/img/svg/DH_logo-round_bg.svg"/>
 <!-- app store ids -->
 	<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/APP_ID"/>
 	<meta name="apple-itunes-app" content="app-id=APP_ID,app-argument=SOME_TEXT"/>
@@ -31,7 +29,7 @@
 	<meta name="apple-mobile-web-app-capable" content="yes"/>
 	<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 	<meta name="apple-mobile-web-app-title" content="Drum'n'Bass Hub"/>
-	<link rel="apple-touch-icon-precomposed" href="http://dnbhub.com/img/DH_logo.png"/>
+	<link rel="apple-touch-icon-precomposed" href="http://dnbhub.com/img/svg/DH_logo-round_bg.svg"/>
 	<link rel="apple-touch-startup-image" media="(max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2)" href="img/startup-retina.png"/>
 	<meta name="format-detection" content="telephone=no"/>
 <!-- general -->
@@ -48,23 +46,21 @@
 	<link type="image/x-icon" rel="icon" href="http://dnbhub.com/favicon.ico"/>
 	<link type="image/x-icon" rel="shortcut icon" href="http://dnbhub.com/favicon.ico"/>
 	<link type="image/x-icon" rel="apple-touch-icon" href="http://dnbhub.com/favicon.ico"/>
+<!-- jquery -->
+	<script src="bower_components/jquery-2.2.4.min/index.js"></script>
 <!-- twitter bootstrap -->
-	<link rel="stylesheet" href="css/bootstrap.min.css"/>
-	<link rel="stylesheet" href="css/bootstrap-theme.min.css"/>
+	<link rel="stylesheet" href="bower_components/bootstrap-css/css/bootstrap.min.css"/>
+	<script src="bower_components/bootstrap-css/js/bootstrap.min.js"></script>
 	<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 	<!--[if lt IE]>
 		<script src="js/html5shiv.js"></script>
 		<script src="js/respond.min.js"></script>
 	<![endif]-->
-<!-- font awesome -->
-	<link rel="stylesheet" href="css/font-awesome.min.css">
 <!-- customized and extended styles - must be after twitter bootstrap -->
 	<link rel="stylesheet" href="css/style.css"/>
-<!-- Soundcloud connect -->
-	<script src="//connect.soundcloud.com/sdk.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<!-- font awesome -->
+	<link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
 </head>
-<!--<body onload="getTracks();" ng-app="dnbhub">-->
 <body>
 
 	<base href="/">
@@ -132,16 +128,15 @@
 
 <!-- Pinterest dependency - pinIt for every image on the website - Please call pinit.js only once per page -->
 	<script async data-pin-hover="true" src="http://assets.pinterest.com/js/pinit.js"></script>
-<!-- bootstrap -->
- 	<script src="js/bootstrap.min.js"></script>
+<!-- Soundcloud connect -->
+	<script src="//connect.soundcloud.com/sdk.js"></script>
 <!-- angular -->
-	<script src="js/angular-1.5.7/angular.js"></script>
-	<script src="js/angular-1.5.7/angular-animate.min.js"></script>
-	<script src="js/angular-1.5.7/angular-route.min.js"></script>
-	<script src="js/angular-1.5.7/angular-resource.min.js"></script>
-	<script src="js/angular-1.5.7/angular-sanitize.min.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-spinner/0.8.1/angular-spinner.js"></script> <!-- requires spin.js -->
+	<script src="bower_components/angular/angular.js"></script>
+	<script src="bower_components/angular-route/angular-route.min.js"></script>
+	<script src="bower_components/angular-resource/angular-resource.min.js"></script>
+	<script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+	<script src="bower_components/spin.js/spin.min.js"></script>
+	<script src="bower_components/angular-spinner/angular-spinner.min.js"></script> <!-- requires spin.js -->
 <!-- app
 	<script src="app/app.js"></script>
 	<script src="app/controllers.js"></script>

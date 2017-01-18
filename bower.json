@@ -1,20 +1,19 @@
 {
-  "name": "dnbhub",
-  "version": "1.0.0",
-  "description": "Dnbhub - multimedia concentrator",
-  "license": "MIT",
-  "private": true,
-  "dependencies": {
-    "angular": ">=1.5.7",
-    "angular-mocks": ">=1.5.7",
-    "angular-route": ">=1.5.7",
-    "angular-resource": ">=1.5.7",
-    "angular-sanitize": ">=1.5.7",
-    "angular-spinner": ">0.7.0",
-    "angular-websocket": ">=1.5.7",
-    "jquery-2.2.4.min": "https://code.jquery.com/jquery-2.2.4.min.js",
-    "bootstrap-css": "~3.3.6",
-    "angular-chart.js": "~1.0.0",
-    "Chart.js": "=2.1.6"
-  }
+	"name": "dnbhub",
+	"version": "1.0.0",
+	"description": "Dnbhub - multimedia concentrator",
+	"license": "MIT",
+	"private": true,
+	"dependencies": {
+		"angular": ">=1.5.7",
+		"angular-mocks": ">=1.5.7",
+		"angular-route": ">=1.5.7",
+		"angular-resource": ">=1.5.7",
+		"angular-sanitize": ">=1.5.7",
+		"angular-spinner": ">0.7.0",
+		"angular-websocket": ">=1.5.7",
+		"jquery-2.2.4.min": "https://code.jquery.com/jquery-2.2.4.min.js",
+		"bootstrap-css": "~3.3.6",
+		"font-awesome": "fontawesome#^4.7.0"
+	}
 }

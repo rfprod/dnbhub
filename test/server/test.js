@@ -11,11 +11,11 @@ const baseUrl = 'http://localhost:'+process.env.PORT;
 describe('/ endpoint', function() {
 	it('should load a an angular initialization page', function (done) {
 		request(baseUrl+'/', function (error,response,body) {
-		    
+
 			expect(error).to.be.not.ok;
 			expect(response).to.be.not.a('undefined');
 			expect(response.statusCode).to.be.equal(200);
-			
+
 			done();
 		});
 	});
