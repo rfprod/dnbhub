@@ -4,15 +4,16 @@ module.exports = function(config){
 	basePath : '../',
 	
 	files : [
-		'public/bower_components/jquery-2.2.4.min/index.js',
+		'public/bower_components/jquery/dist/jquery.min.js',
+		'bower_components/bootstrap-css/js/bootstrap.min.js',
 		'public/bower_components/angular/angular.js',
-		'public/bower_components/angular-route/angular-route.js',
-		'public/bower_components/angular-resource/angular-resource.js',
+		'public/bower_components/angular-animate/angular-animate.js',
 		'public/bower_components/angular-mocks/angular-mocks.js',
-		'public/bower_components/angular-spinner/angular-spinner.js',
-		'public/bower_components/angular-websocket/dist/angular-websocket.js',
-		'public/bower_components/angular-spinner/angular-spinner.min.js',
+		'public/bower_components/angular-resource/angular-resource.js',
+		'public/bower_components/angular-route/angular-route.js',
 		'public/bower_components/angular-sanitize/angular-sanitize.min.js',
+		'public/bower_components/angular-spinner/dist/angular-spinner.min.js',
+		'public/bower_components/angular-websocket/dist/angular-websocket.js',
 		//'public/app/*.js',
 		'public/js/packed-app.min.js',
 		'test/client/unit/*.js'

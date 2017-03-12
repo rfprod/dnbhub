@@ -46,26 +46,18 @@
 	<link type="image/x-icon" rel="icon" href="http://dnbhub.com/favicon.ico"/>
 	<link type="image/x-icon" rel="shortcut icon" href="http://dnbhub.com/favicon.ico"/>
 	<link type="image/x-icon" rel="apple-touch-icon" href="http://dnbhub.com/favicon.ico"/>
-<!-- jquery -->
-	<script src="bower_components/jquery-2.2.4.min/index.js"></script>
-<!-- twitter bootstrap -->
+<!-- vendor stylesheets
 	<link rel="stylesheet" href="bower_components/bootstrap-css/css/bootstrap.min.css"/>
-	<script src="bower_components/bootstrap-css/js/bootstrap.min.js"></script>
-	<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-	<!--[if lt IE]>
-		<script src="js/html5shiv.js"></script>
-		<script src="js/respond.min.js"></script>
-	<![endif]-->
-<!-- customized and extended styles - must be after twitter bootstrap -->
-	<link rel="stylesheet" href="css/style.css"/>
-<!-- font awesome -->
-	<link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css"/>
+-->
+	<link rel="stylesheet" href="css/vendor-pack.min.css"/>
+<!-- app styles -->
+	<link rel="stylesheet" href="css/packed-app.min.css"/>
 </head>
 <body>
 
 	<base href="/">
 
-<!-- * NAVBAR * -->
 	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation" ng-controller="navCtrl">
 		<audio id="speaker"></audio> <!-- invisible speaker -->
 		<div class="container-fluid">
@@ -120,7 +112,6 @@
 		</div>
 		<span class="spinner" us-spinner spinner-key="root-spinner"></span>
 	</nav>
-<!-- NAVBAR END -->
 
 	<div>
 		<div ng-view class="view-frame"></div>
@@ -130,20 +121,30 @@
 	<script async data-pin-hover="true" src="http://assets.pinterest.com/js/pinit.js"></script>
 <!-- Soundcloud connect -->
 	<script src="//connect.soundcloud.com/sdk.js"></script>
-<!-- angular -->
-	<script src="bower_components/angular/angular.js"></script>
-	<script src="bower_components/angular-route/angular-route.min.js"></script>
-	<script src="bower_components/angular-resource/angular-resource.min.js"></script>
-	<script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
-	<script src="bower_components/spin.js/spin.min.js"></script>
-	<script src="bower_components/angular-spinner/angular-spinner.min.js"></script> <!-- requires spin.js -->
-<!-- app
-	<script src="app/app.js"></script>
-	<script src="app/controllers.js"></script>
-	<script src="app/directives.js"></script>
-	<script src="app/services.js"></script>
--->
+<!-- twitter requires jquery as independent package -->
+	<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Debug mode -->
+	<!-- vendor
+		<script src="bower_components/bootstrap-css/js/bootstrap.min.js"></script>
+		<script src="bower_components/angular/angular.js"></script>
+		<script src="bower_components/angular-animate/angular-animate.min.js"></script>
+		<script src="bower_components/angular-route/angular-route.min.js"></script>
+		<script src="bower_components/angular-resource/angular-resource.min.js"></script>
+		<script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+		<script src="bower_components/angular-spinner/dist/angular-spinner.min.js"></script>
+	-->
+	<!-- app
+		<script src="app/app.js"></script>
+		<script src="app/controllers.js"></script>
+		<script src="app/directives.js"></script>
+		<script src="app/services.js"></script>
+	-->
+<!-- Debug mode -->
+<!-- Production mode -->
+	<script src="js/vendor-pack.min.js"></script>
 	<script src="js/packed-app.min.js"></script>
+<!-- Production mode -->
+
 <!-- mailchimp -->
 <!--
 

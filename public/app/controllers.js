@@ -84,7 +84,7 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 		$scope.playSound = function(){
 			$scope.speakerObj.setAttribute('src', $scope.sounds[0]);
 			$scope.speakerObj.setAttribute('autoplay', 'autoplay');
-			$scope.speakerObj.addEventListener("load", function() {
+			$scope.speakerObj.addEventListener('load', function() {
 				$scope.speakerObj.play();
 			}, true);
 		};
@@ -114,7 +114,7 @@ dnbhubControllers.controller('indexCtrl', ['$scope', '$route', 'usSpinnerService
 				for (var i = 0; i < tracks.length; i++) {
 					if (tracks[i].downloadable === true){
 						// if the track is downloadable include download link
-						if (tracks[i].license === "all-rights-reserved"){
+						if (tracks[i].license === 'all-rights-reserved'){
 							// if license is all-rights-reserved - download preview
 							trackSingle = '<div id="line"><div id="title">' + tracks[i].title + '</div><div id="genre" class="right">' + tracks[i].genre + '</div><span id="stream_url"><a href="' + tracks[i].stream_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target="player"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a></span><span id="download_url"><a href="' + tracks[i].download_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target=_blank><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a></span><span id="playback_count">' + tracks[i].playback_count + '</span><span id="favoritings_count">' + tracks[i].favoritings_count + '</span></div>';
 						} else {
@@ -132,7 +132,7 @@ dnbhubControllers.controller('indexCtrl', ['$scope', '$route', 'usSpinnerService
 					trackList = trackList.concat(trackSingle);
 				}
 				trackList = trackList.concat('</span>');
-				document.getElementById("sc_player").innerHTML = trackList;
+				document.getElementById('sc_player').innerHTML = trackList;
 				callback();
 			});
 		};
@@ -241,7 +241,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 				for (var i = 0; i < tracks.length; i++) {
 					if (tracks[i].downloadable === true){
 						// if the track is downloadable include download link
-						if (tracks[i].license === "all-rights-reserved"){
+						if (tracks[i].license === 'all-rights-reserved'){
 							// if license is all-rights-reserved - download preview
 							trackSingle = '<div id="line"><div id="title">' + tracks[i].title + '</div><div id="genre" class="right">' + tracks[i].genre + '</div><span id="stream_url"><a href="' + tracks[i].stream_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target="player"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a></span><span id="download_url"><a href="' + tracks[i].download_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target=_blank><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a></span><span id="playback_count">' + tracks[i].playback_count + '</span><span id="favoritings_count">' + tracks[i].favoritings_count + '</span></div>';
 						} else {
@@ -259,7 +259,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 					trackList = trackList.concat(trackSingle);
 				}
 				trackList = trackList.concat('</span>');
-				document.getElementById("sc_player").innerHTML = trackList;
+				document.getElementById('sc_player').innerHTML = trackList;
 				callback();
 			});
 		};

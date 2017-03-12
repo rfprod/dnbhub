@@ -1,6 +1,0 @@
-{
-  "undef": true,
-  "unused": true,
-  "predef": [ "console", "window", "document" ],
-  "strict": false
-}

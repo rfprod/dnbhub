@@ -1,0 +1,428 @@
+html {
+	height: 100vh;
+
+	body {
+		background: #000 url(../img/electric-circuit.png) center center no-repeat;
+		background-attachment: fixed;
+	}
+}
+:focus { outline: 0; }
+a {
+	color: #9DCE5C;
+	outline: none;
+	text-decoration: none;
+
+	&:hover { cursor: pointer; }
+}
+h1, h2, h3, h4, h5, h6 {
+	&:hover { cursor: default; }
+}
+p { margin: 0 0 18px; }
+img { border: none; }
+input { vertical-align: middle; }
+#noscript {
+	display: block;
+	width: 100%;
+	height: 75px;
+	background: #FFFF00;
+}
+.noscriptWarning {
+	display: block;
+	height: auto !important;
+	float: left;
+	color: red;
+	padding: 10px 0 0 45px;
+	text-align: center;
+	text-decoration: blink;
+	font-weight: 600;
+	line-height: 2em;
+}
+
+/*
+* bootstrap extension classes
+*/
+.width { width: 100%; }
+.center { text-align: center; }
+.top { margin-top: 10px; }
+.navbar { z-index: 15; }
+
+/*
+*	navbar styling
+*/
+#speaker { display:none; }
+.logo {
+	height: 100%;
+	width: auto!important;
+}
+.nav li { text-transform: uppercase; }
+.about {
+	line-height: 1em;
+	font-size: 0.8em;
+	color: #ffffff;
+	text-shadow: 1px 1px 1px #000111;
+	font-family: "Courier New", Courier, monospace;
+}
+
+/*
+*	switchable views common
+*/
+#zero-padding { padding: 0; }
+#data-container { /* usage: blog */
+	display: block;
+	position: relative;
+	width: 100%;
+	height: 100vh;
+	border-radius: 0 0 0.2em 0.2em;
+	padding: 50px 0 0 0;
+}
+.border { /* common class for bordered blocks, mostly soundcloud widgets */
+	box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.33) !important;
+	border-width: 0px 0px 1px !important;
+	border-style: none none solid !important;
+	border-color: -moz-use-text-color -moz-use-text-color rgba(0, 0, 0, 0.09) !important;
+	-moz-border-top-colors: none !important;
+	-moz-border-right-colors: none !important;
+	-moz-border-bottom-colors: none !important;
+	-moz-border-left-colors: none !important;
+	border-image: none !important;
+	overflow:hidden;
+}
+
+/*
+*	index view
+*/
+#spotlight {
+	overflow: hidden;
+	height: 100vh;
+	font-variant: small-caps;
+	background-color: rgba(0, 0, 0, 0.5);
+
+	#facebook-group-widget {
+		margin-top: 75px;
+		display: block;
+		position: relative;
+		border-radius: 0;
+		border: none;
+		overflow: hidden;
+		font: 15px "Helvetica Neue",Roboto,"Segoe UI",Calibri,sans-serif;
+	}
+}
+#showcase {
+	padding-left: 0;
+	padding-right: 0;
+
+	/* custom embedded mailchimp subscribe form */
+	#mc_embed_signup {
+		background: #000000;
+		height: auto!important;
+		clear: left;
+		font: 12px Helvetica,Arial,sans-serif;
+		padding: 50px 0 0 0;
+
+		#mc-embedded-subscribe-form { padding-left: 0; }
+
+		label {
+			width: 100%;
+			text-align: center;
+
+			.yellow { color: #ffed00; }
+		}
+
+		#mce-EMAIL { width: 100%; }
+
+		.clear {
+			#mc-embedded-subscribe {
+				width: 100%;
+
+				&:hover {
+					background: #ffed00;
+					width: 100%;
+					color: #000000;
+				}
+			}
+		}
+	}
+
+	/* custom soundcloud player */
+	#sc_player {
+		display: block;
+		min-width: 100%;
+		position: relative;
+		border-radius: 0;
+		text-align: left;
+		overflow: scroll;
+		overflow-x: hidden;
+		background: #000000;
+		font: 15px "Helvetica Neue",Roboto,"Segoe UI",Calibri,sans-serif;
+
+		a {
+			&:link { color: #9DCE5C; outline: none; text-decoration: none; border: 1px solid transparent; border-radius: 4px; }
+			&:visited { color: #00FF00; outline: none; text-decoration: none; border: 1px solid transparent; border-radius: 4px; }
+			&:hover { color: #ffff00; outline: none; text-decoration: none; border: 1px solid #ffff00; border-radius: 4px; }
+			&:active { color: #0000FF; outline: none; text-decoration: none; border: 1px solid transparent; border-radius: 4px; }
+		}
+
+		#player_progress { display: block; border: 0; width: 100%; height: 30px; }
+
+		#title, #genre { display: block; width: 100%; padding-left: 0.2em; padding-left: 0.2em; }
+
+		span {
+			display: table-cell;
+			width: 4.8vw;
+			text-align: center;
+
+			@media (max-width: 993px) {
+				display: table-cell;
+				padding-left: 0.2em;
+				padding-left: 0.2em;
+				width:12vw;
+			}
+			@media (max-width: 766px) {
+				display: table-cell;
+				padding-left: 0.2em;
+				padding-left: 0.2em;
+				width: 17vw;
+			}
+		}
+
+		#header { display: block; color: #fff; background-color: grey; text-transform: uppercase; }
+
+		#line {
+			display: block;
+			color: #fff;
+			background: url(../img/monitor.png) center center repeat;
+			border-bottom: thick dotted #ff0000;
+
+			&:hover { background: grey; }
+		}
+	}
+
+	/* used in about section */
+	#powered_by {
+		display:block;background:#ffffff;
+
+		.powered-by-heading {display:block; width:100%; font-weight: bold; text-align: center; font-size: 2em;}
+
+		.powered-by-logo {height:auto !important; max-height:14vh; width:100%; box-sizing:border-box;}
+	}
+}
+
+#twitter {
+	overflow: hidden;
+	display: block;
+	box-sizing: border-box;
+	position: relative;
+	padding-left: 0.5em;
+	font-variant: small-caps;
+	height: 100vh;
+	z-index: 10;
+	background-color: rgba(0, 0, 0, 0.5);
+	padding: 50px 0 0 0;
+
+	iframe {
+		width: 100%;
+		height: 100%;
+		padding-left: 0.1em;
+		padding-right: 0.1em;
+		background-color: transparent;
+
+		html {
+			body {
+				.root { background-color: transparent; }
+			}
+		}
+	}
+}
+
+/*
+*	hive styling
+*/
+.freedownloads{
+	margin: 0;
+	position: relative;
+	vertical-align: bottom;
+	display: block;
+	background: transparent;
+	overflow: visible;
+	height: calc(100vh - 50px);
+	width: 100%;
+	z-index: 4;
+
+	#freedownloads-list {
+		padding: 0;
+		height: calc(100vh - 50px);
+		background-color: rgba(0, 0, 0, 0.5);
+
+		.freedownloads-item {
+			display: block;
+
+			&:hover { text-decoration: none; }
+		}
+	}
+
+	.selected { color: yellow; }
+
+	#freedownloads-details {
+		padding: 0;
+		height: calc(100vh - 50px);
+	}
+}
+
+/*
+*	blog styling
+*/
+#blog {
+	padding: 50px 0 0 0;
+
+	.post {
+		color: #ffffff;
+		padding: 0 0.5em 0 0.5em;
+
+		.heading {
+			margin: 0.3em 0 0.3em 0;
+			text-transform: uppercase;
+
+			h4 {
+				text-align: center;
+
+				.blog-control {
+					display: block;
+					position: absolute;
+					cursor: pointer;
+				}
+
+				.previous { left: 0; }
+
+				.next { right: 0; }
+
+				.label-logo {
+					height: 28px;
+					width: auto !important;
+					box-sizing: border-box;
+					border: 1px white dashed;
+				}
+			}
+
+			.links {
+				text-align: center;
+
+				a {
+					height: 100%;
+					min-width: 62px;
+					width: 11%;
+				}
+			}
+		}
+
+		.text {
+			display: inline-block;
+			overflow-X: hidden;
+			background-color: rgba(0, 0, 0, 0.5);
+			padding: 0.5em 0.5em 0 0.5em;
+		}
+	}
+}
+
+/*
+*	about styling
+*/
+#about {
+	padding: 50px 0 0 0;
+	color: #ffffff;
+	padding: 0 0.5em 0 0.5em;
+
+	.heading {
+		margin: 0.3em 0 0.3em 0;
+		text-transform: uppercase;
+
+		h4 { text-align: center; }
+
+		.links {
+			text-align: center;
+
+			a {
+				height: 100%;
+				min-width: 62px;
+				width:11%;
+			}
+		}
+	}
+
+	.text {
+		display: inline-block;
+		overflow-X: hidden;
+	}
+}
+
+/*
+* TODO
+* translate following css to scss
+* SC analyser
+*/
+#scanalyser{height:100vh;}
+#manager_options #info_indicator,
+#manager_options #tracks_indicator,
+#manager_options #followers_indicator,
+#manager_options #followings_indicator,
+#manager_options #groups_indicator{color:red;}
+#scanalyser a:link {color:#9DCE5C;outline:none;text-decoration:none;}
+#scanalyser a:visited {color:#00FF00;outline:none;text-decoration:none;}
+#scanalyser a:hover {color:#ffff00;outline:none;text-decoration:none;}
+#scanalyser a:active {color:#0000FF;outline:none;text-decoration:none;}
+#analyser{color:#fff;width:100%;text-align:left;}
+#analyser #line:hover{background:#444;}
+/* formatting for user info output*/
+#analyser #profile{display:block;text-align:left;}
+#analyser #profile div{display:block;padding:0.2em 1em 0.2em 1em;}
+#analyser #profile div span{display:inline-block;margin-left:1em;}
+#analyser #profile #avatar{margin-left:1em;height:100px;width:100px;}
+/* formatting for tracklist output*/
+#analyser #player_progress{display:block;border:0;width:100%;height:auto !important;min-height:30px;max-height:35px;}
+#analyser #trackList .glyphicon,
+#analyser #playlistList .glyphicon{font-size:1.1em;}
+#trackList,
+#playlistList{display:block;text-align:left;}
+#trackList #line-h,
+#playlistList #line-h{display:table-row;color:#fff;width:100%;text-transform:uppercase;background-color:#000;}
+#trackList #line,
+#playlistList #line{display:table-row;color:#fff;width:100%;}
+#trackList #line-h span,
+#playlistList #line-h span{display:table-cell;padding-left:0.5em;min-width:10%;max-width:10%;vertical-align:middle;}
+#trackList #line span,
+#playlistList #line span{display:table-cell;padding-left:0.5em;min-width:10%;max-width:10%;vertical-align:middle;}
+/* formatting for followers output*/
+#followerList{display:block;text-align:left;}
+#followerList #header{display:table-row;color:#fff;text-transform:uppercase;width:100%;background-color:#000;}
+#followerList #line{display:table-row;color:#fff;width:100%;}
+#followerList span {display:table-cell;padding-left:0.5em;min-width:11%;max-width:11%;}
+/* formatting for groupsList output*/
+#groupsList{display:block;text-align:left;}
+#groupsList #line-h{display:table-row;color:#fff;width:100%;text-transform:uppercase;background-color:#000;}
+#groupsList #line{display:table-row;color:#fff;width:100%;}
+#groupsList #line-h span{display:table-cell;padding-left:0.5em;min-width:10%;max-width:10%;vertical-align:middle;}
+#groupsList #line span{display:table-cell;padding-left:0.5em;min-width:10%;max-width:10%;vertical-align:middle;}
+/* common line node for utility_data */
+#line #utility_data{display:none;}
+/* Floating static window - output filters container */
+.floating-static-window{display:none;position:fixed;float:right;width:90vw;height:100vh;right:-10vw;z-index:10;}
+.floating-static-window .bookmark{
+	display:inline-block;
+	position:relative;
+	width:3%;
+	height:100%;
+	background-color:rgba(0,0,0,0.5);
+	text-shadow: 1px 1px #000000;
+	color:#ffffff;
+}
+.floating-static-window .bookmark .glyphicon{top:50vh;}
+.floating-static-window .bookmark a{text-decoration:none;display:block;width:100%;height:100%;}
+.floating-static-window .filters{
+	display:inline-block;
+	position:relative;
+	width:86%;
+	height:100%;
+	background-color:rgba(0,0,0,0.5);
+	text-shadow: 1px 1px #000000;
+	color:#ffffff;
+}
+.floating-static-window .filters a{text-decoration:none;}

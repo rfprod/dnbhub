@@ -1,26 +1,25 @@
 'use strict';
 
-/*global browser, expect, element, by */
-
 describe('Dnbhub: ', function() {
 
-	it('should have only index view and must redirect properly', function() {
+	it('should have only index view and must redirect properly', function(done) {
 		browser.ignoreSynchronization = false;
-		browser.get('public/index.html');
+		browser.get('');
 		browser.getLocationAbsUrl().then(function(url) {
-				expect(url).toEqual('/');
-			});
+				expect(url).toMatch(/\//);
+				done();
+		});
 	});
 
+/*
+*   some old tests as a quick example
+*
 	describe('indexCtrl', function() {
 
 		beforeEach(function() {
 			browser.get('/');
 		});
 
-/*
-*   some old tests as a quick example
-*
 		it('should filter the labels list as a user types into the search box', function() {
 			var labelsList = element.all(by.repeater('label in publicData[1].labels'));
 			var query = element(by.model('labelSearchQuery'));
@@ -42,6 +41,7 @@ describe('Dnbhub: ', function() {
 			element(by.model('orderProp')).element(by.css('option[value="username"]')).click();
 			expect(getNames()).toMatch(/^B/);
 		});
-*/
 	});
+*/
+
 });

@@ -1,19 +1,45 @@
 {
-	"name": "dnbhub",
-	"version": "1.0.0",
-	"description": "Dnbhub - multimedia concentrator",
-	"license": "MIT",
-	"private": true,
-	"dependencies": {
-		"angular": ">=1.5.7",
-		"angular-mocks": ">=1.5.7",
-		"angular-route": ">=1.5.7",
-		"angular-resource": ">=1.5.7",
-		"angular-sanitize": ">=1.5.7",
-		"angular-spinner": ">0.7.0",
-		"angular-websocket": ">=1.5.7",
-		"jquery-2.2.4.min": "https://code.jquery.com/jquery-2.2.4.min.js",
-		"bootstrap-css": "~3.3.6",
-		"font-awesome": "fontawesome#^4.7.0"
+  "name": "dnbhub",
+  "version": "1.0.0",
+  "description": "Dnbhub - multimedia concentrator",
+  "repository": "https://github.com/rfprod/dnbhub.git",
+  "author": "rfprod",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "angular": ">=1.5.7",
+    "angular-animate": ">=1.5.7",
+    "angular-mocks": ">=1.5.7",
+    "angular-route": ">=1.5.7",
+    "angular-resource": ">=1.5.7",
+    "angular-sanitize": ">=1.5.7",
+    "angular-spinner": "^1.0.1",
+    "angular-websocket": ">=1.5.7",
+    "jquery": "^2.2.4",
+    "bootstrap-css": "~3.3.6",
+    "font-awesome": "fontawesome#^4.7.0"
+  },
+  "overrides": {
+		"bootstrap-css": {
+			"main": [
+				"css/bootstrap.css",
+				"fonts/glyphicons-halflings-regular.eot",
+				"fonts/glyphicons-halflings-regular.svg",
+				"fonts/glyphicons-halflings-regular.ttf",
+				"fonts/glyphicons-halflings-regular.woff",
+				"fonts/glyphicons-halflings-regular.woff2"
+			]
+		},
+		"font-awesome": {
+			"main": [
+				"css/font-awesome.css",
+				"fonts/FontAwesome.otf",
+				"fonts/fontawesome-webfont.eot",
+				"fonts/fontawesome-webfont.svg",
+				"fonts/fontawesome-webfont.ttf",
+				"fonts/fontawesome-webfont.woff",
+				"fonts/fontawesome-webfont.woff2"
+			]
+		}
 	}
 }

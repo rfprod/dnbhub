@@ -1,0 +1,11 @@
+node_modules/**
+public/bower_components/**
+public/fonts/**
+*.ico
+*.svg
+*.css
+*.scss
+*.html
+*.min.js
+*.json
+*.php

@@ -19,11 +19,6 @@ indent_style = tab
 indent_size = 4
 
 # 2 space indentation for code
-[*.{js,json,sh}]
-indent_style = tab
-indent_size = 2
-
-# Matches the exact files: package.json, bower.json, .bowerrc
-[{package.json,bower.json,.bowerrc}]
+[*.{js,json,sh,bowerrc}]
 indent_style = tab
 indent_size = 2
