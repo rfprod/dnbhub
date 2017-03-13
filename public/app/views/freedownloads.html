@@ -1,10 +1,13 @@
 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="zero-padding">
 	<div id="data-container" class="freedownloads">
 		<div id="freedownloads-list" class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-			<a class="freedownloads-item" id="{{$index}}" ng-click="loadIframeUrl($event)" ng-class="{selected: freedownload.iframeLink == selectedIframeLink}" ng-repeat="freedownload in freedownloadsData">
-				<span class="glyphicon glyphicon-save"></span> {{freedownload.title}}
+			<a ng-click="scrollToTrack($index + 1)" ng-class="{selected: $index + 1 == selectedWidget}" ng-repeat="freedownload in freedownloadsData">
+				<span class="glyphicon glyphicon-search"></span> {{freedownload.title}}
 			</a>
 		</div>
-		<iframe id="freedownloads-details" class="col-xs-9 col-sm-9 col-md-9 col-lg-9" ng-src="{{returnSelectedIframeLink()}}" frameborder="0"></iframe>
+
+		<div id="freedownloads-details" class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+			<iframe ng-repeat="freedownload in freedownloadsData" id="{{$index + 1}}" ng-src="{{widgetLink(freedownload.soundcloudTrackID)}}" width="100%" height="166" scrolling="no" frameborder="no"></iframe>
+		</div>
 	</div>
 </div>

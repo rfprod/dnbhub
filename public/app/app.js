@@ -25,7 +25,8 @@ dnbhub.config(['$routeProvider', function($routeProvider) {
 		})
 		.when('/freedownloads', {
 			templateUrl: 'app/views/freedownloads.html',
-			controller: 'freeDownloadsCtrl'
+			controller: 'freeDownloadsCtrl',
+			reloadOnSearch: false
 		})
 		.when('/reposts', {
 			templateUrl: 'app/views/reposts.html',

@@ -251,9 +251,11 @@ input { vertical-align: middle; }
 	#freedownloads-list {
 		padding: 0;
 		height: calc(100vh - 50px);
+		max-height: calc(100vh - 50px);
+		overflow-X: hidden;
 		background-color: rgba(0, 0, 0, 0.5);
 
-		.freedownloads-item {
+		a {
 			display: block;
 
 			&:hover { text-decoration: none; }
@@ -265,6 +267,8 @@ input { vertical-align: middle; }
 	#freedownloads-details {
 		padding: 0;
 		height: calc(100vh - 50px);
+		max-height: calc(100vh - 50px);
+		overflow-X: hidden;
 	}
 }
 

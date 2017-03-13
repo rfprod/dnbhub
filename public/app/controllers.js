@@ -172,29 +172,31 @@ dnbhubControllers.controller('singlesCtrl', ['$scope', 'usSpinnerService',
 	}
 ]);
 
-dnbhubControllers.controller('freeDownloadsCtrl', ['$scope', '$sce', 'usSpinnerService', 'freedownloadsService',
-	function($scope, $sce, usSpinnerService, freedownloadsService) {
+dnbhubControllers.controller('freeDownloadsCtrl', ['$scope', '$sce', '$location', 'usSpinnerService', 'freedownloadsService',
+	function($scope, $sce, $location, usSpinnerService, freedownloadsService) {
 		'use strict';
 		$scope.freedownloadsData = [];
-		$scope.selectedIframeLink = '';
-		$scope.returnSelectedIframeLink = function(){
-			return $sce.trustAsResourceUrl($scope.selectedIframeLink);
+		$scope.selectedWidget = 1;
+		$scope.scWidgetLink = {
+			first: 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/',
+			last: '&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false'
 		};
-		$scope.updateFreedownloadsData = function(){
+		$scope.widgetLink = function(soundcloudTrackID) {
+			return $sce.trustAsResourceUrl($scope.scWidgetLink.first + soundcloudTrackID + $scope.scWidgetLink.last);
+		};
+		$scope.updateFreedownloadsData = function() {
 			freedownloadsService.query({}).$promise.then(function(response){
 				$scope.freedownloadsData = [];
-				response.forEach(function(element){
+				response.forEach(function(element) {
 					$scope.freedownloadsData.push(element);
 				});
-				$scope.selectedIframeLink = $scope.freedownloadsData[0].iframeLink;
+				$scope.welectedWidget = 0;
 				usSpinnerService.stop('root-spinner');
 			});
 		};
-		$scope.loadIframeUrl = function(event){
-			console.log(event.currentTarget.id);
-			if ($scope.selectedIframeLink !== $scope.freedownloadsData[event.currentTarget.id].iframeLink){
-				$scope.selectedIframeLink = $scope.freedownloadsData[event.currentTarget.id].iframeLink;
-			}
+		$scope.scrollToTrack = function(widgetIndex) {
+			$scope.selectedWidget = widgetIndex;
+			$location.$$hash = widgetIndex;
 		};
 		$scope.$on('$viewContentLoaded', function() {
 			console.log('free downloads view controller loaded');
