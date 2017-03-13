@@ -164,10 +164,10 @@ gulp.task('watch', () => {
 });
 
 gulp.task('build', (done) => {
-	runSequence('lint', 'concat-and-uglify-js', 'sass-autoprefix-minify-css', 'bower-files', 'pack-vendor-css', 'move-vendor-fonts', 'build-clean', 'client-unit-test', 'client-e2e-test', done);
+	runSequence('lint', 'concat-and-uglify-js', 'sass-autoprefix-minify-css', 'bower-files', 'pack-vendor-css', 'move-vendor-fonts', 'build-clean', 'client-unit-test', done);
 });
 
-gulp.task('default', ['build', 'database','server','watch']);
+gulp.task('default', ['build', 'database','server','watch','client-e2e-test']);
 
 process.on('exit', function() {
 	if (node) node.kill();
