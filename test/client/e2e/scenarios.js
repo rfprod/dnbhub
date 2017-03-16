@@ -6,7 +6,7 @@ describe('Dnbhub: ', function() {
 		browser.ignoreSynchronization = false;
 		browser.get('');
 		browser.getLocationAbsUrl().then(function(url) {
-				expect(url).toMatch(/\//);
+				expect(url).toMatch(/\/index$/);
 				done();
 		});
 	});

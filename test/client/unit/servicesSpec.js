@@ -3,8 +3,8 @@
 /*
 *	dynamically set backend base url to be able to deploy on any domain
 */
-function setBaseUrl(host,absUrl){
-	return absUrl.substring(0,absUrl.indexOf('#')-1);
+function setBaseUrl(absUrl) {
+	return absUrl.match(new RegExp('http(s)?:\/\/[^/]+'))[0];
 }
 
 beforeEach(module('dnbhubServices'));

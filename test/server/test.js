@@ -6,7 +6,7 @@ const cheerio = require('cheerio'),
 	str = require('string');
 
 require('dotenv').load();
-const baseUrl = 'http://localhost:'+process.env.PORT;
+const baseUrl = 'http://localhost:3000';
 
 describe('/ endpoint', function() {
 	it('should load a an angular initialization page', function (done) {
@@ -21,13 +21,12 @@ describe('/ endpoint', function() {
 	});
 	it('should deliver index page with elements with logo and \'view-frame\' classes', function (done) {
 		request(baseUrl+'/', function (error,response,body) {
-			
+
 			const $ = cheerio.load(body);
-        	assert.equal(1, $('img.logo').length);
-			//expect(str($('title').html()).contains('WhoAmI')).to.be.ok;
+			assert.equal(1, $('img.logo').length);
 			assert.equal(1, $('div.view-frame').length);
-    	    
-    	    done();
-  	    });
-    });
+
+			done();
+		});
+	});
 });

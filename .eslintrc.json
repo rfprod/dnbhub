@@ -36,6 +36,7 @@
 		// app
 		"angular": true,
 		"$": true,
+		"SC": true,
 		// testing
 		"jasmine": true,
 		"beforeEach": true,
