@@ -272,7 +272,7 @@ input { vertical-align: middle; }
 		overflow-X: hidden;
 
 		iframe {
-			&.selected { margin-left: 0.5em; }
+			&.selected { border: 0.25em yellow dotted; }
 		}
 	}
 }
