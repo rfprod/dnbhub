@@ -145,6 +145,7 @@ input { vertical-align: middle; }
 
 	/* custom soundcloud player */
 	#sc_player {
+		margin-top: -2px;
 		display: block;
 		min-width: 100%;
 		position: relative;
@@ -259,16 +260,20 @@ input { vertical-align: middle; }
 			display: block;
 
 			&:hover { text-decoration: none; }
+
+			&.selected { color: yellow; }
 		}
 	}
-
-	.selected { color: yellow; }
 
 	#freedownloads-details {
 		padding: 0;
 		height: calc(100vh - 50px);
 		max-height: calc(100vh - 50px);
 		overflow-X: hidden;
+
+		iframe {
+			&.selected { margin-left: 0.5em; }
+		}
 	}
 }
 
