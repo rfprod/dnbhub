@@ -1,8 +1,13 @@
 /* App Module */
 
 var dnbhub = angular.module('dnbhub', [
-	'ngRoute',
+	'angularSpinner',
+	'ngAnimate',
+	'ngResource',
 	'ngSanitize',
+	'ngRoute',
+	'ngTouch',
+	'ui.bootstrap',
 	'dnbhubControllers',
 	'dnbhubDirectives',
 	'dnbhubServices'
