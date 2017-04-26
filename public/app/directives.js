@@ -24,3 +24,21 @@ dnbhubDirectives.directive('setElementDimensionsOnload', ['$window',
 		};
 	}
 ]);
+
+dnbhubDirectives.directive('customSoundcloudPlayer', ['$window',
+	function($window){
+		'use strict';
+		return {
+			restrict: 'A',
+			link: function(scope, element) {
+				scope.$watch(function() { return element[0].childNodes.length; }, function(newVal, oldVal) {
+					if (!newVal && !oldVal) {
+						console.log('soundcloud player DOM initial change:', newVal, '|', oldVal);
+					} else if (newVal !== oldVal) {
+						console.log('soundcloud player DOM changed:', newVal, '|', oldVal);
+					}
+				});
+			}
+		};
+	}
+]);

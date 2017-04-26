@@ -76,4 +76,16 @@ dnbhub.config(['$routeProvider', '$locationProvider', 'usSpinnerConfigProvider',
 		});
 
 	}
+])
+.run(['$rootScope', '$route', '$window',
+	function ($rootScope, $route, $window) {
+		$window.addEventListener('resize', function() {
+			var current = $route.current.$$route.originalPath;
+			if (current === '/index' || current === '/blog' || current === '/about') {
+				$rootScope.$apply(function() {
+					$route.reload();
+				});
+			}
+		}, true);
+	}
 ]);
