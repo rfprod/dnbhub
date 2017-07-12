@@ -25,8 +25,8 @@ dnbhubDirectives.directive('setElementDimensionsOnload', ['$window',
 	}
 ]);
 
-dnbhubDirectives.directive('customSoundcloudPlayer', ['$window',
-	function($window){
+dnbhubDirectives.directive('customSoundcloudPlayer', [
+	function(){
 		'use strict';
 		return {
 			restrict: 'A',

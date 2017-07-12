@@ -8,7 +8,7 @@ var dnbhubServices = angular.module('dnbhubServices', ['ngResource']);
 function setBaseUrl(absUrl) {
 	//console.log('absUrl:', absUrl);
 	//console.log(' >> set base URL. match', absUrl.match(new RegExp('http(s)?:\/\/[^/]+'), 'ig'));
-	return absUrl.match(new RegExp('http(s)?:\/\/[^/]+'))[0];
+	return absUrl.match(new RegExp('http(s)?://[^/]+'))[0];
 }
 
 dnbhubServices.factory('freedownloadsService', ['$resource', '$location', function($resource, $location) {
