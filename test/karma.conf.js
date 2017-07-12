@@ -26,18 +26,31 @@ module.exports = function(config){
 
 	frameworks: ['jasmine'],
 
+	customLaunchers: {
+		/*
+		*	this custom launcher requires setting env var CHROME_BIN=chromium-browser
+		*	possible options for env var value depending on what you have installed:
+		*	chromium-browser, chromium, google-chrome
+		*/
+		ChromeHeadless: {
+			base: 'Chrome',
+			flags: [
+				'--headless',
+				'--disable-gpu',
+				// Without a remote debugging port Chrome exits immediately
+				'--remote-debugging-port=9222'
+			]
+		}
+	},
+	browsers: ['ChromeHeadless'],
 	//browsers : ['Chrome', 'Firefox'],
-	browsers: ['PhantomJS'],
+	plugins : [
+		'karma-chrome-launcher',
+	//    'karma-firefox-launcher',
+		'karma-jasmine'
+	],
 	hostname: process.env.IP,
 	port: process.env.PORT,
-	runnerPort: 0,
-	
-	plugins : [
-	//    'karma-chrome-launcher',
-	//    'karma-firefox-launcher',
-		'karma-phantomjs-launcher',
-		'karma-jasmine'
-	]
-
+	runnerPort: 0
   });
 };

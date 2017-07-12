@@ -1,13 +1,17 @@
 'use strict';
 
+/*
+*	API DOC: http://www.protractor.org/#/api
+*/
+
 describe('Dnbhub: ', function() {
 
-	it('should have only index view and must redirect properly', function(done) {
-		browser.ignoreSynchronization = false;
-		browser.get('');
-		browser.getLocationAbsUrl().then(function(url) {
-				expect(url).toMatch(/\/index$/);
-				done();
+	it('should load index view', function(/*done*/) {
+		//browser.ignoreSynchronization = false;
+		//browser.get('');
+		browser.getCurrentUrl().then(function(url) {
+			expect(url).toMatch(/\/index$/);
+			//done();
 		});
 	});
 
