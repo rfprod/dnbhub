@@ -13,8 +13,6 @@ const gulp = require('gulp'),
 	sass = require('gulp-sass'),
 	cssnano = require('gulp-cssnano'),
 	autoprefixer = require('gulp-autoprefixer'),
-	gulpFilter = require('gulp-filter'),
-	mainBowerFiles = require('main-bower-files'),
 	del = require('del'),
 	spawn = require('child_process').spawn,
 	exec = require('child_process').exec;
@@ -80,7 +78,11 @@ gulp.task('client-e2e-test', () => {
 	protractor = spawn('npm', ['run', 'protractor'], {stdio: 'inherit'});
 });
 
-gulp.task('concat-and-uglify-js', () => {
+gulp.task('clean-build', () => { // clean old files before a new build
+	return del(['./public/css/*.css', './public/js/*.js', './public/fonts/*.otf', './public/fonts/*.eot', './public/fonts/*.svg', './public/fonts/*.ttf', './public/fonts/*.woff', './public/fonts/*.woff2']);
+});
+
+gulp.task('pack-app-js', () => {
 	return gulp.src('./public/app/*.js')
 		.pipe(plumber())
 		.pipe(concat('packed-app.js'))
@@ -90,10 +92,10 @@ gulp.task('concat-and-uglify-js', () => {
 		.pipe(gulp.dest('./public/js'));
 });
 
-gulp.task('sass-autoprefix-minify-css', () => {
+gulp.task('pack-app-css', () => {
 	return gulp.src('./public/app/scss/*.scss')
 		.pipe(plumber())
-		.pipe(concat('packe-app.css'))
+		.pipe(concat('packed-app.css'))
 		.pipe(sass())
 		.pipe(autoprefixer({
 			browsers: ['last 2 versions']
@@ -104,27 +106,49 @@ gulp.task('sass-autoprefix-minify-css', () => {
 		.pipe(gulp.dest('./public/css'));
 });
 
-gulp.task('bower-files', () => {
-	const filterJS = gulpFilter('**/*.js', { restore: true });
-	return gulp.src(mainBowerFiles(
-		{
-			paths: {
-				bowerJson: './bower.json',
-				bowerrc: './.bowerrc'
-			}
-		}))
-		.pipe(filterJS)
+gulp.task('pack-vendor-js', () => {
+	/*
+	*	nonangular js bundle
+	*	components related to design, styling, data visualization etc.
+	*/
+	return gulp.src([
+		// sequence is essential
+		'./node_modules/jquery/dist/jquery.js',
+		'./node_modules/bootstrap/dist/js/bootstrap.js',
+
+		'./node_modules/angular/angular.js',
+		'./node_modules/angular-sanitize/angular-sanitize.js',
+		'./node_modules/angular-aria/angular-aria.js',
+		'./node_modules/angular-messages/angular-messages.js',
+		'./node_modules/angular-touch/angular-touch.js',
+		'./node_modules/angular-animate/angular-animate.js',
+		'./node_modules/angular-material/angular-material.js',
+		'./node_modules/angular-resource/angular-resource.js',
+		'./node_modules/angular-route/angular-route.js',
+		'./node_modules/angular-spinner/dist/angular-spinner.js',
+		'./node_modules/angular-mocks/angular-mocks.js',
+		'./node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js',
+		'./node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
+		'./node_modules/angular-websocket/dist/angular-websocket.js'
+	])
 		.pipe(plumber())
 		.pipe(concat('vendor-pack.js'))
 		.pipe(uglify())
 		.pipe(plumber.stop())
 		.pipe(rename('vendor-pack.min.js'))
-		.pipe(filterJS.restore)
 		.pipe(gulp.dest('./public/js'));
 });
 
-gulp.task('pack-vendor-css', () => { // packs vendor css files which bowerFiles put into public/js folder on bower-files task execution
-	return gulp.src('./public/js/*.css')
+gulp.task('pack-vendor-css', () => { // packs vendor css files
+	return gulp.src([
+		'./node_modules/bootstrap/dist/css/bootstrap.css',
+		'./node_modules/components-font-awesome/css/font-awesome.css',
+		
+		'./node_modules/angular-material/angular-material.css',
+		'./node_modules/angular-material/layouts/angular-material.layouts.css',
+		'./node_modules/angular-material/layouts/angular-material.layout-attributes.css',
+		'./node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css'
+	])
 		.pipe(plumber())
 		.pipe(concat('vendor-pack.css'))
 		.pipe(cssnano())
@@ -133,13 +157,12 @@ gulp.task('pack-vendor-css', () => { // packs vendor css files which bowerFiles 
 		.pipe(gulp.dest('./public/css'));
 });
 
-gulp.task('move-vendor-fonts', () => { // move vendor font files which bowerFiles put into public/fonts folder on bower-files task execution
-	return gulp.src(['./public/js/*.otf', './public/js/*.eot', './public/js/*.svg', './public/js/*.ttf', './public/js/*.woff', './public/js/*.woff2'])
+gulp.task('move-vendor-fonts', () => { // move vendor font files
+	return gulp.src([
+		'./node_modules/bootstrap/dist/fonts/*.*',
+		'./node_modules/components-font-awesome/fonts/*.*'
+	])
 		.pipe(gulp.dest('./public/fonts'));
-});
-
-gulp.task('build-clean', () => { // remove vendor css and fonts from public/js
-	return del(['./public/js/*.css', './public/js/*.otf', './public/js/*.eot', './public/js/*.svg', './public/js/*.ttf', './public/js/*.woff', './public/js/*.woff2']);
 });
 
 gulp.task('lint', () => { // uses ignore list from .eslintignore
@@ -156,15 +179,15 @@ gulp.task('watch', () => {
 	gulp.watch(['./server.js', './app/**/*.js'], ['server']); // watch server and database changes and restart server
 	gulp.watch(['./server.js', './app/models/*.js'], ['database']); // watch database changes and restart databse
 	gulp.watch(['./public/*.js', './public/app/**/*.js', './*.js', './.eslintignore', './.eslintrc.json'], ['lint']); // watch files to be linted or eslint config files and lint on change
-	gulp.watch('./public/app/**/*.js', ['concat-and-uglify-js']); // watch app js changes, pack js, minify and put in respective folder
-	gulp.watch('./public/app/scss/*.scss', ['sass-autoprefix-minify-css']); // watch app css changes, pack css, minify and put in respective folder
+	gulp.watch('./public/app/**/*.js', ['pack-app-js']); // watch app js changes, pack js, minify and put in respective folder
+	gulp.watch('./public/app/scss/*.scss', ['pack-app-css']); // watch app css changes, pack css, minify and put in respective folder
 	gulp.watch(['./public/app/*.js','./test/client/unit/*.js','./test/karma.conf.js'], ['client-unit-test']); //watch unit test changes and run tests
 	gulp.watch(['./test/client/e2e/**', './test/protractor.conf.js'], ['client-e2e-test']); // watch client e2e test or protractor config changes and run tests
 	gulp.watch(['./server.js', './test/server/test.js'], ['server-test']); // watch server changes and run tests
 });
 
 gulp.task('build', (done) => {
-	runSequence('lint', 'concat-and-uglify-js', 'sass-autoprefix-minify-css', 'bower-files', 'pack-vendor-css', 'move-vendor-fonts', 'build-clean', 'client-unit-test', done);
+	runSequence('lint', 'pack-app-js', 'pack-app-css', 'pack-vendor-js', 'pack-vendor-css', 'move-vendor-fonts', 'client-unit-test', done);
 });
 
 gulp.task('default', ['build', 'database','server','watch','client-e2e-test']);
