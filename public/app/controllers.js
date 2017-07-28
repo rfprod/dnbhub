@@ -15,14 +15,14 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 			contact: 'Contact form - use it for any enquires correlating with Drum and Bass Hub activities',
 			about: 'All trademarks and copyrights are property of their respective owners'
 		};
-		$scope.buttonGlyphicons = {
-			index: 'glyphicon glyphicon-fire',
-			singles: 'glyphicon glyphicon-music',
-			freedownloads: 'glyphicon glyphicon-cloud-download',
-			reposts: 'glyphicon glyphicon-retweet',
-			blog: 'glyphicon glyphicon-th-large',
-			contact: 'glyphicon glyphicon-envelope',
-			about: 'glyphicon glyphicon-copyright-mark'
+		$scope.buttonIcons = {
+			index: 'fa fa-fire',
+			singles: 'fa fa-music',
+			freedownloads: 'fa fa-cloud-download',
+			reposts: 'fa fa-retweet',
+			blog: 'fa fa-th-large',
+			contact: 'fa fa-envelope',
+			about: 'fa fa-copyright'
 		};
 		$scope.currentYear = new Date().getFullYear();
 		$scope.buttonNames = {
@@ -43,18 +43,17 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 			contact: 'contact',
 			about: 'about'
 		};
+		$scope.selectButton = function(href) {
+			console.log('selectButton, href:', href);
+			if ($location.path().slice(1) === href) {
+				console.log('selectButton, path:', $location.path());
+				return true;
+			} else {
+				return false;
+			}
+		};
 		$scope.sounds = ['../sounds/blip.mp3'];
 		$scope.speakerObj = null;
-		$scope.navButtons = [];
-		$scope.$watch(function() {return $location.path();}, function(next,previous) {
-			//console.log('location changed: ',previous,next);
-			if ($scope.navButtons.length > 0){
-				for (var i = 0; i < $scope.navButtons.length; i++) {
-					if ($scope.navButtons[i].innerHTML.indexOf(previous.slice(1)) !== -1) { $scope.navButtons[i].setAttribute('class','nav-tabs'); }
-					if ($scope.navButtons[i].innerHTML.indexOf(next.slice(1)) !== -1) { $scope.navButtons[i].setAttribute('class','nav-tabs active'); }
-				}
-			}
-		});
 		$scope.playSound = function() {
 			$scope.speakerObj.setAttribute('src', $scope.sounds[0]);
 			$scope.speakerObj.setAttribute('autoplay', 'autoplay');
@@ -66,13 +65,7 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 			console.log('document ready');
 			usSpinnerService.spin('root-spinner');
 			//console.log($element);
-			$scope.speakerObj = $element[0].children[0];
-			$scope.navButtons = $element[0].children[1].querySelector('#tabs').querySelectorAll('li');
-			if ($scope.navButtons.length > 0){
-				for (var i=0; i<$scope.navButtons.length; i++){
-					if ($scope.navButtons[i].innerHTML.indexOf($location.path().slice(1)) !== -1) { $scope.navButtons[i].setAttribute('class','nav-tabs active'); }
-				}
-			}
+			$scope.speakerObj = $element[0].querySelector('#speaker');
 		});
 	}
 ]);
@@ -111,13 +104,9 @@ dnbhubControllers.controller('indexCtrl', ['$scope', '$route', 'usSpinnerService
 				callback();
 			});
 		};
-		$scope.adaptInternalsOnLoad = function() {
-			$('#sc_player').height($('html').height()-190); // 190 - rendered maichimp form height
-		};
 		$scope.$on('$viewContentLoaded', function() {
 			console.log('index view controller loaded');
 			$scope.getTracks(function() {
-				$scope.adaptInternalsOnLoad();
 				usSpinnerService.stop('root-spinner');
 			});
 		});
@@ -235,7 +224,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 			});
 		};
 		$scope.adaptInternalsOnLoad = function() {
-			var navbarHeight = $('nav').height();
+			var navbarHeight = $('md-toolbar').height();
 			var windowHeight = $('html').height();
 			var headingHeight = $('.post .heading').height() + $('.post .heading').css('margin-top') + $('.post .heading').css('margin-bottom');
 			var h = windowHeight-navbarHeight-headingHeight;
@@ -375,7 +364,7 @@ dnbhubControllers.controller('aboutCtrl', ['$scope', '$route', 'usSpinnerService
 	function($scope, $route, usSpinnerService, dnbhubDetailsService) {
 		'use strict';
 		$scope.adaptInternalsOnLoad = function() {
-			var navbarHeight = $('nav').height();
+			var navbarHeight = $('md-toolbar').height();
 			var windowHeight = $('html').height();
 			var headingHeight = $('#data-container .heading').height()+$('#data-container .heading').css('margin-top')+$('#data-container .heading').css('margin-bottom');
 			var h = windowHeight-navbarHeight-headingHeight;

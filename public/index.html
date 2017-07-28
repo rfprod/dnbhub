@@ -34,7 +34,7 @@
 	<meta name="format-detection" content="telephone=no"/>
 <!-- general -->
 	<link rel="shortlink" href="dnbhub.com"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<meta name="author" content="VS"/>
 	<meta name="description" content="Digital Multimedia Hub for Drum and Bass Production and Promotion."/>
 	<meta name="сopyright" content="VS - Drum'n'Bass Hub since 2011"/>
@@ -50,68 +50,42 @@
 	<link rel="stylesheet" href="css/vendor-pack.min.css"/>
 <!-- app styles -->
 	<link rel="stylesheet" href="css/packed-app.min.css"/>
-</head>
-<body>
 	<base href="/">
+</head>
+<body ng-cloak layout="column" layout-fill>
 
-	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation" ng-controller="navCtrl">
+	<md-toolbar layout="row" class="md-toolbar-tools" ng-controller="navCtrl">
 		<audio id="speaker"></audio> <!-- invisible speaker -->
-		<div class="container-fluid">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-					<span class="sr-only">Toggle navigation</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" title="{{title}}"><img class="logo" alt="logo" src="img/svg/DH_logo-round_bg.svg"/></a>
-			</div>
-			<div class="collapse navbar-collapse">
-				<ul class="nav navbar-nav navbar-right" id="tabs">
-					<li class="nav-tabs" ng-click="playSound()">
-						<a ng-href="{{buttonHrefs.index}}" title="{{buttonTitles.index}}">
-							<span class="{{buttonGlyphicons.index}}" aria-hidden="true"></span> <span class="hidden-sm hidden-md hidden-lg">{{buttonNames.index}}</span>
-						</a>
-					</li>
-					<li class="nav-tabs" ng-click="playSound()">
-						<a ng-href="{{buttonHrefs.singles}}" title="{{buttonTitles.singles}}">
-							<span class="{{buttonGlyphicons.singles}}" aria-hidden="true"></span> <span class="hidden-sm hidden-md hidden-lg">{{buttonNames.singles}}</span>
-						</a>
-					</li>
-					<li class="nav-tabs" ng-click="playSound()">
-						<a ng-href="{{buttonHrefs.freedownloads}}" title="{{buttonTitles.freedownloads}}">
-							<span class="{{buttonGlyphicons.freedownloads}}" aria-hidden="true"></span> <span class="hidden-sm hidden-md hidden-lg">{{buttonNames.freedownloads}}</span>
-						</a>
-					</li>
-					<li class="nav-tabs" ng-click="playSound()">
-						<a ng-href="{{buttonHrefs.reposts}}" title="{{buttonTitles.reposts}}">
-							<span class="{{buttonGlyphicons.reposts}}" aria-hidden="true"></span> <span class="hidden-sm hidden-md hidden-lg">{{buttonNames.reposts}}</span>
-						</a>
-					</li>
-					<li class="nav-tabs" ng-click="playSound()">
-						<a ng-href="{{buttonHrefs.blog}}" title="{{buttonTitles.blog}}">
-							<span class="{{buttonGlyphicons.blog}}" aria-hidden="true"></span> <span class="hidden-sm hidden-md hidden-lg">{{buttonNames.blog}}</span>
-						</a>
-					</li>
-					<li class="nav-tabs" ng-click="playSound()">
-						<a ng-href="{{buttonHrefs.contact}}" title="{{buttonTitles.contact}}">
-							<span class="{{buttonGlyphicons.contact}}" aria-hidden="true"></span> <span class="hidden-sm hidden-md hidden-lg">{{buttonNames.contact}}</span>
-						</a>
-					</li>
-					<li class="nav-tabs" ng-click="playSound()">
-						<a ng-href="{{buttonHrefs.about}}" title="{{buttonTitles.about}}" class="about">
-							<span class="{{buttonGlyphicons.about}}" aria-hidden="true"></span> {{buttonNames.about}}
-						</a>
-					</li>
-				</ul>
-			</div>
-		</div>
-		<span class="spinner" us-spinner spinner-key="root-spinner"></span>
-	</nav>
+		<h1>
+			<img class="logo" alt="logo" title="{{title}}" src="img/svg/DH_logo-round_bg.svg"/>
+		</h1>
+		<span class="splitter"></span>
+		<a md-button ng-href="{{buttonHrefs.index}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.index)}" title="{{buttonTitles.index}}">
+			<i class="{{buttonIcons.index}}"></i> {{buttonNames.index}}
+		</a>
+		<a md-button ng-href="{{buttonHrefs.singles}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.singles)}" title="{{buttonTitles.singles}}">
+			<i class="{{buttonIcons.singles}}"></i> {{buttonNames.singles}}
+		</a>
+		<a md-button ng-href="{{buttonHrefs.freedownloads}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.freedownloads)}" title="{{buttonTitles.freedownloads}}">
+			<i class="{{buttonIcons.freedownloads}}"></i> {{buttonNames.freedownloads}}
+		</a>
+		<a md-button ng-href="{{buttonHrefs.reposts}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.reposts)}" title="{{buttonTitles.reposts}}">
+			<i class="{{buttonIcons.reposts}}"></i> {{buttonNames.reposts}}
+		</a>
+		<a md-button ng-href="{{buttonHrefs.blog}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.blog)}" title="{{buttonTitles.blog}}">
+			<i class="{{buttonIcons.blog}}"></i> {{buttonNames.blog}}
+		</a>
+		<a md-button ng-href="{{buttonHrefs.contact}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.contact)}" title="{{buttonTitles.contact}}">
+			<i class="{{buttonIcons.contact}}"></i> {{buttonNames.contact}}
+		</a>
+		<a md-button ng-href="{{buttonHrefs.about}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.about)}" title="{{buttonTitles.about}}">
+			<i class="{{buttonIcons.about}}"></i> {{buttonNames.about}}
+		</a>
+	</md-toolbar>
 
-	<div>
-		<div ng-view class="view-frame"></div>
-	</div>
+	<md-content flex>
+		<div ng-view class="view-frame" layout="column" layout-fill layout-align="start stretch"></div>
+	</md-content>
 
 <!-- Pinterest dependency - pinIt for every image on the website - Please call pinit.js only once per page -->
 	<script async data-pin-hover="true" src="http://assets.pinterest.com/js/pinit.js"></script>

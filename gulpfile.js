@@ -120,7 +120,6 @@ gulp.task('pack-vendor-js', () => {
 		'./node_modules/angular-sanitize/angular-sanitize.js',
 		'./node_modules/angular-aria/angular-aria.js',
 		'./node_modules/angular-messages/angular-messages.js',
-		'./node_modules/angular-touch/angular-touch.js',
 		'./node_modules/angular-animate/angular-animate.js',
 		'./node_modules/angular-material/angular-material.js',
 		'./node_modules/angular-resource/angular-resource.js',

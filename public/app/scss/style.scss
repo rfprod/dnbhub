@@ -1,11 +1,43 @@
+$white: #ffffff;
+$selected: #c6c6c6;
+
 html {
 	height: 100vh;
+	width: 100vw;
 
 	body {
+		height: 100vh;
+		width: 100vw;
 		background: #000 url(../img/electric-circuit.png) center center no-repeat;
 		background-attachment: fixed;
 	}
 }
+
+/*
+* new styles
+*/
+.splitter {
+	flex: 1;
+}
+md-content {
+	background: transparent;
+}
+.selected {
+	background: $selected;
+}
+
+// navbar
+#speaker { display:none; }
+.logo {
+	height: 46px;
+	width: auto!important;
+}
+
+
+/*
+* old styles
+*/
+
 :focus { outline: 0; }
 a {
 	color: #9DCE5C;
@@ -20,26 +52,9 @@ h1, h2, h3, h4, h5, h6 {
 p { margin: 0 0 18px; }
 img { border: none; }
 input { vertical-align: middle; }
-#noscript {
-	display: block;
-	width: 100%;
-	height: 75px;
-	background: #FFFF00;
-}
-.noscriptWarning {
-	display: block;
-	height: auto !important;
-	float: left;
-	color: red;
-	padding: 10px 0 0 45px;
-	text-align: center;
-	text-decoration: blink;
-	font-weight: 600;
-	line-height: 2em;
-}
 
 /*
-* bootstrap extension classes
+* bootstrap extension classes - TODO remove later
 */
 .width { width: 100%; }
 .center { text-align: center; }
@@ -47,24 +62,7 @@ input { vertical-align: middle; }
 .navbar { z-index: 15; }
 
 /*
-*	navbar styling
-*/
-#speaker { display:none; }
-.logo {
-	height: 100%;
-	width: auto!important;
-}
-.nav li { text-transform: uppercase; }
-.about {
-	line-height: 1em;
-	font-size: 0.8em;
-	color: #ffffff;
-	text-shadow: 1px 1px 1px #000111;
-	font-family: "Courier New", Courier, monospace;
-}
-
-/*
-*	switchable views common
+*	switchable views common - TODO revise if needed
 */
 #zero-padding { padding: 0; }
 #data-container { /* usage: blog */
@@ -73,7 +71,7 @@ input { vertical-align: middle; }
 	width: 100%;
 	height: 100vh;
 	border-radius: 0 0 0.2em 0.2em;
-	padding: 50px 0 0 0;
+	padding: 0;
 }
 .border { /* common class for bordered blocks, mostly soundcloud widgets */
 	box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.33) !important;
@@ -89,24 +87,15 @@ input { vertical-align: middle; }
 }
 
 /*
-*	index view
+*	index view - keep this styling, optimize
 */
 #spotlight {
-	overflow: hidden;
-	height: 100vh;
 	font-variant: small-caps;
 	background-color: rgba(0, 0, 0, 0.5);
-
-	#facebook-group-widget {
-		margin-top: 75px;
-		display: block;
-		position: relative;
-		border-radius: 0;
-		border: none;
-		overflow: hidden;
-		font: 15px "Helvetica Neue",Roboto,"Segoe UI",Calibri,sans-serif;
-	}
+	display: flex;
+	color: $white;
 }
+
 #showcase {
 	padding-left: 0;
 	padding-right: 0;
@@ -116,8 +105,8 @@ input { vertical-align: middle; }
 		background: #000000;
 		height: auto!important;
 		clear: left;
-		font: 12px Helvetica,Arial,sans-serif;
-		padding: 50px 0 0 0;
+		// font: 12px Helvetica,Arial,sans-serif;
+		padding: 0;
 
 		#mc-embedded-subscribe-form { padding-left: 0; }
 
@@ -145,13 +134,13 @@ input { vertical-align: middle; }
 
 	/* custom soundcloud player */
 	#sc_player {
-		margin-top: -2px;
-		display: block;
+		//margin-top: -2px;
+		//display: block;
 		min-width: 100%;
-		position: relative;
+		//position: relative;
 		border-radius: 0;
 		text-align: left;
-		overflow: scroll;
+		overflow-y: scroll;
 		overflow-x: hidden;
 		background: #000000;
 		font: 15px "Helvetica Neue",Roboto,"Segoe UI",Calibri,sans-serif;
@@ -209,16 +198,16 @@ input { vertical-align: middle; }
 }
 
 #twitter {
-	overflow: hidden;
+	overflow-y: scroll;
+	overflow-x: hidden;
 	display: block;
 	box-sizing: border-box;
 	position: relative;
 	padding-left: 0.5em;
 	font-variant: small-caps;
-	height: 100vh;
+	height: 100%;
 	z-index: 10;
 	background-color: rgba(0, 0, 0, 0.5);
-	padding: 50px 0 0 0;
 
 	iframe {
 		width: 100%;

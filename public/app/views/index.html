@@ -1,11 +1,11 @@
-<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="zero-padding">
-	<div class="hidden-xs col-sm-6 col-md-4 col-lg-4" id="spotlight">
-		<iframe id="facebook-group-widget" set-element-dimensions-onload src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FAllCrews.ru&tabs=timeline&width=400&height=800&small_header=true&adapt_container_width=true&hide_cover=true&show_facepile=true&appId=1771962743078907" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
+<div layout="row" layout-align="start stretch" layout-fill>
+	<div flex="30" id="spotlight" hide>
+		spotlight placeholder
 	</div>
-	<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" id="showcase">
+	<div flex="30" id="showcase" layout="column" layout-align="start stretch" hide-xs hide-sm>
 		<!-- Begin MailChimp Signup Form -->
 		<link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
-		<div id="mc_embed_signup">
+		<div flex="20" id="mc_embed_signup">
 			<form action="//dnbhub.us3.list-manage.com/subscribe/post?u=3eeba7cfe8388b91c662bdf95&amp;id=8cca3229c8" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
 				<div id="mc_embed_signup_scroll">
 					<label for="mce-EMAIL">Join <span class="yellow">Drum'n'Bass Hub</span> Mailing List</label>
@@ -17,9 +17,9 @@
 			</form>
 		</div>
 		<!--End mc_embed_signup-->
-		<div id="sc_player" custom-soundcloud-player></div>
+		<div flex="1 1 auto" id="sc_player" custom-soundcloud-player></div>
 	</div>
-	<div class="hidden-xs hidden-sm col-md-4 col-lg-5" id="twitter">
+	<div flex class="hide-xs hide-sm" id="twitter" layout="column">
 		<a class="twitter-timeline" data-tweet-limit="10" width="100%" data-chrome="noheader noborders nofooter noscrollbar transparent" data-show-replies="false" data-dnt="true" lang="EN" href="https://twitter.com/dnbhub_com" data-screen-name="dnbhub_com"  data-widget-id="434953599831900160">Tweets by @dnbhub_com</a>
 		<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 	</div>
