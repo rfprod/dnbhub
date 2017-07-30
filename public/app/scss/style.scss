@@ -1,5 +1,5 @@
 $white: #ffffff;
-$selected: #c6c6c6;
+$selected: #c5c5c5;
 
 html {
 	height: 100vh;
@@ -29,8 +29,13 @@ md-content {
 // navbar
 #speaker { display:none; }
 .logo {
-	height: 46px;
+	height: 42px;
 	width: auto!important;
+}
+
+#dropdown-menu {
+	height: auto!important;
+	max-height: 95vh;
 }
 
 
