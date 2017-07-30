@@ -40,7 +40,7 @@ md-content {
 }
 
 // navbar
-#speaker { display:none; }
+#speaker { display: none; }
 .logo {
 	height: 42px;
 	width: auto!important;
@@ -79,6 +79,20 @@ md-content {
 			&.selected {
 				border: 0.25em yellow dotted;
 			}
+		}
+	}
+}
+
+/*
+*	about styling
+*/
+#about {
+	color: $white;
+	padding: 0 0.3em 0 0.3em;
+
+	.links {
+		a {
+			min-width: 55px;
 		}
 	}
 }
@@ -316,37 +330,6 @@ input { vertical-align: middle; }
 			background-color: rgba(0, 0, 0, 0.5);
 			padding: 0.5em 0.5em 0 0.5em;
 		}
-	}
-}
-
-/*
-*	about styling
-*/
-#about {
-	padding: 50px 0 0 0;
-	color: #ffffff;
-	padding: 0 0.5em 0 0.5em;
-
-	.heading {
-		margin: 0.3em 0 0.3em 0;
-		text-transform: uppercase;
-
-		h4 { text-align: center; }
-
-		.links {
-			text-align: center;
-
-			a {
-				height: 100%;
-				min-width: 62px;
-				width:11%;
-			}
-		}
-	}
-
-	.text {
-		display: inline-block;
-		overflow-X: hidden;
 	}
 }
 
