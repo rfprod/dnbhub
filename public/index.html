@@ -55,11 +55,16 @@
 <body ng-cloak layout="column" layout-fill>
 
 	<md-toolbar layout="row" class="md-toolbar-tools" ng-controller="navCtrl">
-		<audio id="speaker"></audio> <!-- invisible speaker -->
-		<h1>
+		<audio id="speaker" class="hide"></audio> <!-- invisible speaker -->
+		<md-button id="sidebar-toggler" class="md-icon-button hide-md hide-gt-md hide-lg hide-gt-lg hide-xl" title="toggle tracks list" ng-click="toggleSidenav()" ng-disabled="disableToggler()">
+			<i class="fa" ng-class="{'fa-chevron-right': !isSidenavOpen(), 'fa-chevron-left': isSidenavOpen()}"></i>
+		</md-button>
+		<h1 class="hide-xs hide-gt-xs hide-sm hide-gt-sm show-md show-gt-md show-lg show-gt-lg show-xl">
 			<img class="logo" alt="logo" title="{{title}}" src="img/svg/DH_logo-round_bg.svg"/>
 		</h1>
-		<span class="splitter"></span>
+		<span class="splitter" layout="row" layout-align="center center">
+			<img class="logo hide-md hide-gt-md hide-lg hide-gt-lg hide-xl" alt="logo" title="{{title}}" src="img/svg/DH_logo-round_bg.svg"/>
+		</span>
 		<a md-button ng-href="{{buttonHrefs.index}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.index)}" title="{{buttonTitles.index}}" class="hide-xs hide-sm">
 			<i class="{{buttonIcons.index}}"></i> {{buttonNames.index}}
 		</a>

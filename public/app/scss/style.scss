@@ -1,5 +1,9 @@
 $white: #ffffff;
+$grey: #c5c5c5;
+
 $selected: rgba(192, 192, 192, 0.4);
+
+$padding: 0.5em;
 
 html {
 	height: 100vh;
@@ -51,6 +55,10 @@ md-content {
 	max-height: 95vh;
 }
 
+#sidebar-toggler {
+	margin-left: 0;
+}
+
 
 /*
 *	freedownloads styling
@@ -61,11 +69,15 @@ md-content {
 
 	#freedownloads-list {
 		overflow-x: hidden;
-		background-color: rgba(0, 0, 0, 0.5);
+		background-color: rgba(0, 0, 0, 0.9);
 
 		a {
+			padding: 0 $padding 0 $padding;
 
-			&:hover { text-decoration: none; }
+			&:hover {
+				text-decoration: none;
+				color: $grey;
+			}
 
 			&.selected { color: yellow; }
 		}

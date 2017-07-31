@@ -2,8 +2,8 @@
 
 var dnbhubControllers = angular.module('dnbhubControllers', ['angularSpinner']);
 
-dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$location', 'usSpinnerService',
-	function($scope, $document, $element, $location, usSpinnerService) {
+dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$location', '$mdComponentRegistry', '$mdSidenav', 'usSpinnerService',
+	function($scope, $document, $element, $location, $mdComponentRegistry, $mdSidenav, usSpinnerService) {
 		'use strict';
 		$scope.title = 'Drum and Bass Hub';
 		$scope.buttonTitles = {
@@ -44,9 +44,9 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 			about: 'about'
 		};
 		$scope.selectButton = function(href) {
-			console.log('selectButton, href:', href);
+			// console.log('selectButton, href:', href);
 			if ($location.path().slice(1) === href) {
-				console.log('selectButton, path:', $location.path());
+				// console.log('selectButton, path:', $location.path());
 				return true;
 			} else {
 				return false;
@@ -61,11 +61,33 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 				$scope.speakerObj.play();
 			}, true);
 		};
+		$scope.disableToggler = function() {
+			console.log('$mdComponentRegistry.get(\'left\'):', $mdComponentRegistry.get('left'));
+			return !$mdComponentRegistry.get('left');
+		};
+		$scope.toggleSidenav = function() {
+			$mdSidenav('left').toggle();
+		};
+		$scope.isSidenavOpen = function() {
+			/*
+			*	actual function logic must be set after focument is ready
+			*	or it will generate errors, because sidenav DOM object loads after the main navbar
+			*/
+			return false;
+		};
 		$document.ready(function() {
 			console.log('document ready');
 			usSpinnerService.spin('root-spinner');
-			//console.log($element);
+			// console.log($element);
 			$scope.speakerObj = $element[0].querySelector('#speaker');
+			/*
+			*	set isSidenavOpen actual logic
+			*/
+			if (!$scope.disableToggler()) {
+				$scope.isSidenavOpen = function() {
+					return $mdSidenav('left').isOpen();
+				};
+			}
 		});
 	}
 ]);
@@ -131,8 +153,8 @@ dnbhubControllers.controller('singlesCtrl', ['$scope', 'usSpinnerService',
 	}
 ]);
 
-dnbhubControllers.controller('freeDownloadsCtrl', ['$scope', '$sce', '$location', 'usSpinnerService', 'freedownloadsService',
-	function($scope, $sce, $location, usSpinnerService, freedownloadsService) {
+dnbhubControllers.controller('freeDownloadsCtrl', ['$scope', '$sce', '$location', '$mdSidenav', 'usSpinnerService', 'freedownloadsService',
+	function($scope, $sce, $location, $mdSidenav, usSpinnerService, freedownloadsService) {
 		'use strict';
 		$scope.freedownloadsData = [];
 		$scope.selectedWidget = 1;
