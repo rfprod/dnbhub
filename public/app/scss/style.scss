@@ -1,5 +1,7 @@
 $white: #ffffff;
 $grey: #c5c5c5;
+$green: #9DCE5C;
+$yellow: #ffed00;
 
 $selected: rgba(192, 192, 192, 0.4);
 
@@ -70,16 +72,18 @@ md-content {
 	#freedownloads-list {
 		overflow-x: hidden;
 		background-color: rgba(0, 0, 0, 0.9);
+		font-weight: bold;
 
 		a {
+			color: $white;
 			padding: 0 $padding 0 $padding;
 
 			&:hover {
 				text-decoration: none;
-				color: $grey;
+				color: $green;
 			}
 
-			&.selected { color: yellow; }
+			&.selected { color: $yellow; }
 		}
 	}
 
@@ -89,7 +93,7 @@ md-content {
 
 		iframe {
 			&.selected {
-				border: 0.25em yellow dotted;
+				border: 0.25em $yellow dotted;
 			}
 		}
 	}
@@ -105,6 +109,9 @@ md-content {
 	.links {
 		a {
 			min-width: 55px;
+			&:hover {
+				color: $green;
+			}
 		}
 	}
 }
@@ -115,11 +122,14 @@ md-content {
 
 :focus { outline: 0; }
 a {
-	color: #9DCE5C;
+	color: $green;
 	outline: none;
 	text-decoration: none;
 
-	&:hover { cursor: pointer; }
+	&:hover {
+		cursor: pointer;
+		color: $yellow;
+	}
 }
 h1, h2, h3, h4, h5, h6 {
 	&:hover { cursor: default; }
@@ -178,7 +188,7 @@ input { vertical-align: middle; }
 			width: 100%;
 			text-align: center;
 
-			.yellow { color: #ffed00; }
+			.yellow { color: $yellow; }
 		}
 
 		#mce-EMAIL { width: 100%; }
@@ -210,9 +220,9 @@ input { vertical-align: middle; }
 		font: 15px "Helvetica Neue",Roboto,"Segoe UI",Calibri,sans-serif;
 
 		a {
-			&:link { color: #9DCE5C; outline: none; text-decoration: none; border: 1px solid transparent; border-radius: 4px; }
+			&:link { color: $green; outline: none; text-decoration: none; border: 1px solid transparent; border-radius: 4px; }
 			&:visited { color: #00FF00; outline: none; text-decoration: none; border: 1px solid transparent; border-radius: 4px; }
-			&:hover { color: #ffff00; outline: none; text-decoration: none; border: 1px solid #ffff00; border-radius: 4px; }
+			&:hover { color: $yellow; outline: none; text-decoration: none; border: 1px solid #ffff00; border-radius: 4px; }
 			&:active { color: #0000FF; outline: none; text-decoration: none; border: 1px solid transparent; border-radius: 4px; }
 		}
 
@@ -356,7 +366,7 @@ input { vertical-align: middle; }
 #manager_options #followers_indicator,
 #manager_options #followings_indicator,
 #manager_options #groups_indicator{color:red;}
-#scanalyser a:link {color:#9DCE5C;outline:none;text-decoration:none;}
+#scanalyser a:link {color:$green;outline:none;text-decoration:none;}
 #scanalyser a:visited {color:#00FF00;outline:none;text-decoration:none;}
 #scanalyser a:hover {color:#ffff00;outline:none;text-decoration:none;}
 #scanalyser a:active {color:#0000FF;outline:none;text-decoration:none;}

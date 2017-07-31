@@ -62,7 +62,7 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 			}, true);
 		};
 		$scope.disableToggler = function() {
-			console.log('$mdComponentRegistry.get(\'left\'):', $mdComponentRegistry.get('left'));
+			// console.log('$mdComponentRegistry.get(\'left\'):', $mdComponentRegistry.get('left'));
 			return !$mdComponentRegistry.get('left');
 		};
 		$scope.toggleSidenav = function() {
