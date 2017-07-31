@@ -211,6 +211,13 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 		$scope.blogPosts = [];
 		$scope.selectedBlogPostId = 0;
 		$scope.selectedBlogPost = {};
+		$scope.disableBlogPostSelector = function(direction) {
+			if (direction === 'previous') {
+				return ($scope.selectedBlogPostId === $scope.blogPosts.length - 1) ? true : false;
+			} else if (direction === 'next') {
+				return ($scope.selectedBlogPostId === 0) ? true : false;
+			}
+		};
 		$scope.returnWidgetLink = function() {
 			return $sce.trustAsResourceUrl($scope.selectedBlogPost.widgetLink);
 		};

@@ -1,55 +1,64 @@
-<div class="col-xs-12 col-sm-12 col-md-12 col-lg-9" id="blog">
-	<div class="post">
-		<div class="row heading">
-			<h4 class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-				<a class="blog-control previous" title="previous blog post" ng-hide="selectedBlogPostId == blogPosts.length-1" ng-click="previousBlogPost()"><span class="glyphicon glyphicon-chevron-left"></span></a>
-				<a class="blog-control next" title="next blog post" ng-hide="selectedBlogPostId == 0"><span class="glyphicon glyphicon-chevron-right" ng-click="nextBlogPost()"></span></a>
-				<img class="label-logo" ng-src="{{selectedBlogPost.logo}}"/> {{selectedBlogPost.title}}
+<div id="blog" flex layout="row" layout-fill layout-align="start start">
+	<md-sidenav md-component-id="left" class="md-sidenav-left" id="showcase" flex layout="column" layout-align="start stretch" md-is-locked-open="$mdMedia('md') || $mdMedia('gt-md') || $mdMedia('lg') || $mdMedia('gt-lg') || $mdMedia('xl')">
+		<!-- Begin MailChimp Signup Form -->
+		<link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
+		<div id="mc_embed_signup">
+			<form action="//dnbhub.us3.list-manage.com/subscribe/post?u=3eeba7cfe8388b91c662bdf95&amp;id=8cca3229c8" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+				<div id="mc_embed_signup_scroll">
+					<label for="mce-EMAIL">Join <span class="yellow">Drum'n'Bass Hub</span> Mailing List</label>
+					<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+					<!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+					<div style="position: absolute; left: -5000px;"><input type="text" name="b_3eeba7cfe8388b91c662bdf95_8cca3229c8" tabindex="-1" value=""></div>
+					<div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+				</div>
+			</form>
+		</div>
+		<!--End mc_embed_signup-->
+		<div id="sc_player" custom-soundcloud-player></div>
+	</md-sidenav>
+
+	<div flex class="post" layout="column" layout-align="start stretch">
+		<div flex="1" class="heading" layout="row" layout-align="start center">
+			<h4 flex layout="row" layout-align="center center">
+				<a md-button flex="20" ng-disabled="disableBlogPostSelector('previous')" ng-click="previousBlogPost()" aria-label="previous blog post" title="previous blog post">
+					<span class="fa fa-chevron-left"></span>
+				</a>
+				<span flex="60">
+					<img class="label-logo" ng-src="{{selectedBlogPost.logo}}"/> {{selectedBlogPost.title}}
+				</span>
+				<a md-button flex="20" ng-disabled="disableBlogPostSelector('next')" ng-click="nextBlogPost()" aria-label="next blog post" title="next blog post">
+					<span class="fa fa-chevron-right"></span>
+				</a>
 			</h4>
-			<div class="links col-xs-12 col-sm-12 col-md-6 col-lg-6">
-				<a class="btn btn-info" ng-href="{{selectedBlogPost.links.website}}" ng-hide="selectedBlogPost.links.website == ''" target=_blank>
+			<div flex layout="row" layout-align="center center" class="links" layout-wrap>
+				<a md-button class="md-icon-button" flex ng-href="{{selectedBlogPost.links.website}}" ng-hide="selectedBlogPost.links.website == ''" target=_blank>
 					<i class="fa fa-globe fa-2x" aria-hidden="true"></i>
 				</a>
-				<a class="btn btn-info" ng-href="{{selectedBlogPost.links.soundcloud}}" ng-hide="selectedBlogPost.links.soundcloud == ''" target=_blank>
+				<a md-button class="md-icon-button" flex ng-href="{{selectedBlogPost.links.soundcloud}}" ng-hide="selectedBlogPost.links.soundcloud == ''" target=_blank>
 					<i class="fa fa-soundcloud fa-2x" aria-hidden="true"></i>
 				</a>
-				<a class="btn btn-info" ng-href="{{selectedBlogPost.links.twitter}}" ng-hide="selectedBlogPost.links.twitter == ''" target=_blank>
+				<a md-button class="md-icon-button" flex ng-href="{{selectedBlogPost.links.twitter}}" ng-hide="selectedBlogPost.links.twitter == ''" target=_blank>
 					<i class="fa fa-twitter fa-2x" aria-hidden="true"></i>
 				</a>
-				<a class="btn btn-info" ng-href="{{selectedBlogPost.links.facebook}}" ng-hide="selectedBlogPost.links.facebook == ''" target=_blank>
+				<a md-button class="md-icon-button" flex ng-href="{{selectedBlogPost.links.facebook}}" ng-hide="selectedBlogPost.links.facebook == ''" target=_blank>
 					<i class="fa fa-facebook fa-2x" aria-hidden="true"></i>
 				</a>
-				<a class="btn btn-info" ng-href="{{selectedBlogPost.links.youtube}}" ng-hide="selectedBlogPost.links.youtube == ''" target=_blank>
+				<a md-button class="md-icon-button" flex ng-href="{{selectedBlogPost.links.youtube}}" ng-hide="selectedBlogPost.links.youtube == ''" target=_blank>
 					<i class="fa fa-youtube fa-2x" aria-hidden="true"></i>
 				</a>
-				<a class="btn btn-info" ng-href="{{selectedBlogPost.links.instagram}}" ng-hide="selectedBlogPost.links.instagram == ''" target=_blank>
+				<a md-button class="md-icon-button" flex ng-href="{{selectedBlogPost.links.instagram}}" ng-hide="selectedBlogPost.links.instagram == ''" target=_blank>
 					<i class="fa fa-instagram fa-2x" aria-hidden="true"></i>
 				</a>
-				<a class="btn btn-info" ng-href="{{selectedBlogPost.links.bandcamp}}" ng-hide="selectedBlogPost.links.bandcamp == ''" target=_blank>
+				<a md-button class="md-icon-button" flex ng-href="{{selectedBlogPost.links.bandcamp}}" ng-hide="selectedBlogPost.links.bandcamp == ''" target=_blank>
 					<i class="fa fa-bandcamp fa-2x" aria-hidden="true"></i>
 				</a>
 			</div>
 		</div>
-		<div class="widget col-xs-12 col-sm-12 col-md-12 col-lg-6">
-			<iframe width="100%" height="450" scrolling="no" frameborder="no" ng-src="{{returnWidgetLink()}}"></iframe>
-		</div>
-		<div class="text col-xs-12 col-sm-12 col-md-12 col-lg-6" ng-bind-html="selectedBlogPost.text"></div>
-	</div>
-</div>
-<div class="hidden-xs hidden-sm hidden-md col-lg-3" id="showcase">
-	<!-- Begin MailChimp Signup Form -->
-	<link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
-	<div id="mc_embed_signup">
-		<form action="//dnbhub.us3.list-manage.com/subscribe/post?u=3eeba7cfe8388b91c662bdf95&amp;id=8cca3229c8" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-			<div id="mc_embed_signup_scroll">
-				<label for="mce-EMAIL">Join <span class="yellow">Drum'n'Bass Hub</span> Mailing List</label>
-				<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
-				<!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-				<div style="position: absolute; left: -5000px;"><input type="text" name="b_3eeba7cfe8388b91c662bdf95_8cca3229c8" tabindex="-1" value=""></div>
-				<div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+		<div flex="1" layout="row">
+			<div flex="50">
+				<iframe width="100%" height="450" scrolling="no" frameborder="no" ng-src="{{returnWidgetLink()}}"></iframe>
 			</div>
-		</form>
+			<div flex="50" id="text" ng-bind-html="selectedBlogPost.text"></div>
+		</div>
 	</div>
-	<!--End mc_embed_signup-->
-	<div id="sc_player" custom-soundcloud-player></div>
 </div>
