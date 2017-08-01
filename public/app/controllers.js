@@ -252,15 +252,6 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 				callback();
 			});
 		};
-		$scope.adaptInternalsOnLoad = function() {
-			var navbarHeight = $('md-toolbar').height();
-			var windowHeight = $('html').height();
-			var headingHeight = $('.post .heading').height() + $('.post .heading').css('margin-top') + $('.post .heading').css('margin-bottom');
-			var h = windowHeight-navbarHeight-headingHeight;
-			$('.post .text').height(h);
-			$('.post .widget').height(h);
-			$('#sc_player').height(windowHeight-190); // 190 - rendered maichimp form height
-		};
 		$scope.setProperSearchParam = function() {
 			var search = $location.search();
 			if ($scope.selectedBlogPost) {
@@ -275,7 +266,6 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 				response.forEach(function(element) {
 					$scope.blogPosts.push(element);
 				});
-				//console.log($scope.blogPosts);
 				if ($scope.inputReleaseCode) {
 					$scope.blogPosts.forEach(function(value, index) {
 						if (value.code === $scope.inputReleaseCode) {
@@ -290,7 +280,6 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 					$scope.setProperSearchParam();
 				}
 				$scope.getTracks($scope.selectedBlogPost.soundcloudUserId,function() {
-					$scope.adaptInternalsOnLoad();
 					usSpinnerService.stop('root-spinner');
 				});
 			});
@@ -299,7 +288,6 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 			if ($scope.blogPosts.length > 0) {
 				usSpinnerService.spin('root-spinner');
 				$scope.selectedBlogPost = $scope.blogPosts[$scope.selectedBlogPostId];
-				//console.log('selectedBlogPost: ',$scope.selectedBlogPost);
 				$scope.setProperSearchParam();
 				$scope.getTracks($scope.selectedBlogPost.soundcloudUserId,function() {
 					usSpinnerService.stop('root-spinner');
@@ -313,14 +301,16 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 		$scope.nextBlogPost = function() {
 			if ($scope.selectedBlogPostId > 0) {
 				$scope.selectedBlogPostId--;
-				//$scope.selectBlogPost();
-			}console.log('this is last blog post');
+			} else {
+				console.log('this is a last blog post');
+			}
 		};
 		$scope.previousBlogPost = function() {
 			if ($scope.selectedBlogPostId < $scope.blogPosts.length-1) {
 				$scope.selectedBlogPostId++;
-				//$scope.selectBlogPost();
-			}console.log('this is first blog post');
+			} else {
+				console.log('this is a first blog post');
+			}
 		};
 		$scope.$on('$viewContentLoaded', function() {
 			console.log('blog view controller loaded');
@@ -392,26 +382,16 @@ dnbhubControllers.controller('contactCtrl', ['$scope', '$timeout', 'usSpinnerSer
 dnbhubControllers.controller('aboutCtrl', ['$scope', '$route', 'usSpinnerService', 'dnbhubDetailsService',
 	function($scope, $route, usSpinnerService, dnbhubDetailsService) {
 		'use strict';
-		$scope.adaptInternalsOnLoad = function() {
-			var navbarHeight = $('md-toolbar').height();
-			var windowHeight = $('html').height();
-			var headingHeight = $('#data-container .heading').height()+$('#data-container .heading').css('margin-top')+$('#data-container .heading').css('margin-bottom');
-			var h = windowHeight-navbarHeight-headingHeight;
-			$('.text').height(h);
-			$('#data-container .widget').height(h);
-			$('#powered_by').height(windowHeight-190); // 190px - rendered mailchimp form height
-		};
 		$scope.dnbhubDetails = {};
 		$scope.updateDnbhubDetails = function() {
 			dnbhubDetailsService.query({}).$promise.then(function(response) {
 				$scope.dnbhubDetails = {};
 				var keys = Object.keys(response);
-				console.log(keys,response);
+				// console.log('keys, response:', keys, ',', response);
 				keys.forEach(function(key) {
 					$scope.dnbhubDetails[key] = response[key];
 				});
-				console.log($scope.dnbhubDetails);
-				$scope.adaptInternalsOnLoad();
+				// console.log('$scope.dnbhubDetails:', $scope.dnbhubDetails);
 				usSpinnerService.stop('root-spinner');
 			});
 		};
