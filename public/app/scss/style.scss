@@ -21,404 +21,297 @@ html {
 }
 
 /*
-* new styles
+*	general
 */
-.splitter {
-	flex: 1;
-}
-md-content {
-	background: transparent;
-}
-.selected {
-	background: $selected;
-}
+	:focus { outline: 0; }
+		a {
+			color: $green;
+			outline: none;
+			text-decoration: none;
 
-.border { /* common class for bordered blocks, mostly soundcloud widgets */
-	box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.33) !important;
-	border-width: 0px 0px 0px !important;
-	border-style: none none solid !important;
-	border-color: -moz-use-text-color -moz-use-text-color rgba(0, 0, 0, 0.09) !important;
-	-moz-border-top-colors: none !important;
-	-moz-border-right-colors: none !important;
-	-moz-border-bottom-colors: none !important;
-	-moz-border-left-colors: none !important;
-	border-image: none !important;
-	overflow:hidden;
-}
+			&:hover {
+				cursor: pointer;
+				color: $yellow;
+			}
+		}
+		h1, h2, h3, h4, h5, h6 {
+			&:hover { cursor: default; }
+		}
+		img { border: none; }
+		input { vertical-align: middle; }
+
+	.splitter {
+		flex: 1;
+	}
+
+	md-content {
+		background: transparent;
+	}
+
+	.selected {
+		background: $selected;
+	}
+
+	.border { /* common class for bordered blocks, mostly soundcloud widgets */
+		box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.33) !important;
+		border-width: 0px 0px 0px !important;
+		border-style: none none solid !important;
+		border-color: -moz-use-text-color -moz-use-text-color rgba(0, 0, 0, 0.09) !important;
+		-moz-border-top-colors: none !important;
+		-moz-border-right-colors: none !important;
+		-moz-border-bottom-colors: none !important;
+		-moz-border-left-colors: none !important;
+		border-image: none !important;
+		overflow:hidden;
+	}
 
 /*
 *	navbar
 */
-#speaker { display: none; }
-.logo {
-	height: 42px;
-	width: auto!important;
-}
+	#speaker { display: none; }
 
-#dropdown-menu {
-	height: auto!important;
-	max-height: 95vh;
-}
+	.logo {
+		height: 42px;
+		width: auto!important;
+	}
 
-#sidebar-toggler {
-	margin-left: 0;
-}
+	#dropdown-menu {
+		height: auto!important;
+		max-height: 95vh;
+	}
 
-/*
-*	index view - optimize
-*/
-#spotlight {
-	font-variant: small-caps;
-	background-color: rgba(0, 0, 0, 0.5);
-	display: flex;
-	color: $white;
-}
+	#sidebar-toggler {
+		margin-left: 0;
+	}
 
 /*
 *	freedownloads styling
 */
-#freedownloads{
-	margin: 0;
-	background: transparent;
+	#freedownloads{
+		margin: 0;
+		background: transparent;
 
-	#freedownloads-list {
-		overflow-x: hidden;
-		background-color: rgba(0, 0, 0, 0.9);
-		font-weight: bold;
+		#freedownloads-list {
+			overflow-x: hidden;
+			background-color: rgba(0, 0, 0, 0.9);
+			font-weight: bold;
 
-		a {
-			color: $white;
-			padding: 0 $padding 0 $padding;
+			a {
+				color: $white;
+				padding: 0 $padding 0 $padding;
 
-			&:hover {
-				text-decoration: none;
-				color: $green;
-			}
+				&:hover {
+					text-decoration: none;
+					color: $green;
+				}
 
-			&.selected { color: $yellow; }
-		}
-	}
-
-	#freedownloads-details {
-		padding: 0;
-		overflow-x: hidden;
-
-		iframe {
-			&.selected {
-				border: 0.25em $yellow dotted;
+				&.selected { color: $yellow; }
 			}
 		}
+
+		#freedownloads-details {
+			padding: 0;
+			overflow-x: hidden;
+
+			iframe {
+				&.selected {
+					border: 0.25em $yellow dotted;
+				}
+			}
+		}
 	}
-}
 
 /*
 *	about styling
 */
-#about {
-	color: $white;
+	#about {
+		color: $white;
 
-	h4 {
-		text-transform: uppercase;
-		font-weight: bold;
-	}
-
-	#text {
-		padding: 0 0.3em 0 0.3em;
-		font-size: 1.2em;
-	}
-
-	.links {
-		a {
-			min-width: 55px;
-			&:hover {
-				color: $green;
-			}
-		}
-	}
-}
-
-#showcase {
-	padding-left: 0;
-	padding-right: 0;
-
-	/* custom embedded mailchimp subscribe form */
-	#mc_embed_signup {
-		background: #000000;
-		height: auto!important;
-		clear: left;
-		padding: 0;
-
-		#mc-embedded-subscribe-form { padding-left: 0; }
-
-		label {
-			width: 100%;
-			text-align: center;
-
-			.yellow { color: $yellow; }
+		h4 {
+			text-transform: uppercase;
+			font-weight: bold;
 		}
 
-		#mce-EMAIL { width: 100%; }
+		#text {
+			padding: 0 0.3em 0 0.3em;
+			font-size: 1.2em;
+		}
 
-		.clear {
-			#mc-embedded-subscribe {
-				width: 100%;
-
+		.links {
+			a {
+				min-width: 55px;
 				&:hover {
-					background: #ffed00;
-					width: 100%;
-					color: #000000;
+					color: $green;
 				}
 			}
 		}
 	}
 
-	/* custom soundcloud player */
-	#sc_player {
-		min-width: 100%;
-		border-radius: 0;
-		text-align: left;
+	#showcase {
+		padding-left: 0;
+		padding-right: 0;
+
+		/* custom embedded mailchimp subscribe form */
+		#mc_embed_signup {
+			background: #000000;
+			height: auto!important;
+			clear: left;
+			padding: 0;
+
+			#mc-embedded-subscribe-form { padding-left: 0; }
+
+			label {
+				width: 100%;
+				text-align: center;
+
+				.yellow { color: $yellow; }
+			}
+
+			#mce-EMAIL { width: 100%; }
+
+			.clear {
+				#mc-embedded-subscribe {
+					width: 100%;
+
+					&:hover {
+						background: #ffed00;
+						width: 100%;
+						color: #000000;
+					}
+				}
+			}
+		}
+
+		/* custom soundcloud player */
+		#sc_player {
+			min-width: 100%;
+			border-radius: 0;
+			text-align: left;
+			overflow-y: scroll;
+			overflow-x: hidden;
+			background: #000000;
+			font: 15px "Helvetica Neue",Roboto,"Segoe UI",Calibri,sans-serif;
+
+			a {
+				&:link { color: $green; outline: none; text-decoration: none; border: 1px solid transparent; border-radius: 4px; }
+				&:visited { color: #00FF00; outline: none; text-decoration: none; border: 1px solid transparent; border-radius: 4px; }
+				&:hover { color: $yellow; outline: none; text-decoration: none; border: 1px solid #ffff00; border-radius: 4px; }
+				&:active { color: #0000FF; outline: none; text-decoration: none; border: 1px solid transparent; border-radius: 4px; }
+			}
+
+			#player_progress { display: block; border: 0; width: 100%; height: 30px; }
+
+			#title, #genre { display: block; width: 100%; padding-left: 0.2em; padding-left: 0.2em; }
+
+			span {
+				display: table-cell;
+				width: 4.8vw;
+				text-align: center;
+
+				@media (max-width: 993px) {
+					display: table-cell;
+					padding-left: 0.2em;
+					padding-left: 0.2em;
+					width:12vw;
+				}
+				@media (max-width: 766px) {
+					display: table-cell;
+					padding-left: 0.2em;
+					padding-left: 0.2em;
+					width: 17vw;
+				}
+			}
+
+			#header { display: block; color: $white; background-color: $grey; text-transform: uppercase; }
+
+			#line {
+				display: block;
+				color: #fff;
+				background: url(../img/monitor.png) center center repeat;
+				border-bottom: thick dotted #ff0000;
+
+				&:hover { background: $grey; }
+			}
+		}
+
+		/* used in about section */
+		#powered_by {
+			background: $white;
+			color: $black;
+			padding: 0 $padding 0 $padding;
+
+			h5 {
+				text-align: center;
+				font-size: 3vw;
+			}
+		}
+	}
+
+	#twitter {
 		overflow-y: scroll;
 		overflow-x: hidden;
-		background: #000000;
-		font: 15px "Helvetica Neue",Roboto,"Segoe UI",Calibri,sans-serif;
-
-		a {
-			&:link { color: $green; outline: none; text-decoration: none; border: 1px solid transparent; border-radius: 4px; }
-			&:visited { color: #00FF00; outline: none; text-decoration: none; border: 1px solid transparent; border-radius: 4px; }
-			&:hover { color: $yellow; outline: none; text-decoration: none; border: 1px solid #ffff00; border-radius: 4px; }
-			&:active { color: #0000FF; outline: none; text-decoration: none; border: 1px solid transparent; border-radius: 4px; }
-		}
-
-		#player_progress { display: block; border: 0; width: 100%; height: 30px; }
-
-		#title, #genre { display: block; width: 100%; padding-left: 0.2em; padding-left: 0.2em; }
-
-		span {
-			display: table-cell;
-			width: 4.8vw;
-			text-align: center;
-
-			@media (max-width: 993px) {
-				display: table-cell;
-				padding-left: 0.2em;
-				padding-left: 0.2em;
-				width:12vw;
-			}
-			@media (max-width: 766px) {
-				display: table-cell;
-				padding-left: 0.2em;
-				padding-left: 0.2em;
-				width: 17vw;
-			}
-		}
-
-		#header { display: block; color: $white; background-color: $grey; text-transform: uppercase; }
-
-		#line {
-			display: block;
-			color: #fff;
-			background: url(../img/monitor.png) center center repeat;
-			border-bottom: thick dotted #ff0000;
-
-			&:hover { background: $grey; }
-		}
-	}
-
-	/* used in about section */
-	#powered_by {
-		background: $white;
-		color: $black;
-		padding: 0 $padding 0 $padding;
-
-		h5 {
-			text-align: center;
-			font-size: 3vw;
-		}
-	}
-}
-
-#twitter {
-	overflow-y: scroll;
-	overflow-x: hidden;
-	display: block;
-	box-sizing: border-box;
-	position: relative;
-	padding-left: 0.5em;
-	font-variant: small-caps;
-	height: 100%;
-	z-index: 10;
-	background-color: rgba(0, 0, 0, 0.5);
-
-	iframe {
-		width: 100%;
-		height: 100%;
-		padding-left: 0.1em;
-		padding-right: 0.1em;
-		background-color: transparent;
-
-		html {
-			body {
-				.root { background-color: transparent; }
-			}
-		}
-	}
-}
-
-/*
-* old styles
-*/
-
-	:focus { outline: 0; }
-	a {
-		color: $green;
-		outline: none;
-		text-decoration: none;
-
-		&:hover {
-			cursor: pointer;
-			color: $yellow;
-		}
-	}
-	h1, h2, h3, h4, h5, h6 {
-		&:hover { cursor: default; }
-	}
-	p { margin: 0 0 18px; }
-	img { border: none; }
-	input { vertical-align: middle; }
-
-	/*
-	* bootstrap extension classes - TODO remove later
-	*/
-	.width { width: 100%; }
-	.center { text-align: center; }
-	.top { margin-top: 10px; }
-	.navbar { z-index: 15; }
-
-	/*
-	*	switchable views common - TODO revise if needed
-	*/
-	#zero-padding { padding: 0; }
-	#data-container { /* usage: blog */
 		display: block;
+		box-sizing: border-box;
 		position: relative;
-		width: 100%;
+		padding-left: 0.5em;
+		font-variant: small-caps;
 		height: 100%;
-		border-radius: 0 0 0.2em 0.2em;
-		padding: 0;
-	}
+		z-index: 10;
+		background-color: rgba(0, 0, 0, 0.5);
 
+		iframe {
+			width: 100%;
+			height: 100%;
+			padding-left: 0.1em;
+			padding-right: 0.1em;
+			background-color: transparent;
+
+			html {
+				body {
+					.root { background-color: transparent; }
+				}
+			}
+		}
+	}
 
 /*
 *	blog styling
 */
-#blog {
+	#blog {
 
-	.post {
-		color: $white;
-		padding: 0 $padding 0 $padding;
+		.post {
+			color: $white;
+			padding: 0 $padding 0 $padding;
 
-		.heading {
-			margin: $padding 0 $padding 0;
-			text-transform: uppercase;
+			.heading {
+				margin: $padding 0 $padding 0;
+				text-transform: uppercase;
 
-			h4 {
-				text-align: center;
+				h4 {
+					text-align: center;
 
-				.label-logo {
-					height: 28px;
-					width: auto !important;
-					box-sizing: border-box;
-					// border: 1px white dashed;
-				}
-			}
-
-			.links {
-				a {
-					min-width: 55px;
-					&:hover {
-						color: $green;
+					.label-logo {
+						height: 28px;
+						width: auto !important;
+						box-sizing: border-box;
+						// border: 1px white dashed;
 					}
 				}
+
+				.links {
+					a {
+						min-width: 55px;
+						&:hover {
+							color: $green;
+						}
+					}
+				}
+
 			}
 
-		}
-
-		#text {
-			padding: 0 $padding 0 $padding;
-			font-size: 13pt;
+			#text {
+				padding: 0 $padding 0 $padding;
+				font-size: 13pt;
+			}
 		}
 	}
-}
-
-/*
-* TODO
-* translate following css to scss
-* SC analyser
-*/
-#scanalyser{height:100vh;}
-#manager_options #info_indicator,
-#manager_options #tracks_indicator,
-#manager_options #followers_indicator,
-#manager_options #followings_indicator,
-#manager_options #groups_indicator{color:red;}
-#scanalyser a:link {color:$green;outline:none;text-decoration:none;}
-#scanalyser a:visited {color:#00FF00;outline:none;text-decoration:none;}
-#scanalyser a:hover {color:#ffff00;outline:none;text-decoration:none;}
-#scanalyser a:active {color:#0000FF;outline:none;text-decoration:none;}
-#analyser{color:#fff;width:100%;text-align:left;}
-#analyser #line:hover{background:#444;}
-/* formatting for user info output*/
-#analyser #profile{display:block;text-align:left;}
-#analyser #profile div{display:block;padding:0.2em 1em 0.2em 1em;}
-#analyser #profile div span{display:inline-block;margin-left:1em;}
-#analyser #profile #avatar{margin-left:1em;height:100px;width:100px;}
-/* formatting for tracklist output*/
-#analyser #player_progress{display:block;border:0;width:100%;height:auto !important;min-height:30px;max-height:35px;}
-#analyser #trackList .glyphicon,
-#analyser #playlistList .glyphicon{font-size:1.1em;}
-#trackList,
-#playlistList{display:block;text-align:left;}
-#trackList #line-h,
-#playlistList #line-h{display:table-row;color:#fff;width:100%;text-transform:uppercase;background-color:#000;}
-#trackList #line,
-#playlistList #line{display:table-row;color:#fff;width:100%;}
-#trackList #line-h span,
-#playlistList #line-h span{display:table-cell;padding-left:0.5em;min-width:10%;max-width:10%;vertical-align:middle;}
-#trackList #line span,
-#playlistList #line span{display:table-cell;padding-left:0.5em;min-width:10%;max-width:10%;vertical-align:middle;}
-/* formatting for followers output*/
-#followerList{display:block;text-align:left;}
-#followerList #header{display:table-row;color:#fff;text-transform:uppercase;width:100%;background-color:#000;}
-#followerList #line{display:table-row;color:#fff;width:100%;}
-#followerList span {display:table-cell;padding-left:0.5em;min-width:11%;max-width:11%;}
-/* formatting for groupsList output*/
-#groupsList{display:block;text-align:left;}
-#groupsList #line-h{display:table-row;color:#fff;width:100%;text-transform:uppercase;background-color:#000;}
-#groupsList #line{display:table-row;color:#fff;width:100%;}
-#groupsList #line-h span{display:table-cell;padding-left:0.5em;min-width:10%;max-width:10%;vertical-align:middle;}
-#groupsList #line span{display:table-cell;padding-left:0.5em;min-width:10%;max-width:10%;vertical-align:middle;}
-/* common line node for utility_data */
-#line #utility_data{display:none;}
-/* Floating static window - output filters container */
-.floating-static-window{display:none;position:fixed;float:right;width:90vw;height:100vh;right:-10vw;z-index:10;}
-.floating-static-window .bookmark{
-	display:inline-block;
-	position:relative;
-	width:3%;
-	height:100%;
-	background-color:rgba(0,0,0,0.5);
-	text-shadow: 1px 1px #000000;
-	color:#ffffff;
-}
-.floating-static-window .bookmark .glyphicon{top:50vh;}
-.floating-static-window .bookmark a{text-decoration:none;display:block;width:100%;height:100%;}
-.floating-static-window .filters{
-	display:inline-block;
-	position:relative;
-	width:86%;
-	height:100%;
-	background-color:rgba(0,0,0,0.5);
-	text-shadow: 1px 1px #000000;
-	color:#ffffff;
-}
-.floating-static-window .filters a{text-decoration:none;}

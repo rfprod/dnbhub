@@ -52,9 +52,9 @@
 	<link rel="stylesheet" href="css/packed-app.min.css"/>
 	<base href="/">
 </head>
-<body ng-cloak layout="column" layout-fill>
+<body ng-cloak layout="column">
 
-	<md-toolbar layout="row" class="md-toolbar-tools" ng-controller="navCtrl">
+	<md-toolbar flex class="md-toolbar-tools md-medium" layout="row" ng-controller="navCtrl">
 		<audio id="speaker" class="hide"></audio> <!-- invisible speaker -->
 		<md-button id="sidebar-toggler" class="md-icon-button hide-md hide-gt-md hide-lg hide-gt-lg hide-xl" title="toggle tracks list" ng-click="toggleSidenav()" ng-disabled="disableToggler()" aria-label="toggle sidebar">
 			<i class="fa" ng-class="{'fa-chevron-right': !isSidenavOpen(), 'fa-chevron-left': isSidenavOpen()}"></i>
