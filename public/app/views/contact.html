@@ -1,34 +1,57 @@
-<form accept-charset="UTF-8">
-	<fieldset>
-		<legend class="alert-info alert-dismissible" ng-hide="hideInstructions" role="alert">
-			<button type="button" class="close" ng-click="switchInstructionsVisibility()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			<p>{{instructions.intro}}</p>
-			<ul ng-bind-html="instructions.list"></ul>
-		</legend>
-		<legend class="alert-success alert-dismissible" ng-hide="sendMailResponse.success == ''" role="alert">
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			<p>{{sendMailResponse.success}}</p>
-		</legend>
-		<legend class="alert-danger alert-dismissible" ng-hide="sendMailResponse.error == ''" role="alert">
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			<p>{{sendMailResponse.error}}</p>
-		</legend>
-		<div class="input-group input-group-lg col-xs-12 col-sm-12 col-md-12 col-lg-12">
-			<input class="form-control" type="text" name="email" ng-model="email" placeholder="your_e-mail@domain.com">
-		</div>
-		<div class="input-group input-group-lg col-xs-12 col-sm-12 col-md-12 col-lg-12">
-			<input class="form-control" type="text" name="name" ng-model="name" placeholder="Your name">
-		</div>
-		<div class="input-group input-group-lg col-xs-12 col-sm-12 col-md-12 col-lg-12">
-			<input class="form-control" type="text" name="header" ng-model="header" placeholder="Message header">
-		</div>
-		<div class="input-group input-group-lg col-xs-12 col-sm-12 col-md-12 col-lg-12">
-			<input class="form-control" type="text" name="message" ng-model="message" placeholder="Message text">
-		</div>
+<div id="contact">
+	<md-card class="contact-instructions" ng-hide="hideInstructions" layout-padding>
+		<md-card-title>
+			<md-card-title-text>{{instructions.intro}}</md-card-title-text>
+			<a md-icon-button class="md-accent" ng-click="switchInstructionsVisibility()" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</a>
+		</md-card-title>
+		<md-card-content>
+			<ul flex ng-bind-html="instructions.list"></ul>
+		</md-card-content>
+	</md-card>
+	<md-card ng-hide="sendMailResponse.success == '' && sendMailResponse.error == ''">
+		<md-card-title>
+			<md-card-title-text>{{instructions.intro}}</md-card-title-text>
+			<a md-icon-button class="md-accent" ng-click="switchInstructionsVisibility()" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</a>
+		</md-card-title>
+		<md-card-content>
+			<p ng-hide="sendMailResponse.success == ''">{{sendMailResponse.success}}</p>
+			<p ng-hide="sendMailResponse.error == ''">{{sendMailResponse.error}}</p>
+		</md-card-content>
+	</md-card>
+	<form flex accept-charset="UTF-8" name="contactForm" layout="column" layout-padding align-items="start stretch">
+		<md-input-container>
+			<input type="text" name="email" ng-model="email" placeholder="your_e-mail@domain.com" required>
+			<div ng-messages="contactForm.email.$error">
+				<div ng-message="required">This field is required</div>
+			</div>
+		</md-input-container>
+		<md-input-container>
+			<input type="text" name="name" ng-model="name" placeholder="Your name" required>
+			<div ng-messages="contactForm.name.$error">
+				<div ng-message="required">This field is required</div>
+			</div>
+		</md-input-container>
+		<md-input-container>
+			<input type="text" name="header" ng-model="header" placeholder="Message header" required>
+			<div ng-messages="contactForm.header.$error">
+				<div ng-message="required">This field is required</div>
+			</div>
+		</md-input-container>
+		<md-input-container>
+			<textarea type="text" name="message" ng-model="message" placeholder="Message text" required>
+			</textarea>
+			<div ng-messages="contactForm.message.$error">
+				<div ng-message="required">This field is required</div>
+			</div>
+		</md-input-container>
 		<br/>
-		<div class="btn-group btn-group-lg btn-group-justified">
-			<a class="btn btn-warning" ng-click="resetForm()">{{buttonText.reset}}</a>
-			<a class="btn btn-success" ng-click="submitForm()" ng-class="{disabled: email == '' || name == '' || header == '' || message == ''}">{{buttonText.submit}}</a>
+		<div>
+			<a md-button class="md-warn" ng-click="resetForm()">{{buttonText.reset}}</a>
+			<a md-button class="md-accent" ng-disabled="contactForm.$invalid" ng-click="submitForm()" ng-class="{disabled: email == '' || name == '' || header == '' || message == ''}">{{buttonText.submit}}</a>
 		</div>
-	</fieldset>
-</form>
+	</form>
+</div>

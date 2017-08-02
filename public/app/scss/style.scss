@@ -36,6 +36,7 @@ html {
 		&:hover {
 			cursor: pointer;
 			color: $amber;
+			text-decoration: none;
 		}
 	}
 	h1, h2, h3, h4, h5, h6 {
@@ -320,4 +321,21 @@ html {
 				font-size: 13pt;
 			}
 		}
+	}
+/*
+*	contact
+*/
+	#contact {
+		flex: 1 1 auto;
+		align-self: stretch;
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		justify-content: flex-start;
+
+		.contact-instructions {
+			color: $white;
+			background: rgba(0, 0, 0, 0.5);
+		}
+
 	}
