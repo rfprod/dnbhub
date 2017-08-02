@@ -56,7 +56,7 @@
 
 	<md-toolbar flex class="md-toolbar-tools md-medium" layout="row" ng-controller="navCtrl">
 		<audio id="speaker" class="hide"></audio> <!-- invisible speaker -->
-		<md-button id="sidebar-toggler" class="md-icon-button hide-md hide-gt-md hide-lg hide-gt-lg hide-xl" title="toggle tracks list" ng-click="toggleSidenav()" ng-disabled="disableToggler()" aria-label="toggle sidebar">
+		<md-button id="sidebar-toggler" class="md-icon-button hide-md hide-gt-md hide-lg hide-gt-lg hide-xl" title="toggle tracks list" ng-click="toggleSidenav()" ng-disabled="disableToggler()" ng-hide="disableToggler()" aria-label="toggle sidebar">
 			<i class="fa" ng-class="{'fa-chevron-right': !isSidenavOpen(), 'fa-chevron-left': isSidenavOpen()}"></i>
 		</md-button>
 		<h1 class="hide-xs hide-gt-xs hide-sm hide-gt-sm show-md show-gt-md show-lg show-gt-lg show-xl">
