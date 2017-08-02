@@ -66,13 +66,19 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 			return !$mdComponentRegistry.get('left');
 		};
 		$scope.toggleSidenav = function() {
-			$mdSidenav('left').toggle();
+			if ($mdComponentRegistry.get('left')) {
+				$mdSidenav('left').toggle();
+			}
 		};
 		$scope.isSidenavOpen = function() {
 			/*
 			*	actual function logic must be set after focument is ready
 			*	or it will generate errors, because sidenav DOM object loads after the main navbar
 			*/
+			if ($mdComponentRegistry.get('left')) {
+				// console.log('is sidenav open', $mdSidenav('left').isOpen());
+				return $mdSidenav('left').isOpen();
+			}
 			return false;
 		};
 		$document.ready(function() {
@@ -80,14 +86,6 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 			usSpinnerService.spin('root-spinner');
 			// console.log($element);
 			$scope.speakerObj = $element[0].querySelector('#speaker');
-			/*
-			*	set isSidenavOpen actual logic
-			*/
-			if (!$scope.disableToggler()) {
-				$scope.isSidenavOpen = function() {
-					return $mdSidenav('left').isOpen();
-				};
-			}
 		});
 	}
 ]);

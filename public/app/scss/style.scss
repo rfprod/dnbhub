@@ -1,7 +1,11 @@
 $white: #ffffff;
 $black: #000000;
 $grey: #c5c5c5;
-$green: #9DCE5C;
+$darkGreen: #003300;
+$green: #009900;
+$amber: #ffc107;
+$lightGreen: #00cc33;
+$lightBlue: #00cccc;
 $yellow: #ffed00;
 
 $selected: rgba(192, 192, 192, 0.4);
@@ -24,21 +28,21 @@ html {
 *	general
 */
 	:focus { outline: 0; }
-		a {
-			color: $green;
-			outline: none;
-			text-decoration: none;
+	a {
+		color: $green;
+		outline: none;
+		text-decoration: none;
 
-			&:hover {
-				cursor: pointer;
-				color: $yellow;
-			}
+		&:hover {
+			cursor: pointer;
+			color: $amber;
 		}
-		h1, h2, h3, h4, h5, h6 {
-			&:hover { cursor: default; }
-		}
-		img { border: none; }
-		input { vertical-align: middle; }
+	}
+	h1, h2, h3, h4, h5, h6 {
+		&:hover { cursor: default; }
+	}
+	img { border: none; }
+	input { vertical-align: middle; }
 
 	.splitter {
 		flex: 1;
@@ -72,7 +76,9 @@ html {
 
 	.logo {
 		height: 42px;
-		width: auto!important;
+		width: 42px;
+		border: 1px $grey solid;
+		border-radius: 50%;
 	}
 
 	#dropdown-menu {
@@ -102,7 +108,7 @@ html {
 
 				&:hover {
 					text-decoration: none;
-					color: $green;
+					color: $amber;
 				}
 
 				&.selected { color: $yellow; }
@@ -141,7 +147,7 @@ html {
 			a {
 				min-width: 55px;
 				&:hover {
-					color: $green;
+					color: $amber;
 				}
 			}
 		}
@@ -302,7 +308,7 @@ html {
 					a {
 						min-width: 55px;
 						&:hover {
-							color: $green;
+							color: $amber;
 						}
 					}
 				}

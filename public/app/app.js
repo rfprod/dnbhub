@@ -16,8 +16,8 @@ var dnbhub = angular.module('dnbhub', [
 ]);
 
 dnbhub
-	.config(['$routeProvider', '$locationProvider', 'usSpinnerConfigProvider',
-		function($routeProvider, $locationProvider, usSpinnerConfigProvider) {
+	.config(['$routeProvider', '$locationProvider', '$mdThemingProvider', 'usSpinnerConfigProvider',
+		function($routeProvider, $locationProvider, $mdThemingProvider, usSpinnerConfigProvider) {
 			$routeProvider
 				.when('/index', {
 					templateUrl: 'app/views/index.html',
@@ -54,6 +54,13 @@ dnbhub
 				});
 
 			$locationProvider.html5Mode({enabled: true, requireBase: false});
+
+			$mdThemingProvider.theme('default')
+				.primaryPalette('blue-grey')
+				.accentPalette('amber')
+				.warnPalette('red')
+				//.backgroundPalette('blue-grey')
+				.dark();
 
 			usSpinnerConfigProvider.setDefaults({
 				lines: 13, // The number of lines to draw

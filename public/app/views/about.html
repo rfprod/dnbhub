@@ -29,7 +29,7 @@
 		<div flex="90" flex-xs="70" flex-sm="80" id="text" ng-bind-html="dnbhubDetails.text"></div>
 	</div>
 
-	<div flex="25" class="hide-xs hide-sm hide-md" id="showcase" layout="column">
+	<div flex="25" class="hide-xs hide-sm hide-md" id="showcase" layout="column" layout-align="start stretch">
 		<!-- Begin MailChimp Signup Form -->
 		<link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
 		<div id="mc_embed_signup">
@@ -44,7 +44,7 @@
 			</form>
 		</div>
 		<!--End mc_embed_signup-->
-		<div id="powered_by" layout="column" layout-align="center stretch">
+		<div flex id="powered_by" layout="column" layout-align="center stretch">
 			<h5 flex>POWERED BY</h5>
 			<img flex layout-fill title="{{item.name}}" ng-src="{{item.logo}}" ng-repeat="item in dnbhubDetails.poweredBy"/>
 		</div>
