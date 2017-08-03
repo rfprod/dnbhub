@@ -9,7 +9,6 @@ var dnbhub = angular.module('dnbhub', [
 	'ngAria',
 	'ngMessages',
 	'ngMaterial',
-	'ui.bootstrap',
 	'dnbhubControllers',
 	'dnbhubDirectives',
 	'dnbhubServices'
