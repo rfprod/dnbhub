@@ -93,11 +93,17 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 dnbhubControllers.controller('indexCtrl', ['$scope', '$route', 'usSpinnerService',
 	function($scope, $route, usSpinnerService) {
 		'use strict';
+		$scope.tracks = [];
 		$scope.getTracks = function(callback) {
 			SC.initialize({ client_id: 'dc01ec1b4ea7d41793e61bac1dae13c5' });
 			var trackSingle = '';
 			var trackList = '<br/><iframe id="player_progress" name="player" src=""></iframe><br/><div id="header"><div></div><span id="stream_url"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></span><span id="download_url"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></span><span id="playback_count">plays</span><span id="favoritings_count">favoritings</span></div>';
 			SC.get('http://api.soundcloud.com/users/1275637/tracks.json?client_id=dc01ec1b4ea7d41793e61bac1dae13c5', function(tracks) {
+				$scope.tracks = tracks;
+				/*
+				*	TODO
+				*	move this logic to customSoudncloudPlayer durective and template
+				*/
 				for (var i = 0; i < tracks.length; i++) {
 					if (tracks[i].downloadable === true) {
 						// if the track is downloadable include download link
@@ -119,7 +125,11 @@ dnbhubControllers.controller('indexCtrl', ['$scope', '$route', 'usSpinnerService
 					trackList = trackList.concat(trackSingle);
 				}
 				trackList = trackList.concat('</span>');
-				document.getElementById('sc_player').innerHTML = trackList;
+				//document.getElementById('sc_player').innerHTML = trackList;
+				/*
+				*	TODO
+				*	move this logic to customSoudncloudPlayer durective and template
+				*/
 				$scope.$digest();
 				callback();
 			});

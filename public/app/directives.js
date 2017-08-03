@@ -30,6 +30,8 @@ dnbhubDirectives.directive('customSoundcloudPlayer', [
 		'use strict';
 		return {
 			restrict: 'A',
+			replace: true,
+			templateUrl: 'app/views/custom-soundcloud-player.html',
 			link: function(scope, element) {
 				scope.$watch(function() { return element[0].childNodes.length; }, function(newVal, oldVal) {
 					if (!newVal && !oldVal) {
@@ -37,6 +39,9 @@ dnbhubDirectives.directive('customSoundcloudPlayer', [
 					} else if (newVal !== oldVal) {
 						console.log('soundcloud player DOM changed:', newVal, '|', oldVal);
 					}
+				});
+				scope.$watchCollection('tracks', function(newVal) {
+					console.log('sc player, tracks changed', newVal);
 				});
 			}
 		};
