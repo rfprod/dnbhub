@@ -155,6 +155,9 @@ html {
 	}
 
 	#showcase {
+		min-width: 30vw;
+		// overflow-y: hidden;
+		overflow-x: hidden;
 
 		/* custom embedded mailchimp subscribe form */
 		#mc_embed_signup {
@@ -188,54 +191,18 @@ html {
 		}
 
 		/* custom soundcloud player */
-		#sc_player {
-			min-width: 100%;
+		#sc-player {
+			width: 100%;
 			border-radius: 0;
 			text-align: left;
-			overflow-y: scroll;
-			overflow-x: hidden;
-			background: #000000;
-			font: 15px "Helvetica Neue",Roboto,"Segoe UI",Calibri,sans-serif;
+			background: $black;
 
-			a {
-				&:link { color: $green; outline: none; text-decoration: none; border: 1px solid transparent; border-radius: 4px; }
-				&:visited { color: #00FF00; outline: none; text-decoration: none; border: 1px solid transparent; border-radius: 4px; }
-				&:hover { color: $yellow; outline: none; text-decoration: none; border: 1px solid #ffff00; border-radius: 4px; }
-				&:active { color: #0000FF; outline: none; text-decoration: none; border: 1px solid transparent; border-radius: 4px; }
-			}
+			iframe { border: 0; width: 100%; }
 
-			#player_progress { display: block; border: 0; width: 100%; height: 30px; }
-
-			#title, #genre { display: block; width: 100%; padding-left: 0.2em; padding-left: 0.2em; }
-
-			span {
-				display: table-cell;
-				width: 4.8vw;
-				text-align: center;
-
-				@media (max-width: 993px) {
-					display: table-cell;
-					padding-left: 0.2em;
-					padding-left: 0.2em;
-					width:12vw;
+			div {
+				&:hover {
+					cursor: default;
 				}
-				@media (max-width: 766px) {
-					display: table-cell;
-					padding-left: 0.2em;
-					padding-left: 0.2em;
-					width: 17vw;
-				}
-			}
-
-			#header { display: block; color: $white; background-color: $grey; text-transform: uppercase; }
-
-			#line {
-				display: block;
-				color: #fff;
-				background: url(../img/monitor.png) center center repeat;
-				border-bottom: thick dotted #ff0000;
-
-				&:hover { background: $grey; }
 			}
 		}
 

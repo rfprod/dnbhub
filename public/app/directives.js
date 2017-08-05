@@ -33,6 +33,10 @@ dnbhubDirectives.directive('customSoundcloudPlayer', [
 			replace: true,
 			templateUrl: 'app/views/custom-soundcloud-player.html',
 			link: function(scope, element) {
+				scope.selectedTrack;
+				scope.selectTrack = function(index) {
+					scope.selectedTrack = index;
+				};
 				scope.$watch(function() { return element[0].childNodes.length; }, function(newVal, oldVal) {
 					if (!newVal && !oldVal) {
 						console.log('soundcloud player DOM initial change:', newVal, '|', oldVal);

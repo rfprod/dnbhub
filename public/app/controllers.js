@@ -96,40 +96,8 @@ dnbhubControllers.controller('indexCtrl', ['$scope', '$route', 'usSpinnerService
 		$scope.tracks = [];
 		$scope.getTracks = function(callback) {
 			SC.initialize({ client_id: 'dc01ec1b4ea7d41793e61bac1dae13c5' });
-			var trackSingle = '';
-			var trackList = '<br/><iframe id="player_progress" name="player" src=""></iframe><br/><div id="header"><div></div><span id="stream_url"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></span><span id="download_url"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></span><span id="playback_count">plays</span><span id="favoritings_count">favoritings</span></div>';
 			SC.get('http://api.soundcloud.com/users/1275637/tracks.json?client_id=dc01ec1b4ea7d41793e61bac1dae13c5', function(tracks) {
 				$scope.tracks = tracks;
-				/*
-				*	TODO
-				*	move this logic to customSoudncloudPlayer durective and template
-				*/
-				for (var i = 0; i < tracks.length; i++) {
-					if (tracks[i].downloadable === true) {
-						// if the track is downloadable include download link
-						if (tracks[i].license === 'all-rights-reserved') {
-							// if license is all-rights-reserved - download preview
-							trackSingle = '<div id="line"><div id="title">' + tracks[i].title + '</div><div id="genre" class="right">' + tracks[i].genre + '</div><span id="stream_url"><a href="' + tracks[i].stream_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target="player"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a></span><span id="download_url"><a href="' + tracks[i].download_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target=_blank><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a></span><span id="playback_count">' + tracks[i].playback_count + '</span><span id="favoritings_count">' + tracks[i].favoritings_count + '</span></div>';
-						} else {
-							trackSingle = '<div id="line"><div id="title">' + tracks[i].title + '</div><div id="genre" class="right">' + tracks[i].genre + '</div><span id="stream_url"><a href="' + tracks[i].stream_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target="player"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a></span><span id="download_url"><a href="' + tracks[i].download_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target=_blank><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a></span><span id="playback_count">' + tracks[i].playback_count + '</span><span id="favoritings_count">' + tracks[i].favoritings_count + '</span></div>';
-						}
-					} else {
-						// if the track is not downloadable
-						// check if there's a purchase url
-						if (tracks[i].purchase_url !== null) {
-							trackSingle = '<div id="line"><div id="title">' + tracks[i].title + '</div><div id="genre" class="right">' + tracks[i].genre + '</div><span id="stream_url"><a href="' + tracks[i].stream_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target="player"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a></span><span id="download_url"><a href="' + tracks[i].purchase_url + '" target=_blank><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a></span><span id="playback_count">' + tracks[i].playback_count + '</span><span id="favoritings_count">' + tracks[i].favoritings_count + '</span></div>';
-						} else {
-							trackSingle = '<div id="line"><div id="title">' + tracks[i].title + '</div><div id="genre">' + tracks[i].genre + '</div><span id="stream_url"><a href="' + tracks[i].stream_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target="player"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a></span><span id="download_url"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></span><span id="playback_count">' + tracks[i].playback_count + '</span><span id="favoritings_count">' + tracks[i].favoritings_count + '</span></div>';
-						}
-					}
-					trackList = trackList.concat(trackSingle);
-				}
-				trackList = trackList.concat('</span>');
-				//document.getElementById('sc_player').innerHTML = trackList;
-				/*
-				*	TODO
-				*	move this logic to customSoudncloudPlayer durective and template
-				*/
 				$scope.$digest();
 				callback();
 			});
@@ -230,33 +198,11 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 		$scope.returnWidgetLink = function() {
 			return $sce.trustAsResourceUrl($scope.selectedBlogPost.widgetLink);
 		};
+		$scope.tracks = [];
 		$scope.getTracks = function(soundcloudUserId,callback) {
 			SC.initialize({ client_id: 'dc01ec1b4ea7d41793e61bac1dae13c5' });
-			var trackSingle = '';
-			var trackList = '<br/><iframe id="player_progress" name="player" src=""></iframe><br/><div id="header"><div></div><span id="stream_url"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></span><span id="download_url"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></span><span id="playback_count">plays</span><span id="favoritings_count">favoritings</span></div>';
 			SC.get('http://api.soundcloud.com/users/'+soundcloudUserId+'/tracks.json?client_id=dc01ec1b4ea7d41793e61bac1dae13c5', function(tracks) {
-				for (var i = 0; i < tracks.length; i++) {
-					if (tracks[i].downloadable === true) {
-						// if the track is downloadable include download link
-						if (tracks[i].license === 'all-rights-reserved'){
-							// if license is all-rights-reserved - download preview
-							trackSingle = '<div id="line"><div id="title">' + tracks[i].title + '</div><div id="genre" class="right">' + tracks[i].genre + '</div><span id="stream_url"><a href="' + tracks[i].stream_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target="player"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a></span><span id="download_url"><a href="' + tracks[i].download_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target=_blank><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a></span><span id="playback_count">' + tracks[i].playback_count + '</span><span id="favoritings_count">' + tracks[i].favoritings_count + '</span></div>';
-						} else {
-							trackSingle = '<div id="line"><div id="title">' + tracks[i].title + '</div><div id="genre" class="right">' + tracks[i].genre + '</div><span id="stream_url"><a href="' + tracks[i].stream_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target="player"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a></span><span id="download_url"><a href="' + tracks[i].download_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target=_blank><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a></span><span id="playback_count">' + tracks[i].playback_count + '</span><span id="favoritings_count">' + tracks[i].favoritings_count + '</span></div>';
-						}
-					} else {
-						// if the track is not downloadable
-						// check if there's a purchase url
-						if (tracks[i].purchase_url !== null) {
-							trackSingle = '<div id="line"><div id="title">' + tracks[i].title + '</div><div id="genre" class="right">' + tracks[i].genre + '</div><span id="stream_url"><a href="' + tracks[i].stream_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target="player"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a></span><span id="download_url"><a href="' + tracks[i].purchase_url + '" target=_blank><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a></span><span id="playback_count">' + tracks[i].playback_count + '</span><span id="favoritings_count">' + tracks[i].favoritings_count + '</span></div>';
-						} else {
-							trackSingle = '<div id="line"><div id="title">' + tracks[i].title + '</div><div id="genre">' + tracks[i].genre + '</div><span id="stream_url"><a href="' + tracks[i].stream_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5" target="player"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a></span><span id="download_url"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></span><span id="playback_count">' + tracks[i].playback_count + '</span><span id="favoritings_count">' + tracks[i].favoritings_count + '</span></div>';
-						}
-					}
-					trackList = trackList.concat(trackSingle);
-				}
-				trackList = trackList.concat('</span>');
-				document.getElementById('sc_player').innerHTML = trackList;
+				$scope.tracks = tracks;
 				$scope.$digest();
 				callback();
 			});

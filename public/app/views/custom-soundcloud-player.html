@@ -1,14 +1,27 @@
-<div flex="1 1 auto" id="sc_player">
-	<div>
-	<iframe id="player_progress" name="player" src=""></iframe>
-	<div id="header"></div>
-	<span id="stream_url">
-		<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
-	</span>
-	<span id="download_url">
-		<span class="glyphicon glyphicon-save" aria-hidden="true"></span>
-	</span>
-	<span id="playback_count">plays</span>
-	<span id="favoritings_count">favoritings</span>
-	</div>
+<div flex layout="column" layout-align="start stretch">
+	<iframe name="player" src=""></iframe>
+	<md-virtual-repeat-container flex>
+		<div md-virtual-repeat="track in tracks" layout="column" id="{{$index}}" layout-align="start stretch" ng-class="{selected: $index === selectedTrack}">
+			<div flex layout-padding>{{track.title}}</div>
+			<div flex layout="row" layout-align="center stretch" layout-padding>
+				<div flex class="md-caption">{{track.genre}}</div>
+				<div flex></div>
+				<div flex class="md-caption">{{track.license}}</div>
+			</div>
+			<div flex layout="row" layout-align="start stretch">
+				<a href="{{track.stream_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5'}}" target="player" ng-click="selectTrack($index)" md-button flex title="play">
+					<i class="fa fa-play" aria-hidden="true" aria-label="play"></i> {{track.playback_count}}
+				</a>
+				<a ng-if="track.downloadable" href="{{track.download_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5'}}" ng-click="selectTrack($index)" target=_blank md-button flex title="download">
+					<i class="fa fa-save" aria-hidden="true" aria-label="download"></i>
+				</a>
+				<a ng-if="track.purchase_url" href="{{track.purchase_url + '?client_id=dc01ec1b4ea7d41793e61bac1dae13c5'}}" target=_blank ng-click="selectTrack($index)" md-button flex="40" title="{{track.purchase_title || 'buy'}}">
+					<i class="fa fa-save" aria-hidden="true" aria-label="{{track.purchase_title || 'buy'}}"></i>
+				</a>
+				<button md-button flex disabled="true">
+					<i class="fa fa-heart" aria-hidden="true" aria-label="favoritings"></i> {{track.favoritings_count}}
+				</button>
+			</div>
+		</div>
+	</md-virtual-repeat-container>
 </div>
