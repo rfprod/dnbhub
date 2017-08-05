@@ -283,7 +283,7 @@ html {
 			padding: 0 $padding 0 $padding;
 
 			.heading {
-				margin: $padding 0 $padding 0;
+				margin: ($padding * 2) 0 ($padding * 2) 0;
 				text-transform: uppercase;
 
 				h4 {
