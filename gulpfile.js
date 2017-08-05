@@ -107,10 +107,6 @@ gulp.task('pack-app-css', () => {
 });
 
 gulp.task('pack-vendor-js', () => {
-	/*
-	*	nonangular js bundle
-	*	components related to design, styling, data visualization etc.
-	*/
 	return gulp.src([
 		/*
 		*	add third party js files here
@@ -193,7 +189,9 @@ gulp.task('build', (done) => {
 	runSequence('lint', 'pack-app-js', 'pack-app-css', 'pack-vendor-js', 'pack-vendor-css', 'move-vendor-fonts', 'client-unit-test', done);
 });
 
-gulp.task('default', ['build', 'database','server','watch','client-e2e-test']);
+gulp.task('default', (done) => {
+	runSequence('build', 'database','server','watch','client-e2e-test', done);
+});
 
 process.on('exit', function() {
 	if (node) node.kill();
