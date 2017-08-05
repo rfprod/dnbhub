@@ -186,6 +186,7 @@ dnbhubControllers.controller('freeDownloadsCtrl', ['$scope', '$sce', '$location'
 		$scope.scrollToTrack = function(widgetIndex) {
 			$scope.selectedWidget = widgetIndex;
 			$location.$$hash = widgetIndex;
+			$mdSidenav('left').toggle();
 		};
 		$scope.$on('$viewContentLoaded', function() {
 			console.log('free downloads view controller loaded');
