@@ -1,5 +1,5 @@
 <div id="about" flex layout="row" layout-fill layout-align="start stretch">
-	<div flex="1 1 auto" layout="column" layout-fill layout-align="start stretch">
+	<div flex="auto" layout="column" layout-fill layout-align="start stretch">
 		<div flex="10" flex-xs="30" flex-sm="20" layout="row" layout-align="start stretch" layout-wrap>
 			<h4 flex="50" flex-xs="100" flex-sm="100" layout="row" layout-align="center center" class="md-display-1">
 				{{dnbhubDetails.title}}
@@ -28,7 +28,9 @@
 				</a>
 			</div>
 		</div>
-		<div flex="90" flex-xs="70" flex-sm="80" id="text" class="md-body-1" ng-bind-html="dnbhubDetails.text"></div>
+		<div flex="90" flex-xs="70" flex-sm="80" id="text" class="md-body-1" layout-padding>
+			<span ng-bind-html="dnbhubDetails.text"></span>
+		</div>
 	</div>
 
 	<div flex="25" class="hide-xs hide-sm hide-md" id="showcase" layout="column" layout-align="start stretch" layout-padding>
