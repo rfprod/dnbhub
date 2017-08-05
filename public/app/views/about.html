@@ -1,7 +1,9 @@
 <div id="about" flex layout="row" layout-fill layout-align="start stretch">
 	<div flex="1 1 auto" layout="column" layout-fill layout-align="start stretch">
 		<div flex="10" flex-xs="30" flex-sm="20" layout="row" layout-align="start stretch" layout-wrap>
-			<h4 flex="50" flex-xs="100" flex-sm="100" layout="row" layout-align="center center">{{dnbhubDetails.title}}</h4>
+			<h4 flex="50" flex-xs="100" flex-sm="100" layout="row" layout-align="center center" class="md-display-1">
+				{{dnbhubDetails.title}}
+			</h4>
 			<div flex="50" flex-xs="100" flex-sm="100" layout="row" layout-align="center center" class="links" layout-wrap>
 				<a md-button class="md-icon-button" flex ng-href="{{dnbhubDetails.links.soundcloud}}" target=_blank aria-label="soundclous link">
 					<i class="fa fa-soundcloud fa-2x" aria-hidden="true"></i>
@@ -26,10 +28,10 @@
 				</a>
 			</div>
 		</div>
-		<div flex="90" flex-xs="70" flex-sm="80" id="text" ng-bind-html="dnbhubDetails.text"></div>
+		<div flex="90" flex-xs="70" flex-sm="80" id="text" class="md-body-1" ng-bind-html="dnbhubDetails.text"></div>
 	</div>
 
-	<div flex="25" class="hide-xs hide-sm hide-md" id="showcase" layout="column" layout-align="start stretch">
+	<div flex="25" class="hide-xs hide-sm hide-md" id="showcase" layout="column" layout-align="start stretch" layout-padding>
 		<!-- Begin MailChimp Signup Form -->
 		<link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
 		<div id="mc_embed_signup">
@@ -44,9 +46,9 @@
 			</form>
 		</div>
 		<!--End mc_embed_signup-->
-		<div flex id="powered_by" layout="column" layout-align="center stretch">
-			<h5 flex>POWERED BY</h5>
-			<img flex layout-fill title="{{item.name}}" ng-src="{{item.logo}}" ng-repeat="item in dnbhubDetails.poweredBy"/>
+		<div flex id="powered_by" layout="column" layout-align="start stretch" layout-wrap>
+			POWERED BY
+			<img flex title="{{item.name}}" ng-src="{{item.logo}}" ng-repeat="item in dnbhubDetails.poweredBy"/>
 		</div>
 	</div>
 </div>
