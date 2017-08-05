@@ -320,14 +320,12 @@ html {
 	#contact {
 		flex: 1 1 auto;
 		align-self: stretch;
-		display: flex;
-		flex-direction: column;
-		align-items: stretch;
-		justify-content: flex-start;
 
 		.contact-instructions {
 			color: $white;
 			background: rgba(0, 0, 0, 0.5);
+			display: block;
+			min-height: auto!important;
 		}
 
 	}

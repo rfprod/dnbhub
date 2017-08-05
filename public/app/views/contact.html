@@ -1,27 +1,29 @@
-<div id="contact">
-	<md-card class="contact-instructions" ng-hide="hideInstructions" layout-padding>
-		<md-card-title>
-			<md-card-title-text>{{instructions.intro}}</md-card-title-text>
+<div id="contact" layout="column" align-item="start stretch" class="md-body-1">
+	<div class="contact-instructions" ng-hide="hideInstructions" layout-padding layout="column" layout-align="start stretch">
+		<span layout="row">
+			<h5 class="md-subhead" flex="100">{{instructions.intro}}</h5>
 			<a md-icon-button class="md-accent" ng-click="switchInstructionsVisibility()" aria-label="Close">
 				<span aria-hidden="true">&times;</span>
 			</a>
-		</md-card-title>
-		<md-card-content>
-			<ul flex ng-bind-html="instructions.list"></ul>
-		</md-card-content>
-	</md-card>
-	<md-card ng-hide="sendMailResponse.success == '' && sendMailResponse.error == ''">
-		<md-card-title>
-			<md-card-title-text>{{instructions.intro}}</md-card-title-text>
+		</span>
+		<span layout="column">
+			<span flex ng-repeat="item in instructions.list">
+				&bull; {{item}}
+			</span>
+		</span>
+	</div>
+	<div class="contact-instructions" ng-hide="sendMailResponse.success == '' && sendMailResponse.error == ''" layout-padding layout="column" layout-align="start stretch">
+		<span layout="row">
+			<h5 class="md-subhead" flex="100">{{instructions.intro}}</h5>
 			<a md-icon-button class="md-accent" ng-click="switchInstructionsVisibility()" aria-label="Close">
 				<span aria-hidden="true">&times;</span>
 			</a>
-		</md-card-title>
-		<md-card-content>
+		</span>
+		<span layout="column">
 			<p ng-hide="sendMailResponse.success == ''">{{sendMailResponse.success}}</p>
 			<p ng-hide="sendMailResponse.error == ''">{{sendMailResponse.error}}</p>
-		</md-card-content>
-	</md-card>
+		</span>
+	</div>
 	<form flex accept-charset="UTF-8" name="contactForm" layout="column" layout-padding align-items="start stretch">
 		<md-input-container>
 			<input type="text" name="email" ng-model="email" placeholder="your_e-mail@domain.com" required>
