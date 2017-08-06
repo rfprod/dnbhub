@@ -140,7 +140,7 @@ gulp.task('pack-vendor-css', () => { // packs vendor css files
 		/*
 		*	add third party css files here
 		*/
-		'./node_modules/components-font-awesome/css/font-awesome.css',
+		'./node_modules/font-awesome/css/font-awesome.css',
 		
 		'./node_modules/angular-material/angular-material.css',
 		'./node_modules/angular-material/layouts/angular-material.layouts.css',
@@ -159,7 +159,7 @@ gulp.task('move-vendor-fonts', () => { // move vendor font files
 		/*
 		*	add third party fonts here
 		*/
-		'./node_modules/components-font-awesome/fonts/*.*'
+		'./node_modules/font-awesome/fonts/*.*'
 	])
 		.pipe(gulp.dest('./public/fonts'));
 });
