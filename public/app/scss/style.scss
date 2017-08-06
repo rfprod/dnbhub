@@ -8,7 +8,7 @@ $lightGreen: #00cc33;
 $lightBlue: #00cccc;
 $yellow: #ffed00;
 
-$selected: rgba(192, 192, 192, 0.4);
+$selected: rgba(0, 0, 0, 0.4);
 
 $padding: 0.5em;
 
@@ -53,10 +53,6 @@ html {
 		background: transparent;
 	}
 
-	.selected {
-		background: $selected;
-	}
-
 	.border { /* common class for bordered blocks, mostly soundcloud widgets */
 		box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.33) !important;
 		border-width: 0px 0px 0px !important;
@@ -68,6 +64,16 @@ html {
 		-moz-border-left-colors: none !important;
 		border-image: none !important;
 		overflow:hidden;
+	}
+
+/*
+*	colouring
+*/
+	.amber-text { color: $amber; }
+	.yellow-text { color: $yellow; }
+	.selected {
+		background: $selected;
+		color: $white;
 	}
 
 /*
@@ -91,6 +97,16 @@ html {
 		margin-left: 0;
 	}
 
+	md-menu-item {
+		a {
+			&:hover {
+				cursor: pointer;
+				color: $black;
+				text-decoration: none;
+			}
+		}
+	}
+
 /*
 *	freedownloads styling
 */
@@ -112,7 +128,7 @@ html {
 					color: $amber;
 				}
 
-				&.selected { color: $yellow; }
+				&.selected { color: $amber; }
 			}
 		}
 
@@ -122,7 +138,7 @@ html {
 
 			iframe {
 				&.selected {
-					border: 0.25em $yellow dotted;
+					border: 0.25em $amber dotted;
 				}
 			}
 		}
@@ -171,8 +187,6 @@ html {
 			label {
 				width: 100%;
 				text-align: center;
-
-				.yellow { color: $yellow; }
 			}
 
 			#mce-EMAIL { width: 100%; }
@@ -182,9 +196,9 @@ html {
 					width: 100%;
 
 					&:hover {
-						background: #ffed00;
+						background: $amber;
 						width: 100%;
-						color: #000000;
+						color: $black;
 					}
 				}
 			}
