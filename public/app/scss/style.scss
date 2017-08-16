@@ -293,6 +293,7 @@ html {
 			#text {
 				padding: 0 $padding 0 $padding;
 				font-size: 13pt;
+				overflow-y: scroll;
 			}
 		}
 	}
