@@ -78,6 +78,20 @@ html {
 	}
 
 /*
+*	scrollbars
+*/
+	::-webkit-scrollbar {
+		width: 10px;
+		height: 10px;
+	}
+	::-webkit-scrollbar-track {
+		background: rgba(0, 0, 0, 0.1);
+	}
+	::-webkit-scrollbar-thumb {
+		background: rgba(255, 255, 255, 0.5);
+	}
+
+/*
 *	navbar
 */
 	#speaker { display: none; }
@@ -294,6 +308,10 @@ html {
 				padding: 0 $padding 0 $padding;
 				font-size: 13pt;
 				overflow-y: scroll;
+			}
+
+			iframe {
+				height: calc(100vh / 2);
 			}
 		}
 	}

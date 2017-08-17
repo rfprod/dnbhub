@@ -1,0 +1,75 @@
+<md-toolbar flex class="md-toolbar-tools md-medium" layout="row" ng-controller="navCtrl">
+	<audio id="speaker" class="hide"></audio> <!-- invisible speaker -->
+	<md-button id="sidebar-toggler" class="md-icon-button hide-md hide-gt-md hide-lg hide-gt-lg hide-xl" title="toggle tracks list" ng-click="toggleSidenav()" ng-disabled="disableToggler()" ng-hide="disableToggler()" aria-label="toggle sidebar">
+		<i class="fa" ng-class="{'fa-chevron-right': !isSidenavOpen(), 'fa-chevron-left': isSidenavOpen()}"></i>
+	</md-button>
+	<h1 class="hide-xs hide-gt-xs hide-sm hide-gt-sm show-md show-gt-md show-lg show-gt-lg show-xl">
+		<img class="logo" alt="logo" title="{{title}}" src="img/svg/DH_logo-round_bg.svg"/>
+	</h1>
+	<span class="splitter" layout="row" layout-align="center center">
+		<img class="logo hide-md hide-gt-md hide-lg hide-gt-lg hide-xl" alt="logo" title="{{title}}" src="img/svg/DH_logo-round_bg.svg"/>
+	</span>
+	<a md-button ng-href="{{buttonHrefs.index}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.index)}" title="{{buttonTitles.index}}" class="hide-xs hide-sm">
+		<i class="{{buttonIcons.index}}"></i> {{buttonNames.index}}
+	</a>
+	<a md-button ng-href="{{buttonHrefs.singles}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.singles)}" title="{{buttonTitles.singles}}" class="hide-xs hide-sm">
+		<i class="{{buttonIcons.singles}}"></i> {{buttonNames.singles}}
+	</a>
+	<a md-button ng-href="{{buttonHrefs.freedownloads}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.freedownloads)}" title="{{buttonTitles.freedownloads}}" class="hide-xs hide-sm">
+		<i class="{{buttonIcons.freedownloads}}"></i> {{buttonNames.freedownloads}}
+	</a>
+	<a md-button ng-href="{{buttonHrefs.reposts}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.reposts)}" title="{{buttonTitles.reposts}}" class="hide-xs hide-sm">
+		<i class="{{buttonIcons.reposts}}"></i> {{buttonNames.reposts}}
+	</a>
+	<a md-button ng-href="{{buttonHrefs.blog}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.blog)}" title="{{buttonTitles.blog}}" class="hide-xs hide-sm">
+		<i class="{{buttonIcons.blog}}"></i> {{buttonNames.blog}}
+	</a>
+	<a md-button ng-href="{{buttonHrefs.contact}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.contact)}" title="{{buttonTitles.contact}}" class="hide-xs hide-sm">
+		<i class="{{buttonIcons.contact}}"></i> {{buttonNames.contact}}
+	</a>
+	<a md-button ng-href="{{buttonHrefs.about}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.about)}" title="{{buttonTitles.about}}" class="hide-xs hide-sm">
+		<i class="{{buttonIcons.about}}"></i> {{buttonNames.about}}
+	</a>
+	<md-menu class="hide-md hide-lg hide-xl primary">
+		<md-button aria-label="Open navigation menu" class="md-icon-button" ng-click="$mdMenu.open()">
+			<i class="fa fa-bars"></i>
+		</md-button>
+		<md-menu-content id="dropdown-menu">
+			<md-menu-item>
+				<a md-button ng-href="{{buttonHrefs.index}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.index)}" title="{{buttonTitles.index}}">
+					<i class="{{buttonIcons.index}}"></i> {{buttonNames.index}}
+				</a>
+			</md-menu-item>
+			<md-menu-item>
+				<a md-button ng-href="{{buttonHrefs.singles}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.singles)}" title="{{buttonTitles.singles}}">
+					<i class="{{buttonIcons.singles}}"></i> {{buttonNames.singles}}
+				</a>
+			</md-menu-item>
+			<md-menu-item>
+				<a md-button ng-href="{{buttonHrefs.freedownloads}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.freedownloads)}" title="{{buttonTitles.freedownloads}}">
+					<i class="{{buttonIcons.freedownloads}}"></i> {{buttonNames.freedownloads}}
+				</a>
+			</md-menu-item>
+			<md-menu-item>
+				<a md-button ng-href="{{buttonHrefs.reposts}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.reposts)}" title="{{buttonTitles.reposts}}">
+					<i class="{{buttonIcons.reposts}}"></i> {{buttonNames.reposts}}
+				</a>
+			</md-menu-item>
+			<md-menu-item>
+				<a md-button ng-href="{{buttonHrefs.blog}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.blog)}" title="{{buttonTitles.blog}}">
+					<i class="{{buttonIcons.blog}}"></i> {{buttonNames.blog}}
+				</a>
+			</md-menu-item>
+			<md-menu-item>
+				<a md-button ng-href="{{buttonHrefs.contact}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.contact)}" title="{{buttonTitles.contact}}">
+					<i class="{{buttonIcons.contact}}"></i> {{buttonNames.contact}}
+				</a>
+			</md-menu-item>
+			<md-menu-item>
+				<a md-button ng-href="{{buttonHrefs.about}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.about)}" title="{{buttonTitles.about}}">
+					<i class="{{buttonIcons.about}}"></i> {{buttonNames.about}}
+				</a>
+			</md-menu-item>
+		</md-menu-content>
+	</md-menu>
+</md-toolbar>
