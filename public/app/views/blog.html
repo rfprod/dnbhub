@@ -23,9 +23,9 @@
 				<a md-button flex="20" ng-disabled="disableBlogPostSelector('previous')" ng-click="previousBlogPost()" aria-label="previous blog post" title="previous blog post" class="md-accent">
 					<i class="fa fa-chevron-left"></i>
 				</a>
-				<span flex="60" layout="column" layout-align="center center" layout-wrap>
-					<img hide-xs flex class="label-logo" ng-src="{{selectedBlogPost.logo}}"/>
-					<span flex>{{selectedBlogPost.title}}</span>
+				<span flex="60" layout="row" layout-align="center center" layout-wrap>
+					<img hide-xs flex="15" class="label-logo" ng-src="{{selectedBlogPost.logo}}"/>
+					<span flex="85">{{selectedBlogPost.title}}</span>
 				</span>
 				<a md-button flex="20" ng-disabled="disableBlogPostSelector('next')" ng-click="nextBlogPost()" aria-label="next blog post" title="next blog post" class="md-accent">
 					<i class="fa fa-chevron-right"></i>

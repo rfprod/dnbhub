@@ -286,7 +286,8 @@ html {
 					text-align: center;
 
 					.label-logo {
-						height: 28px;
+						//height: 28px;
+						height: auto !important;
 						width: auto !important;
 						box-sizing: border-box;
 						// border: 1px white dashed;
