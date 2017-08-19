@@ -70,6 +70,7 @@ html {
 /*
 *	colouring
 */
+	.green-text { color: $lightGreen; }
 	.amber-text { color: $amber; }
 	.yellow-text { color: $yellow; }
 	.selected {
@@ -192,7 +193,7 @@ html {
 
 		/* custom embedded mailchimp subscribe form */
 		#mc_embed_signup {
-			background: #000000;
+			background: $black;
 			height: auto!important;
 			clear: left;
 			padding: 0;
@@ -315,6 +316,16 @@ html {
 				height: calc(100vh / 2);
 			}
 		}
+	}
+
+/*
+*	actions speed dial
+*/
+	#actions {
+		position: fixed;
+		bottom: 0;
+		right: 0.6em;
+		background: transparent;
 	}
 /*
 *	contact

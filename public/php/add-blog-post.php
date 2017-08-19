@@ -1,19 +1,16 @@
 <?php
-$field_name = $_POST['name'];
 $field_email = $_POST['email'];
-$field_header = $_POST['header'];
-$body = $_POST['message'];
+$body = 'Soundcloud playlist link: ' . $_POST['link'];
 
 $mail_to = 'vs@dnbhub.com';
-$subject = 'Message from dnbhub.com site user: '.$field_header;
+$subject = 'Message from dnbhub.com site user: blog post submission';
 
 //$data_charset = 'CP1251';
 $data_charset = 'UTF-8';
 $send_charset = 'UTF-8';
 
 // mime-type transformation function - START
-function send_mime_mail($field_name, // sender's name
-												$field_email, // sender's email
+function send_mime_mail($field_email, // sender's email
 												$mail_to, // recipient's email
 												$data_charset, // sent data encoding
 												$send_charset, // email encoding
@@ -23,7 +20,7 @@ function send_mime_mail($field_name, // sender's name
 												) {
 	$mail_to = '<' . $mail_to . '>';
 	$subject = mime_header_encode($subject, $data_charset, $send_charset);
-	$from =  mime_header_encode($field_name, $data_charset, $send_charset). ' <' . $field_email . '>';
+	$from =  mime_header_encode($field_email, $data_charset, $send_charset). ' <' . $field_email . '>';
 
 	if($data_charset !== $send_charset) {
 		$body = iconv($data_charset, $send_charset, $body). ' <' . $field_email . '>';
@@ -44,11 +41,11 @@ function mime_header_encode($str, $data_charset, $send_charset) {
 }
 // mime-type transformation function - END
 
-if ((strlen($field_name) > 3) && (strlen($field_email) >= 10) && (strlen($field_header) > 1) && (strlen($body) > 5)) {
-	$mail_status = send_mime_mail($field_name, $field_email, $mail_to, $data_charset, $send_charset, $subject, $body);
+if ((strlen($field_email) >= 5) && (strlen($body) > 10)) {
+	$mail_status = send_mime_mail($field_email, $mail_to, $data_charset, $send_charset, $subject, $body);
 }
 
-if ($mail_status && (strlen($field_name) > 3) && (strlen($field_email) >= 10) && (strlen($field_header) > 1) && (strlen($body) > 5)) { ?>
+if ($mail_status && (strlen($field_email) >= 10) && (strlen($body) > 5)) { ?>
 	{"success":"Your message was successfully sent."}
 <?php
 }

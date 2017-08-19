@@ -63,3 +63,19 @@
 		</div>
 	</div>
 </div>
+
+<md-fab-toolbar id="actions" md-open="actions.open" md-direction="left">
+	<md-fab-trigger class="align-with-text">
+		<md-button class="md-fab md-raised md-primary" aria-label="Actions menu" title="Actions menu">
+			<md-icon md-font-icon="fa fa-ellipsis-h"></md-icon>
+		</md-button>
+	</md-fab-trigger>
+
+	<md-toolbar>
+		<md-fab-actions class="md-toolbar-tools">
+			<md-button aria-label="Add blog post" title="Add blog post" ng-click="showAddBlogPostDialog($event)">
+				<md-icon md-font-icon="fa fa-plus"></md-icon>
+			</md-button>
+		</md-fab-actions>
+	</md-toolbar>
+</md-fab-toolbar>

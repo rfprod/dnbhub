@@ -74,3 +74,19 @@ dnbhubServices.factory('submitFormService', ['$resource', '$location', function(
 		}
 	});
 }]);
+
+dnbhubServices.factory('addBlogPostService', ['$resource', '$location', function($resource, $location) {
+	'use strict';
+	var baseUrl = setBaseUrl($location.$$absUrl);
+	console.log('abs base url:', baseUrl);
+	return $resource(baseUrl + '/php/add-blog-post.php', {}, {
+		query: {method: 'POST', params: {}, headers: {'Content-type': 'application/x-www-form-urlencoded'}, isArray: false,
+			interceptor: {
+				response: function(response) {
+					response.resource.$httpHeaders = response.headers;
+					return response.resource;
+				}
+			}
+		}
+	});
+}]);

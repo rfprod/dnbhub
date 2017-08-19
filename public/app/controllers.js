@@ -181,8 +181,8 @@ dnbhubControllers.controller('repostsCtrl', ['$scope', 'usSpinnerService',
 	}
 ]);
 
-dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location', 'usSpinnerService', 'blogPostsService',
-	function($scope, $sce, $route, $location, usSpinnerService, blogPostsService) {
+dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location', '$mdDialog', 'usSpinnerService', 'blogPostsService',
+	function($scope, $sce, $route, $location, $mdDialog, usSpinnerService, blogPostsService) {
 		'use strict';
 		$scope.inputReleaseCode = undefined;
 		$scope.blogPosts = [];
@@ -198,6 +198,9 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 		$scope.returnWidgetLink = function() {
 			return $sce.trustAsResourceUrl($scope.selectedBlogPost.widgetLink);
 		};
+		/*
+		*	sidebar soundcloud player
+		*/
 		$scope.tracks = [];
 		$scope.getTracks = function(soundcloudUserId,callback) {
 			SC.initialize({ client_id: 'dc01ec1b4ea7d41793e61bac1dae13c5' });
@@ -207,6 +210,9 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 				callback();
 			});
 		};
+		/*
+		*	blog posts navigation
+		*/
 		$scope.setProperSearchParam = function() {
 			var search = $location.search();
 			if ($scope.selectedBlogPost) {
@@ -267,6 +273,33 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 				console.log('this is a first blog post');
 			}
 		};
+		/*
+		*	actions
+		*/
+		$scope.actions = {
+			open: false
+		};
+		$scope.showAddBlogPostDialog = function(event) {
+			console.log('event', event);
+			$mdDialog.show({
+				controller: 'addBlogPostDialogCtrl',
+				templateUrl: 'app/views/add-blog-post-dialog.html',
+				parent: angular.element(document.body),
+				targetEvent: event,
+				clickOutsideToClose: true,
+				fullscreen: false
+			}).then(
+				function(result) {
+					console.log('result', result);
+				},
+				function() {
+					console.log('dialog dismissed at', new Date().getTime());
+				}
+			);
+		};
+		/*
+		*	lifecycle
+		*/
 		$scope.$on('$viewContentLoaded', function() {
 			console.log('blog view controller loaded');
 			var search = $location.search();
@@ -279,6 +312,48 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 		$scope.$on('$destroy', function() {
 			console.log('blog view controller destroyed');
 			usSpinnerService.spin('root-spinner');
+		});
+	}
+]);
+
+dnbhubControllers.controller('addBlogPostDialogCtrl', ['$scope', '$mdDialog', '$timeout', 'addBlogPostService',
+	function($scope, $mdDialog, $timeout, addBlogPostService) {
+		'use strict';
+		$scope.form = {
+			email: '',
+			soundcloudPlaylistLink: ''
+		};
+		$scope.sendMailResponse = {error: '', success: ''};
+		$scope.hide = function() {
+			$mdDialog.hide();
+		};
+		$scope.cancel = function() {
+			$mdDialog.cancel();
+		};
+		$scope.submit = function() {
+			var params = 'email=' + $scope.form.email + '&link=' + $scope.form.soundcloudPlaylistLink;
+			addBlogPostService.query(params).$promise.then(function(response) {
+				console.log('addBlogPostService, response', response);
+				if (response.error) $scope.sendMailResponse.error = response.error;
+				if (response.success) {
+					$scope.sendMailResponse.error = '';
+					$scope.sendMailResponse.success = response.success;
+				}
+				$timeout(function() {
+					if ($scope.sendMailResponse.success) {
+						$mdDialog.hide($scope.form);
+					}
+				},5000);
+			});
+		};
+		/*
+		*	lifecycle
+		*/
+		$scope.$on('$viewContentLoaded', function() {
+			console.log('add blog post dialog controller loaded');
+		});
+		$scope.$on('$destroy', function() {
+			console.log('add blog post dialog controller destroyed');
 		});
 	}
 ]);
