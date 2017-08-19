@@ -7,15 +7,17 @@
 		<form flex accept-charset="UTF-8" name="addBlogPostForm" layout="column" layout-padding align-items="start stretch">
 			<legend>In order to add a blog post about a release submit a soundcloud playlist link to release (you should have a soundcloud account and have a playlist created there) and your email. The submission will be reviewed and added to the blog section of Dnbhub if it satisfies genre requirements and passes general production quality control.</legend>
 			<md-input-container>
-				<input type="text" name="email" ng-model="form.email" placeholder="your_e-mail@domain.com" required>
+				<input type="email" name="email" ng-model="form.email" ng-pattern="patterns.email" placeholder="your_e-mail@domain.com" required>
 				<div ng-messages="addBlogPostForm.email.$error">
 					<div ng-message="required">This field is required</div>
+					<div ng-message="pattern">Invalid value, it should be an email</div>
 				</div>
 			</md-input-container>
 			<md-input-container>
-				<input type="text" name="soundcloudPlaylistLink" ng-model="form.soundcloudPlaylistLink" placeholder="Soundcloud playlist link" required>
+				<input type="text" name="soundcloudPlaylistLink" ng-model="form.soundcloudPlaylistLink" ng-pattern="patterns.soundcloudPlaylistLink" placeholder="Soundcloud playlist link, for example: https://soundcloud.com/dnbhub/sets/everything" required>
 				<div ng-messages="addBlogPostForm.soundcloudPlaylistLink.$error">
 					<div ng-message="required">This field is required</div>
+					<div ng-message="pattern">Invalid value, example link: https://soundcloud.com/dnbhub/sets/everything</div>
 				</div>
 			</md-input-container>
 		</form>

@@ -323,6 +323,10 @@ dnbhubControllers.controller('addBlogPostDialogCtrl', ['$scope', '$mdDialog', '$
 			email: '',
 			soundcloudPlaylistLink: ''
 		};
+		$scope.patterns = {
+			email: /\w{4}@\w{2,}(\.)?\w{2,}/,
+			soundcloudPlaylistLink: /https:\/\/soundcloud\.com\/\w+\/sets\/\w+/
+		};
 		$scope.sendMailResponse = {error: '', success: ''};
 		$scope.hide = function() {
 			$mdDialog.hide();
@@ -388,7 +392,6 @@ dnbhubControllers.controller('contactCtrl', ['$scope', '$timeout', 'usSpinnerSer
 			$scope.message = '';
 		};
 		$scope.submitForm = function() {
-			//$scope.params = { name: $scope.name, email: $scope.email, header: $scope.header, message: $scope.message };
 			$scope.params = 'name=' + $scope.name + '&email=' + $scope.email + '&header=' + $scope.header + '&message=' + $scope.message;
 			submitFormService.query($scope.params).$promise.then(function(response) {
 				console.log(response);
