@@ -45,7 +45,7 @@ if ((strlen($field_email) >= 5) && (strlen($body) > 10)) {
 	$mail_status = send_mime_mail($field_email, $mail_to, $data_charset, $send_charset, $subject, $body);
 }
 
-if ($mail_status && (strlen($field_email) >= 10) && (strlen($body) > 5)) { ?>
+if ($mail_status && (strlen($field_email) >= 5) && (strlen($body) > 10)) { ?>
 	{"success":"Your message was successfully sent."}
 <?php
 }

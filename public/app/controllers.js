@@ -316,17 +316,14 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 	}
 ]);
 
-dnbhubControllers.controller('addBlogPostDialogCtrl', ['$scope', '$mdDialog', '$timeout', 'addBlogPostService',
-	function($scope, $mdDialog, $timeout, addBlogPostService) {
+dnbhubControllers.controller('addBlogPostDialogCtrl', ['$scope', '$mdDialog', '$timeout', 'regXpatternsService', 'addBlogPostService',
+	function($scope, $mdDialog, $timeout, regXpatternsService, addBlogPostService) {
 		'use strict';
 		$scope.form = {
 			email: '',
 			soundcloudPlaylistLink: ''
 		};
-		$scope.patterns = {
-			email: /\w{4}@\w{2,}(\.)?\w{2,}/,
-			soundcloudPlaylistLink: /https:\/\/soundcloud\.com\/\w+\/sets\/\w+/
-		};
+		$scope.patterns = regXpatternsService;
 		$scope.sendMailResponse = {error: '', success: ''};
 		$scope.hide = function() {
 			$mdDialog.hide();
@@ -362,8 +359,8 @@ dnbhubControllers.controller('addBlogPostDialogCtrl', ['$scope', '$mdDialog', '$
 	}
 ]);
 
-dnbhubControllers.controller('contactCtrl', ['$scope', '$timeout', 'usSpinnerService', 'submitFormService',
-	function($scope, $timeout, usSpinnerService, submitFormService) {
+dnbhubControllers.controller('contactCtrl', ['$scope', '$timeout', 'usSpinnerService', 'regXpatternsService', 'submitFormService',
+	function($scope, $timeout, usSpinnerService, regXpatternsService, submitFormService) {
 		'use strict';
 		$scope.email = '';
 		$scope.name = '';
@@ -371,6 +368,7 @@ dnbhubControllers.controller('contactCtrl', ['$scope', '$timeout', 'usSpinnerSer
 		$scope.message = '';
 		$scope.buttonText = {reset: 'Reset all fields', submit: 'Send message'};
 		$scope.params = '';
+		$scope.patterns = regXpatternsService;
 		$scope.sendMailResponse = {error: '', success: ''};
 		$scope.hideInstructions = false;
 		$scope.switchInstructionsVisibility = function() {

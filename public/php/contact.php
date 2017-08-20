@@ -44,11 +44,11 @@ function mime_header_encode($str, $data_charset, $send_charset) {
 }
 // mime-type transformation function - END
 
-if ((strlen($field_name) > 3) && (strlen($field_email) >= 10) && (strlen($field_header) > 1) && (strlen($body) > 5)) {
+if ((strlen($field_name) > 3) && (strlen($field_email) >= 5) && (strlen($field_header) > 3) && (strlen($body) > 3)) {
 	$mail_status = send_mime_mail($field_name, $field_email, $mail_to, $data_charset, $send_charset, $subject, $body);
 }
 
-if ($mail_status && (strlen($field_name) > 3) && (strlen($field_email) >= 10) && (strlen($field_header) > 1) && (strlen($body) > 5)) { ?>
+if ($mail_status && (strlen($field_name) > 3) && (strlen($field_email) >= 5) && (strlen($field_header) > 3) && (strlen($body) > 3)) { ?>
 	{"success":"Your message was successfully sent."}
 <?php
 }

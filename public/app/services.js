@@ -2,6 +2,18 @@
 
 var dnbhubServices = angular.module('dnbhubServices', ['ngResource']);
 
+dnbhubServices.factory('regXpatternsService', [ function() {
+	'use strict';
+	/*
+	*	regular expression patterns shared service
+	*/
+	return {
+		email: /\w{2}@\w{2,}(\.)?\w{2,}/,
+		soundcloudPlaylistLink: /https:\/\/soundcloud\.com\/\w+\/sets\/\w+/,
+		text: /\w{3,}/
+	};
+}]);
+
 /*
 *	dynamically set backend base url to be able to deploy on any domain
 */
