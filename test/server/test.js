@@ -23,8 +23,10 @@ describe('/ endpoint', function() {
 		request(baseUrl+'/', function (error,response,body) {
 
 			const $ = cheerio.load(body);
-			assert.equal(1, $('img.logo').length);
-			assert.equal(1, $('div.view-frame').length);
+			setTimeout(function() {
+				assert.equal(1, $('img.logo').length);
+				assert.equal(1, $('div.view-frame').length);
+			}, 5000);
 
 			done();
 		});
