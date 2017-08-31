@@ -55,11 +55,11 @@
 				</a>
 			</div>
 		</div>
-		<div flex layout="row" layout-wrap>
-			<div flex flex-xs="100" flex-sm="100">
+		<div flex layout="row" layout-wrap class="post-container">
+			<div flex="50" flex-xs="100" flex-sm="100">
 				<iframe width="100%" height="450" scrolling="no" frameborder="no" ng-src="{{returnWidgetLink()}}"></iframe>
 			</div>
-			<div flex flex-xs="100" flex-sm="100" id="text" ng-bind-html="selectedBlogPost.text"></div>
+			<div flex="50" flex-xs="100" flex-sm="100" id="text" ng-bind-html="selectedBlogPost.text"></div>
 		</div>
 	</div>
 </div>
