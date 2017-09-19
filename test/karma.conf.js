@@ -44,10 +44,9 @@ module.exports = function(config){
 		}
 	},
 	browsers: ['ChromeHeadless'],
-	//browsers : ['Chrome', 'Firefox'],
+	// browsers : ['Chrome'],
 	plugins : [
 		'karma-chrome-launcher',
-	//    'karma-firefox-launcher',
 		'karma-jasmine'
 	],
 	hostname: process.env.IP,

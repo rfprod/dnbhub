@@ -16,8 +16,7 @@ const gulp = require('gulp'),
 	del = require('del'),
 	spawn = require('child_process').spawn,
 	exec = require('child_process').exec;
-let node, mongo,
-	protractor;
+let node, protractor;
 
 function killProcessByName(name) {
 	exec('ps -e | grep ' + name, (error, stdout, stderr) => {
@@ -36,16 +35,6 @@ function killProcessByName(name) {
 		}
 	});
 }
-
-gulp.task('database', () => {
-	if (mongo) mongo.kill();
-	mongo = spawn('mongod', ['--smallfiles'], {stdio: 'inherit'});
-	mongo.on('close', (code) => {
-		if (code === 8) {
-			gulp.log('Error detected, waiting for changes...');
-		}
-	});
-});
 
 gulp.task('server', () => {
 	if (node) node.kill();
@@ -115,6 +104,8 @@ gulp.task('pack-vendor-js', () => {
 		*/
 		'./node_modules/jquery/dist/jquery.js',
 
+		'./node_modules/firebase/firebase.js',
+
 		'./node_modules/angular/angular.js',
 		'./node_modules/angular-sanitize/angular-sanitize.js',
 		'./node_modules/angular-aria/angular-aria.js',
@@ -175,8 +166,7 @@ gulp.task('watch-and-lint', () => {
 });
 
 gulp.task('watch', () => {
-	gulp.watch(['./server.js', './app/**/*.js'], ['server']); // watch server and database changes and restart server
-	gulp.watch(['./server.js', './app/models/*.js'], ['database']); // watch database changes and restart databse
+	gulp.watch(['./server.js', './app/**/*.js'], ['server']); // watch server changes and restart server
 	gulp.watch(['./public/*.js', './public/app/**/*.js', './*.js', './.eslintignore', './.eslintrc.json'], ['lint']); // watch files to be linted or eslint config files and lint on change
 	gulp.watch('./public/app/**/*.js', ['pack-app-js']); // watch app js changes, pack js, minify and put in respective folder
 	gulp.watch('./public/app/scss/*.scss', ['pack-app-css']); // watch app css changes, pack css, minify and put in respective folder
@@ -190,12 +180,11 @@ gulp.task('build', (done) => {
 });
 
 gulp.task('default', (done) => {
-	runSequence('build', 'database','server','watch','client-e2e-test', done);
+	runSequence('build', 'server','watch','client-e2e-test', done);
 });
 
 process.on('exit', function() {
 	if (node) node.kill();
-	if (mongo) mongo.kill();
 });
 
 process.on('SIGINT', function() {
