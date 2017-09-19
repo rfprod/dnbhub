@@ -16,7 +16,6 @@
 		"angular-resource": "^1.6.6",
 		"angular-route": "^1.6.6",
 		"angular-sanitize": "^1.6.6",
-		"angular-spinner": "^1.0.1",
 		"angular-websocket": "^2.0.1",
 		"dotenv": "^4.0.0",
 		"eslint": "^4.7.0",

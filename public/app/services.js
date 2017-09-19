@@ -102,3 +102,26 @@ dnbhubServices.factory('addBlogPostService', ['$resource', '$location', function
 		}
 	});
 }]);
+
+dnbhubServices.service('firebaseService', [function() {
+	'use strict';
+	/* global firebase */
+	var config = {
+		apiKey: 'firebase_key_here',
+		authDomain: 'firebase_domain',
+		databaseURL: 'database_url',
+		projectId: 'project_id',
+		storageBucket: 'storage_bucket',
+		messagingSenderId: 'msg_sender'
+	};
+	firebase.initializeApp(config);
+
+	this.db = firebase.database();
+	this.get = function(collection) {
+		if (collection && (collection === 'about' || collection === 'freedownloads' || collection === 'blog')) {
+			return this.db.ref('/' + collection).once('value');
+		} else {
+			throw new TypeError('firebaseService, get(collection): missing collection identifier, which can have values: about, freedownloads, blog');
+		}
+	};
+}]);

@@ -114,7 +114,6 @@ gulp.task('pack-vendor-js', () => {
 		'./node_modules/angular-material/angular-material.js',
 		'./node_modules/angular-resource/angular-resource.js',
 		'./node_modules/angular-route/angular-route.js',
-		'./node_modules/angular-spinner/dist/angular-spinner.js',
 		'./node_modules/angular-mocks/angular-mocks.js',
 		'./node_modules/angular-websocket/dist/angular-websocket.js'
 	])

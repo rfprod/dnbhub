@@ -5,13 +5,11 @@ describe('Dnbhub controllers', function() {
 	beforeEach(module('dnbhub'));
 
 	describe('blogCtrl', function(){
-		var scope, ctrl, usSpinnerService, blogPostsService;
+		var scope, ctrl, blogPostsService;
 
-		beforeEach(inject(function($rootScope, $controller, _usSpinnerService_, _blogPostsService_) {
+		beforeEach(inject(function($rootScope, $controller, _blogPostsService_) {
 			scope = $rootScope.$new();
 			ctrl = $controller('blogCtrl', {$scope: scope});
-			usSpinnerService = _usSpinnerService_;
-			spyOn(usSpinnerService,'spin').and.callThrough();
 			blogPostsService = _blogPostsService_;
 			spyOn(blogPostsService,'query').and.callThrough();
 		}));

@@ -1,9 +1,9 @@
 /* Controllers */
 
-var dnbhubControllers = angular.module('dnbhubControllers', ['angularSpinner']);
+var dnbhubControllers = angular.module('dnbhubControllers', []);
 
-dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$location', '$mdComponentRegistry', '$mdSidenav', 'usSpinnerService',
-	function($scope, $document, $element, $location, $mdComponentRegistry, $mdSidenav, usSpinnerService) {
+dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$location', '$mdComponentRegistry', '$mdSidenav',
+	function($scope, $document, $element, $location, $mdComponentRegistry, $mdSidenav) {
 		'use strict';
 		$scope.title = 'Drum and Bass Hub';
 		$scope.buttonTitles = {
@@ -81,17 +81,19 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 			}
 			return false;
 		};
+		/*
+		*	lifecycle
+		*/
 		$document.ready(function() {
 			console.log('document ready');
-			usSpinnerService.spin('root-spinner');
 			// console.log($element);
 			$scope.speakerObj = $element[0].querySelector('#speaker');
 		});
 	}
 ]);
 
-dnbhubControllers.controller('indexCtrl', ['$scope', '$route', 'usSpinnerService',
-	function($scope, $route, usSpinnerService) {
+dnbhubControllers.controller('indexCtrl', ['$scope',
+	function($scope) {
 		'use strict';
 		$scope.tracks = [];
 		$scope.getTracks = function(callback) {
@@ -102,35 +104,38 @@ dnbhubControllers.controller('indexCtrl', ['$scope', '$route', 'usSpinnerService
 				callback();
 			});
 		};
+		/*
+		*	lifecycle
+		*/
 		$scope.$on('$viewContentLoaded', function() {
 			console.log('index view controller loaded');
 			$scope.getTracks(function() {
-				usSpinnerService.stop('root-spinner');
+				console.log('got tracks');
 			});
 		});
 		$scope.$on('$destroy', function() {
 			console.log('index view controller destroyed');
-			usSpinnerService.spin('root-spinner');
 		});
 	}
 ]);
 
-dnbhubControllers.controller('singlesCtrl', ['$scope', 'usSpinnerService',
-	function($scope, usSpinnerService) {
+dnbhubControllers.controller('singlesCtrl', ['$scope',
+	function($scope) {
 		'use strict';
+		/*
+		*	lifecycle
+		*/
 		$scope.$on('$viewContentLoaded', function() {
 			console.log('singles view controller loaded');
-			usSpinnerService.stop('root-spinner');
 		});
 		$scope.$on('$destroy', function() {
 			console.log('singles view controller destroyed');
-			usSpinnerService.spin('root-spinner');
 		});
 	}
 ]);
 
-dnbhubControllers.controller('freeDownloadsCtrl', ['$scope', '$sce', '$location', '$mdSidenav', 'usSpinnerService', 'freedownloadsService',
-	function($scope, $sce, $location, $mdSidenav, usSpinnerService, freedownloadsService) {
+dnbhubControllers.controller('freeDownloadsCtrl', ['$scope', '$sce', '$location', '$mdSidenav', 'freedownloadsService', 'firebaseService',
+	function($scope, $sce, $location, $mdSidenav, freedownloadsService, firebaseService) {
 		'use strict';
 		$scope.freedownloadsData = [];
 		$scope.selectedWidget = 1;
@@ -141,14 +146,30 @@ dnbhubControllers.controller('freeDownloadsCtrl', ['$scope', '$sce', '$location'
 		$scope.widgetLink = function(soundcloudTrackID) {
 			return $sce.trustAsResourceUrl($scope.scWidgetLink.first + soundcloudTrackID + $scope.scWidgetLink.last);
 		};
+		$scope.firebase = firebaseService;
 		$scope.updateFreedownloadsData = function() {
-			freedownloadsService.query({}).$promise.then(function(response){
+			$scope.firebase.get('freedownloads').then(function(snapshot) {
+				console.log('freedownloads', snapshot.val());
+				var response = snapshot.val();
 				$scope.freedownloadsData = [];
 				response.forEach(function(element) {
 					$scope.freedownloadsData.push(element);
 				});
 				$scope.welectedWidget = 0;
-				usSpinnerService.stop('root-spinner');
+				// console.log('$scope.freedownloadsData:', $scope.freedownloadsData);
+				$scope.$apply();
+			}).catch(function(error) {
+				console.log('error', error);
+				// fallback to static json hosted on client
+				freedownloadsService.query({}).$promise.then(function(response){
+					$scope.freedownloadsData = [];
+					response.forEach(function(element) {
+						$scope.freedownloadsData.push(element);
+					});
+					$scope.welectedWidget = 0;
+				});
+				// console.log('$scope.freedownloadsData:', $scope.freedownloadsData);
+				$scope.$apply();
 			});
 		};
 		$scope.scrollToTrack = function(widgetIndex) {
@@ -156,33 +177,36 @@ dnbhubControllers.controller('freeDownloadsCtrl', ['$scope', '$sce', '$location'
 			$location.$$hash = widgetIndex;
 			$mdSidenav('left').toggle();
 		};
+		/*
+		*	lifecycle
+		*/
 		$scope.$on('$viewContentLoaded', function() {
 			console.log('free downloads view controller loaded');
 			$scope.updateFreedownloadsData();
 		});
 		$scope.$on('$destroy', function() {
 			console.log('free downloads view controller destroyed');
-			usSpinnerService.spin('root-spinner');
 		});
 	}
 ]);
 
-dnbhubControllers.controller('repostsCtrl', ['$scope', 'usSpinnerService',
-	function($scope, usSpinnerService) {
+dnbhubControllers.controller('repostsCtrl', ['$scope',
+	function($scope) {
 		'use strict';
+		/*
+		*	lifecycle
+		*/
 		$scope.$on('$viewContentLoaded', function() {
 			console.log('reposts view controller loaded');
-			usSpinnerService.stop('root-spinner');
 		});
 		$scope.$on('$destroy', function() {
 			console.log('reposts view controller destroyed');
-			usSpinnerService.spin('root-spinner');
 		});
 	}
 ]);
 
-dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location', '$mdDialog', 'usSpinnerService', 'blogPostsService',
-	function($scope, $sce, $route, $location, $mdDialog, usSpinnerService, blogPostsService) {
+dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location', '$mdDialog', 'blogPostsService', 'firebaseService',
+	function($scope, $sce, $route, $location, $mdDialog, blogPostsService, firebaseService) {
 		'use strict';
 		$scope.inputReleaseCode = undefined;
 		$scope.blogPosts = [];
@@ -221,8 +245,11 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 				$location.search(search);
 			}
 		};
+		$scope.firebase = firebaseService;
 		$scope.updateBlogPosts = function() {
-			blogPostsService.query({}).$promise.then(function(response) {
+			$scope.firebase.get('blog').then(function(snapshot) {
+				console.log('blog', snapshot.val());
+				var response = snapshot.val();
 				$scope.blogPosts = [];
 				response.forEach(function(element) {
 					$scope.blogPosts.push(element);
@@ -241,17 +268,43 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 					$scope.setProperSearchParam();
 				}
 				$scope.getTracks($scope.selectedBlogPost.soundcloudUserId,function() {
-					usSpinnerService.stop('root-spinner');
+					console.log('got user tracks');
 				});
+				$scope.$apply();
+			}).catch(function(error) {
+				console.log('error', error);
+				// fallback to static json hosted on client
+				blogPostsService.query({}).$promise.then(function(response) {
+					$scope.blogPosts = [];
+					response.forEach(function(element) {
+						$scope.blogPosts.push(element);
+					});
+					if ($scope.inputReleaseCode) {
+						$scope.blogPosts.forEach(function(value, index) {
+							if (value.code === $scope.inputReleaseCode) {
+								$scope.selectedBlogPostId = index;
+							}
+						});
+						$scope.inputReleaseCode = undefined;
+						$scope.selectedBlogPost = $scope.blogPosts[$scope.selectedBlogPostId];
+						if ($scope.selectedBlogPostId === 0) { $scope.setProperSearchParam(); }
+					}else{
+						$scope.selectedBlogPost = $scope.blogPosts[$scope.selectedBlogPostId];
+						$scope.setProperSearchParam();
+					}
+					$scope.getTracks($scope.selectedBlogPost.soundcloudUserId,function() {
+						console.log('got user tracks');
+					});
+				});
+				$scope.$apply();
 			});
 		};
 		$scope.selectBlogPost = function() {
 			if ($scope.blogPosts.length > 0) {
-				usSpinnerService.spin('root-spinner');
 				$scope.selectedBlogPost = $scope.blogPosts[$scope.selectedBlogPostId];
 				$scope.setProperSearchParam();
 				$scope.getTracks($scope.selectedBlogPost.soundcloudUserId,function() {
-					usSpinnerService.stop('root-spinner');
+					console.log('got user tracks');
 				});
 			}
 		};
@@ -311,7 +364,6 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 		});
 		$scope.$on('$destroy', function() {
 			console.log('blog view controller destroyed');
-			usSpinnerService.spin('root-spinner');
 		});
 	}
 ]);
@@ -359,8 +411,8 @@ dnbhubControllers.controller('addBlogPostDialogCtrl', ['$scope', '$mdDialog', '$
 	}
 ]);
 
-dnbhubControllers.controller('contactCtrl', ['$scope', '$timeout', 'usSpinnerService', 'regXpatternsService', 'submitFormService',
-	function($scope, $timeout, usSpinnerService, regXpatternsService, submitFormService) {
+dnbhubControllers.controller('contactCtrl', ['$scope', '$timeout', 'regXpatternsService', 'submitFormService',
+	function($scope, $timeout, regXpatternsService, submitFormService) {
 		'use strict';
 		$scope.email = '';
 		$scope.name = '';
@@ -404,23 +456,27 @@ dnbhubControllers.controller('contactCtrl', ['$scope', '$timeout', 'usSpinnerSer
 				},5000);
 			});
 		};
+		/*
+		*	lifecycle
+		*/
 		$scope.$on('$viewContentLoaded', function() {
 			console.log('contact view controller loaded');
-			usSpinnerService.stop('root-spinner');
 		});
 		$scope.$on('$destroy', function() {
 			console.log('contact view controller destroyed');
-			usSpinnerService.spin('root-spinner');
 		});
 	}
 ]);
 
-dnbhubControllers.controller('aboutCtrl', ['$scope', '$route', 'usSpinnerService', 'dnbhubDetailsService',
-	function($scope, $route, usSpinnerService, dnbhubDetailsService) {
+dnbhubControllers.controller('aboutCtrl', ['$scope', '$route', 'dnbhubDetailsService', 'firebaseService',
+	function($scope, $route, dnbhubDetailsService, firebaseService) {
 		'use strict';
 		$scope.dnbhubDetails = {};
+		$scope.firebase = firebaseService;
 		$scope.updateDnbhubDetails = function() {
-			dnbhubDetailsService.query({}).$promise.then(function(response) {
+			$scope.firebase.get('about').then(function(snapshot) {
+				console.log('about', snapshot.val());
+				var response = snapshot.val();
 				$scope.dnbhubDetails = {};
 				var keys = Object.keys(response);
 				// console.log('keys, response:', keys, ',', response);
@@ -428,16 +484,31 @@ dnbhubControllers.controller('aboutCtrl', ['$scope', '$route', 'usSpinnerService
 					$scope.dnbhubDetails[key] = response[key];
 				});
 				// console.log('$scope.dnbhubDetails:', $scope.dnbhubDetails);
-				usSpinnerService.stop('root-spinner');
+				$scope.$apply();
+			}).catch(function(error) {
+				console.log('error', error);
+				// fallback to static json hosted on client
+				dnbhubDetailsService.query({}).$promise.then(function(response) {
+					$scope.dnbhubDetails = {};
+					var keys = Object.keys(response);
+					// console.log('keys, response:', keys, ',', response);
+					keys.forEach(function(key) {
+						$scope.dnbhubDetails[key] = response[key];
+					});
+					// console.log('$scope.dnbhubDetails:', $scope.dnbhubDetails);
+				});
+				$scope.$apply();
 			});
 		};
+		/*
+		*	lifecycle
+		*/
 		$scope.$on('$viewContentLoaded', function() {
 			console.log('about view controller loaded');
 			$scope.updateDnbhubDetails();
 		});
 		$scope.$on('$destroy', function() {
 			console.log('about view controller destroyed');
-			usSpinnerService.spin('root-spinner');
 		});
 	}
 ]);
