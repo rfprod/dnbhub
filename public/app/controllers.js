@@ -96,9 +96,10 @@ dnbhubControllers.controller('indexCtrl', ['$scope',
 	function($scope) {
 		'use strict';
 		$scope.tracks = [];
+		$scope.scid = 'soundcloud_client_id';
 		$scope.getTracks = function(callback) {
-			SC.initialize({ client_id: 'dc01ec1b4ea7d41793e61bac1dae13c5' });
-			SC.get('http://api.soundcloud.com/users/1275637/tracks.json?client_id=dc01ec1b4ea7d41793e61bac1dae13c5', function(tracks) {
+			SC.initialize({ client_id: $scope.scid });
+			SC.get('http://api.soundcloud.com/users/1275637/tracks.json?client_id=' + $scope.scid, function(tracks) {
 				$scope.tracks = tracks;
 				$scope.$digest();
 				callback();
@@ -226,9 +227,10 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 		*	sidebar soundcloud player
 		*/
 		$scope.tracks = [];
+		$scope.scid = 'soundcloud_client_id';
 		$scope.getTracks = function(soundcloudUserId,callback) {
-			SC.initialize({ client_id: 'dc01ec1b4ea7d41793e61bac1dae13c5' });
-			SC.get('http://api.soundcloud.com/users/'+soundcloudUserId+'/tracks.json?client_id=dc01ec1b4ea7d41793e61bac1dae13c5', function(tracks) {
+			SC.initialize({ client_id: $scope.scid });
+			SC.get('http://api.soundcloud.com/users/'+soundcloudUserId+'/tracks.json?client_id=' + $scope.scid, function(tracks) {
 				$scope.tracks = tracks;
 				$scope.$digest();
 				callback();

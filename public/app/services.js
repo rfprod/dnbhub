@@ -107,12 +107,12 @@ dnbhubServices.service('firebaseService', [function() {
 	'use strict';
 	/* global firebase */
 	var config = {
-		apiKey: 'firebase_key_here',
-		authDomain: 'firebase_domain',
-		databaseURL: 'database_url',
-		projectId: 'project_id',
-		storageBucket: 'storage_bucket',
-		messagingSenderId: 'msg_sender'
+		apiKey: 'firebase_api_key',
+		authDomain: 'firebase_auth_domain',
+		databaseURL: 'firebase_database_url',
+		projectId: 'firebase_project_id',
+		storageBucket: 'firebase_storage_bucket',
+		messagingSenderId: 'firebase_messaging_sender_id'
 	};
 	firebase.initializeApp(config);
 

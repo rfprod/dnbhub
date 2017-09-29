@@ -8,6 +8,7 @@ const gulp = require('gulp'),
 	eslint = require('gulp-eslint'),
 	plumber = require('gulp-plumber'),
 	uglify = require('gulp-uglify'),
+	replace = require('gulp-replace'),
 	mocha = require('gulp-mocha'),
 	karmaServer = require('karma').Server,
 	sass = require('gulp-sass'),
@@ -72,9 +73,18 @@ gulp.task('clean-build', () => { // clean old files before a new build
 });
 
 gulp.task('pack-app-js', () => {
+	require('dotenv').load();
+	const env = process.env;
 	return gulp.src('./public/app/*.js')
 		.pipe(plumber())
 		.pipe(concat('packed-app.js'))
+		.pipe(replace('soundcloud_client_id', env.SOUNDCLOUD_CLIENT_ID))
+		.pipe(replace('firebase_api_key', env.FIREBASE_API_KEY))
+		.pipe(replace('firebase_auth_domain', env.FIREBASE_AUTH_DOMAIN))
+		.pipe(replace('firebase_database_url', env.FIREBASE_DATABASE_URL))
+		.pipe(replace('firebase_project_id', env.FIREBASE_PROJECT_ID))
+		.pipe(replace('firebase_storage_bucket', env.FIREBASE_STORAGE_BUCKET))
+		.pipe(replace('firebase_messaging_sender_id', env.FIREBASE_MESSAGING_SENDER_ID))
 		.pipe(uglify())
 		.pipe(plumber.stop())
 		.pipe(rename('packed-app.min.js'))
