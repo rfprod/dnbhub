@@ -17,8 +17,8 @@ module.exports = function(config){
 		'node_modules/angular-mocks/angular-mocks.js',
 		'node_modules/angular-websocket/dist/angular-websocket.js',
 		//'public/js/vendor-pack.min.js',
-		//'public/app/*.js',
-		'public/js/packed-app.min.js',
+		'public/app/*.js',
+		//'public/js/packed-app.min.js',
 		'test/client/unit/*.js',
 	],
 

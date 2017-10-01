@@ -6,6 +6,21 @@ var firebase = {
 		return true;
 	},
 	database: function() {
-		return true;
+		return {
+			ref: function() {
+				return {
+					once: function() {
+						return true;
+					}
+				};
+			}
+		};
+	},
+	auth: function() {
+		return {
+			onAuthStateChanged: function() {
+				return true;
+			}
+		};
 	}
 };

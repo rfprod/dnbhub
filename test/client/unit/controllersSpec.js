@@ -4,10 +4,11 @@ describe('Dnbhub controllers', function() {
 
 	beforeEach(module('dnbhub'));
 
-	describe('navCtrl', function() {
-		var scope, ctrl, doc, el, loc, compReg, sidenav, dialog;
 
-		beforeEach(inject(function($rootScope, $controller, _$document_, _$location_, _$mdComponentRegistry_, _$mdSidenav_, _$mdDialog_) {
+	describe('navCtrl', function() {
+		var scope, ctrl, doc, el, loc, compReg, sidenav, dialog, firebaseService;
+
+		beforeEach(inject(function($rootScope, $controller, _$document_, _$location_, _$mdComponentRegistry_, _$mdSidenav_, _$mdDialog_, _firebaseService_) {
 			scope = $rootScope.$new();
 			doc = _$document_;
 			el = angular.element('<div></div>');
@@ -15,7 +16,8 @@ describe('Dnbhub controllers', function() {
 			compReg = _$mdComponentRegistry_;
 			sidenav = _$mdSidenav_;
 			dialog = _$mdDialog_;
-			ctrl = $controller('navCtrl', { $scope: scope, $document: doc, $element: el, $location: loc, $mdComponentRegistry: compReg, $mdSidenav: sidenav, $mdDialog: dialog });
+			firebaseService = _firebaseService_;
+			ctrl = $controller('navCtrl', { $scope: scope, $document: doc, $element: el, $location: loc, $mdComponentRegistry: compReg, $mdSidenav: sidenav, $mdDialog: dialog, firebaseService: firebaseService });
 		}));
 
 		it('should be defined', function() {

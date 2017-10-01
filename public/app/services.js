@@ -99,7 +99,7 @@ dnbhubServices.factory('addBlogPostService', ['$resource', '$location', function
 	});
 }]);
 
-dnbhubServices.service('firebaseService', [function() {
+dnbhubServices.service('firebaseService', ['$q', function($q) {
 	/* global firebase */
 	this.initFirebase = function() {
 		var config = {
@@ -112,13 +112,23 @@ dnbhubServices.service('firebaseService', [function() {
 		};
 		firebase.initializeApp(config);
 		this.db = firebase.database();
-		this.auth = firebase.auth;
+		this.auth = firebase.auth();
+		firebase.auth().onAuthStateChanged(function(user) {
+			if (user) {
+				console.log('user signed in', user);
+				this.isSignedIn = true;
+			} else {
+				console.log('user signed out');
+				this.isSignedIn = false;
+			}
+		});
 	};
 
 	this.db = undefined;
 	this.auth = undefined;
+	this.isSignedIn = false;
 
-	this.get = function(collection) {
+	this.getDB = function(collection) {
 		if (collection && (collection === 'about' || collection === 'freedownloads' || collection === 'blog')) {
 			return this.db.ref('/' + collection).once('value');
 		} else {
@@ -126,14 +136,66 @@ dnbhubServices.service('firebaseService', [function() {
 		}
 	};
 
-	this.auth = function(mode, payload) {
-		if (mode !== 'email' && mode !== 'oauth') {
-			throw new TypeError('mode must be an \'email\' or \'oauth\'');
+	this.authenticate = function(mode, payload) {
+		var def = $q.defer();
+		if (mode !== 'email' && mode !== 'twitter') {
+			def.reject(new TypeError('mode must be: \'email\' or \'twitter\''));
 		}
-		if (typeof paypoad !== 'object') {
-			throw new TypeError('payload must be an object');
+		if (typeof payload !== 'object') {
+			def.reject(new TypeError('payload must be an object'));
 		}
+
 		console.log('mode:', mode);
 		console.log('payload:', payload);
+
+		if (mode === 'email' && payload.hasOwnProperty('email') && payload.hasOwnProperty('password')) {
+			this.auth().signInWithEmailAndPassword(payload.email, payload.password)
+				.then(function(success) {
+					// console.log('auth success', success);
+					def.resolve(success);
+				})
+				.catch(function(error) {
+					// console.log('auth error', error);
+					def.reject(error);
+				});
+		} else {
+			def.reject(new ReferenceError('payload must have attributes: email, password'));
+		}
+
+		if (mode === 'twitter') {
+			/*
+			*	TODO
+			*	https://firebase.google.com/docs/auth/web/twitter-login?authuser=0
+			*/
+		}
+		return def.promise;
 	};
+
+	this.signout = function() {
+		if (this.auth) {
+			return this.auth().signOut();
+		}
+	};
+
+	this.create = function(mode, payload) {
+		var def = $q.defer();
+		if (mode !== 'email') {
+			def.reject(new TypeError('mode must be: \'email\''));
+		}
+		if (mode === 'email' && payload.hasOwnProperty('email') && payload.hasOwnProperty('password')) {
+			this.auth().createUserWithEmailAndPassword(payload.email, payload.password)
+				.then(function(success) {
+					// console.log('auth success', success);
+					def.resolve(success);
+				})
+				.catch(function(error) {
+					// console.log('auth error', error);
+					def.reject(error);
+				});
+		} else {
+			def.reject(new ReferenceError('payload must have attributes: email, password'));
+		}
+		return def.promise;
+	};
+
 }]);

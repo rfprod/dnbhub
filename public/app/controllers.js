@@ -3,8 +3,8 @@
 
 var dnbhubControllers = angular.module('dnbhubControllers', []);
 
-dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$location', '$mdComponentRegistry', '$mdSidenav', '$mdDialog',
-	function($scope, $document, $element, $location, $mdComponentRegistry, $mdSidenav, $mdDialog) {
+dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$location', '$mdComponentRegistry', '$mdSidenav', '$mdDialog', 'firebaseService',
+	function($scope, $document, $element, $location, $mdComponentRegistry, $mdSidenav, $mdDialog, firebaseService) {
 		$scope.title = 'Drum and Bass Hub';
 		$scope.buttonTitles = {
 			index: 'Index - Drum and Bass Hub index',
@@ -14,7 +14,8 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 			blog: 'Blog - Drum and Bass related press releases',
 			contact: 'Contact form - use it for any enquires correlating with Drum and Bass Hub activities',
 			about: 'All trademarks and copyrights are property of their respective owners',
-			auth: 'Sign up / Log in'
+			auth: 'Sign up / Log in',
+			signout: 'Sign out'
 		};
 		$scope.buttonIcons = {
 			index: 'fa fa-fire',
@@ -24,7 +25,8 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 			blog: 'fa fa-th-large',
 			contact: 'fa fa-envelope',
 			about: 'fa fa-copyright',
-			auth: 'fa fa-user'
+			auth: 'fa fa-user',
+			signout: 'fa fa-sign-out'
 		};
 		$scope.currentYear = new Date().getFullYear();
 		$scope.buttonNames = {
@@ -35,7 +37,8 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 			blog: 'Blog',
 			contact: 'Contact',
 			about: 'VS 2011-'+$scope.currentYear,
-			auth: 'Auth'
+			auth: 'Auth',
+			signout: 'Sign Out'
 		};
 		$scope.buttonHrefs = {
 			index: 'index',
@@ -79,6 +82,17 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 				console.log('closed', rejected);
 			});
 		};
+		$scope.signout = function() {
+			if (firebaseService.auth) {
+				firebaseService.signout()
+					.then(function(success) {
+						console.log('signout success', success);
+					})
+					.catch(function(error) {
+						console.log('signout error', error);
+					});
+			}
+		};
 		$scope.disableToggler = function() {
 			// console.log('$mdComponentRegistry.get(\'left\'):', $mdComponentRegistry.get('left'));
 			return !$mdComponentRegistry.get('left');
@@ -112,6 +126,7 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 
 dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', 'regXpatternsService', 'firebaseService',
 	function($scope, $mdDialog, regXpatternsService, firebaseService) {
+		$scope.instructions = undefined;
 		$scope.form = {
 			email: '',
 			password: ''
@@ -123,10 +138,35 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', 'regXpatt
 		$scope.patterns = regXpatternsService;
 		$scope.firebase = firebaseService;
 
+		$scope.signupMode = false;
 		$scope.submit = function(isValid) {
 			console.log('isValid', isValid);
 			if (isValid) {
-				$mdDialog.hide(isValid);
+				if (!$scope.signupMode) {
+					$scope.firebase.authenticate('email', { email: $scope.form.email, password: $scope.form.password }).then(
+						function(success) {
+							console.log('auth success', success);
+							$mdDialog.hide(isValid);
+						},
+						function(error) {
+							console.log('auth error', error);
+							if (error.code === 'auth/user-not-found') {
+								$scope.instructions = 'We did not find an account registered with this email address. To create a new account hit a CREATE ACCOUNT button.';
+								$scope.signupMode = true;
+							}
+						}
+					);
+				} else {
+					console.log('TODO: send signup request');
+					$scope.firebase.create('email', { email: $scope.form.email, password: $scope.form.password }).then(
+						function(success) {
+							console.log('signup success', success);
+						},
+						function(error) {
+							console.log('signup error', error);
+						}
+					);
+				}
 			}
 		};
 		$scope.hide = function() {
@@ -134,6 +174,13 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', 'regXpatt
 		};
 		$scope.cancel = function() {
 			$mdDialog.cancel();
+		};
+		$scope.reset = function() {
+			$scope.instructions = undefined;
+			$scope.form.email = '';
+			$scope.form.password = '';
+			$scope.showPassword = false;
+			$scope.signupMode = false;
 		};
 		/*
 		*	lifecycle
@@ -201,7 +248,7 @@ dnbhubControllers.controller('freeDownloadsCtrl', ['$scope', '$sce', '$location'
 		};
 		$scope.firebase = firebaseService;
 		$scope.updateFreedownloadsData = function() {
-			$scope.firebase.get('freedownloads').then(function(snapshot) {
+			$scope.firebase.getDB('freedownloads').then(function(snapshot) {
 				console.log('freedownloads', snapshot.val());
 				var response = snapshot.val();
 				$scope.freedownloadsData = [];
@@ -299,7 +346,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 		};
 		$scope.firebase = firebaseService;
 		$scope.updateBlogPosts = function() {
-			$scope.firebase.get('blog').then(function(snapshot) {
+			$scope.firebase.getDB('blog').then(function(snapshot) {
 				console.log('blog', snapshot.val());
 				var response = snapshot.val();
 				$scope.blogPosts = [];
@@ -523,7 +570,7 @@ dnbhubControllers.controller('aboutCtrl', ['$scope', '$route', 'dnbhubDetailsSer
 		$scope.dnbhubDetails = {};
 		$scope.firebase = firebaseService;
 		$scope.updateDnbhubDetails = function() {
-			$scope.firebase.get('about').then(function(snapshot) {
+			$scope.firebase.getDB('about').then(function(snapshot) {
 				console.log('about', snapshot.val());
 				var response = snapshot.val();
 				$scope.dnbhubDetails = {};

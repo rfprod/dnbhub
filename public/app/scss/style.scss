@@ -67,6 +67,12 @@ html {
 		overflow:hidden;
 	}
 
+	.visibility-toggler {
+		&:hover {
+			cursor: pointer;
+		}
+	}
+
 /*
 *	colouring
 */
