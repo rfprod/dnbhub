@@ -111,10 +111,12 @@ dnbhubServices.service('firebaseService', [function() {
 			messagingSenderId: 'firebase_messaging_sender_id'
 		};
 		firebase.initializeApp(config);
+		this.db = firebase.database();
+		this.auth = firebase.auth;
 	};
 
-	this.db = firebase.database();
-	this.auth = firebase.auth;
+	this.db = undefined;
+	this.auth = undefined;
 
 	this.get = function(collection) {
 		if (collection && (collection === 'about' || collection === 'freedownloads' || collection === 'blog')) {
