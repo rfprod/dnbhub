@@ -1,16 +1,17 @@
+'use strict';
 /* Services */
 
 var dnbhubServices = angular.module('dnbhubServices', ['ngResource']);
 
 dnbhubServices.factory('regXpatternsService', [ function() {
-	'use strict';
 	/*
 	*	regular expression patterns shared service
 	*/
 	return {
 		email: /\w{2}@\w{2,}(\.)?\w{2,}/,
 		soundcloudPlaylistLink: /https:\/\/soundcloud\.com\/\w+\/sets\/\w+/,
-		text: /\w{3,}/
+		text: /\w{3,}/,
+		password: /\w{8,}/
 	};
 }]);
 
@@ -24,7 +25,6 @@ function setBaseUrl(absUrl) {
 }
 
 dnbhubServices.factory('freedownloadsService', ['$resource', '$location', function($resource, $location) {
-	'use strict';
 	var baseUrl = setBaseUrl($location.$$absUrl);
 	console.log('abs base url:', baseUrl);
 	return $resource(baseUrl + '/data/freedownloads-data.json', {}, {
@@ -40,7 +40,6 @@ dnbhubServices.factory('freedownloadsService', ['$resource', '$location', functi
 }]);
 
 dnbhubServices.factory('blogPostsService', ['$resource', '$location', function($resource, $location) {
-	'use strict';
 	var baseUrl = setBaseUrl($location.$$absUrl);
 	console.log('abs base url:', baseUrl);
 	return $resource(baseUrl + '/data/blog-posts.json', {}, {
@@ -56,7 +55,6 @@ dnbhubServices.factory('blogPostsService', ['$resource', '$location', function($
 }]);
 
 dnbhubServices.factory('dnbhubDetailsService', ['$resource', '$location', function($resource, $location) {
-	'use strict';
 	var baseUrl = setBaseUrl($location.$$absUrl);
 	console.log('abs base url:', baseUrl);
 	return $resource(baseUrl + '/data/dnbhub-details.json', {}, {
@@ -72,7 +70,6 @@ dnbhubServices.factory('dnbhubDetailsService', ['$resource', '$location', functi
 }]);
 
 dnbhubServices.factory('submitFormService', ['$resource', '$location', function($resource, $location) {
-	'use strict';
 	var baseUrl = setBaseUrl($location.$$absUrl);
 	console.log('abs base url:', baseUrl);
 	return $resource(baseUrl + '/php/contact.php', {}, {
@@ -88,7 +85,6 @@ dnbhubServices.factory('submitFormService', ['$resource', '$location', function(
 }]);
 
 dnbhubServices.factory('addBlogPostService', ['$resource', '$location', function($resource, $location) {
-	'use strict';
 	var baseUrl = setBaseUrl($location.$$absUrl);
 	console.log('abs base url:', baseUrl);
 	return $resource(baseUrl + '/php/add-blog-post.php', {}, {
@@ -104,24 +100,38 @@ dnbhubServices.factory('addBlogPostService', ['$resource', '$location', function
 }]);
 
 dnbhubServices.service('firebaseService', [function() {
-	'use strict';
 	/* global firebase */
-	var config = {
-		apiKey: 'firebase_api_key',
-		authDomain: 'firebase_auth_domain',
-		databaseURL: 'firebase_database_url',
-		projectId: 'firebase_project_id',
-		storageBucket: 'firebase_storage_bucket',
-		messagingSenderId: 'firebase_messaging_sender_id'
+	this.initFirebase = function() {
+		var config = {
+			apiKey: 'firebase_api_key',
+			authDomain: 'firebase_auth_domain',
+			databaseURL: 'firebase_database_url',
+			projectId: 'firebase_project_id',
+			storageBucket: 'firebase_storage_bucket',
+			messagingSenderId: 'firebase_messaging_sender_id'
+		};
+		firebase.initializeApp(config);
 	};
-	firebase.initializeApp(config);
 
 	this.db = firebase.database();
+	this.auth = firebase.auth;
+
 	this.get = function(collection) {
 		if (collection && (collection === 'about' || collection === 'freedownloads' || collection === 'blog')) {
 			return this.db.ref('/' + collection).once('value');
 		} else {
 			throw new TypeError('firebaseService, get(collection): missing collection identifier, which can have values: about, freedownloads, blog');
 		}
+	};
+
+	this.auth = function(mode, payload) {
+		if (mode !== 'email' && mode !== 'oauth') {
+			throw new TypeError('mode must be an \'email\' or \'oauth\'');
+		}
+		if (typeof paypoad !== 'object') {
+			throw new TypeError('payload must be an object');
+		}
+		console.log('mode:', mode);
+		console.log('payload:', payload);
 	};
 }]);

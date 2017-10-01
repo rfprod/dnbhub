@@ -3,8 +3,8 @@
 
 var dnbhubControllers = angular.module('dnbhubControllers', []);
 
-dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$location', '$mdComponentRegistry', '$mdSidenav',
-	function($scope, $document, $element, $location, $mdComponentRegistry, $mdSidenav) {
+dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$location', '$mdComponentRegistry', '$mdSidenav', '$mdDialog',
+	function($scope, $document, $element, $location, $mdComponentRegistry, $mdSidenav, $mdDialog) {
 		$scope.title = 'Drum and Bass Hub';
 		$scope.buttonTitles = {
 			index: 'Index - Drum and Bass Hub index',
@@ -13,7 +13,8 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 			reposts: 'Featured - Soundcloud powered RePosts playlists, featuring drum and bass producers, DJs, and MCs audio compositions',
 			blog: 'Blog - Drum and Bass related press releases',
 			contact: 'Contact form - use it for any enquires correlating with Drum and Bass Hub activities',
-			about: 'All trademarks and copyrights are property of their respective owners'
+			about: 'All trademarks and copyrights are property of their respective owners',
+			auth: 'Sign up / Log in'
 		};
 		$scope.buttonIcons = {
 			index: 'fa fa-fire',
@@ -22,7 +23,8 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 			reposts: 'fa fa-retweet',
 			blog: 'fa fa-th-large',
 			contact: 'fa fa-envelope',
-			about: 'fa fa-copyright'
+			about: 'fa fa-copyright',
+			auth: 'fa fa-user'
 		};
 		$scope.currentYear = new Date().getFullYear();
 		$scope.buttonNames = {
@@ -32,7 +34,8 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 			reposts: 'Featured',
 			blog: 'Blog',
 			contact: 'Contact',
-			about: 'VS 2011-'+$scope.currentYear
+			about: 'VS 2011-'+$scope.currentYear,
+			auth: 'Auth'
 		};
 		$scope.buttonHrefs = {
 			index: 'index',
@@ -61,6 +64,21 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 				$scope.speakerObj.play();
 			}, true);
 		};
+		$scope.showAuthDialog = function(event) {
+			console.log('event', event);
+			$mdDialog.show({
+				controller: dnbhubControllers.authDialogCtrl,
+				templateUrl: './app/views/auth.html',
+				parent: angular.element(document.body),
+				targetEvent: event,
+				clickOutsideToClose: true,
+				fullscreen: false
+			}).then(function(result) {
+				console.log('submitted', result);
+			}, function(rejected) {
+				console.log('closed', rejected);
+			});
+		};
 		$scope.disableToggler = function() {
 			// console.log('$mdComponentRegistry.get(\'left\'):', $mdComponentRegistry.get('left'));
 			return !$mdComponentRegistry.get('left');
@@ -88,6 +106,39 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 			console.log('document ready');
 			// console.log($element);
 			$scope.speakerObj = $element[0].querySelector('#speaker');
+		});
+	}
+]);
+
+dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', 'regXpatternsService', 'firebaseService',
+	function($scope, $mdDialog, regXpatternsService, firebaseService) {
+		$scope.form = {
+			email: '',
+			password: ''
+		};
+		$scope.patterns = regXpatternsService;
+		$scope.firebase = firebaseService;
+
+		$scope.submit = function(isValid) {
+			console.log('isValid', isValid);
+			if (isValid) {
+				$mdDialog.hide(isValid);
+			}
+		};
+		$scope.hide = function() {
+			$mdDialog.hide();
+		};
+		$scope.cancel = function() {
+			$mdDialog.cancel();
+		};
+		/*
+		*	lifecycle
+		*/
+		$scope.$on('$viewContentLoaded', function() {
+			console.log('auth controller loaded');
+		});
+		$scope.$on('$destroy', function() {
+			console.log('auth controller destroyed');
 		});
 	}
 ]);

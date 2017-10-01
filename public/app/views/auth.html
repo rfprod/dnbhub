@@ -1,0 +1,37 @@
+<md-dialog aria-label="Auth Dialog" ng-controller="authDialogCtrl">
+	<form ng-cloak accept-charset="UTF-8" name="authForm">
+		<md-toolbar>
+			<div class="md-toolbar-tools">
+				<h2>Auth Dialog</h2>
+				<span flex></span>
+				<md-button class="md-icon-button" ng-click="cancel()">
+					<md-icon aria-label="Close dialog" class="fa fa-close"></md-icon>
+				</md-button>
+			</div>
+		</md-toolbar>
+
+		<md-dialog-content>
+			<div class="md-dialog-content" layout="column" layout-padding align-items="start stretch">
+				<md-input-container>
+					<input type="email" name="email" ng-model="form.email" ng-pattern="patterns.email" placeholder="your_e-mail@domain.com" required>
+					<div ng-messages="authForm.email.$error">
+						<div ng-message="required">This field is required</div>
+						<div ng-message="pattern">Invalid value, it should be an email</div>
+					</div>
+				</md-input-container>
+				<md-input-container>
+					<input type="text" name="password" ng-model="form.password" ng-pattern="patterns.password" placeholder="your password" required>
+					<div ng-messages="authForm.password.$error">
+						<div ng-message="required">This field is required</div>
+						<div ng-message="pattern">Invalid value, should be 8+ characters</div>
+					</div>
+				</md-input-container>
+			</div>
+		</md-dialog-content>
+
+		<md-dialog-actions layout="row">
+			<md-button ng-click="hide()">hide</md-button>
+			<md-button type="submit" ng-disabled="authForm.$invalid" ng-click="submit(authForm.$valid)">submit</md-button>
+		</md-dialog-actions>
+	</form>
+</md-dialog>

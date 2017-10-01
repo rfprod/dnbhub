@@ -61,17 +61,11 @@ dnbhub
 				.dark();
 		}
 	])
-	.run(['$rootScope', '$route', '$window',
-		function ($rootScope, $route, $window) {
-			$window.addEventListener('resize', function() {
-				var current = $route.current.$$route.originalPath;
-				if (current === '/index' || current === '/blog' || current === '/about') {
-					/*
-					$rootScope.$apply(function() {
-						$route.reload();
-					});
-					*/
-				}
-			}, true);
+	.run(['firebaseService',
+		function (firebaseService) {
+			/*
+			*	initialize firebase
+			*/
+			firebaseService.initFirebase();
 		}
 	]);

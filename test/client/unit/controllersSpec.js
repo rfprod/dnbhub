@@ -5,16 +5,17 @@ describe('Dnbhub controllers', function() {
 	beforeEach(module('dnbhub'));
 
 	describe('navCtrl', function() {
-		var scope, ctrl, doc, el, loc, compReg, sidenav;
+		var scope, ctrl, doc, el, loc, compReg, sidenav, dialog;
 
-		beforeEach(inject(function($rootScope, $controller, _$document_, _$location_, _$mdComponentRegistry_, _$mdSidenav_) {
+		beforeEach(inject(function($rootScope, $controller, _$document_, _$location_, _$mdComponentRegistry_, _$mdSidenav_, _$mdDialog_) {
 			scope = $rootScope.$new();
 			doc = _$document_;
 			el = angular.element('<div></div>');
 			loc = _$location_;
 			compReg = _$mdComponentRegistry_;
 			sidenav = _$mdSidenav_;
-			ctrl = $controller('navCtrl', { $scope: scope, $document: doc, $element: el, $location: loc, $mdComponentRegistry: compReg, $mdSidenav: sidenav });
+			dialog = _$mdDialog_;
+			ctrl = $controller('navCtrl', { $scope: scope, $document: doc, $element: el, $location: loc, $mdComponentRegistry: compReg, $mdSidenav: sidenav, $mdDialog: dialog });
 		}));
 
 		it('should be defined', function() {
