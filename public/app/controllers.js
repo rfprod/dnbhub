@@ -1,10 +1,10 @@
+'use strict';
 /* Controllers */
 
 var dnbhubControllers = angular.module('dnbhubControllers', []);
 
 dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$location', '$mdComponentRegistry', '$mdSidenav',
 	function($scope, $document, $element, $location, $mdComponentRegistry, $mdSidenav) {
-		'use strict';
 		$scope.title = 'Drum and Bass Hub';
 		$scope.buttonTitles = {
 			index: 'Index - Drum and Bass Hub index',
@@ -94,7 +94,6 @@ dnbhubControllers.controller('navCtrl', ['$scope', '$document', '$element', '$lo
 
 dnbhubControllers.controller('indexCtrl', ['$scope',
 	function($scope) {
-		'use strict';
 		$scope.tracks = [];
 		$scope.scid = 'soundcloud_client_id';
 		$scope.getTracks = function(callback) {
@@ -122,7 +121,6 @@ dnbhubControllers.controller('indexCtrl', ['$scope',
 
 dnbhubControllers.controller('singlesCtrl', ['$scope',
 	function($scope) {
-		'use strict';
 		/*
 		*	lifecycle
 		*/
@@ -137,7 +135,6 @@ dnbhubControllers.controller('singlesCtrl', ['$scope',
 
 dnbhubControllers.controller('freeDownloadsCtrl', ['$scope', '$sce', '$location', '$mdSidenav', 'freedownloadsService', 'firebaseService',
 	function($scope, $sce, $location, $mdSidenav, freedownloadsService, firebaseService) {
-		'use strict';
 		$scope.freedownloadsData = [];
 		$scope.selectedWidget = 1;
 		$scope.scWidgetLink = {
@@ -193,7 +190,6 @@ dnbhubControllers.controller('freeDownloadsCtrl', ['$scope', '$sce', '$location'
 
 dnbhubControllers.controller('repostsCtrl', ['$scope',
 	function($scope) {
-		'use strict';
 		/*
 		*	lifecycle
 		*/
@@ -208,7 +204,6 @@ dnbhubControllers.controller('repostsCtrl', ['$scope',
 
 dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location', '$mdDialog', 'blogPostsService', 'firebaseService',
 	function($scope, $sce, $route, $location, $mdDialog, blogPostsService, firebaseService) {
-		'use strict';
 		$scope.inputReleaseCode = undefined;
 		$scope.blogPosts = [];
 		$scope.selectedBlogPostId = 0;
@@ -372,7 +367,6 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 
 dnbhubControllers.controller('addBlogPostDialogCtrl', ['$scope', '$mdDialog', '$timeout', 'regXpatternsService', 'addBlogPostService',
 	function($scope, $mdDialog, $timeout, regXpatternsService, addBlogPostService) {
-		'use strict';
 		$scope.form = {
 			email: '',
 			soundcloudPlaylistLink: ''
@@ -415,7 +409,6 @@ dnbhubControllers.controller('addBlogPostDialogCtrl', ['$scope', '$mdDialog', '$
 
 dnbhubControllers.controller('contactCtrl', ['$scope', '$timeout', 'regXpatternsService', 'submitFormService',
 	function($scope, $timeout, regXpatternsService, submitFormService) {
-		'use strict';
 		$scope.email = '';
 		$scope.name = '';
 		$scope.header = '';
@@ -472,7 +465,6 @@ dnbhubControllers.controller('contactCtrl', ['$scope', '$timeout', 'regXpatterns
 
 dnbhubControllers.controller('aboutCtrl', ['$scope', '$route', 'dnbhubDetailsService', 'firebaseService',
 	function($scope, $route, dnbhubDetailsService, firebaseService) {
-		'use strict';
 		$scope.dnbhubDetails = {};
 		$scope.firebase = firebaseService;
 		$scope.updateDnbhubDetails = function() {
