@@ -116,6 +116,10 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', 'regXpatt
 			email: '',
 			password: ''
 		};
+		$scope.showPassword = false;
+		$scope.togglePasswordVisibility = function() {
+			$scope.showPassword = ($scope.showPassword) ? false : true;
+		};
 		$scope.patterns = regXpatternsService;
 		$scope.firebase = firebaseService;
 

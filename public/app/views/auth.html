@@ -20,7 +20,10 @@
 					</div>
 				</md-input-container>
 				<md-input-container>
-					<input type="text" name="password" ng-model="form.password" ng-pattern="patterns.password" placeholder="your password" required>
+					<md-icon class="fa fa-eye" ng-if="!showPassword" ng-click="togglePasswordVisibility()"></md-icon>
+					<md-icon class="fa fa-eye-slash" ng-if="showPassword" ng-click="togglePasswordVisibility()"></md-icon>
+					<input type="{{showPassword ? 'text' : 'password' }}" name="password" ng-model="form.password" ng-pattern="patterns.password" placeholder="your password" required>
+
 					<div ng-messages="authForm.password.$error">
 						<div ng-message="required">This field is required</div>
 						<div ng-message="pattern">Invalid value, should be 8+ characters</div>
