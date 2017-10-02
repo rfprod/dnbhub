@@ -27,10 +27,10 @@
 	<a md-button ng-href="{{buttonHrefs.contact}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.contact)}" title="{{buttonTitles.contact}}" class="hide-xs hide-sm">
 		<i class="{{buttonIcons.contact}}"></i> {{buttonNames.contact}}
 	</a>
-	<a md-button ng-click="showAuthDialog($event)" title="{{buttonTitles.auth}}" class="hide-xs hide-sm">
+	<a md-button ng-click="showAuthDialog($event)" title="{{buttonTitles.auth}}" class="hide-xs hide-sm" ng-if="!firebase.isSignedIn">
 		<i class="{{buttonIcons.auth}}"></i> {{buttonNames.auth}}
 	</a>
-	<a md-button ng-click="signout()" title="{{buttonTitles.signout}}" class="hide-xs hide-sm">
+	<a md-button ng-click="signout()" title="{{buttonTitles.signout}}" class="hide-xs hide-sm" ng-if="firebase.isSignedIn">
 		<i class="{{buttonIcons.signout}}"></i> {{buttonNames.signout}}
 	</a>
 	<a md-button ng-href="{{buttonHrefs.about}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.about)}" title="{{buttonTitles.about}}" class="hide-xs hide-sm">
@@ -71,12 +71,12 @@
 					<i class="{{buttonIcons.contact}}"></i> {{buttonNames.contact}}
 				</a>
 			</md-menu-item>
-			<md-menu-item>
+			<md-menu-item ng-if="!firebase.isSignedIn">
 				<a md-button ng-click="showAuthDialog($event)" title="{{buttonTitles.auth}}">
 					<i class="{{buttonIcons.auth}}"></i> {{buttonNames.auth}}
 				</a>
 			</md-menu-item>
-			<md-menu-item>
+			<md-menu-item ng-if="firebase.isSignedIn">
 				<a md-button ng-click="signout()" title="{{buttonTitles.signout}}">
 					<i class="{{buttonIcons.signout}}"></i> {{buttonNames.signout}}
 				</a>

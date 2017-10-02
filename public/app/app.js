@@ -47,6 +47,14 @@ dnbhub
 					templateUrl: 'app/views/about.html',
 					controller: 'aboutCtrl'
 				})
+				.when('/admin', {
+					templateUrl: 'app/views/admin.html',
+					controller: 'adminCtrl'
+				})
+				.when('/user', {
+					templateUrl: 'app/views/user.html',
+					controller: 'userCtrl'
+				})
 				.otherwise({
 					redirectTo: '/index'
 				});
@@ -61,11 +69,22 @@ dnbhub
 				.dark();
 		}
 	])
-	.run(['firebaseService',
-		function (firebaseService) {
+	.run(['$rootScope', 'firebaseService',
+		function ($rootScope, firebaseService) {
 			/*
 			*	initialize firebase
 			*/
 			firebaseService.initFirebase();
+
+			$rootScope.$on('$locationChangeSuccess', function(event, next, current) {
+				console.log('event', event);
+				console.log('current', current);
+				console.log('next', next);
+				if (/\/user.*$/.test(next)) {
+					console.log('user controls loaded, isSignedIn', firebaseService.isSignedIn);
+				} else if (/\/admin.*$/.test(next)) {
+					console.log('admin controls loaded, isSignedIn', firebaseService.isSignedIn);
+				}
+			});
 		}
 	]);

@@ -100,102 +100,106 @@ dnbhubServices.factory('addBlogPostService', ['$resource', '$location', function
 }]);
 
 dnbhubServices.service('firebaseService', ['$q', function($q) {
-	/* global firebase */
-	this.initFirebase = function() {
-		var config = {
-			apiKey: 'firebase_api_key',
-			authDomain: 'firebase_auth_domain',
-			databaseURL: 'firebase_database_url',
-			projectId: 'firebase_project_id',
-			storageBucket: 'firebase_storage_bucket',
-			messagingSenderId: 'firebase_messaging_sender_id'
-		};
-		firebase.initializeApp(config);
-		this.db = firebase.database();
-		this.auth = firebase.auth();
-		firebase.auth().onAuthStateChanged(function(user) {
-			if (user) {
-				console.log('user signed in', user);
-				this.isSignedIn = true;
+	var service = {
+		/* global firebase */
+		initFirebase: function() {
+			var config = {
+				apiKey: 'firebase_api_key',
+				authDomain: 'firebase_auth_domain',
+				databaseURL: 'firebase_database_url',
+				projectId: 'firebase_project_id',
+				storageBucket: 'firebase_storage_bucket',
+				messagingSenderId: 'firebase_messaging_sender_id'
+			};
+			firebase.initializeApp(config);
+			service.db = firebase.database();
+			service.auth = firebase.auth;
+			firebase.auth().onAuthStateChanged(function(user) {
+				if (user) {
+					console.log('user signed in', user);
+					service.isSignedIn = true;
+				} else {
+					console.log('user signed out');
+					service.isSignedIn = false;
+				}
+			});
+		},
+
+		db: undefined,
+		auth: undefined,
+		isSignedIn: false,
+
+		getDB: function(collection) {
+			if (collection && (collection === 'about' || collection === 'freedownloads' || collection === 'blog')) {
+				return service.db.ref('/' + collection).once('value');
 			} else {
-				console.log('user signed out');
-				this.isSignedIn = false;
+				throw new TypeError('firebaseService, get(collection): missing collection identifier, which can have values: about, freedownloads, blog');
 			}
-		});
-	};
+		},
 
-	this.db = undefined;
-	this.auth = undefined;
-	this.isSignedIn = false;
+		authenticate: function(mode, payload) {
+			var def = $q.defer();
+			if (mode !== 'email' && mode !== 'twitter') {
+				def.reject(new TypeError('mode must be: \'email\' or \'twitter\''));
+			}
+			if (typeof payload !== 'object') {
+				def.reject(new TypeError('payload must be an object'));
+			}
 
-	this.getDB = function(collection) {
-		if (collection && (collection === 'about' || collection === 'freedownloads' || collection === 'blog')) {
-			return this.db.ref('/' + collection).once('value');
-		} else {
-			throw new TypeError('firebaseService, get(collection): missing collection identifier, which can have values: about, freedownloads, blog');
+			console.log('mode:', mode);
+			console.log('payload:', payload);
+
+			if (mode === 'email' && payload.hasOwnProperty('email') && payload.hasOwnProperty('password')) {
+				service.auth().signInWithEmailAndPassword(payload.email, payload.password)
+					.then(function(success) {
+						// console.log('auth success', success);
+						def.resolve(success);
+					})
+					.catch(function(error) {
+						// console.log('auth error', error);
+						def.reject(error);
+					});
+			} else {
+				def.reject(new ReferenceError('payload must have attributes: email, password'));
+			}
+
+			if (mode === 'twitter') {
+				/*
+				*	TODO
+				*	https://firebase.google.com/docs/auth/web/twitter-login?authuser=0
+				*/
+			}
+			return def.promise;
+		},
+
+		signout: function() {
+			if (service.isSignedIn) {
+				return service.auth().signOut();
+			}
+		},
+
+		create: function(mode, payload) {
+			var def = $q.defer();
+			if (mode !== 'email') {
+				def.reject(new TypeError('mode must be: \'email\''));
+			}
+			if (mode === 'email' && payload.hasOwnProperty('email') && payload.hasOwnProperty('password')) {
+				service.auth().createUserWithEmailAndPassword(payload.email, payload.password)
+					.then(function(success) {
+						// console.log('auth success', success);
+						def.resolve(success);
+					})
+					.catch(function(error) {
+						// console.log('auth error', error);
+						def.reject(error);
+					});
+			} else {
+				def.reject(new ReferenceError('payload must have attributes: email, password'));
+			}
+			return def.promise;
 		}
 	};
 
-	this.authenticate = function(mode, payload) {
-		var def = $q.defer();
-		if (mode !== 'email' && mode !== 'twitter') {
-			def.reject(new TypeError('mode must be: \'email\' or \'twitter\''));
-		}
-		if (typeof payload !== 'object') {
-			def.reject(new TypeError('payload must be an object'));
-		}
-
-		console.log('mode:', mode);
-		console.log('payload:', payload);
-
-		if (mode === 'email' && payload.hasOwnProperty('email') && payload.hasOwnProperty('password')) {
-			this.auth().signInWithEmailAndPassword(payload.email, payload.password)
-				.then(function(success) {
-					// console.log('auth success', success);
-					def.resolve(success);
-				})
-				.catch(function(error) {
-					// console.log('auth error', error);
-					def.reject(error);
-				});
-		} else {
-			def.reject(new ReferenceError('payload must have attributes: email, password'));
-		}
-
-		if (mode === 'twitter') {
-			/*
-			*	TODO
-			*	https://firebase.google.com/docs/auth/web/twitter-login?authuser=0
-			*/
-		}
-		return def.promise;
-	};
-
-	this.signout = function() {
-		if (this.auth) {
-			return this.auth().signOut();
-		}
-	};
-
-	this.create = function(mode, payload) {
-		var def = $q.defer();
-		if (mode !== 'email') {
-			def.reject(new TypeError('mode must be: \'email\''));
-		}
-		if (mode === 'email' && payload.hasOwnProperty('email') && payload.hasOwnProperty('password')) {
-			this.auth().createUserWithEmailAndPassword(payload.email, payload.password)
-				.then(function(success) {
-					// console.log('auth success', success);
-					def.resolve(success);
-				})
-				.catch(function(error) {
-					// console.log('auth error', error);
-					def.reject(error);
-				});
-		} else {
-			def.reject(new ReferenceError('payload must have attributes: email, password'));
-		}
-		return def.promise;
-	};
+	return service;
 
 }]);
