@@ -74,7 +74,7 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 				templateUrl: './app/views/auth.html',
 				parent: angular.element(document.body),
 				targetEvent: event,
-				clickOutsideToClose: true,
+				clickOutsideToClose: ($location.$$path === '/user' && !$scope.firebase.isSignedIn) ? false : true,
 				fullscreen: false
 			}).then(function(result) {
 				console.log('submitted', result);
@@ -196,10 +196,14 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$locatio
 			}
 		};
 		$scope.hide = function() {
-			$mdDialog.hide();
+			if (!$scope.disableDismissal) {
+				$mdDialog.hide();
+			}
 		};
 		$scope.cancel = function() {
-			$mdDialog.cancel();
+			if (!$scope.disableDismissal) {
+				$mdDialog.cancel();
+			}
 		};
 		$scope.reset = function() {
 			$scope.instructions = undefined;
@@ -208,6 +212,7 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$locatio
 			$scope.showPassword = false;
 			$scope.signupMode = false;
 		};
+		$scope.disableDismissal = ($location.$$path === '/user' && !$scope.firebase.isSignedIn) ? true : false;
 		/*
 		*	lifecycle
 		*/

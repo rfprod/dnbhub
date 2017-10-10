@@ -118,6 +118,12 @@ dnbhubServices.service('firebaseService', ['$q', function($q) {
 				if (user) {
 					console.log('user signed in', user);
 					service.isSignedIn = true;
+					if (!user.emailVerified) {
+						user.sendEmailVerification().then(function() {
+							console.log('email verification sent');
+							this.signout();
+						});
+					}
 				} else {
 					console.log('user signed out');
 					service.isSignedIn = false;
