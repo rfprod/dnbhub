@@ -15,6 +15,8 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 			contact: 'Contact form - use it for any enquires correlating with Drum and Bass Hub activities',
 			about: 'All trademarks and copyrights are property of their respective owners',
 			auth: 'Sign up / Log in',
+			admin: 'Admin controls',
+			user: 'User controls',
 			signout: 'Sign out'
 		};
 		$scope.buttonIcons = {
@@ -25,7 +27,9 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 			blog: 'fa fa-th-large',
 			contact: 'fa fa-envelope',
 			about: 'fa fa-copyright',
-			auth: 'fa fa-user',
+			auth: 'fa fa-sign-in',
+			admin: 'fa fa-user-secret',
+			user: 'fa fa-user-circle',
 			signout: 'fa fa-sign-out'
 		};
 		$scope.currentYear = new Date().getFullYear();
@@ -38,6 +42,8 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 			contact: 'Contact',
 			about: 'VS 2011-'+$scope.currentYear,
 			auth: 'Auth',
+			admin: 'Admin',
+			user: 'User',
 			signout: 'Sign Out'
 		};
 		$scope.buttonHrefs = {
@@ -46,6 +52,8 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 			freedownloads: 'freedownloads',
 			reposts: 'reposts',
 			blog: 'blog',
+			admin: 'admin',
+			user: 'user',
 			contact: 'contact',
 			about: 'about'
 		};
@@ -130,7 +138,7 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 		});
 		$rootScope.$on('hideAuthDialog', function(event) {
 			console.log('hideAuthDialog, event', event);
-			$mdDialog.hide()
+			$mdDialog.hide();
 		});
 		/*
 		*	lifecycle
@@ -675,6 +683,7 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', 'firebaseServ
 dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', 'firebaseService',
 	function($rootScope, $scope, firebaseService) {
 		$scope.firebase = firebaseService;
+		$scope.userData = undefined;
 		/*
 		*	lifecycle
 		*/
@@ -682,11 +691,16 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', 'firebaseServi
 			console.log('user view controller loaded');
 			if (!$scope.firebase.isSignedIn) {
 				$rootScope.$broadcast('showAuthDialog');
+				$rootScope.$on('hideAuthDialog', function() {
+					// console.log('$scope.firebase.user.providerData:', $scope.firebase.user.providerData);
+					$scope.userData = $scope.firebase.user.providerData[0];
+				});
 			} else {
 				/*
 				*	TODO
-				*	init
+				*	load data
 				*/
+				$scope.userData = $scope.firebase.user.providerData[0];
 			}
 		});
 		$scope.$on('$destroy', function() {

@@ -135,6 +135,7 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 									});
 							});
 					} else {
+						service.user = user;
 						$rootScope.$broadcast('hideAuthDialog');
 						if (user.email === 'connect@rfprod.tk') {
 							$location.url('/admin');
@@ -151,6 +152,7 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 
 		db: undefined,
 		auth: undefined,
+		user: undefined,
 		isSignedIn: false,
 
 		getDB: function(collection) {

@@ -1,3 +1,9 @@
 <div id="user" flex layout="column" layout-fill layout-align="start stretch">
-	You must me authenticated to access user controls
+	<span ng-if="!firebase.isSignedIn">You must me authenticated to access user controls</span>
+	<span ng-if="firebase.isSignedIn">
+		{{ userData.email }}
+		{{ userData.displayName }}
+		{{ userData.phoneNumber }}
+		{{ userData.photoURL }}
+	</span>
 </div>
