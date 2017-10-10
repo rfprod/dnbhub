@@ -19,9 +19,9 @@
 		"angular-websocket": "^2.0.1",
 		"dotenv": "^4.0.0",
 		"eslint": "^4.8.0",
-		"express": "^4.16.1",
+		"express": "^4.16.2",
 		"express-session": "^1.15.6",
-		"firebase": "^4.4.0",
+		"firebase": "^4.5.0",
 		"font-awesome": "^4.7.0",
 		"gulp": "^3.9.1",
 		"gulp-autoprefixer": "^4.0.0",
@@ -37,7 +37,7 @@
 		"gulp-util": "^3.0.8",
 		"jquery": "^3.2.1",
 		"karma": "^1.7.1",
-		"run-sequence": "^2.1.0"
+		"run-sequence": "^2.2.0"
 	},
 	"devDependencies": {
 		"chai": "^4.1.2",
@@ -45,7 +45,7 @@
 		"jasmine-core": "^2.8.0",
 		"karma-chrome-launcher": "^2.2.0",
 		"karma-jasmine": "^1.1.0",
-		"mocha": "^3.5.3",
+		"mocha": "^4.0.1",
 		"protractor": "^5.1.2",
 		"request": "^2.83.0",
 		"string": "^3.3.3"
@@ -56,8 +56,10 @@
 		"clean-build": "gulp clean-build",
 		"start": "gulp",
 		"pretest": "npm install",
-		"test": "karma start test/karma.conf.js",
-		"test-single-run": "karma start test/karma.conf.js --single-run",
+		"test": "gulp unit-tests",
+		"test-server": "gulp setver-test",
+		"test-client": "gulp client-unit-test",
+		"test-client-single-run": "gulp client-unit-tes-single-run",
 		"lint": "gulp watch-and-lint",
 		"lint-single-run": "gulp lint",
 		"preupdate-webdriver": "npm install",
