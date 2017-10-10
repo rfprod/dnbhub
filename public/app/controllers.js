@@ -128,6 +128,10 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 			console.log('showAuthDialog, event', event);
 			$scope.showAuthDialog(event);
 		});
+		$rootScope.$on('hideAuthDialog', function(event) {
+			console.log('hideAuthDialog, event', event);
+			$mdDialog.hide()
+		});
 		/*
 		*	lifecycle
 		*/
@@ -164,9 +168,9 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$locatio
 							console.log('auth success');
 							$mdDialog.hide(isValid);
 							if (user.email === 'connect@rfprod.tk') {
-								$location.path('/admin');
+								$location.url('/admin');
 							} else {
-								$location.path('/user');
+								$location.url('/user');
 							}
 						},
 						function(error) {
@@ -186,9 +190,9 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$locatio
 							console.log('signup success');
 							$mdDialog.hide(isValid);
 							if (user.email === 'connect@rfprod.tk') {
-								$location.path('/admin');
+								$location.url('/admin');
 							} else {
-								$location.path('/user');
+								$location.url('/user');
 							}
 						},
 						function(error) {

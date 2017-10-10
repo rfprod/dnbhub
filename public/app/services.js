@@ -99,7 +99,7 @@ dnbhubServices.factory('addBlogPostService', ['$resource', '$location', function
 	});
 }]);
 
-dnbhubServices.service('firebaseService', ['$q', '$route', '$window', function($q, $route, $window) {
+dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$window', '$location', function($rootScope, $q, $route, $window, $location) {
 	var service = {
 		/* global firebase */
 		initFirebase: function() {
@@ -134,6 +134,13 @@ dnbhubServices.service('firebaseService', ['$q', '$route', '$window', function($
 										$route.reload();
 									});
 							});
+					} else {
+						$rootScope.$broadcast('hideAuthDialog');
+						if (user.email === 'connect@rfprod.tk') {
+							$location.url('/admin');
+						} else {
+							$location.url('/user');
+						}
 					}
 				} else {
 					console.log('user signed out');
