@@ -99,7 +99,7 @@ dnbhubServices.factory('addBlogPostService', ['$resource', '$location', function
 	});
 }]);
 
-dnbhubServices.service('firebaseService', ['$q', function($q) {
+dnbhubServices.service('firebaseService', ['$q', '$route', '$window', function($q, $route, $window) {
 	var service = {
 		/* global firebase */
 		initFirebase: function() {
@@ -119,10 +119,21 @@ dnbhubServices.service('firebaseService', ['$q', function($q) {
 					console.log('user signed in', user);
 					service.isSignedIn = true;
 					if (!user.emailVerified) {
-						user.sendEmailVerification().then(function() {
-							console.log('email verification sent');
-							this.signout();
-						});
+						user.sendEmailVerification()
+							.then(function() {
+								console.log('email verification sent');
+								service.signout()
+									.then(function() {
+										console.log('signout success');
+										$window.alert('Check your email for the latest verification link from Dnbhub firebaseapp mailer. You should verify your email first.');
+										$route.reload();
+									})
+									.catch(function(error) {
+										console.log('signout error', error);
+										$window.alert('Error: try again later.');
+										$route.reload();
+									});
+							});
 					}
 				} else {
 					console.log('user signed out');

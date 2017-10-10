@@ -86,9 +86,14 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 		$scope.signout = function() {
 			if ($scope.firebase.isSignedIn) {
 				$scope.firebase.signout()
-					.then(function(success) {
-						console.log('signout success', success);
-						$route.reload();
+					.then(function() {
+						console.log('signout success');
+						if ($location.$$path === '/user') {
+							$location.path('/index');
+							$scope.$apply();
+						} else {
+							$route.reload();
+						}
 					})
 					.catch(function(error) {
 						console.log('signout error', error);
