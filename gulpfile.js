@@ -223,13 +223,13 @@ gulp.task('watch', () => {
 	gulp.watch(['./public/*.js', './public/app/**/*.js', './*.js', './.eslintignore', './.eslintrc.json'], ['lint']); // watch files to be linted or eslint config files and lint on change
 	gulp.watch('./public/app/**/*.js', ['pack-app-js']); // watch app js changes, pack js, minify and put in respective folder
 	gulp.watch('./public/app/scss/*.scss', ['pack-app-css']); // watch app css changes, pack css, minify and put in respective folder
-	gulp.watch(['./public/app/*.js','./test/client/unit/*.js','./test/karma.conf.js'], ['client-unit-test']); //watch unit test changes and run tests
+	gulp.watch(['./public/app/*.js','./test/client/unit/*.js','./test/karma.conf.js'], ['client-unit-test-single-run']); //watch unit test changes and run tests
 	gulp.watch(['./test/client/e2e/**', './test/protractor.conf.js'], ['client-e2e-test']); // watch client e2e test or protractor config changes and run tests
 	gulp.watch(['./server.js', './test/server/test.js'], ['server-test']); // watch server changes and run tests
 });
 
 gulp.task('build', (done) => {
-	runSequence('lint', 'pack-app-js', 'pack-app-css', 'pack-vendor-js', 'pack-vendor-css', 'move-vendor-fonts', 'client-unit-test', done);
+	runSequence('lint', 'pack-app-js', 'pack-app-css', 'pack-vendor-js', 'pack-vendor-css', 'move-vendor-fonts', 'client-unit-test-single-run', done);
 });
 
 gulp.task('default', (done) => {

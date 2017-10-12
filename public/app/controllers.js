@@ -406,7 +406,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 			*	\n to <br/>
 			*	links to anchors
 			*/
-			var processed = unprocessed.replace(/\n/g, '<br/>').replace(/(http(s)?:\/\/(www\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._\+~#=]{0,255}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))/g, '<a href="$1" target=_blank>link</a>');
+			var processed = unprocessed.replace(/\n/g, '<br/>').replace(/(http(s)?:\/\/(www\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._+~#=]{0,255}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*))/g, '<a href="$1" target=_blank><i class="fa fa-external-link"></i></a>');
 			console.log('processed', processed);
 			return processed;
 		};

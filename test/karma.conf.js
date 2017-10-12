@@ -22,8 +22,6 @@ module.exports = function(config){
 		'test/client/unit/*.js',
 	],
 
-	autoWatch : true,
-
 	frameworks: ['jasmine'],
 
 	customLaunchers: {
@@ -48,8 +46,19 @@ module.exports = function(config){
 		'karma-chrome-launcher',
 		'karma-jasmine'
 	],
+
+	browserNoActivityTimeout: 20000,
+
+	failOnEmptyTestSuite: false, // overrides the error, warn instead - by default returns error if there're no tests defined
+
 	hostname: process.env.IP,
 	port: process.env.PORT,
-	runnerPort: 0
+	runnerPort: 0,
+
+	autoWatch: true,
+	singleRun: true,
+	logLevel: config.LOG_DEBUG,
+	colors: true
+
   });
 };
