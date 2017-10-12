@@ -24,8 +24,7 @@
 					<i class="fa fa-chevron-left"></i>
 				</a>
 				<span flex="60" layout="row" layout-align="center center" layout-wrap>
-					<img hide-xs flex="15" class="label-logo" ng-src="{{selectedBlogPost.logo}}"/>
-					<span flex="85">{{selectedBlogPost.title}}</span>
+					<span flex="100">{{playlist.title}}</span>
 				</span>
 				<a md-button flex="20" ng-disabled="disableBlogPostSelector('next')" ng-click="nextBlogPost()" aria-label="next blog post" title="next blog post" class="md-accent">
 					<i class="fa fa-chevron-right"></i>
@@ -57,9 +56,12 @@
 		</div>
 		<div flex layout="row" layout-wrap class="post-container">
 			<div flex="50" flex-xs="100" flex-sm="100">
-				<iframe width="100%" height="450" scrolling="no" frameborder="no" ng-src="{{returnWidgetLink()}}"></iframe>
+				<iframe width="100%" height="450" scrolling="no" frameborder="no" ng-src="{{returnWidgetLink()}}" ng-if="returnWidgetLink() !== '#'"></iframe>
 			</div>
-			<div flex="50" flex-xs="100" flex-sm="100" id="text" ng-bind-html="selectedBlogPost.text"></div>
+			<div flex="50" flex-xs="100" flex-sm="100" id="text" ng-if="playlist">
+				<div ng-bind-html="playlist.description"></div>
+				<p ng-if="playlist.release_year && playlist.release_month && playlist.release_day">Release date: {{playlist.release_year}}.{{playlist.release_month}}.{{playlist.release_day}}</p>
+			</div>
 		</div>
 	</div>
 </div>

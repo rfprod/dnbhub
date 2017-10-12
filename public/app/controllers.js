@@ -365,18 +365,37 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 				return ($scope.selectedBlogPostId === 0) ? true : false;
 			}
 		};
+		$scope.widgetLink = {
+			prefix: 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/',
+			suffix: '&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true'
+		};
 		$scope.returnWidgetLink = function() {
-			return $sce.trustAsResourceUrl($scope.selectedBlogPost.widgetLink);
+			return ($scope.selectedBlogPost.playlistId) ? $sce.trustAsResourceUrl($scope.widgetLink.prefix + $scope.selectedBlogPost.playlistId + $scope.widgetLink.suffix) : '#';
 		};
 		/*
 		*	sidebar soundcloud player
 		*/
 		$scope.tracks = [];
 		$scope.scid = 'soundcloud_client_id';
-		$scope.getTracks = function(soundcloudUserId,callback) {
+		$scope.getTracks = function(soundcloudUserId, callback) {
 			SC.initialize({ client_id: $scope.scid });
 			SC.get('http://api.soundcloud.com/users/'+soundcloudUserId+'/tracks.json?client_id=' + $scope.scid, function(tracks) {
 				$scope.tracks = tracks;
+				$scope.$digest();
+				callback();
+			});
+		};
+		/*
+		*	playlist details
+		*/
+		$scope.playlist = undefined;
+		$scope.getPlaylistDetails = function(playlistId, callback) {
+			$scope.playlist = undefined;
+			SC.initialize({ client_id: $scope.scid });
+			SC.get('http://api.soundcloud.com/playlists/'+playlistId+'?client_id=' + $scope.scid, function(playlist) {
+				playlist.description = playlist.description.replace(/\n/g, '<br/>');
+				$scope.playlist = playlist;
+				console.log('$scope.playlist:', $scope.playlist);
 				$scope.$digest();
 				callback();
 			});
@@ -414,9 +433,6 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 					$scope.selectedBlogPost = $scope.blogPosts[$scope.selectedBlogPostId];
 					$scope.setProperSearchParam();
 				}
-				$scope.getTracks($scope.selectedBlogPost.soundcloudUserId,function() {
-					console.log('got user tracks');
-				});
 				$scope.$apply();
 			}).catch(function(error) {
 				console.log('error', error);
@@ -439,9 +455,6 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 						$scope.selectedBlogPost = $scope.blogPosts[$scope.selectedBlogPostId];
 						$scope.setProperSearchParam();
 					}
-					$scope.getTracks($scope.selectedBlogPost.soundcloudUserId,function() {
-						console.log('got user tracks');
-					});
 				});
 				$scope.$apply();
 			});
@@ -450,8 +463,11 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 			if ($scope.blogPosts.length > 0) {
 				$scope.selectedBlogPost = $scope.blogPosts[$scope.selectedBlogPostId];
 				$scope.setProperSearchParam();
-				$scope.getTracks($scope.selectedBlogPost.soundcloudUserId,function() {
-					console.log('got user tracks');
+				$scope.getPlaylistDetails($scope.selectedBlogPost.playlistId, function() {
+					console.log('got playlist details');
+					$scope.getTracks($scope.selectedBlogPost.soundcloudUserId, function() {
+						console.log('got user tracks');
+					});
 				});
 			}
 		};
