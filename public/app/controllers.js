@@ -393,12 +393,22 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 			$scope.playlist = undefined;
 			SC.initialize({ client_id: $scope.scid });
 			SC.get('http://api.soundcloud.com/playlists/'+playlistId+'?client_id=' + $scope.scid, function(playlist) {
-				playlist.description = playlist.description.replace(/\n/g, '<br/>');
+				playlist.description = $scope.processDescription(playlist.description);
 				$scope.playlist = playlist;
 				console.log('$scope.playlist:', $scope.playlist);
 				$scope.$digest();
 				callback();
 			});
+		};
+		$scope.processDescription = function(unprocessed) {
+			/*
+			*	convert:
+			*	\n to <br/>
+			*	links to anchors
+			*/
+			var processed = unprocessed.replace(/\n/g, '<br/>').replace(/(http(s)?:\/\/(www\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._\+~#=]{0,255}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))/g, '<a href="$1" target=_blank>link</a>');
+			console.log('processed', processed);
+			return processed;
 		};
 		/*
 		*	blog posts navigation
@@ -412,7 +422,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 			}
 		};
 		$scope.firebase = firebaseService;
-		$scope.updateBlogPosts = function() {
+		$scope.updateBlogPosts = function(callback) {
 			$scope.firebase.getDB('blog').then(function(snapshot) {
 				console.log('blog', snapshot.val());
 				var response = snapshot.val();
@@ -433,6 +443,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 					$scope.selectedBlogPost = $scope.blogPosts[$scope.selectedBlogPostId];
 					$scope.setProperSearchParam();
 				}
+				callback();
 				$scope.$apply();
 			}).catch(function(error) {
 				console.log('error', error);
@@ -456,6 +467,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 						$scope.setProperSearchParam();
 					}
 				});
+				callback();
 				$scope.$apply();
 			});
 		};
@@ -523,7 +535,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 				console.log('location.search: ',search);
 				$scope.inputReleaseCode = search.code;
 			}
-			$scope.updateBlogPosts();
+			$scope.updateBlogPosts($scope.selectBlogPost);
 		});
 		$scope.$on('$destroy', function() {
 			console.log('blog view controller destroyed');
