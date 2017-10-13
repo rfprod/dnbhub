@@ -1,6 +1,7 @@
 exports.config = {
 
 	onPrepare: function() {
+		browser.angularAppRoot('html');
 		browser.driver.get('http://localhost:3000/public/index.html');
 	},
 
@@ -15,17 +16,17 @@ exports.config = {
 		}
 	},
 
-	directConnect: false,
+	chromeOnly: true,
 
-	chromeOnly: false,
+	directConnect: true,
 
 	baseUrl: 'http://localhost:3000/',
 
 	framework: 'jasmine',
 
-	allScriptsTimeout: 15000,
+	allScriptsTimeout: 30000,
 
-	getPageTimeout: 15000,
+	getPageTimeout: 30000,
 
 	jasmineNodeOpts: {
 		showColors: true,
