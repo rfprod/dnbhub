@@ -166,6 +166,7 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$locatio
 		$scope.firebase = firebaseService;
 
 		$scope.signupMode = false;
+		$scope.wrongPassword = false;
 		$scope.submit = function(isValid) {
 			console.log('isValid', isValid);
 			if (isValid) {
@@ -187,11 +188,16 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$locatio
 							if (error.code === 'auth/user-not-found') {
 								$scope.instructions = 'We did not find an account registered with this email address. To create a new account hit a CREATE ACCOUNT button.';
 								$scope.signupMode = true;
+								$scope.wrongPassword = false;
+							} else if (error.code === 'auth/wrong-password') {
+								$scope.instructions = 'Password does not match an email address.';
+								$scope.wrongPassword = true;
+							} else {
+								$scope.instructions = 'Unknown error occurred. Try again later.';
 							}
 						}
 					);
 				} else {
-					console.log('TODO: send signup request');
 					$scope.firebase.create('email', { email: $scope.form.email, password: $scope.form.password }).then(
 						function(user) {
 							// console.log('signup success', user);
