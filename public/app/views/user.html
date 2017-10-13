@@ -1,9 +1,31 @@
 <div id="user" flex layout="column" layout-fill layout-align="start stretch">
 	<span ng-if="!firebase.isSignedIn">You must me authenticated to access user controls</span>
 	<span ng-if="firebase.isSignedIn">
-		{{ userData.email }}
-		{{ userData.displayName }}
-		{{ userData.phoneNumber }}
-		{{ userData.photoURL }}
+		<span ng-if="instructions">{{ instructions }}</span>
+		<form ng-cloak accept-charset="UTF-8" name="profileForm" layout="column" layout-align="start stretch">
+			<span layout="row" layout-wrap layout-align="center center">
+				<md-input-container>
+					<md-icon class="fa fa-paper-plane amber-text hover-pointer" ng-if="!currentUser.emailVerified" title="your email is not verified, click here to request a verification link" ng-click="resendVerificationEmail()"></md-icon>
+					<md-icon class="fa fa-check green-text" ng-if="currentUser.emailVerified" title="your email is verified"></md-icon>
+					<input type="email" name="email" ng-model="currentUser.email" ng-pattern="patterns.email" placeholder="your_email@domain.tld" ng-disabled="!mode.edit || !mode.updateEmail" required>
+					<md-icon class="fa fa-envelope"></md-icon>
+					<div ng-messages="profileForm.email.$error">
+						<div ng-message="required">This field is required</div>
+						<div ng-message="pattern">Invalid value, it should be an email</div>
+					</div>
+				</md-input-container>
+				<md-input-container>
+					<input type="text" name="name" ng-model="currentUser.displayName" placeholder="your display name" ng-disabled="!mode.edit">
+					<md-icon class="fa fa-user-circle-o"></md-icon>
+				</md-input-container>
+			</span>
+			<span layout="row" layout-wrap layout-align="center center">
+				<md-button ng-click="toggleEditMode()" aria-label="toggle edit mode">
+					<span ng-if="!mode.edit">edit profile</span>
+					<span ng-if="mode.edit">cancel</span>
+				</md-button>
+				<md-button type="submit" ng-if="mode.edit" ng-disabled="profileForm.$invalid" ng-click="updateProfile(profileForm.$valid)" aria-label="update profile">update</md-button>
+			</span>
+		</form>
 	</span>
 </div>

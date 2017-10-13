@@ -716,8 +716,35 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', 'firebaseServ
 
 dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', 'firebaseService',
 	function($rootScope, $scope, firebaseService) {
+		$scope.instructions = '';
 		$scope.firebase = firebaseService;
-		$scope.userData = undefined;
+		$scope.currentUser = undefined;
+		$scope.mode = {
+			edit: false,
+			updateEmail: false
+		};
+		$scope.resendVerificationEmail = function() {
+			if (!$scope.currentUser.emailVerified) {
+				$scope.firebase.user.sendEmailVerification()
+					.then(function() {
+						$scope.instructions = 'Check your email for an email with a verification link';
+						console.log('$scope.instructions:', $scope.instructions);
+					})
+					.catch(function() {
+						$scope.instructions = 'There was an error sending email verification';
+						console.log('$scope.instructions:', $scope.instructions);
+					});
+			} else {
+				$scope.instructions = 'Your email is already verified';
+				console.log('$scope.instructions:', $scope.instructions);
+			}
+		};
+		$scope.toggleEditMode = function() {
+			$scope.mode.edit = ($scope.mode.edit) ? false : true;
+		};
+		$scope.updateProfile = function() {
+			console.log('TODO: update profile');
+		};
 		/*
 		*	lifecycle
 		*/
@@ -727,14 +754,15 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', 'firebaseServi
 				$rootScope.$broadcast('showAuthDialog');
 				$rootScope.$on('hideAuthDialog', function() {
 					// console.log('$scope.firebase.user.providerData:', $scope.firebase.user.providerData);
-					$scope.userData = $scope.firebase.user.providerData[0];
+					$scope.currentUser = $scope.firebase.auth().currentUser;
+					console.log('$scope.currentUser', $scope.currentUser);
 				});
 			} else {
 				/*
 				*	TODO
 				*	load data
 				*/
-				$scope.userData = $scope.firebase.user.providerData[0];
+				$scope.userData = $scope.firebase.user;
 			}
 		});
 		$scope.$on('$destroy', function() {
