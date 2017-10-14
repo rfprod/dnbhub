@@ -133,10 +133,18 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 										$window.alert('Error: try again later.');
 										$route.reload();
 									});
+							})
+							.catch(function(error) {
+								console.log('send email verification error', error);
 							});
 					} else {
 						service.user = user;
 						$rootScope.$broadcast('hideAuthDialog');
+						/*
+						*	check if authed user has a database profile
+						*	create if it's absent
+						*/
+						service.checkDBuserUID();
 						if (user.email === 'connect@rfprod.tk') {
 							$location.url('/admin');
 						} else {
@@ -156,10 +164,37 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 		isSignedIn: false,
 
 		getDB: function(collection) {
-			if (collection && (collection === 'about' || collection === 'freedownloads' || collection === 'blog')) {
+			if (collection && (/(about|freedownloads|blog|users)/.test(collection))) {
 				return service.db.ref('/' + collection).once('value');
 			} else {
-				throw new TypeError('firebaseService, get(collection): missing collection identifier, which can have values: about, freedownloads, blog');
+				throw new TypeError('firebaseService, getDB(collection): missing collection identifier, which can have values: about, freedownloads, blog');
+			}
+		},
+
+		checkDBuserUID: function() {
+			var typeError = new TypeError('firebaseService, checkDBuserUID(): there seems to be no authenticated users');
+			if (!service.user) {
+				throw typeError;
+			} else if (service.user && !service.user.uid) {
+				throw typeError;
+			} else {
+				service.getDB('users/' + service.user.uid)
+					.then(function(snapshot) {
+						console.log('checking user db profile');
+						if (!snapshot.val()) {
+							console.log('creating user db profile');
+							service.db.ref('users/' + service.user.uid).set({
+								created: new Date().getTime()
+							}).then(function() {
+								console.log('created user db profile');
+							}).catch(function(error) {
+								console.log('error creating user db profile', error);
+							});
+						}
+					})
+					.catch(function(error) {
+						console.log('user db profile check:', error);
+					});
 			}
 		},
 

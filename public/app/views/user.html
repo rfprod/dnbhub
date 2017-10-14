@@ -7,7 +7,7 @@
 				<md-input-container>
 					<md-icon class="fa fa-paper-plane amber-text hover-pointer" ng-if="!currentUser.emailVerified" title="your email is not verified, click here to request a verification link" ng-click="resendVerificationEmail()"></md-icon>
 					<md-icon class="fa fa-check green-text" ng-if="currentUser.emailVerified" title="your email is verified"></md-icon>
-					<input type="email" name="email" ng-model="currentUser.email" ng-pattern="patterns.email" placeholder="your_email@domain.tld" ng-disabled="!mode.edit || !mode.updateEmail" required>
+					<input type="email" name="email" ng-model="profile.email" ng-pattern="patterns.email" placeholder="your_email@domain.tld" ng-disabled="!mode.edit || !mode.updateEmail" required>
 					<md-icon class="fa fa-envelope"></md-icon>
 					<div ng-messages="profileForm.email.$error">
 						<div ng-message="required">This field is required</div>
@@ -15,14 +15,12 @@
 					</div>
 				</md-input-container>
 				<md-input-container>
-					<input type="text" name="name" ng-model="currentUser.displayName" placeholder="your display name" ng-disabled="!mode.edit">
+					<input type="text" name="name" ng-model="profile.name" placeholder="your display name" ng-disabled="!mode.edit">
 					<md-icon class="fa fa-user-circle-o"></md-icon>
 				</md-input-container>
 			</span>
 			<span layout="row" layout-wrap layout-align="center center">
-				<md-button ng-if="!mode.edit" ng-click="resetPassword()" aria-label="reset password">
-					reset password
-				</md-button>
+				<md-button ng-if="!mode.edit" ng-click="resetPassword()" aria-label="reset password">reset password</md-button>
 				<md-button ng-click="toggleEditMode()" aria-label="toggle edit mode">
 					<span ng-if="!mode.edit">edit profile</span>
 					<span ng-if="mode.edit">cancel</span>

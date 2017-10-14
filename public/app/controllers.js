@@ -172,15 +172,11 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$locatio
 			if (isValid) {
 				if (!$scope.signupMode) {
 					$scope.firebase.authenticate('email', { email: $scope.form.email, password: $scope.form.password }).then(
-						function(user) {
+						function(/*user*/) {
 							// console.log('auth success', success);
 							console.log('auth success');
 							$mdDialog.hide(isValid);
-							if (user.email === 'connect@rfprod.tk') {
-								$location.url('/admin');
-							} else {
-								$location.url('/user');
-							}
+							$location.url('/user');
 						},
 						function(error) {
 							// console.log('auth error', error);
@@ -720,6 +716,7 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$location', '
 		$scope.instructions = '';
 		$scope.firebase = firebaseService;
 		$scope.currentUser = undefined;
+		$scope.userDBrecord = undefined;
 		$scope.mode = {
 			edit: false,
 			updateEmail: false
@@ -730,10 +727,12 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$location', '
 					.then(function() {
 						$scope.instructions = 'Check your email for an email with a verification link';
 						console.log('$scope.instructions:', $scope.instructions);
+						$scope.$apply();
 					})
 					.catch(function() {
 						$scope.instructions = 'There was an error sending email verification';
 						console.log('$scope.instructions:', $scope.instructions);
+						$scope.$apply();
 					});
 			} else {
 				$scope.instructions = 'Your email is already verified';
@@ -742,6 +741,10 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$location', '
 		};
 		$scope.toggleEditMode = function() {
 			$scope.mode.edit = ($scope.mode.edit) ? false : true;
+			if (!$scope.mode.edit) {
+				$scope.profile.email = $scope.currentUser.email;
+				$scope.profile.name = $scope.currentUser.displayName;
+			}
 		};
 		$scope.resetPassword = function() {
 			console.log('send email with password reset link');
@@ -749,14 +752,43 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$location', '
 				.then(function() {
 					$scope.instructions = 'Password reset email was sent to ' + $scope.currentUser.email;
 					console.log('password reset email successfully sent');
+					$scope.$apply();
 				})
 				.catch(function(error) {
 					$scope.instructions = 'There was an error while resetting your password, try again later';
 					console.log('password reset error', error);
+					$scope.$apply();
 				});
 		};
+		$scope.getDBuser = function() {
+			$scope.firebase.getDB('users/' + $scope.currentUser.uid).then(function(snapshot) {
+				console.log('users/' + $scope.currentUser.uid, snapshot.val());
+				$scope.userDBrecord = snapshot.val();
+				console.log('$scope.userDBrecord', $scope.userDBrecord);
+				// $scope.$apply();
+			}).catch(function(error) {
+				$scope.instructions = 'There was an error while getting user db record';
+				console.log('get user db record, error', error);
+				$scope.$apply();
+			});
+		};
+		$scope.profile = {
+			email: undefined,
+			name: undefined
+		};
 		$scope.updateProfile = function() {
-			console.log('TODO: update profile');
+			console.log('update profile');
+			$scope.currentUser.updateProfile({ displayName: $scope.profile.name })
+				.then(function() {
+					console.log('update profile, success');
+					$scope.toggleEditMode();
+					$scope.$apply();
+				})
+				.catch(function(error) {
+					$scope.instructions = 'There was an error while updating user profile';
+					console.log('update profile, error', error);
+					$scope.$apply();
+				});
 		};
 		/*
 		*	lifecycle
@@ -768,6 +800,9 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$location', '
 				$rootScope.$on('hideAuthDialog', function() {
 					// console.log('$scope.firebase.user.providerData:', $scope.firebase.user.providerData);
 					$scope.currentUser = $scope.firebase.auth().currentUser;
+					$scope.profile.email = $scope.currentUser.email;
+					$scope.profile.name = $scope.currentUser.displayName;
+					$scope.getDBuser();
 					console.log('$scope.currentUser', $scope.currentUser);
 				});
 			} else {
@@ -776,6 +811,9 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$location', '
 				*	load data
 				*/
 				$scope.currentUser = $scope.firebase.user;
+				$scope.profile.email = $scope.currentUser.email;
+				$scope.profile.name = $scope.currentUser.displayName;
+				$scope.getDBuser();
 			}
 		});
 		$scope.$on('$destroy', function() {
