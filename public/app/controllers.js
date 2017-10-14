@@ -407,6 +407,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 			});
 		};
 		$scope.processDescription = function(unprocessed) {
+			if (!unprocessed) { return unprocessed; }
 			/*
 			*	convert:
 			*	\n to <br/>
