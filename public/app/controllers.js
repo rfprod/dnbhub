@@ -715,8 +715,8 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', 'firebaseServ
 	}
 ]);
 
-dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', 'firebaseService',
-	function($rootScope, $scope, firebaseService) {
+dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$location', 'firebaseService',
+	function($rootScope, $scope, $location, firebaseService) {
 		$scope.instructions = '';
 		$scope.firebase = firebaseService;
 		$scope.currentUser = undefined;
@@ -742,6 +742,18 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', 'firebaseServi
 		};
 		$scope.toggleEditMode = function() {
 			$scope.mode.edit = ($scope.mode.edit) ? false : true;
+		};
+		$scope.resetPassword = function() {
+			console.log('send email with password reset link');
+			$scope.firebase.auth().sendPasswordResetEmail({ emailAddress: $scope.currentUser.email, continueUrl: $location.$$absUrl })
+				.then(function() {
+					$scope.instructions = 'Password reset email was sent to ' + $scope.currentUser.email;
+					console.log('password reset email successfully sent');
+				})
+				.catch(function(error) {
+					$scope.instructions = 'There was an error while resetting your password, try again later';
+					console.log('password reset error', error);
+				});
 		};
 		$scope.updateProfile = function() {
 			console.log('TODO: update profile');

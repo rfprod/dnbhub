@@ -20,6 +20,9 @@
 				</md-input-container>
 			</span>
 			<span layout="row" layout-wrap layout-align="center center">
+				<md-button ng-if="!mode.edit" ng-click="resetPassword()" aria-label="reset password">
+					reset password
+				</md-button>
 				<md-button ng-click="toggleEditMode()" aria-label="toggle edit mode">
 					<span ng-if="!mode.edit">edit profile</span>
 					<span ng-if="mode.edit">cancel</span>
