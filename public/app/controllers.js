@@ -763,7 +763,7 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', 'firebaseServi
 				*	TODO
 				*	load data
 				*/
-				$scope.userData = $scope.firebase.user;
+				$scope.currentUser = $scope.firebase.user;
 			}
 		});
 		$scope.$on('$destroy', function() {
