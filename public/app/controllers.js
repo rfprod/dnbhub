@@ -745,7 +745,7 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$location', '
 		};
 		$scope.resetPassword = function() {
 			console.log('send email with password reset link');
-			$scope.firebase.auth().sendPasswordResetEmail({ emailAddress: $scope.currentUser.email, continueUrl: $location.$$absUrl })
+			$scope.firebase.auth().sendPasswordResetEmail($scope.currentUser.email)
 				.then(function() {
 					$scope.instructions = 'Password reset email was sent to ' + $scope.currentUser.email;
 					console.log('password reset email successfully sent');

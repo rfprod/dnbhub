@@ -53,7 +53,7 @@ gulp.task('server-test', () => {
 		.on('error', util.log);
 });
 
-gulp.task('client-unit-test', (done) => {
+gulp.task('client-unit-test', () => {
 	const server = new karmaServer({
 		configFile: require('path').resolve('test/karma.conf.js'),
 		singleRun: false
@@ -71,8 +71,6 @@ gulp.task('client-unit-test', (done) => {
 		} else {
 			console.log('=====\nKarma > Complete With No Failures\n=====\n', results);
 		}
-
-		done();
 	});
 
 	server.start();
@@ -221,9 +219,9 @@ gulp.task('watch-and-lint', () => {
 gulp.task('watch', () => {
 	gulp.watch(['./server.js', './app/**/*.js'], ['server']); // watch server changes and restart server
 	gulp.watch(['./public/*.js', './public/app/**/*.js', './*.js', './.eslintignore', './.eslintrc.json'], ['lint']); // watch files to be linted or eslint config files and lint on change
-	gulp.watch('./public/app/**/*.js', ['pack-app-js']); // watch app js changes, pack js, minify and put in respective folder
 	gulp.watch('./public/app/scss/*.scss', ['pack-app-css']); // watch app css changes, pack css, minify and put in respective folder
-	gulp.watch(['./public/app/*.js','./test/client/unit/*.js','./test/karma.conf.js'], ['client-unit-test']); //watch unit test changes and run tests
+	gulp.watch('./public/app/**/*.js', ['pack-app-js', 'client-unit-test']); // watch app js changes, pack js, minify and put in respective folder
+	gulp.watch(['./test/client/unit/*.js', './test/karma.conf.js'], ['client-unit-test']); //watch unit test changes and run tests
 	gulp.watch(['./test/client/e2e/**', './test/protractor.conf.js'], ['client-e2e-test']); // watch client e2e test or protractor config changes and run tests
 	gulp.watch(['./server.js', './test/server/test.js'], ['server-test']); // watch server changes and run tests
 });
