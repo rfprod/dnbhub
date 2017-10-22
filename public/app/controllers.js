@@ -711,8 +711,8 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', 'firebaseServ
 	}
 ]);
 
-dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$location', 'firebaseService',
-	function($rootScope, $scope, $location, firebaseService) {
+dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$location', '$mdDialog', 'firebaseService',
+	function($rootScope, $scope, $location, $mdDialog, firebaseService) {
 		$scope.instructions = '';
 		$scope.firebase = firebaseService;
 		$scope.currentUser = undefined;
@@ -726,17 +726,18 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$location', '
 				$scope.firebase.user.sendEmailVerification()
 					.then(function() {
 						$scope.instructions = 'Check your email for an email with a verification link';
-						console.log('$scope.instructions:', $scope.instructions);
+						// console.log('$scope.instructions:', $scope.instructions);
 						$scope.$apply();
 					})
-					.catch(function() {
+					.catch(function(error) {
+						console.log('send email verification, error:', error);
 						$scope.instructions = 'There was an error sending email verification';
-						console.log('$scope.instructions:', $scope.instructions);
+						// console.log('$scope.instructions:', $scope.instructions);
 						$scope.$apply();
 					});
 			} else {
 				$scope.instructions = 'Your email is already verified';
-				console.log('$scope.instructions:', $scope.instructions);
+				// console.log('$scope.instructions:', $scope.instructions);
 			}
 		};
 		$scope.toggleEditMode = function() {
@@ -751,12 +752,13 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$location', '
 			$scope.firebase.auth().sendPasswordResetEmail($scope.currentUser.email)
 				.then(function() {
 					$scope.instructions = 'Password reset email was sent to ' + $scope.currentUser.email;
-					console.log('password reset email successfully sent');
+					// console.log('$scope.instructions:', $scope.instructions);
 					$scope.$apply();
 				})
 				.catch(function(error) {
+					console.log('reset user password, error:', error);
 					$scope.instructions = 'There was an error while resetting your password, try again later';
-					console.log('password reset error', error);
+					// console.log('$scope.instructions:', $scope.instructions);
 					$scope.$apply();
 				});
 		};
@@ -765,16 +767,19 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$location', '
 				console.log('users/' + $scope.currentUser.uid, snapshot.val());
 				$scope.userDBrecord = snapshot.val();
 				console.log('$scope.userDBrecord', $scope.userDBrecord);
-				// $scope.$apply();
+				$scope.instructions = '';
+				$scope.$apply();
 			}).catch(function(error) {
-				$scope.instructions = 'There was an error while getting user db record';
-				console.log('get user db record, error', error);
+				console.log('get user db record, error:', error);
+				$scope.instructions = 'There was an error while getting user db record: ' + error;
+				// console.log('$scope.instructions:', $scope.instructions);
 				$scope.$apply();
 			});
 		};
 		$scope.profile = {
 			email: undefined,
-			name: undefined
+			name: undefined,
+			password: '' // is used if user wants to delete an account
 		};
 		$scope.updateProfile = function() {
 			console.log('update profile');
@@ -782,13 +787,53 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$location', '
 				.then(function() {
 					console.log('update profile, success');
 					$scope.toggleEditMode();
+					$scope.instructions = '';
 					$scope.$apply();
 				})
 				.catch(function(error) {
-					$scope.instructions = 'There was an error while updating user profile';
 					console.log('update profile, error', error);
+					$scope.instructions = 'There was an error while updating user profile.';
+					// console.log('$scope.instructions:', $scope.instructions);
 					$scope.$apply();
 				});
+		};
+		$scope.deleteProfile = function(event) {
+			if (!$scope.profile.password) {
+				console.log('delete account, password missing');
+				$scope.instructions = 'You must provide a password in order to delete your account';
+				// console.log('$scope.instructions:', $scope.instructions);
+			} else {
+				$scope.instructions = '';
+				$mdDialog.show(
+					$mdDialog.confirm()
+						.parent(angular.element(document.querySelector('#user')))
+						.clickOutsideToClose(true)
+						.title('Confirm account deletion')
+						.textContent('This action can not be undone, all data related to this account will be deleted.')
+						.ariaLabel('Confirm account deletion')
+						.ok('Yes, delete my account')
+						.cancel('Cancel')
+						.targetEvent(event)
+				).then(function(confirm) {
+					console.log('confirm deletion', confirm);
+					$scope.firebase.delete($scope.profile.email, $scope.profile.password).then(
+						function(success) {
+							console.log('account successfully deleted', success);
+							$location.path('/index');
+						}, function (error) {
+							console.log('reauthenticate, error', error);
+							$scope.instructions = 'There was an error while reauthenticating, it is required for an account deletion.';
+							// console.log('$scope.instructions:', $scope.instructions);
+						}
+					);
+				}, function(cancel) {
+					console.log('cancel', cancel);
+				});
+			}
+		};
+		$scope.showPassword = false;
+		$scope.togglePasswordVisibility = function() {
+			$scope.showPassword = ($scope.showPassword) ? false : true;
 		};
 		/*
 		*	lifecycle
@@ -800,10 +845,12 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$location', '
 				$rootScope.$on('hideAuthDialog', function() {
 					// console.log('$scope.firebase.user.providerData:', $scope.firebase.user.providerData);
 					$scope.currentUser = $scope.firebase.auth().currentUser;
-					$scope.profile.email = $scope.currentUser.email;
-					$scope.profile.name = $scope.currentUser.displayName;
-					$scope.getDBuser();
-					console.log('$scope.currentUser', $scope.currentUser);
+					if ($scope.currentUser) {
+						$scope.profile.email = $scope.currentUser.email;
+						$scope.profile.name = $scope.currentUser.displayName;
+						$scope.getDBuser();
+						console.log('$scope.currentUser', $scope.currentUser);
+					}
 				});
 			} else {
 				/*

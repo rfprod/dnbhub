@@ -258,6 +258,26 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 				def.reject(new ReferenceError('payload must have attributes: email, password'));
 			}
 			return def.promise;
+		},
+
+		delete: function(email, password) {
+			var def = $q.defer();
+			var credential = service.auth.EmailAuthProvider.credential(email, password);
+			service.user.reauthenticateWithCredential(credential)
+				.then(function() {
+					// console.log('successfully reauthenticated');
+					service.user.delete()
+						.then(function() {
+							def.resolve(true);
+						})
+						.catch(function(error) {
+							def.reject(error);
+						});
+				})
+				.catch(function(error) {
+					def.reject(error);
+				});
+			return def.promise;
 		}
 	};
 
