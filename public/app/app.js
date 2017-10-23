@@ -69,12 +69,17 @@ dnbhub
 				.dark();
 		}
 	])
-	.run(['$rootScope', 'firebaseService',
-		function ($rootScope, firebaseService) {
+	.run(['$rootScope', 'firebaseService', 'soundcloudService',
+		function ($rootScope, firebaseService, soundcloudService) {
 			/*
 			*	initialize firebase
 			*/
 			firebaseService.initFirebase();
+
+			/*
+			*	initialize soundcloud
+			*/
+			soundcloudService.init();
 
 			$rootScope.$on('$locationChangeSuccess', function(event, next, current) {
 				console.log('event', event);

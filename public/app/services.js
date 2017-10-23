@@ -99,6 +99,25 @@ dnbhubServices.factory('addBlogPostService', ['$resource', '$location', function
 	});
 }]);
 
+dnbhubServices.service('soundcloudService', [function() {
+	var baseUrl = 'http://api.soundcloud.com/';
+	var scid = 'soundcloud_client_id';
+	var service = {
+		/* global SC */
+		init: function() {
+			SC.initialize({ client_id: scid });
+		},
+
+		getUrl: function(endpoint) {
+			return baseUrl + endpoint + '?client_id=' + scid;
+		}
+	};
+
+	return service;
+
+}]);
+
+
 dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$window', '$location', function($rootScope, $q, $route, $window, $location) {
 	var service = {
 		/* global firebase */

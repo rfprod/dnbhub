@@ -2,8 +2,15 @@
 
 describe('Dnbhub controllers', function() {
 
-	beforeEach(module('dnbhub'));
+	/*
+	*	Soundcloud mock
+	*/
+	window.SC = {
+		initialize: function() { return true; },
+		get: function() { return true; }
+	};
 
+	beforeEach(module('dnbhub'));
 
 	describe('navCtrl', function() {
 		var scope, ctrl, doc, el, loc, compReg, sidenav, dialog, firebaseService;
@@ -75,11 +82,12 @@ describe('Dnbhub controllers', function() {
 	});
 
 	describe('indexCtrl', function() {
-		var scope, ctrl;
+		var scope, ctrl, soundcloudService;
 
-		beforeEach(inject(function($rootScope, $controller) {
+		beforeEach(inject(function($rootScope, $controller, _soundcloudService_) {
 			scope = $rootScope.$new();
-			ctrl = $controller('indexCtrl', { $scope: scope });
+			soundcloudService = _soundcloudService_;
+			ctrl = $controller('indexCtrl', { $scope: scope, soundcloudService: soundcloudService });
 		}));
 
 		it('should be defined', function() {
@@ -89,7 +97,6 @@ describe('Dnbhub controllers', function() {
 		it('should have variables and methods defined', function() {
 			expect(scope.tracks).toEqual(jasmine.any(Array));
 			expect(scope.tracks.length).toEqual(0);
-			expect(scope.scid).toEqual(jasmine.any(String));
 			expect(scope.getTracks).toEqual(jasmine.any(Function));
 		});
 
@@ -158,9 +165,9 @@ describe('Dnbhub controllers', function() {
 	});
 
 	describe('blogCtrl', function() {
-		var scope, ctrl, sce, route, loc, sidenav, blogPostsService, firebaseService;
+		var scope, ctrl, sce, route, loc, sidenav, blogPostsService, firebaseService, soundcloudService;
 
-		beforeEach(inject(function($rootScope, $controller, _$sce_, _$route_, _$location_, _$mdSidenav_, _blogPostsService_, _firebaseService_) {
+		beforeEach(inject(function($rootScope, $controller, _$sce_, _$route_, _$location_, _$mdSidenav_, _blogPostsService_, _firebaseService_, _soundcloudService_) {
 			scope = $rootScope.$new();
 			sce = _$sce_;
 			route = _$route_;
@@ -169,7 +176,8 @@ describe('Dnbhub controllers', function() {
 			blogPostsService = _blogPostsService_;
 			spyOn(blogPostsService,'query').and.callFake(function() { return []; });
 			firebaseService = _firebaseService_;
-			ctrl = $controller('blogCtrl', { $scope: scope, $sce: sce, $route: route, $location: loc, $mdSidenav: sidenav, blogPostsService: blogPostsService, firebaseService: firebaseService });
+			soundcloudService = _soundcloudService_;
+			ctrl = $controller('blogCtrl', { $scope: scope, $sce: sce, $route: route, $location: loc, $mdSidenav: sidenav, blogPostsService: blogPostsService, firebaseService: firebaseService, soundcloudService: soundcloudService });
 		}));
 
 		it('should be defined', function() {
@@ -186,7 +194,6 @@ describe('Dnbhub controllers', function() {
 			expect(scope.returnWidgetLink).toEqual(jasmine.any(Function));
 			expect(scope.tracks).toEqual(jasmine.any(Array));
 			expect(scope.tracks.length).toEqual(0);
-			expect(scope.scid).toEqual(jasmine.any(String));
 			expect(scope.getTracks).toEqual(jasmine.any(Function));
 			expect(scope.setProperSearchParam).toEqual(jasmine.any(Function));
 			expect(scope.firebase).toEqual(firebaseService);

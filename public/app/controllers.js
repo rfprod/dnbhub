@@ -199,6 +199,9 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$locatio
 							// console.log('signup success', user);
 							console.log('signup success');
 							$mdDialog.hide(isValid);
+							/*
+							*	TODO verify user.uid instead of user.email
+							*/
 							if (user.email === 'connect@rfprod.tk') {
 								$location.url('/admin');
 							} else {
@@ -244,13 +247,11 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$locatio
 	}
 ]);
 
-dnbhubControllers.controller('indexCtrl', ['$scope',
-	function($scope) {
+dnbhubControllers.controller('indexCtrl', ['$scope', 'soundcloudService',
+	function($scope, soundcloudService) {
 		$scope.tracks = [];
-		$scope.scid = 'soundcloud_client_id';
 		$scope.getTracks = function(callback) {
-			SC.initialize({ client_id: $scope.scid });
-			SC.get('http://api.soundcloud.com/users/1275637/tracks.json?client_id=' + $scope.scid, function(tracks) {
+			SC.get(soundcloudService.getUrl('users/1275637/tracks.json'), function(tracks) {
 				$scope.tracks = tracks;
 				$scope.$digest();
 				callback();
@@ -354,8 +355,8 @@ dnbhubControllers.controller('repostsCtrl', ['$scope',
 	}
 ]);
 
-dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location', '$mdDialog', 'blogPostsService', 'firebaseService',
-	function($scope, $sce, $route, $location, $mdDialog, blogPostsService, firebaseService) {
+dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location', '$mdDialog', 'blogPostsService', 'firebaseService', 'soundcloudService',
+	function($scope, $sce, $route, $location, $mdDialog, blogPostsService, firebaseService, soundcloudService) {
 		$scope.inputReleaseCode = undefined;
 		$scope.blogPosts = [];
 		$scope.selectedBlogPostId = 0;
@@ -378,10 +379,8 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 		*	sidebar soundcloud player
 		*/
 		$scope.tracks = [];
-		$scope.scid = 'soundcloud_client_id';
 		$scope.getTracks = function(soundcloudUserId, callback) {
-			SC.initialize({ client_id: $scope.scid });
-			SC.get('http://api.soundcloud.com/users/'+soundcloudUserId+'/tracks.json?client_id=' + $scope.scid, function(tracks) {
+			SC.get(soundcloudService.getUrl('users/' + soundcloudUserId + '/tracks.json'), function(tracks) {
 				$scope.tracks = tracks;
 				$scope.$digest();
 				callback();
@@ -393,11 +392,10 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 		$scope.playlist = undefined;
 		$scope.getPlaylistDetails = function(playlistId, callback) {
 			$scope.playlist = undefined;
-			SC.initialize({ client_id: $scope.scid });
-			SC.get('http://api.soundcloud.com/playlists/'+playlistId+'?client_id=' + $scope.scid, function(playlist) {
+			SC.get(soundcloudService.getUrl('playlists/' + playlistId), function(playlist) {
 				playlist.description = $scope.processDescription(playlist.description);
 				$scope.playlist = playlist;
-				console.log('$scope.playlist:', $scope.playlist);
+				// console.log('$scope.playlist:', $scope.playlist);
 				$scope.$digest();
 				callback();
 			});
@@ -410,7 +408,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 			*	links to anchors
 			*/
 			var processed = unprocessed.replace(/\n/g, '<br/>').replace(/(http(s)?:\/\/(www\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._+~#=]{0,255}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*))/g, '<a href="$1" target=_blank><i class="fa fa-external-link"></i> <span class="md-caption">$1</span></a>');
-			console.log('processed', processed);
+			// console.log('processed', processed);
 			return processed;
 		};
 		/*
