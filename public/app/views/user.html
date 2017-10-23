@@ -26,7 +26,7 @@
 					<span ng-if="mode.edit">cancel</span>
 				</md-button>
 				<md-button type="submit" ng-if="mode.edit" ng-disabled="profileForm.$invalid" ng-click="updateProfile(profileForm.$valid)" aria-label="update profile">update</md-button>
-				<md-button type="submit" ng-if="mode.edit" ng-disabled="!profile.password.trim()" ng-disabled="profileForm.$invalid" ng-click="deleteProfile($event)" aria-label="delete profile" class="danger">delete</md-button>
+				<md-button type="submit" ng-if="mode.edit" ng-disabled="!profile.password.trim()" ng-disabled="profileForm.$invalid" ng-click="deleteProfile($event)" aria-label="delete profile" class="md-warn">delete</md-button>
 				<md-input-container flex="40" ng-if="mode.edit">
 					<input type="{{showPassword ? 'text' : 'password' }}" name="password" ng-model="profile.password" placeholder="provide a password to DELETE your account">
 					<md-icon class="visibility-toggler fa fa-eye" ng-if="!showPassword" ng-click="togglePasswordVisibility()"></md-icon>

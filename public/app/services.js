@@ -163,9 +163,9 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 		user: undefined,
 		isSignedIn: false,
 
-		getDB: function(collection) {
+		getDB: function(collection, refOnly) {
 			if (collection && (/(about|freedownloads|blog|users)/.test(collection))) {
-				return service.db.ref('/' + collection).once('value');
+				return (!refOnly) ? service.db.ref('/' + collection).once('value') : service.db.ref('/' + collection);
 			} else {
 				throw new TypeError('firebaseService, getDB(collection): missing collection identifier, which can have values: about, freedownloads, blog');
 			}
@@ -268,6 +268,8 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 					// console.log('successfully reauthenticated');
 					service.user.delete()
 						.then(function() {
+							// delete user db profile also
+							service.getDB('users/' + service.user.uid, true).remove();
 							def.resolve(true);
 						})
 						.catch(function(error) {
