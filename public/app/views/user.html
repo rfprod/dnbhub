@@ -32,6 +32,7 @@
 					<md-icon class="visibility-toggler fa fa-eye" ng-if="!showPassword" ng-click="togglePasswordVisibility()"></md-icon>
 					<md-icon class="visibility-toggler fa fa-eye-slash" ng-if="showPassword" ng-click="togglePasswordVisibility()"></md-icon>
 				</md-input-container>
+				<md-button ng-if="!mode.edit" class="amber-text" ng-click="scConnect()" aria-label="connect with Soundcloud">connect with soundcloud</md-button>
 			</span>
 		</form>
 	</span>

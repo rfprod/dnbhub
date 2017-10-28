@@ -149,6 +149,7 @@ html {
 			a {
 				color: $white;
 				padding: 0 $padding 0 $padding;
+				min-height: 50px;
 
 				&:hover {
 					text-decoration: none;

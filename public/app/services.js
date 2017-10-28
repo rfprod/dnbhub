@@ -100,21 +100,15 @@ dnbhubServices.factory('addBlogPostService', ['$resource', '$location', function
 }]);
 
 dnbhubServices.service('soundcloudService', [function() {
-	var baseUrl = 'http://api.soundcloud.com/';
 	var scid = 'soundcloud_client_id';
+	var options = { client_id: scid, redirect_uri: 'http://dnbhub.com/callback.html' };
 	var service = {
 		/* global SC */
 		init: function() {
-			SC.initialize({ client_id: scid });
-		},
-
-		getUrl: function(endpoint) {
-			return baseUrl + endpoint + '?client_id=' + scid;
+			return SC.initialize(options);
 		}
 	};
-
 	return service;
-
 }]);
 
 

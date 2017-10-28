@@ -40,7 +40,7 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 			reposts: 'Featured',
 			blog: 'Blog',
 			contact: 'Contact',
-			about: 'VS 2011-'+$scope.currentYear,
+			about: '2011-'+$scope.currentYear,
 			auth: 'Auth',
 			admin: 'Admin',
 			user: 'User',
@@ -247,11 +247,11 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$locatio
 	}
 ]);
 
-dnbhubControllers.controller('indexCtrl', ['$scope', 'soundcloudService',
-	function($scope, soundcloudService) {
+dnbhubControllers.controller('indexCtrl', ['$scope',
+	function($scope) {
 		$scope.tracks = [];
 		$scope.getTracks = function(callback) {
-			SC.get(soundcloudService.getUrl('users/1275637/tracks.json'), function(tracks) {
+			SC.get('/users/1275637/tracks').then(function(tracks) {
 				$scope.tracks = tracks;
 				$scope.$digest();
 				callback();
@@ -355,8 +355,8 @@ dnbhubControllers.controller('repostsCtrl', ['$scope',
 	}
 ]);
 
-dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location', '$mdDialog', 'blogPostsService', 'firebaseService', 'soundcloudService',
-	function($scope, $sce, $route, $location, $mdDialog, blogPostsService, firebaseService, soundcloudService) {
+dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location', '$mdDialog', 'blogPostsService', 'firebaseService',
+	function($scope, $sce, $route, $location, $mdDialog, blogPostsService, firebaseService) {
 		$scope.inputReleaseCode = undefined;
 		$scope.blogPosts = [];
 		$scope.selectedBlogPostId = 0;
@@ -380,7 +380,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 		*/
 		$scope.tracks = [];
 		$scope.getTracks = function(soundcloudUserId, callback) {
-			SC.get(soundcloudService.getUrl('users/' + soundcloudUserId + '/tracks.json'), function(tracks) {
+			SC.get('/users/' + soundcloudUserId + '/tracks.json').then(function(tracks) {
 				$scope.tracks = tracks;
 				$scope.$digest();
 				callback();
@@ -392,7 +392,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 		$scope.playlist = undefined;
 		$scope.getPlaylistDetails = function(playlistId, callback) {
 			$scope.playlist = undefined;
-			SC.get(soundcloudService.getUrl('playlists/' + playlistId), function(playlist) {
+			SC.get('/playlists/' + playlistId).then(function(playlist) {
 				playlist.description = $scope.processDescription(playlist.description);
 				$scope.playlist = playlist;
 				// console.log('$scope.playlist:', $scope.playlist);
@@ -709,8 +709,8 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', 'firebaseServ
 	}
 ]);
 
-dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$location', '$mdDialog', 'firebaseService',
-	function($rootScope, $scope, $location, $mdDialog, firebaseService) {
+dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$window', '$location', '$mdDialog', 'firebaseService',
+	function($rootScope, $scope, $window, $location, $mdDialog, firebaseService) {
 		$scope.instructions = '';
 		$scope.firebase = firebaseService;
 		$scope.currentUser = undefined;
@@ -832,6 +832,17 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$location', '
 		$scope.showPassword = false;
 		$scope.togglePasswordVisibility = function() {
 			$scope.showPassword = ($scope.showPassword) ? false : true;
+		};
+		/*
+		*	connect with Soundcloud
+		*/
+		$scope.scConnect = function() {
+			SC.connect().then(function() {
+				return SC.get('/me');
+			}).then(function(me) {
+				console.log('/me', me);
+				return me;
+			});
 		};
 		/*
 		*	lifecycle
