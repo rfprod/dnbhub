@@ -53,27 +53,32 @@ gulp.task('server-test', () => {
 		.on('error', util.log);
 });
 
+let karmaSRV;
 gulp.task('client-unit-test', () => {
-	const server = new karmaServer({
-		configFile: require('path').resolve('test/karma.conf.js'),
-		singleRun: false
-	});
+	if (!karmaSRV) {
+		karmaSRV = new karmaServer({
+			configFile: require('path').resolve('test/karma.conf.js'),
+			singleRun: false
+		});
 
-	server.on('browser_error', (browser, err) => {
-		console.log('=====\nKarma > Run Failed\n=====\n', err);
-		throw err;
-	});
+		karmaSRV.on('browser_error', (browser, err) => {
+			console.log('=====\nKarma > Run Failed\n=====\n', err);
+			throw err;
+		});
 
-	server.on('run_complete', (browsers, results) => {
-		if (results.failed) {
-			// throw new Error('=====\nKarma > Tests Failed\n=====\n', results);
-			console.log('=====\nKarma > Tests Failed\n=====\n', results);
-		} else {
-			console.log('=====\nKarma > Complete With No Failures\n=====\n', results);
-		}
-	});
+		karmaSRV.on('run_complete', (browsers, results) => {
+			if (results.failed) {
+				// throw new Error('=====\nKarma > Tests Failed\n=====\n', results);
+				console.log('=====\nKarma > Tests Failed\n=====\n', results);
+			} else {
+				console.log('=====\nKarma > Complete With No Failures\n=====\n', results);
+			}
+		});
 
-	server.start();
+		karmaSRV.start();
+	} else {
+		console.log('<<<<< karmaSRV already running >>>>>');
+	}
 });
 
 gulp.task('client-unit-test-single-run', (done) => {
