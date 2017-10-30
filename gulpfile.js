@@ -243,6 +243,34 @@ gulp.task('default', (done) => {
 	runSequence('build', 'server', 'watch', /*'test',*/ done);
 });
 
+gulp.task('bump-version-patch', () => {
+	const version = require('gulp-bump');
+	return gulp.src(['./package.json'])
+		.pipe(version({type: 'patch'}))
+		.pipe(gulp.dest('./'));
+});
+
+gulp.task('bump-version-minor', () => {
+	const version = require('gulp-bump');
+	return gulp.src(['./package.json'])
+		.pipe(version({type: 'minor'}))
+		.pipe(gulp.dest('./'));
+});
+
+gulp.task('bump-version-major', () => {
+	const version = require('gulp-bump');
+	return gulp.src(['./package.json'])
+		.pipe(version({type: 'major'}))
+		.pipe(gulp.dest('./'));
+});
+
+gulp.task('bump-version-prerelease', () => {
+	const version = require('gulp-bump');
+	return gulp.src(['./package.json'])
+		.pipe(version({type: 'prerelease'}))
+		.pipe(gulp.dest('./'));
+});
+
 process.on('exit', function() {
 	if (node) node.kill();
 });
