@@ -767,6 +767,9 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$window', '$l
 			$scope.firebase.getDB('users/' + $scope.currentUser.uid).then(function(snapshot) {
 				console.log('users/' + $scope.currentUser.uid, snapshot.val());
 				$scope.userDBrecord = snapshot.val();
+				if ($scope.userDBrecord.sc_id) {
+					$scope.getMe();
+				}
 				console.log('$scope.userDBrecord', $scope.userDBrecord);
 				$scope.instructions = '';
 				$scope.$apply();
@@ -839,13 +842,68 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$window', '$l
 		/*
 		*	connect with Soundcloud
 		*/
+		$scope.SCdata = {
+			me: undefined,
+			playlists: undefined
+		};
 		$scope.scConnect = function() {
-			SC.connect().then(function() {
+			SC.connect().then(function(data) {
+				console.log('SC.connect.then, data:', data);
+				console.log('scConnect local storage', localStorage.getItem('callback'));
+				var urlParams = localStorage.getItem('callback').replace(/^.*\?/, '').split('&');
+				var code = urlParams[0].split('=')[1];
+				var oauthToken = urlParams[1].split('#')[1].split('=')[1];
+				localStorage.removeItem('callback');
+				console.log('scConnect local storage removed callback', localStorage.getItem('callback'));
+				/*
+				*	update user auth params for firther oauth2/token requests
+				*/
+				$scope.firebase.setDBuserNewValues({ sc_code: code, sc_oauth_token: oauthToken })
+					.then(function(data) {
+						console.log('setDBuserValues', JSON.stringify(data));
+					})
+					.catch(function(error) {
+						console.log('setDBuserValues, error', JSON.stringify(error));
+					});
 				return SC.get('/me');
 			}).then(function(me) {
-				console.log('/me', me);
-				return me;
+				console.log('SC.me.then, me', me);
+				$scope.SCdata.me = me;
+				/*
+				*	update user id to be able to retrieve user data without authentication
+				*/
+				$scope.firebase.setDBuserNewValues({ sc_id: me.id })
+					.then(function(data) {
+						console.log('setDBuserValues', JSON.stringify(data));
+					})
+					.catch(function(error) {
+						console.log('setDBuserValues, error', JSON.stringify(error));
+					});
+				return SC.get('users/' + me.id + '/playlists');
+			}).then(function(playlists) {
+				console.log('SC.playlists.then, playlists', playlists);
+				$scope.SCdata.playlists = playlists;
+				$scope.$apply();
+				return playlists;
 			});
+		};
+		$scope.getMe = function() {
+			console.log('getMe, use has got a token');
+			/*
+			*	TODO - oauth2/token from code from callback
+			*/
+			SC.get('users/' + $scope.userDBrecord.sc_id)
+				.then(function(me) {
+					console.log('SC.me.then, me', me);
+					$scope.SCdata.me = me;
+					$scope.$apply();
+					return SC.get('users/' + me.id + '/playlists');
+				}).then(function(playlists) {
+					console.log('SC.playlists.then, playlists', playlists);
+					$scope.SCdata.playlists = playlists;
+					$scope.$apply();
+					return playlists;
+				});
 		};
 		/*
 		*	lifecycle

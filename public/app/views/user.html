@@ -1,6 +1,6 @@
 <div id="user" flex layout="column" layout-fill layout-align="start stretch">
 	<span ng-if="!firebase.isSignedIn">You must me authenticated to access user controls</span>
-	<span ng-if="firebase.isSignedIn">
+	<span ng-if="firebase.isSignedIn" layout="column" layout-align="start stretch">
 		<span ng-if="instructions">{{ instructions }}</span>
 		<form ng-cloak accept-charset="UTF-8" name="profileForm" layout="column" layout-align="start stretch">
 			<span layout="row" layout-wrap layout-align="center center">
@@ -32,8 +32,27 @@
 					<md-icon class="visibility-toggler fa fa-eye" ng-if="!showPassword" ng-click="togglePasswordVisibility()"></md-icon>
 					<md-icon class="visibility-toggler fa fa-eye-slash" ng-if="showPassword" ng-click="togglePasswordVisibility()"></md-icon>
 				</md-input-container>
-				<md-button ng-if="!mode.edit" class="amber-text" ng-click="scConnect()" aria-label="connect with Soundcloud">connect with soundcloud</md-button>
+				<md-button ng-if="!mode.edit && !SCdata.me" class="amber-text" ng-click="scConnect()" aria-label="connect with Soundcloud">connect with soundcloud</md-button>
+				<md-button ng-if="!mode.edit && SCdata.me" class="green-text" ng-click="scConnect()" aria-label="reconnect with Soundcloud or connect another account">reconnect with soundcloud or connect another account</md-button>
 			</span>
 		</form>
+	</span>
+	<span flex layout="row" layout-wrap layout-align="start stretch" ng-if="firebase.isSignedIn && SCdata.me">
+		<span flex="20" layout="column" layout-align="start stretch" ng-if="SCdata.me">
+			<span flex="nogrow">username: {{ SCdata.me.username }}</span>
+			<span flex="nogrow">full name: {{ SCdata.me.full_name }}</span>
+			<span flex="nogrow">playlist count: {{ SCdata.me.playlist_count }}</span>
+			<span flex="grow" ng-bind-html="SCdata.me.description"></span>
+		</span>
+		<span flex="80" layout="column" layout-align="start stretch" ng-if="SCdata.playlists">
+			<md-grid-list md-cols="4" md-gutter="1em" md-row-height="4:3">
+				<md-grid-title ng-repeat="playlist in SCdata.playlists">
+					<md-icon class="fa fa-list"></md-icon>
+					<md-grid-title-footer>
+						<h3>{{ playlist.title }}</h3>
+					</md-grid-title-footer>
+				</md-grid-title>
+			</md-grid-list>
+		</span>
 	</span>
 </div>

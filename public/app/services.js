@@ -101,7 +101,10 @@ dnbhubServices.factory('addBlogPostService', ['$resource', '$location', function
 
 dnbhubServices.service('soundcloudService', [function() {
 	var scid = 'soundcloud_client_id';
-	var options = { client_id: scid, redirect_uri: 'http://dnbhub.com/callback.html' };
+	var options = {
+		client_id: scid,
+		redirect_uri: 'http://dnbhub.com/callback.html'
+	};
 	var service = {
 		/* global SC */
 		init: function() {
@@ -184,31 +187,62 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 			}
 		},
 
-		checkDBuserUID: function() {
-			var typeError = new TypeError('firebaseService, checkDBuserUID(): there seems to be no authenticated users');
+		authErrorCheck: function() {
+			var typeError = new TypeError('firebaseService, user DB record action error: there seems to be no authenticated users');
 			if (!service.user) {
 				throw typeError;
 			} else if (service.user && !service.user.uid) {
 				throw typeError;
-			} else {
-				service.getDB('users/' + service.user.uid)
-					.then(function(snapshot) {
-						console.log('checking user db profile');
-						if (!snapshot.val()) {
-							console.log('creating user db profile');
-							service.db.ref('users/' + service.user.uid).set({
-								created: new Date().getTime()
-							}).then(function() {
-								console.log('created user db profile');
-							}).catch(function(error) {
-								console.log('error creating user db profile', error);
-							});
-						}
-					})
-					.catch(function(error) {
-						console.log('user db profile check:', error);
-					});
 			}
+		},
+
+		checkDBuserUID: function() {
+			var def = $q.defer();
+			service.authErrorCheck();
+			service.getDB('users/' + service.user.uid)
+				.then(function(snapshot) {
+					console.log('checking user db profile');
+					if (!snapshot.val()) {
+						console.log('creating user db profile');
+						service.db.ref('users/' + service.user.uid).set({
+							created: new Date().getTime()
+						}).then(function() {
+							console.log('created user db profile');
+							def.resolve({ exists: false, created: true });
+						}).catch(function(error) {
+							console.log('error creating user db profile', error);
+							def.reject({ exists: false, created: false });
+						});
+					} else {
+						def.resolve({ exists: true, created: false });
+					}
+				})
+				.catch(function(error) {
+					console.log('checkDBuserUID, user db profile check:', error);
+					def.reject(error);
+				});
+			return def.promise;
+		},
+
+		setDBuserNewValues: function(valuesObj) {
+			var def = $q.defer();
+			service.authErrorCheck();
+			service.checkDBuserUID()
+				.then(function(data) {
+					console.log('checkDBuserUID', JSON.stringify(data));
+					service.db.ref('users/' + service.user.uid).update(valuesObj)
+						.then(function() {
+							console.log('user db profile values set');
+							def.resolve({ valuesSet: true });
+						}).catch(function(error) {
+							console.log('error setting user db profile values', error);
+							def.reject({ valuesSet: false });
+						});
+				}).catch(function(error) {
+					console.log('setDBuserValues, user db profile check error', error);
+					def.reject(error);
+				});
+			return def.promise;
 		},
 
 		authenticate: function(mode, payload) {
