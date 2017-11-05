@@ -712,8 +712,8 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', 'firebaseServ
 	}
 ]);
 
-dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$window', '$location', '$mdDialog', 'firebaseService',
-	function($rootScope, $scope, $window, $location, $mdDialog, firebaseService) {
+dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$window', '$location', '$mdDialog', 'firebaseService',
+	function($rootScope, $scope, $sce, $window, $location, $mdDialog, firebaseService) {
 		$scope.instructions = '';
 		$scope.firebase = firebaseService;
 		$scope.currentUser = undefined;
@@ -901,6 +901,13 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$window', '$l
 					$scope.$apply();
 					return playlists;
 				});
+		};
+		$scope.scWidgetLink = {
+			first: 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/',
+			last: '&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false'
+		};
+		$scope.widgetLink = function(soundcloudPlaylistID) {
+			return $sce.trustAsResourceUrl($scope.scWidgetLink.first + soundcloudPlaylistID + $scope.scWidgetLink.last);
 		};
 		/*
 		*	lifecycle

@@ -38,20 +38,23 @@
 		</form>
 	</span>
 	<span flex layout="row" layout-wrap layout-align="start stretch" ng-if="firebase.isSignedIn && SCdata.me">
-		<span flex="20" layout="column" layout-align="start stretch" ng-if="SCdata.me">
-			<span flex="nogrow">username: {{ SCdata.me.username }}</span>
-			<span flex="nogrow">full name: {{ SCdata.me.full_name }}</span>
-			<span flex="nogrow">playlist count: {{ SCdata.me.playlist_count }}</span>
-			<span flex="grow" ng-bind-html="SCdata.me.description"></span>
+		<span id="soundcloud-user" flex="20" flex-xs="100" flex-sm="100" layout="column" layout-align="start stretch" ng-if="SCdata.me">
+			<span class="md-body-1">{{ SCdata.me.username }}</span>
+			<span class="md-body-1">{{ SCdata.me.full_name }}</span>
+			<span class="md-body-2">Playlists: {{ SCdata.me.playlist_count }}</span>
+			<span flex="grow" class="md-body-1" ng-bind-html="SCdata.me.description"></span>
 		</span>
-		<span flex="80" layout="column" layout-align="start stretch" ng-if="SCdata.playlists">
-			<md-grid-list md-cols="4" md-gutter="1em" md-row-height="4:3">
-				<md-grid-title ng-repeat="playlist in SCdata.playlists">
-					<md-icon class="fa fa-list"></md-icon>
-					<md-grid-title-footer>
-						<h3>{{ playlist.title }}</h3>
-					</md-grid-title-footer>
-				</md-grid-title>
+		<span id="soundcloud-playlists" flex="80" flex-xs="100" flex-sm="100" layout="column" layout-align="start stretch" ng-if="SCdata.playlists">
+			<md-grid-list flex="100" md-cols-xs="1" md-cols-sm="2" md-cols-md="3" md-cols-lg="4" md-cols-xl="5" md-gutter="10px" md-row-height="2:3">
+				<md-grid-tile ng-repeat="playlist in SCdata.playlists">
+					<md-grid-tile-header class="md-body-2">
+						{{ playlist.title }}
+					</md-grid-tile-header>
+					<iframe ng-src="{{widgetLink(playlist.id)}}" width="100%" height="85%" scrolling="no" frameborder="no"></iframe>
+					<md-grid-tile-footer>
+						<md-button>add to blog</md-button>
+					</md-grid-tile-footer>
+				</md-grid-tile>
 			</md-grid-list>
 		</span>
 	</span>

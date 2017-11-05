@@ -355,3 +355,18 @@ html {
 		}
 
 	}
+
+/*
+*	user
+*/
+	#user {
+		#soundcloud-user {
+			span {
+				padding: $padding;
+			}
+		}
+
+		#soundcloud-playlists {
+			overflow-y: scroll;
+		}
+	}
