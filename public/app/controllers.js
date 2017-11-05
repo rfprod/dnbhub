@@ -76,7 +76,7 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 			}, true);
 		};
 		$scope.showAuthDialog = function(event) {
-			console.log('event', event);
+			// console.log('event', event);
 			$mdDialog.show({
 				controller: dnbhubControllers.authDialogCtrl,
 				templateUrl: './app/views/auth.html',
@@ -765,12 +765,12 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$window', '$l
 		};
 		$scope.getDBuser = function() {
 			$scope.firebase.getDB('users/' + $scope.currentUser.uid).then(function(snapshot) {
-				console.log('users/' + $scope.currentUser.uid, snapshot.val());
+				// console.log('users/' + $scope.currentUser.uid, snapshot.val());
 				$scope.userDBrecord = snapshot.val();
 				if ($scope.userDBrecord.sc_id) {
 					$scope.getMe();
 				}
-				console.log('$scope.userDBrecord', $scope.userDBrecord);
+				// console.log('$scope.userDBrecord', $scope.userDBrecord);
 				$scope.instructions = '';
 				$scope.$apply();
 			}).catch(function(error) {
@@ -848,15 +848,15 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$window', '$l
 		};
 		$scope.scConnect = function() {
 			SC.connect().then(function(data) {
-				console.log('SC.connect.then, data:', data);
-				console.log('scConnect local storage', localStorage.getItem('callback'));
+				// console.log('SC.connect.then, data:', data);
+				// console.log('scConnect local storage', localStorage.getItem('callback'));
 				var urlParams = localStorage.getItem('callback').replace(/^.*\?/, '').split('&');
 				var code = urlParams[0].split('=')[1];
 				var oauthToken = urlParams[1].split('#')[1].split('=')[1];
 				localStorage.removeItem('callback');
-				console.log('scConnect local storage removed callback', localStorage.getItem('callback'));
+				// console.log('scConnect local storage removed callback', localStorage.getItem('callback'));
 				/*
-				*	update user auth params for firther oauth2/token requests
+				*	store user auth params for further oauth2/token requests
 				*/
 				$scope.firebase.setDBuserNewValues({ sc_code: code, sc_oauth_token: oauthToken })
 					.then(function(data) {
@@ -870,14 +870,14 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$window', '$l
 				console.log('SC.me.then, me', me);
 				$scope.SCdata.me = me;
 				/*
-				*	update user id to be able to retrieve user data without authentication
+				*	store user id to be able to retrieve user data without authentication
 				*/
 				$scope.firebase.setDBuserNewValues({ sc_id: me.id })
 					.then(function(data) {
-						console.log('setDBuserValues', JSON.stringify(data));
+						// console.log('setDBuserValues', JSON.stringify(data));
 					})
 					.catch(function(error) {
-						console.log('setDBuserValues, error', JSON.stringify(error));
+						// console.log('setDBuserValues, error', JSON.stringify(error));
 					});
 				return SC.get('users/' + me.id + '/playlists');
 			}).then(function(playlists) {
@@ -889,9 +889,6 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$window', '$l
 		};
 		$scope.getMe = function() {
 			console.log('getMe, use has got a token');
-			/*
-			*	TODO - oauth2/token from code from callback
-			*/
 			SC.get('users/' + $scope.userDBrecord.sc_id)
 				.then(function(me) {
 					console.log('SC.me.then, me', me);
@@ -919,14 +916,9 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$window', '$l
 						$scope.profile.email = $scope.currentUser.email;
 						$scope.profile.name = $scope.currentUser.displayName;
 						$scope.getDBuser();
-						console.log('$scope.currentUser', $scope.currentUser);
 					}
 				});
 			} else {
-				/*
-				*	TODO
-				*	load data
-				*/
 				$scope.currentUser = $scope.firebase.user;
 				$scope.profile.email = $scope.currentUser.email;
 				$scope.profile.name = $scope.currentUser.displayName;
