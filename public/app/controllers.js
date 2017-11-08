@@ -847,7 +847,7 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 			playlists: undefined
 		};
 		$scope.scConnect = function() {
-			SC.connect().then(function(data) {
+			SC.connect().then(function(/*data*/) {
 				// console.log('SC.connect.then, data:', data);
 				// console.log('scConnect local storage', localStorage.getItem('callback'));
 				var urlParams = localStorage.getItem('callback').replace(/^.*\?/, '').split('&');
@@ -873,10 +873,10 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 				*	store user id to be able to retrieve user data without authentication
 				*/
 				$scope.firebase.setDBuserNewValues({ sc_id: me.id })
-					.then(function(data) {
+					.then(function(/*data*/) {
 						// console.log('setDBuserValues', JSON.stringify(data));
 					})
-					.catch(function(error) {
+					.catch(function(/*error*/) {
 						// console.log('setDBuserValues, error', JSON.stringify(error));
 					});
 				return SC.get('users/' + me.id + '/playlists');
@@ -909,12 +909,23 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 		$scope.widgetLink = function(soundcloudPlaylistID) {
 			return $sce.trustAsResourceUrl($scope.scWidgetLink.first + soundcloudPlaylistID + $scope.scWidgetLink.last);
 		};
+		$scope.blogPostPreview = undefined;
+		$scope.toggleBlogPostPreview = function(arrayIndex) {
+			/*
+			*	deselect if element does not exist
+			*/
+			console.log('arrayIndex', arrayIndex);
+			var post = $scope.SCdata.playlists[arrayIndex];
+			$scope.blogPostPreview = (post) ? post : undefined;
+			console.log('$scope.blogPostPreview', $scope.blogPostPreview);
+		};
 		/*
 		*	lifecycle
 		*/
 		$scope.$on('$viewContentLoaded', function() {
 			console.log('user view controller loaded');
 			if (!$scope.firebase.isSignedIn) {
+				console.log('show auth dialog');
 				$rootScope.$broadcast('showAuthDialog');
 				$rootScope.$on('hideAuthDialog', function() {
 					// console.log('$scope.firebase.user.providerData:', $scope.firebase.user.providerData);
