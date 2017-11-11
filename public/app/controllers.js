@@ -10,7 +10,8 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 			index: 'Index - Drum and Bass Hub index',
 			singles: 'Singles - Soundcloud powered production showcase; all downloadable sounds are free for personal use and/or promotional purposes only',
 			freedownloads: 'Free Downloads - Hive and Soundcloud powered section featuring freely downloadable music, produced by Dnbhub in-house artists',
-			reposts: 'Featured - Soundcloud powered RePosts playlists, featuring drum and bass producers, DJs, and MCs audio compositions',
+			reposts: 'Featured - Soundcloud powered RePosts playlists featuring freely downloadable tracks',
+			iluvdnb: 'I Luv Drum & Bass - Sporify playlist featuring paid tracks',
 			blog: 'Blog - Drum and Bass related press releases',
 			contact: 'Contact form - use it for any enquires correlating with Drum and Bass Hub activities',
 			about: 'All trademarks and copyrights are property of their respective owners',
@@ -24,6 +25,7 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 			singles: 'fa fa-music',
 			freedownloads: 'fa fa-cloud-download',
 			reposts: 'fa fa-retweet',
+			iluvdnb: 'fa fa-heart',
 			blog: 'fa fa-th-large',
 			contact: 'fa fa-envelope',
 			about: 'fa fa-copyright',
@@ -38,6 +40,7 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 			singles: 'Singles',
 			freedownloads: 'Free Downloads',
 			reposts: 'Featured',
+			iluvdnb: 'ILuvDnB',
 			blog: 'Blog',
 			contact: 'Contact',
 			about: '2011-'+$scope.currentYear,
@@ -51,6 +54,7 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 			singles: 'singles',
 			freedownloads: 'freedownloads',
 			reposts: 'reposts',
+			iluvdnb: 'iluvdnb',
 			blog: 'blog',
 			admin: 'admin',
 			user: 'user',
@@ -351,6 +355,20 @@ dnbhubControllers.controller('repostsCtrl', ['$scope',
 		});
 		$scope.$on('$destroy', function() {
 			console.log('reposts view controller destroyed');
+		});
+	}
+]);
+
+dnbhubControllers.controller('iluvdnbCtrl', ['$scope',
+	function($scope) {
+		/*
+		*	lifecycle
+		*/
+		$scope.$on('$viewContentLoaded', function() {
+			console.log('iluvdnb view controller loaded');
+		});
+		$scope.$on('$destroy', function() {
+			console.log('iluvdnb view controller destroyed');
 		});
 	}
 ]);
