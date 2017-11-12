@@ -2,25 +2,19 @@
 *	firebase mock
 */
 var firebase = {
-	initializeApp: function() {
-		return true;
-	},
-	database: function() {
+	initializeApp: () => true,
+	database: () => {
 		return {
-			ref: function() {
+			ref: () => {
 				return {
-					once: function() {
-						return true;
-					}
+					once: () => true
 				};
 			}
 		};
 	},
-	auth: function() {
+	auth: () => {
 		return {
-			onAuthStateChanged: function() {
-				return true;
-			}
+			onAuthStateChanged: () => true
 		};
 	}
 };
