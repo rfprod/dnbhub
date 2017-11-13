@@ -15,7 +15,7 @@ var dnbhub = angular.module('dnbhub', [
 
 dnbhub
 	.config(['$routeProvider', '$locationProvider', '$mdThemingProvider',
-		function($routeProvider, $locationProvider, $mdThemingProvider) {
+		($routeProvider, $locationProvider, $mdThemingProvider) => {
 			$routeProvider
 				.when('/index', {
 					templateUrl: 'app/views/index.html',
@@ -74,7 +74,7 @@ dnbhub
 		}
 	])
 	.run(['$rootScope', 'firebaseService', 'soundcloudService',
-		function ($rootScope, firebaseService, soundcloudService) {
+		($rootScope, firebaseService, soundcloudService) => {
 			/*
 			*	initialize firebase
 			*/
@@ -85,7 +85,7 @@ dnbhub
 			*/
 			soundcloudService.init();
 
-			$rootScope.$on('$locationChangeSuccess', function(event, next, current) {
+			$rootScope.$on('$locationChangeSuccess', (event, next, current) => {
 				console.log('event', event);
 				console.log('current', current);
 				console.log('next', next);

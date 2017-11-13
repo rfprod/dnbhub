@@ -2,7 +2,7 @@
 
 const gulp = require('gulp'),
 	runSequence = require('run-sequence'),
-	util = require('gulp-util'),
+	gutil = require('gulp-util'),
 	concat = require('gulp-concat'),
 	rename = require('gulp-rename'),
 	eslint = require('gulp-eslint'),
@@ -12,6 +12,8 @@ const gulp = require('gulp'),
 	mocha = require('gulp-mocha'),
 	karmaServer = require('karma').Server,
 	sass = require('gulp-sass'),
+	babel = require('gulp-babel'),
+	sourcemaps = require('gulp-sourcemaps'),
 	cssnano = require('gulp-cssnano'),
 	autoprefixer = require('gulp-autoprefixer'),
 	del = require('del'),
@@ -20,17 +22,17 @@ const gulp = require('gulp'),
 let node, protractor;
 
 function killProcessByName(name) {
-	exec('ps -e | grep ' + name, (error, stdout, stderr) => {
+	exec('pgrep ' + name, (error, stdout, stderr) => {
 		if (error) throw error;
-		if (stderr) console.log('stderr: ',stderr);
+		if (stderr) console.log('stderr: ', stderr);
 		if (stdout) {
 			//console.log('killing running processes: ', stdout);
-			var runningProcessesIDs = stdout.match(/\d{4}/);
+			var runningProcessesIDs = stdout.match(/\d+/);
 			runningProcessesIDs.forEach((id) => {
 				exec('kill -9 ' + id, (error, stdout, stderr) => {
 					if (error) throw error;
-					if (stderr) console.log('stdout:', stdout);
-					if (stdout) console.log('stderr:', stderr);
+					if (stderr) console.log('stdout: ', stdout);
+					if (stdout) console.log('stderr: ', stderr);
 				});
 			});
 		}
@@ -50,7 +52,7 @@ gulp.task('server', () => {
 gulp.task('server-test', () => {
 	return gulp.src(['./test/server/*.js'], { read: false })
 		.pipe(mocha({ reporter: 'spec' }))
-		.on('error', util.log);
+		.on('error', gutil.log);
 });
 
 let karmaSRV;
@@ -124,6 +126,10 @@ gulp.task('pack-app-js', () => {
 	const env = process.env;
 	return gulp.src('./public/app/*.js')
 		.pipe(plumber())
+		.pipe(sourcemaps.init())
+		.pipe(babel({
+			presets: ['babel-preset-es2015', 'babel-preset-es2016', 'babel-preset-es2017']
+		}))
 		.pipe(concat('packed-app.js'))
 		.pipe(replace('soundcloud_client_id', env.SOUNDCLOUD_CLIENT_ID))
 		.pipe(replace('firebase_api_key', env.FIREBASE_API_KEY))
@@ -135,6 +141,7 @@ gulp.task('pack-app-js', () => {
 		.pipe(uglify())
 		.pipe(plumber.stop())
 		.pipe(rename('packed-app.min.js'))
+		.pipe(sourcemaps.write('.'))
 		.pipe(gulp.dest('./public/js'));
 });
 

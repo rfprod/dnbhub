@@ -1,18 +1,18 @@
 /*
 * SimpleServer
 */
-var http = require('http');
-var path = require('path');
+const http = require('http');
+const path = require('path');
 
-var express = require('express');
+const express = require('express');
 
 /*
 * SimpleServer `SimpleServer(obj)`
 * Creates a new instance of SimpleServer with the following options:
 * `port` - The HTTP port to listen on. If `process.env.PORT` is set, _it overrides this value_.
 */
-var app = express();
-var server = http.createServer(app);
+const app = express();
+const server = http.createServer(app);
 
 app.use(express.static(path.resolve(__dirname, 'public')));
 
@@ -24,8 +24,7 @@ app.use((req, res) => {
 	res.sendFile(__dirname + '/public/index.html');
 });
 
-
-server.listen(process.env.PORT || 3000, process.env.IP || '0.0.0.0', function(){
-	var addr = server.address();
-	console.log('Dnbhub server listening at', addr.address + ':' + addr.port);
+server.listen(process.env.PORT || 3000, process.env.IP || '0.0.0.0', () => {
+	const addr = server.address();
+	console.log(`Dnbhub server listening at ${addr.address}:${addr.port}`);
 });
