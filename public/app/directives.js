@@ -7,16 +7,16 @@ dnbhubDirectives.directive('setElementDimensionsOnload', ['$window',
 		'use strict';
 		return {
 			restrict: 'A',
-			link: function(scope, element) {
-				element.on('load', function(){
-					var iFrameHeight = $window.innerHeight - 75;
-					var iFrameWidth = 400;
+			link: (scope, element) => {
+				element.on('load', () => {
+					const iFrameHeight = $window.innerHeight - 75;
+					const iFrameWidth = 400;
 					element.css('width', iFrameWidth + 'px');
 					element.css('height', iFrameHeight + 'px');
 					console.log('element', element);
-					var spotlight = angular.element(element.offsetParent());
-					var spotlightWidth = spotlight[0].clientWidth;
-					var elementMargin = ((spotlightWidth - iFrameWidth) / 2) - 15;
+					const spotlight = angular.element(element.offsetParent());
+					const spotlightWidth = spotlight[0].clientWidth;
+					const elementMargin = ((spotlightWidth - iFrameWidth) / 2) - 15;
 					console.log('resize params', spotlight, spotlightWidth, elementMargin);
 					element.css({marginLeft: elementMargin + 'px', marginRight: elementMargin + 'px'});
 				});
@@ -26,25 +26,25 @@ dnbhubDirectives.directive('setElementDimensionsOnload', ['$window',
 ]);
 
 dnbhubDirectives.directive('customSoundcloudPlayer', [
-	function(){
+	function() {
 		'use strict';
 		return {
 			restrict: 'A',
 			replace: true,
 			templateUrl: 'app/views/custom-soundcloud-player.html',
-			link: function(scope, element) {
+			link: (scope, element) => {
 				scope.selectedTrack;
 				scope.selectTrack = function(index) {
 					scope.selectedTrack = index;
 				};
-				scope.$watch(function() { return element[0].childNodes.length; }, function(newVal, oldVal) {
+				scope.$watch(() => { return element[0].childNodes.length; }, (newVal, oldVal) => {
 					if (!newVal && !oldVal) {
 						console.log('soundcloud player DOM initial change:', newVal, '|', oldVal);
 					} else if (newVal !== oldVal) {
 						console.log('soundcloud player DOM changed:', newVal, '|', oldVal);
 					}
 				});
-				scope.$watchCollection('tracks', function(newVal) {
+				scope.$watchCollection('tracks', (newVal) => {
 					console.log('sc player, tracks changed', newVal);
 				});
 			}

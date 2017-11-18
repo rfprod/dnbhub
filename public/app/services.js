@@ -25,12 +25,12 @@ function setBaseUrl(absUrl) {
 }
 
 dnbhubServices.factory('freedownloadsService', ['$resource', '$location', function($resource, $location) {
-	var baseUrl = setBaseUrl($location.$$absUrl);
-	console.log('abs base url:', baseUrl);
+	const baseUrl = setBaseUrl($location.$$absUrl);
+	// console.log('abs base url:', baseUrl);
 	return $resource(baseUrl + '/data/freedownloads-data.json', {}, {
 		query: {method: 'GET', params: {}, isArray: true,
 			interceptor: {
-				response: function(response){
+				response: (response) => {
 					response.resource.$httpHeaders = response.headers;
 					return response.resource;
 				}
@@ -40,12 +40,12 @@ dnbhubServices.factory('freedownloadsService', ['$resource', '$location', functi
 }]);
 
 dnbhubServices.factory('blogPostsService', ['$resource', '$location', function($resource, $location) {
-	var baseUrl = setBaseUrl($location.$$absUrl);
-	console.log('abs base url:', baseUrl);
+	const baseUrl = setBaseUrl($location.$$absUrl);
+	// console.log('abs base url:', baseUrl);
 	return $resource(baseUrl + '/data/blog-posts.json', {}, {
 		query: {method: 'GET', params: {}, isArray: true,
 			interceptor: {
-				response: function(response){
+				response: (response) => {
 					response.resource.$httpHeaders = response.headers;
 					return response.resource;
 				}
@@ -55,12 +55,12 @@ dnbhubServices.factory('blogPostsService', ['$resource', '$location', function($
 }]);
 
 dnbhubServices.factory('dnbhubDetailsService', ['$resource', '$location', function($resource, $location) {
-	var baseUrl = setBaseUrl($location.$$absUrl);
-	console.log('abs base url:', baseUrl);
+	const baseUrl = setBaseUrl($location.$$absUrl);
+	// console.log('abs base url:', baseUrl);
 	return $resource(baseUrl + '/data/dnbhub-details.json', {}, {
 		query: {method: 'GET', params: {}, isArray: false,
 			interceptor: {
-				response: function(response) {
+				response: (response) => {
 					response.resource.$httpHeaders = response.headers;
 					return response.resource;
 				}
@@ -70,12 +70,12 @@ dnbhubServices.factory('dnbhubDetailsService', ['$resource', '$location', functi
 }]);
 
 dnbhubServices.factory('submitFormService', ['$resource', '$location', function($resource, $location) {
-	var baseUrl = setBaseUrl($location.$$absUrl);
-	console.log('abs base url:', baseUrl);
+	const baseUrl = setBaseUrl($location.$$absUrl);
+	// console.log('abs base url:', baseUrl);
 	return $resource(baseUrl + '/php/contact.php', {}, {
 		query: {method: 'POST', params: {}, headers: {'Content-type': 'application/x-www-form-urlencoded'}, isArray: false,
 			interceptor: {
-				response: function(response) {
+				response: (response) => {
 					response.resource.$httpHeaders = response.headers;
 					return response.resource;
 				}
@@ -85,12 +85,12 @@ dnbhubServices.factory('submitFormService', ['$resource', '$location', function(
 }]);
 
 dnbhubServices.factory('addBlogPostService', ['$resource', '$location', function($resource, $location) {
-	var baseUrl = setBaseUrl($location.$$absUrl);
-	console.log('abs base url:', baseUrl);
+	const baseUrl = setBaseUrl($location.$$absUrl);
+	// console.log('abs base url:', baseUrl);
 	return $resource(baseUrl + '/php/add-blog-post.php', {}, {
 		query: {method: 'POST', params: {}, headers: {'Content-type': 'application/x-www-form-urlencoded'}, isArray: false,
 			interceptor: {
-				response: function(response) {
+				response: (response) => {
 					response.resource.$httpHeaders = response.headers;
 					return response.resource;
 				}
@@ -100,14 +100,14 @@ dnbhubServices.factory('addBlogPostService', ['$resource', '$location', function
 }]);
 
 dnbhubServices.service('soundcloudService', [function() {
-	var scid = 'soundcloud_client_id';
-	var options = {
+	const scid = 'soundcloud_client_id';
+	const options = {
 		client_id: scid,
 		redirect_uri: 'http://dnbhub.com/callback.html'
 	};
-	var service = {
+	const service = {
 		/* global SC */
-		init: function() {
+		init: () => {
 			return SC.initialize(options);
 		}
 	};
@@ -116,10 +116,10 @@ dnbhubServices.service('soundcloudService', [function() {
 
 
 dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$window', '$location', function($rootScope, $q, $route, $window, $location) {
-	var service = {
+	const service = {
 		/* global firebase */
-		initFirebase: function() {
-			var config = {
+		initFirebase: () => {
+			const config = {
 				apiKey: 'firebase_api_key',
 				authDomain: 'firebase_auth_domain',
 				databaseURL: 'firebase_database_url',
@@ -130,27 +130,27 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 			firebase.initializeApp(config);
 			service.db = firebase.database();
 			service.auth = firebase.auth;
-			firebase.auth().onAuthStateChanged(function(user) {
+			firebase.auth().onAuthStateChanged((user) => {
 				if (user) {
-					console.log('user signed in', user);
+					console.log('user signed in'/*, user*/);
 					service.isSignedIn = true;
 					if (!user.emailVerified) {
 						user.sendEmailVerification()
-							.then(function() {
+							.then(() => {
 								console.log('email verification sent');
 								service.signout()
-									.then(function() {
+									.then(() => {
 										console.log('signout success');
 										$window.alert('Check your email for the latest verification link from Dnbhub firebaseapp mailer. You should verify your email first.');
 										$route.reload();
 									})
-									.catch(function(error) {
+									.catch((error) => {
 										console.log('signout error', error);
 										$window.alert('Error: try again later.');
 										$route.reload();
 									});
 							})
-							.catch(function(error) {
+							.catch((error) => {
 								console.log('send email verification error', error);
 							});
 					} else {
@@ -179,7 +179,7 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 		user: undefined,
 		isSignedIn: false,
 
-		getDB: function(collection, refOnly) {
+		getDB: (collection, refOnly) => {
 			if (collection && (/(about|freedownloads|blog|users)/.test(collection))) {
 				return (!refOnly) ? service.db.ref('/' + collection).once('value') : service.db.ref('/' + collection);
 			} else {
@@ -187,8 +187,8 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 			}
 		},
 
-		authErrorCheck: function() {
-			var typeError = new TypeError('firebaseService, user DB record action error: there seems to be no authenticated users');
+		authErrorCheck: () => {
+			const typeError = new TypeError('firebaseService, user DB record action error: there seems to be no authenticated users');
 			if (!service.user) {
 				throw typeError;
 			} else if (service.user && !service.user.uid) {
@@ -196,20 +196,20 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 			}
 		},
 
-		checkDBuserUID: function() {
-			var def = $q.defer();
+		checkDBuserUID: () => {
+			const def = $q.defer();
 			service.authErrorCheck();
 			service.getDB('users/' + service.user.uid)
-				.then(function(snapshot) {
+				.then((snapshot) => {
 					console.log('checking user db profile');
 					if (!snapshot.val()) {
 						console.log('creating user db profile');
 						service.db.ref('users/' + service.user.uid).set({
 							created: new Date().getTime()
-						}).then(function() {
+						}).then(() => {
 							console.log('created user db profile');
 							def.resolve({ exists: false, created: true });
-						}).catch(function(error) {
+						}).catch((error) => {
 							console.log('error creating user db profile', error);
 							def.reject({ exists: false, created: false });
 						});
@@ -217,36 +217,36 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 						def.resolve({ exists: true, created: false });
 					}
 				})
-				.catch(function(error) {
+				.catch((error) => {
 					console.log('checkDBuserUID, user db profile check:', error);
 					def.reject(error);
 				});
 			return def.promise;
 		},
 
-		setDBuserNewValues: function(valuesObj) {
-			var def = $q.defer();
+		setDBuserNewValues: (valuesObj) => {
+			const def = $q.defer();
 			service.authErrorCheck();
 			service.checkDBuserUID()
-				.then(function(data) {
+				.then((data) => {
 					console.log('checkDBuserUID', JSON.stringify(data));
 					service.db.ref('users/' + service.user.uid).update(valuesObj)
-						.then(function() {
+						.then(() => {
 							console.log('user db profile values set');
 							def.resolve({ valuesSet: true });
-						}).catch(function(error) {
+						}).catch((error) => {
 							console.log('error setting user db profile values', error);
 							def.reject({ valuesSet: false });
 						});
-				}).catch(function(error) {
+				}).catch((error) => {
 					console.log('setDBuserValues, user db profile check error', error);
 					def.reject(error);
 				});
 			return def.promise;
 		},
 
-		authenticate: function(mode, payload) {
-			var def = $q.defer();
+		authenticate: (mode, payload) => {
+			const def = $q.defer();
 			if (mode !== 'email' && mode !== 'twitter') {
 				def.reject(new TypeError('mode must be: \'email\' or \'twitter\''));
 			}
@@ -259,11 +259,11 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 
 			if (mode === 'email' && payload.hasOwnProperty('email') && payload.hasOwnProperty('password')) {
 				service.auth().signInWithEmailAndPassword(payload.email, payload.password)
-					.then(function(success) {
+					.then((success) => {
 						// console.log('auth success', success);
 						def.resolve(success);
 					})
-					.catch(function(error) {
+					.catch((error) => {
 						// console.log('auth error', error);
 						def.reject(error);
 					});
@@ -280,24 +280,24 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 			return def.promise;
 		},
 
-		signout: function() {
+		signout: () => {
 			if (service.isSignedIn) {
 				return service.auth().signOut();
 			}
 		},
 
-		create: function(mode, payload) {
-			var def = $q.defer();
+		create: (mode, payload) => {
+			const def = $q.defer();
 			if (mode !== 'email') {
 				def.reject(new TypeError('mode must be: \'email\''));
 			}
 			if (mode === 'email' && payload.hasOwnProperty('email') && payload.hasOwnProperty('password')) {
 				service.auth().createUserWithEmailAndPassword(payload.email, payload.password)
-					.then(function(success) {
+					.then((success) => {
 						// console.log('auth success', success);
 						def.resolve(success);
 					})
-					.catch(function(error) {
+					.catch((error) => {
 						// console.log('auth error', error);
 						def.reject(error);
 					});
@@ -307,23 +307,23 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 			return def.promise;
 		},
 
-		delete: function(email, password) {
-			var def = $q.defer();
-			var credential = service.auth.EmailAuthProvider.credential(email, password);
+		delete: (email, password) => {
+			const def = $q.defer();
+			const credential = service.auth.EmailAuthProvider.credential(email, password);
 			service.user.reauthenticateWithCredential(credential)
-				.then(function() {
+				.then(() => {
 					// console.log('successfully reauthenticated');
 					service.user.delete()
-						.then(function() {
+						.then(() => {
 							// delete user db profile also
 							service.getDB('users/' + service.user.uid, true).remove();
 							def.resolve(true);
 						})
-						.catch(function(error) {
+						.catch((error) => {
 							def.reject(error);
 						});
 				})
-				.catch(function(error) {
+				.catch((error) => {
 					def.reject(error);
 				});
 			return def.promise;
