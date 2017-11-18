@@ -780,11 +780,11 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 					$scope.$apply();
 				});
 		};
-		$scope.getDBuser = () => {
+		$scope.getDBuser = (passGetMeMethodCall) => {
 			$scope.firebase.getDB('users/' + $scope.currentUser.uid).then((snapshot) => {
 				// console.log('users/' + $scope.currentUser.uid, snapshot.val());
 				$scope.userDBrecord = snapshot.val();
-				if ($scope.userDBrecord.sc_id) {
+				if ($scope.userDBrecord.sc_id && !passGetMeMethodCall) {
 					$scope.getMe();
 				}
 				// console.log('$scope.userDBrecord', $scope.userDBrecord);
@@ -909,6 +909,9 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 			SC.get('users/' + $scope.userDBrecord.sc_id)
 				.then((me) => {
 					console.log('SC.me.then, me', me);
+					if (me.description) {
+						me.description = $scope.processDescription(me.description);
+					}
 					$scope.SCdata.me = me;
 					$scope.$apply();
 					return SC.get('users/' + me.id + '/playlists');
@@ -933,8 +936,117 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 			*/
 			console.log('arrayIndex', arrayIndex);
 			const post = $scope.SCdata.playlists[arrayIndex];
+			if (post) {
+				post.description = $scope.processDescription(post.description);
+			}
 			$scope.blogPostPreview = (post) ? post : undefined;
 			console.log('$scope.blogPostPreview', $scope.blogPostPreview);
+		};
+		$scope.processDescription = (unprocessed) => {
+			if (!unprocessed) { return unprocessed; }
+			/*
+			*	convert:
+			*	\n to <br/>
+			*	links to anchors
+			*/
+			const processed = unprocessed.replace(/\n/g, '<br/>')
+				.replace(/((http(s)?)?(:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._+~#=]{0,255}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*))/g, '<a href="$1" target=_blank><i class="fa fa-external-link"></i> <span class="md-caption">$1</span></a>') // parse all urls, full and partial
+				.replace(/href="((www\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._+~#=]{0,255}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*))"/g, 'href="http://$1"') // add to partial hrefs protocol prefix
+				.replace(/(@)([^@,\s<)\]]+)/g, '<a href="https://soundcloud.com/$2" target=_blank><i class="fa fa-external-link"></i> <span class="md-caption">$1$2</span></a>');
+			// console.log('processed', processed);
+			return processed;
+		};
+		$scope.existingBlogEntriesIDs = undefined;
+		$scope.getExistingBlogEntriesIDs = () => {
+			$scope.firebase.getDB('blogEntriesIDs').then((snapshot) => {
+				const response = snapshot.val();
+				$scope.existingBlogEntriesIDs = response;
+				console.log('$scope.existingBlogEntriesIDs', $scope.existingBlogEntriesIDs);
+				$scope.$apply();
+			}).catch((error) => {
+				console.log('error', error);
+				$scope.$apply();
+			});
+		};
+		$scope.alreadyAdded = (arrayIndex) => {
+			let added = false;
+			if (!$scope.existingBlogEntriesIDs) {
+				console.log('Unable to add blog posts, there was an error getting existing blog entries');
+				added = true;
+			} else {
+				const post = $scope.SCdata.playlists[arrayIndex];
+				if (post) {
+					if ($scope.existingBlogEntriesIDs.hasOwnProperty(post.id) || $scope.alreadySubmitted(arrayIndex)) {
+						added = true;
+					}
+				}
+			}
+			return added;
+		};
+		$scope.alreadySubmitted = (arrayIndex) => {
+			let alreadySubmitted = false;
+			const post = $scope.SCdata.playlists[arrayIndex];
+			if (post) {
+				if ($scope.userDBrecord.submittedPlaylists) {
+					alreadySubmitted = ($scope.userDBrecord.submittedPlaylists.hasOwnProperty(post.id)) ? true : alreadySubmitted;
+				}
+			}
+			return alreadySubmitted;
+		};
+		$scope.unsubmittable = (arrayIndex) => {
+			let unsubmittable = false;
+			const post = $scope.SCdata.playlists[arrayIndex];
+			if (post) {
+				if ($scope.userDBrecord.submittedPlaylists) {
+					unsubmittable = ($scope.userDBrecord.submittedPlaylists[post.id] === false) ? true : unsubmittable;
+				}
+			}
+			return unsubmittable;
+		};
+		$scope.submitBlogPost = (arrayIndex) => {
+			if (!$scope.existingBlogEntriesIDs) {
+				console.log('Unable to add a blog post, there was an error getting existing blog entries');
+			} else {
+				console.log(`submit blog post, index ${arrayIndex}`);
+				const post = $scope.SCdata.playlists[arrayIndex];
+				const playlists = $scope.userDBrecord.submittedPlaylists || {};
+				if (post) {
+					playlists[post.id] = false; // false - submitted but not approved by a moderator, true - submitted and approved by a moderator
+					$scope.firebase.setDBuserNewValues({ submittedPlaylists: playlists })
+						.then((data) => {
+							console.log('submitBlogPost setDBuserValues', JSON.stringify(data));
+							$scope.getDBuser(true);
+						})
+						.catch((error) => {
+							console.log('submitBlogPost setDBuserValues, error', JSON.stringify(error));
+						});
+				}
+			}
+		};
+		$scope.unsubmitBlogPost = (arrayIndex) => {
+			if (!$scope.userDBrecord.submittedPlaylists) {
+				console.log('No playlists to unsubmit');
+			} else {
+				console.log(`unsibmit blog post, index ${arrayIndex}`);
+				const post = $scope.SCdata.playlists[arrayIndex];
+				const playlists = $scope.userDBrecord.submittedPlaylists;
+				if (post) {
+					if (playlists.hasOwnProperty(post.id) && playlists[post.id] === false) {
+						delete playlists[post.id];
+						$scope.firebase.setDBuserNewValues({ submittedPlaylists: playlists })
+							.then((data) => {
+								console.log('submitBlogPost setDBuserValues', JSON.stringify(data));
+								$scope.getDBuser(true);
+							})
+							.catch((error) => {
+								console.log('submitBlogPost setDBuserValues, error', JSON.stringify(error));
+							});
+					}
+				}
+			}
+		};
+		$scope.goToBlogEntry = () => {
+			console.log('TODO: goToBlogEntry');
 		};
 		/*
 		*	lifecycle
@@ -951,6 +1063,7 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 						$scope.profile.email = $scope.currentUser.email;
 						$scope.profile.name = $scope.currentUser.displayName;
 						$scope.getDBuser();
+						$scope.getExistingBlogEntriesIDs();
 					}
 				});
 			} else {
@@ -958,10 +1071,12 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 				$scope.profile.email = $scope.currentUser.email;
 				$scope.profile.name = $scope.currentUser.displayName;
 				$scope.getDBuser();
+				$scope.getExistingBlogEntriesIDs();
 			}
 		});
 		$scope.$on('$destroy', () => {
 			console.log('user view controller destroyed');
+			$scope.firebase.getDB('blogEntriesIDs', true).off();
 		});
 	}
 ]);

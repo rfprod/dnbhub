@@ -180,7 +180,7 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 		isSignedIn: false,
 
 		getDB: (collection, refOnly) => {
-			if (collection && (/(about|freedownloads|blog|users)/.test(collection))) {
+			if (collection && (/(about|freedownloads|blog|blogEntriesIDs|users)/.test(collection))) {
 				return (!refOnly) ? service.db.ref('/' + collection).once('value') : service.db.ref('/' + collection);
 			} else {
 				throw new TypeError('firebaseService, getDB(collection): missing collection identifier, which can have values: about, freedownloads, blog');
