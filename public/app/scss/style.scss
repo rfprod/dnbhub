@@ -368,6 +368,10 @@ html {
 
 		#soundcloud-playlists {
 			overflow-y: scroll;
+
+			md-grid-tile-header, md-grid-tile-footer {
+				height: 10%;
+			}
 		}
 	}
 
