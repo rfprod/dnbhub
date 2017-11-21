@@ -22,3 +22,8 @@ indent_size = 4
 [*.{js,json,sh,php,bowerrc}]
 indent_style = tab
 indent_size = 2
+
+# 2 space indentation for code
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2

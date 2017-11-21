@@ -1,5 +1,7 @@
 # Drum'n'Bass Hub
 
+![build](https://travis-ci.org/rfprod/dnbhub.svg?branch=master)
+
 [See it in action](http://dnbhub.com)
 
 ### Environment variables

@@ -1,0 +1,32 @@
+# doc: https://docs.travis-ci.com/user/languages/javascript-with-nodejs/
+# require sudo
+sudo: required
+# use Ubuntu Trusty
+dist: trusty
+# define infrastructure
+language: node_js
+# define nodejs version(s) to use
+node_js:
+  - "8.9.1"
+# cache node_modules
+## npm install will run on every build and update/install new depencencies
+## defined in package.json
+cache:
+  directories:
+    - "node_modules"
+# install global and local dependencies
+install:
+  - npm install -g gulp-cli
+  - npm install
+# export required environment variables before running tests
+before_script:
+  - export CHROME_BIN=chromium-browser
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - sleep 2
+# build app, start it, and run tests
+script:
+  - gulp build
+  - gulp server & # ampersand is required to run server in background
+  - gulp unit-tests
+  # - gulp client-e2e-test # uncomment to run e2e tests but it requires correct env variables setup via travis-ci.org UI
