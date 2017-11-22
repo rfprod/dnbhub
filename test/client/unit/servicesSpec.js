@@ -7,7 +7,7 @@ function setBaseUrl(absUrl) {
 	return absUrl.match(new RegExp('http(s)?:\/\/[^/]+'))[0];
 }
 
-beforeEach(module('dnbhubServices'));
+beforeEach(module('dnbhubServices', 'ngResource'));
 
 describe('Dnbhub services', () => {
 	let service, httpBackend;

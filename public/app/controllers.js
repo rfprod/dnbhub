@@ -438,7 +438,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 			const search = $location.search();
 			if ($scope.selectedBlogPost) {
 				search.code = $scope.selectedBlogPost.code;
-				console.log('location.search: ',search);
+				// console.log('location.search: ',search);
 				$location.search(search);
 			}
 		};
@@ -638,7 +638,7 @@ dnbhubControllers.controller('contactCtrl', ['$scope', '$timeout', 'regXpatterns
 		$scope.submitForm = () => {
 			$scope.params = 'name=' + $scope.name + '&email=' + $scope.email + '&header=' + $scope.header + '&message=' + $scope.message;
 			submitFormService.query($scope.params).$promise.then((response) => {
-				console.log(response);
+				// console.log(response);
 				if (response.error) $scope.sendMailResponse.error = response.error;
 				if (response.success) {
 					$scope.sendMailResponse.success = response.success;
@@ -934,13 +934,13 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 			/*
 			*	deselect if element does not exist
 			*/
-			console.log('arrayIndex', arrayIndex);
+			// console.log('arrayIndex', arrayIndex);
 			const post = $scope.SCdata.playlists[arrayIndex];
 			if (post) {
 				post.description = $scope.processDescription(post.description);
 			}
 			$scope.blogPostPreview = (post) ? post : undefined;
-			console.log('$scope.blogPostPreview', $scope.blogPostPreview);
+			// console.log('$scope.blogPostPreview', $scope.blogPostPreview);
 		};
 		$scope.processDescription = (unprocessed) => {
 			if (!unprocessed) { return unprocessed; }
