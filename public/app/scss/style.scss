@@ -323,6 +323,11 @@ html {
 				padding: 0 $padding 0 $padding;
 				font-size: 13pt;
 				overflow-y: scroll;
+
+				@media (max-width: 959px) {
+					height: auto !important;
+					overflow: visible;
+				}
 			}
 
 			iframe {
