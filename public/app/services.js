@@ -276,6 +276,7 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 
 		signout: () => {
 			if (service.isSignedIn) {
+				service.isSignedIn = false;
 				return service.auth().signOut();
 			}
 		},
