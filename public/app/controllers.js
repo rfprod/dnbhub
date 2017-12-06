@@ -168,6 +168,22 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$locatio
 		$scope.patterns = regXpatternsService;
 		$scope.firebase = firebaseService;
 
+		$scope.resetPassword = () => {
+			console.log('send email with password reset link');
+			$scope.firebase.auth().sendPasswordResetEmail($scope.form.email)
+				.then(() => {
+					$scope.instructions = 'Password reset email was sent to ' + $scope.form.email + '. It may take some time for the email to be delivered. Request it again if you do not receive it in about 15 minutes.';
+					// console.log('$scope.instructions:', $scope.instructions);
+					$scope.$apply();
+				})
+				.catch((error) => {
+					console.log('reset user password, error:', error);
+					$scope.instructions = error.message;
+					// console.log('$scope.instructions:', $scope.instructions);
+					$scope.$apply();
+				});
+		};
+
 		$scope.signupMode = false;
 		$scope.wrongPassword = false;
 		$scope.submit = (isValid) => {
