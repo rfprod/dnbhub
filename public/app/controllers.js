@@ -991,14 +991,14 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 					alreadySubmitted = ($scope.userDBrecord.submittedPlaylists.hasOwnProperty(post.id)) ? true : alreadySubmitted;
 				}
 			}
-			return alreadySubmitted;
+			return alreadySubmitted || $scope.alreadyAdded();
 		};
 		$scope.unsubmittable = (arrayIndex) => {
 			let unsubmittable = false;
 			const post = $scope.SCdata.playlists[arrayIndex];
 			if (post) {
 				if ($scope.userDBrecord.submittedPlaylists) {
-					unsubmittable = ($scope.userDBrecord.submittedPlaylists[post.id] === false) ? true : unsubmittable;
+					unsubmittable = (!$scope.userDBrecord.submittedPlaylists[post.id]) ? true : unsubmittable;
 				}
 			}
 			return unsubmittable;
