@@ -1,0 +1,68 @@
+{
+	"hosting": {
+		"public": "public",
+		"ignore": [
+			"firebase.json",
+			"**/.*",
+			"**/node_modules/**",
+			"public/components",
+			"public/php",
+			".env"
+		],
+		"headers": [
+			{
+				"source": "**",
+				"headers": [
+					{
+						"key": "Access-Control-Allow-Origin",
+						"value": "https://dnbhub-a5d9c.firebaseapp.com https://dnbhub.com"
+					},
+					{
+						"key": "Access-Control-Allow-Methods",
+						"value": "GET,PUT,POST,DELETE,OPTIONS,HEAD"
+					}
+				]
+			},
+			{
+				"source": "**/*.@(jpg|jpeg|gif|png|svg)",
+				"headers": [
+					{
+						"key": "Cache-Control",
+						"value": "max-age=7200"
+					}
+				]
+			},
+			{
+				"source": "/sendEmail",
+				"headers": [
+					{
+						"key": "Cache-Control",
+						"value": "public, no-cache, no-store, must-ravalidate, max-age=0"
+					},
+					{
+						"key": "Expires",
+						"value": "-1"
+					},
+					{
+						"key": "Pragme",
+						"value": "no-cache"
+					}
+				]
+			}
+		],
+		"rewrites": [
+			{
+				"source": "/sendEmail",
+				"function": "sendEmail"
+			},
+			{
+				"source": "/submitBlogPostOverEmail",
+				"function": "submitBlogPostOverEmail"
+			},
+			{
+				"source": "**/!(sendEmail|submitBlogPostOverEmail)",
+				"destination": "/index.html"
+			}
+		]
+	}
+}

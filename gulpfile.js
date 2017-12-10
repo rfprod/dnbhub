@@ -60,6 +60,7 @@ gulp.task('client-unit-test', () => {
 	if (!karmaSRV) {
 		karmaSRV = new karmaServer({
 			configFile: require('path').resolve('test/karma.conf.js'),
+			autoWatch: true,
 			singleRun: false
 		});
 

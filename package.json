@@ -71,7 +71,7 @@
 		"unit-tests": "gulp unit-tests",
 		"test-server": "gulp setver-test",
 		"test-client": "gulp client-unit-test",
-		"test-client-single-run": "gulp client-unit-tes-single-run",
+		"test-client-single-run": "gulp client-unit-test-single-run",
 		"lint": "gulp watch-and-lint",
 		"lint-single-run": "gulp lint",
 		"preupdate-webdriver": "npm install",

@@ -210,16 +210,17 @@ describe('Dnbhub controllers', () => {
 	});
 
 	describe('addBlogPostDialogCtrl', () => {
-		let scope, ctrl, dialog, timeout, regXpatternsService, addBlogPostService;
+		let scope, ctrl, dialog, location, timeout, regXpatternsService, addBlogPostService;
 
-		beforeEach(inject(($rootScope, $controller, _$mdDialog_, _$timeout_, _regXpatternsService_, _addBlogPostService_) => {
+		beforeEach(inject(($rootScope, $controller, _$mdDialog_, _$location_, _$timeout_, _regXpatternsService_, _addBlogPostService_) => {
 			scope = $rootScope.$new();
 			dialog = _$mdDialog_;
+			location = _$location_;
 			timeout = _$timeout_;
 			regXpatternsService = _regXpatternsService_;
 			addBlogPostService = _addBlogPostService_;
-			spyOn(addBlogPostService,'query').and.callFake(() => []);
-			ctrl = $controller('addBlogPostDialogCtrl', { $scope: scope, $mdDialog: dialog, $timeout: timeout, regXpatternsService: regXpatternsService, addBlogPostService: addBlogPostService });
+			spyOn(addBlogPostService,'save').and.callFake(() => []);
+			ctrl = $controller('addBlogPostDialogCtrl', { $scope: scope, $mdDialog: dialog, $location: location, $timeout: timeout, regXpatternsService: regXpatternsService, addBlogPostService: addBlogPostService });
 		}));
 
 		it('should be defined', () => {
@@ -244,15 +245,16 @@ describe('Dnbhub controllers', () => {
 	});
 
 	describe('contactCtrl', () => {
-		let scope, ctrl, timeout, regXpatternsService, submitFormService;
+		let scope, ctrl, location, timeout, regXpatternsService, sendEmailService;
 
-		beforeEach(inject(($rootScope, $controller, _$timeout_, _regXpatternsService_, _submitFormService_) => {
+		beforeEach(inject(($rootScope, $controller, _$location_, _$timeout_, _regXpatternsService_, _sendEmailService_) => {
 			scope = $rootScope.$new();
+			location = _$location_;
 			timeout = _$timeout_;
 			regXpatternsService = _regXpatternsService_;
-			submitFormService = _submitFormService_;
-			spyOn(submitFormService,'query').and.callFake(() => []);
-			ctrl = $controller('contactCtrl', { $scope: scope, $timeout: timeout, regXpatternsService: regXpatternsService, submitFormService: submitFormService });
+			sendEmailService = _sendEmailService_;
+			spyOn(sendEmailService,'save').and.callFake(() => []);
+			ctrl = $controller('contactCtrl', { $scope: scope, $location: location, $timeout: timeout, regXpatternsService: regXpatternsService, sendEmailService: sendEmailService });
 		}));
 
 		it('should be defined', () => {

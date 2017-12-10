@@ -580,12 +580,13 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 	}
 ]);
 
-dnbhubControllers.controller('addBlogPostDialogCtrl', ['$scope', '$mdDialog', '$timeout', 'regXpatternsService', 'addBlogPostService',
-	function($scope, $mdDialog, $timeout, regXpatternsService, addBlogPostService) {
+dnbhubControllers.controller('addBlogPostDialogCtrl', ['$scope', '$mdDialog', '$location', '$timeout', 'regXpatternsService', 'addBlogPostService',
+	function($scope, $mdDialog, $location, $timeout, regXpatternsService, addBlogPostService) {
 		$scope.form = {
 			email: '',
 			soundcloudPlaylistLink: ''
 		};
+		$scope.domain = $location.$$host;
 		$scope.patterns = regXpatternsService;
 		$scope.sendMailResponse = {error: '', success: ''};
 		$scope.hide = () => {
@@ -595,20 +596,31 @@ dnbhubControllers.controller('addBlogPostDialogCtrl', ['$scope', '$mdDialog', '$
 			$mdDialog.cancel();
 		};
 		$scope.submit = () => {
-			const params = 'email=' + $scope.form.email + '&link=' + $scope.form.soundcloudPlaylistLink;
-			addBlogPostService.query(params).$promise.then((response) => {
-				console.log('addBlogPostService, response', response);
-				if (response.error) $scope.sendMailResponse.error = response.error;
-				if (response.success) {
-					$scope.sendMailResponse.error = '';
-					$scope.sendMailResponse.success = response.success;
-				}
-				$timeout(() => {
-					if ($scope.sendMailResponse.success) {
-						$mdDialog.hide($scope.form);
+			const params = 'email=' + $scope.form.email + '&link=' + $scope.form.soundcloudPlaylistLink + '&domain=' + $scope.domain;
+			addBlogPostService.save({}, params).$promise.then(
+				(response) => {
+					if (response.success) {
+						$scope.sendMailResponse.error = '';
+						$scope.sendMailResponse.success = response.success || 'Message was successfully sent';
+						$scope.resetForm();
+					} else {
+						$scope.sendMailResponse.error = response.error || 'Unknown error';
+						$scope.sendMailResponse.success = '';
 					}
-				},5000);
-			});
+					$timeout(() => {
+						$scope.sendMailResponse.success = '';
+						$scope.sendMailResponse.error = '';
+					},5000);
+				},
+				(error) => {
+					// console.log('sendMessage error: ', error);
+					$scope.sendMailResponse.success = '';
+					$scope.sendMailResponse.error = error.status + ' : ' + error.statusText;
+					$timeout(() => {
+						$scope.sendMailResponse.error = '';
+					},5000);
+				}
+			);
 		};
 		/*
 		*	lifecycle
@@ -622,12 +634,13 @@ dnbhubControllers.controller('addBlogPostDialogCtrl', ['$scope', '$mdDialog', '$
 	}
 ]);
 
-dnbhubControllers.controller('contactCtrl', ['$scope', '$timeout', 'regXpatternsService', 'submitFormService',
-	function($scope, $timeout, regXpatternsService, submitFormService) {
+dnbhubControllers.controller('contactCtrl', ['$scope', '$location', '$timeout', 'regXpatternsService', 'sendEmailService',
+	function($scope, $location, $timeout, regXpatternsService, sendEmailService) {
 		$scope.email = '';
 		$scope.name = '';
 		$scope.header = '';
 		$scope.message = '';
+		$scope.domain = $location.$$host;
 		$scope.buttonText = {reset: 'Reset all fields', submit: 'Send message'};
 		$scope.params = '';
 		$scope.patterns = regXpatternsService;
@@ -652,19 +665,32 @@ dnbhubControllers.controller('contactCtrl', ['$scope', '$timeout', 'regXpatterns
 			$scope.message = '';
 		};
 		$scope.submitForm = () => {
-			$scope.params = 'name=' + $scope.name + '&email=' + $scope.email + '&header=' + $scope.header + '&message=' + $scope.message;
-			submitFormService.query($scope.params).$promise.then((response) => {
-				// console.log(response);
-				if (response.error) $scope.sendMailResponse.error = response.error;
-				if (response.success) {
-					$scope.sendMailResponse.success = response.success;
-					$scope.resetForm();
-				}
-				$timeout(() => {
-					$scope.sendMailResponse.error = '';
+			$scope.params = 'name=' + $scope.name + '&email=' + $scope.email + '&header=' + $scope.header + '&message=' + $scope.message + '&domain=' + $scope.domain;
+			sendEmailService.save({}, $scope.params).$promise.then(
+				(response) => {
+					// console.log(response);
+					if (response.success) {
+						$scope.sendMailResponse.error = '';
+						$scope.sendMailResponse.success = response.success || 'Message was successfully sent';
+						$scope.resetForm();
+					} else {
+						$scope.sendMailResponse.error = response.error || 'Unknown error';
+						$scope.sendMailResponse.success = '';
+					}
+					$timeout(() => {
+						$scope.sendMailResponse.success = '';
+						$scope.sendMailResponse.error = '';
+					},5000);
+				},
+				(error) => {
+					// console.log('sendMessage error: ', error);
 					$scope.sendMailResponse.success = '';
-				},5000);
-			});
+					$scope.sendMailResponse.error = error.status + ' : ' + error.statusText;
+					$timeout(() => {
+						$scope.sendMailResponse.error = '';
+					},5000);
+				}
+			);
 		};
 		/*
 		*	lifecycle

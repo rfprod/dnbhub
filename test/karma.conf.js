@@ -55,7 +55,7 @@ module.exports = function(config){
 	port: process.env.PORT,
 	runnerPort: 0,
 
-	autoWatch: true,
+	autoWatch: false,
 	singleRun: true,
 	logLevel: config.LOG_DEBUG,
 	colors: true
