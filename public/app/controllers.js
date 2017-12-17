@@ -793,8 +793,8 @@ dnbhubControllers.controller('aboutCtrl', ['$scope', '$route', '$mdDialog', 'dnb
 	}
 ]);
 
-dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', 'firebaseService',
-	function($rootScope, $scope, firebaseService) {
+dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$timeout', 'firebaseService',
+	function($rootScope, $scope, $timeout, firebaseService) {
 		$scope.firebase = firebaseService;
 
 		$scope.loading = false;
