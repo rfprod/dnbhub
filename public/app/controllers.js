@@ -146,8 +146,8 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 	}
 ]);
 
-dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$location', 'regXpatternsService', 'firebaseService',
-	function($scope, $mdDialog, $location, regXpatternsService, firebaseService) {
+dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$location', '$timeout', 'regXpatternsService', 'firebaseService',
+	function($scope, $mdDialog, $location, $timeout, regXpatternsService, firebaseService) {
 		$scope.instructions = undefined;
 		$scope.form = {
 			email: '',
@@ -160,18 +160,27 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$locatio
 		$scope.patterns = regXpatternsService;
 		$scope.firebase = firebaseService;
 
+		$scope.loading = false;
+
 		$scope.resetPassword = () => {
 			console.log('send email with password reset link');
+			$scope.loading = true;
 			$scope.firebase.auth().sendPasswordResetEmail($scope.form.email)
 				.then(() => {
 					$scope.instructions = 'Password reset email was sent to ' + $scope.form.email + '. It may take some time for the email to be delivered. Request it again if you do not receive it in about 15 minutes.';
 					// console.log('$scope.instructions:', $scope.instructions);
+					$timeout(() => {
+						$scope.loading = false;
+					}, 1000);
 					$scope.$apply();
 				})
 				.catch((error) => {
 					console.log('reset user password, error:', error);
 					$scope.instructions = error.message;
 					// console.log('$scope.instructions:', $scope.instructions);
+					$timeout(() => {
+						$scope.loading = false;
+					}, 1000);
 					$scope.$apply();
 				});
 		};
@@ -180,6 +189,7 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$locatio
 		$scope.wrongPassword = false;
 		$scope.submit = (isValid) => {
 			console.log('isValid', isValid);
+			$scope.loading = true;
 			if (isValid) {
 				if (!$scope.signupMode) {
 					$scope.firebase.authenticate('email', { email: $scope.form.email, password: $scope.form.password }).then(
@@ -202,6 +212,9 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$locatio
 							} else {
 								$scope.instructions = 'Unknown error occurred. Try again later.';
 							}
+							$timeout(() => {
+								$scope.loading = false;
+							}, 1000);
 						}
 					);
 				} else {
@@ -223,6 +236,9 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$locatio
 							// console.log('signup error', error);
 							console.log('signup error');
 							$scope.instructions = 'An error occurred:', error.code;
+							$timeout(() => {
+								$scope.loading = false;
+							}, 1000);
 						}
 					);
 				}
@@ -674,6 +690,7 @@ dnbhubControllers.controller('contactCtrl', ['$scope', '$mdDialog', '$location',
 					}
 					$scope.scrollToSubmissionResult();
 					$timeout(() => {
+						$location.hash('');
 						$scope.sendMailResponse.success = '';
 						$scope.sendMailResponse.error = '';
 						$scope.loading = false;
@@ -685,6 +702,7 @@ dnbhubControllers.controller('contactCtrl', ['$scope', '$mdDialog', '$location',
 					$scope.sendMailResponse.error = error.status + ' : ' + error.statusText;
 					$scope.scrollToSubmissionResult();
 					$timeout(() => {
+						$location.hash('');
 						$scope.sendMailResponse.error = '';
 						$scope.loading = false;
 					},5000);
@@ -699,9 +717,11 @@ dnbhubControllers.controller('contactCtrl', ['$scope', '$mdDialog', '$location',
 		*	dialog controls
 		*/
 		$scope.hide = () => {
+			$location.hash('');
 			$mdDialog.hide();
 		};
 		$scope.cancel = () => {
+			$location.hash('');
 			$mdDialog.cancel();
 		};
 		/*
@@ -776,6 +796,18 @@ dnbhubControllers.controller('aboutCtrl', ['$scope', '$route', '$mdDialog', 'dnb
 dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', 'firebaseService',
 	function($rootScope, $scope, firebaseService) {
 		$scope.firebase = firebaseService;
+
+		$scope.loading = false;
+		$scope.currentTimeout = undefined;
+		$scope.loaded = () => {
+			if ($scope.currentTimeout) {
+				clearTimeout($scope.currentTimeout);
+			}
+			$scope.currentTimeout = $timeout(() => {
+				$scope.loading = false;
+			}, 1000);
+		};
+
 		/*
 		*	lifecycle
 		*/
@@ -796,8 +828,8 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', 'firebaseServ
 	}
 ]);
 
-dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$window', '$location', '$mdDialog', 'firebaseService',
-	function($rootScope, $scope, $sce, $window, $location, $mdDialog, firebaseService) {
+dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$window', '$timeout', '$location', '$mdDialog', 'firebaseService',
+	function($rootScope, $scope, $sce, $window, $timeout, $location, $mdDialog, firebaseService) {
 		$scope.instructions = '';
 		$scope.firebase = firebaseService;
 		$scope.currentUser = undefined;
@@ -806,18 +838,31 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 			edit: false,
 			updateEmail: false
 		};
+		$scope.loading = false;
+		$scope.currentTimeout = undefined;
+		$scope.loaded = () => {
+			if ($scope.currentTimeout) {
+				clearTimeout($scope.currentTimeout);
+			}
+			$scope.currentTimeout = $timeout(() => {
+				$scope.loading = false;
+			}, 1000);
+		};
 		$scope.resendVerificationEmail = () => {
+			$scope.loading = true;
 			if (!$scope.currentUser.emailVerified) {
 				$scope.firebase.user.sendEmailVerification()
 					.then(() => {
 						$scope.instructions = 'Check your email for an email with a verification link';
 						// console.log('$scope.instructions:', $scope.instructions);
+						$scope.loaded();
 						$scope.$apply();
 					})
 					.catch((error) => {
 						console.log('send email verification, error:', error);
 						$scope.instructions = 'There was an error sending email verification';
 						// console.log('$scope.instructions:', $scope.instructions);
+						$scope.loaded();
 						$scope.$apply();
 					});
 			} else {
@@ -834,20 +879,24 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 		};
 		$scope.resetPassword = () => {
 			console.log('send email with password reset link');
+			$scope.loading = true;
 			$scope.firebase.auth().sendPasswordResetEmail($scope.currentUser.email)
 				.then(() => {
 					$scope.instructions = 'Password reset email was sent to ' + $scope.currentUser.email;
 					// console.log('$scope.instructions:', $scope.instructions);
+					$scope.loaded();
 					$scope.$apply();
 				})
 				.catch((error) => {
 					console.log('reset user password, error:', error);
 					$scope.instructions = 'There was an error while resetting your password, try again later';
 					// console.log('$scope.instructions:', $scope.instructions);
+					$scope.loaded();
 					$scope.$apply();
 				});
 		};
 		$scope.getDBuser = (passGetMeMethodCall) => {
+			$scope.loading = true;
 			$scope.firebase.getDB('users/' + $scope.currentUser.uid).then((snapshot) => {
 				// console.log('users/' + $scope.currentUser.uid, snapshot.val());
 				$scope.userDBrecord = snapshot.val();
@@ -856,11 +905,13 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 				}
 				// console.log('$scope.userDBrecord', $scope.userDBrecord);
 				$scope.instructions = '';
+				$scope.loaded();
 				$scope.$apply();
 			}).catch((error) => {
 				console.log('get user db record, error:', error);
 				$scope.instructions = 'There was an error while getting user db record: ' + error;
 				// console.log('$scope.instructions:', $scope.instructions);
+				$scope.loaded();
 				$scope.$apply();
 			});
 		};
@@ -871,17 +922,20 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 		};
 		$scope.updateProfile = () => {
 			console.log('update profile');
+			$scope.loading = true;
 			$scope.currentUser.updateProfile({ displayName: $scope.profile.name })
 				.then(() => {
 					console.log('update profile, success');
 					$scope.toggleEditMode();
 					$scope.instructions = '';
+					$scope.loaded();
 					$scope.$apply();
 				})
 				.catch((error) => {
 					console.log('update profile, error', error);
 					$scope.instructions = 'There was an error while updating user profile.';
 					// console.log('$scope.instructions:', $scope.instructions);
+					$scope.loaded();
 					$scope.$apply();
 				});
 		};
@@ -904,6 +958,7 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 						.targetEvent(event)
 				).then((confirm) => {
 					console.log('confirm deletion', confirm);
+					$scope.loading = true;
 					$scope.firebase.delete($scope.profile.email, $scope.profile.password).then(
 						(success) => {
 							console.log('account successfully deleted', success);
@@ -931,6 +986,7 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 			playlists: undefined
 		};
 		$scope.scConnect = () => {
+			$scope.loading = true;
 			SC.connect().then((/*data*/) => {
 				// console.log('SC.connect.then, data:', data);
 				// console.log('scConnect local storage', localStorage.getItem('callback'));
@@ -967,12 +1023,14 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 			}).then((playlists) => {
 				console.log('SC.playlists.then, playlists', playlists);
 				$scope.SCdata.playlists = playlists;
+				$scope.loaded();
 				$scope.$apply();
 				return playlists;
 			});
 		};
 		$scope.getMe = () => {
 			console.log('getMe, use has got a token');
+			$scope.loading = true;
 			SC.get('users/' + $scope.userDBrecord.sc_id)
 				.then((me) => {
 					console.log('SC.me.then, me', me);
@@ -985,6 +1043,7 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 				}).then((playlists) => {
 					console.log('SC.playlists.then, playlists', playlists);
 					$scope.SCdata.playlists = playlists;
+					$scope.loaded();
 					$scope.$apply();
 					return playlists;
 				});
@@ -1025,13 +1084,16 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 		};
 		$scope.existingBlogEntriesIDs = undefined;
 		$scope.getExistingBlogEntriesIDs = () => {
+			$scope.loading = true;
 			$scope.firebase.getDB('blogEntriesIDs').then((snapshot) => {
 				const response = snapshot.val();
 				$scope.existingBlogEntriesIDs = response;
 				console.log('$scope.existingBlogEntriesIDs', $scope.existingBlogEntriesIDs);
+				$scope.loaded();
 				$scope.$apply();
 			}).catch((error) => {
 				console.log('error', error);
+				$scope.loaded();
 				$scope.$apply();
 			});
 		};
@@ -1079,13 +1141,16 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 				const playlists = $scope.userDBrecord.submittedPlaylists || {};
 				if (post) {
 					playlists[post.id] = false; // false - submitted but not approved by a moderator, true - submitted and approved by a moderator
+					$scope.loading = true;
 					$scope.firebase.setDBuserNewValues({ submittedPlaylists: playlists })
 						.then((data) => {
 							console.log('submitBlogPost setDBuserValues', JSON.stringify(data));
+							$scope.loaded();
 							$scope.getDBuser(true);
 						})
 						.catch((error) => {
 							console.log('submitBlogPost setDBuserValues, error', JSON.stringify(error));
+							$scope.loaded();
 						});
 				}
 			}
@@ -1100,13 +1165,16 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 				if (post) {
 					if (playlists.hasOwnProperty(post.id) && playlists[post.id] === false) {
 						delete playlists[post.id];
+						$scope.loading = true;
 						$scope.firebase.setDBuserNewValues({ submittedPlaylists: playlists })
 							.then((data) => {
 								console.log('submitBlogPost setDBuserValues', JSON.stringify(data));
+								$scope.loaded();
 								$scope.getDBuser(true);
 							})
 							.catch((error) => {
 								console.log('submitBlogPost setDBuserValues, error', JSON.stringify(error));
+								$scope.loaded();
 							});
 					}
 				}

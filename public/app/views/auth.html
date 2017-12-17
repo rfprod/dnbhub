@@ -36,12 +36,12 @@
 		</md-dialog-content>
 
 		<md-dialog-actions layout="row">
-			<md-button ng-click="resetPassword()" ng-disabled="!patterns.email.test(form.email) || (patterns.email.test(form.email) && patterns.password.test(form.password))">forgot password</md-button>
-			<md-button ng-click="hide()" ng-disabled="disableDismissal">cancel</md-button>
-			<md-button type="submit" class="md-accent" ng-if="!signupMode" ng-disabled="authForm.$invalid" ng-click="submit(authForm.$valid)">submit</md-button>
+			<md-button ng-click="resetPassword()" ng-disabled="!patterns.email.test(form.email) || (patterns.email.test(form.email) && patterns.password.test(form.password)) || loading">forgot password</md-button>
+			<md-button ng-click="hide()" ng-disabled="disableDismissal || loading">cancel</md-button>
+			<md-button type="submit" class="md-accent" ng-if="!signupMode" ng-disabled="authForm.$invalid || loading" ng-click="submit(authForm.$valid)">submit</md-button>
 
 			<md-button ng-if="signupMode" ng-click="reset()">reset form to start over</md-button>
-			<md-button type="submit" class="md-accent" ng-if="signupMode" ng-disabled="authForm.$invalid" ng-click="submit(authForm.$valid, true)">create account</md-button>
+			<md-button type="submit" class="md-accent" ng-if="signupMode" ng-disabled="authForm.$invalid || loading" ng-click="submit(authForm.$valid, true)">create account</md-button>
 		</md-dialog-actions>
 	</form>
 </md-dialog>
