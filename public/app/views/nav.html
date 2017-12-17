@@ -24,9 +24,6 @@
 	<a md-button ng-href="{{buttonHrefs.blog}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.blog)}" title="{{buttonTitles.blog}}" class="hide-xs hide-sm">
 		<i class="{{buttonIcons.blog}}"></i> {{buttonNames.blog}}
 	</a>
-	<a md-button ng-href="{{buttonHrefs.contact}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.contact)}" title="{{buttonTitles.contact}}" class="hide-xs hide-sm" ng-if="!firebase.isSignedIn">
-		<i class="{{buttonIcons.contact}}"></i> {{buttonNames.contact}}
-	</a>
 	<a md-button ng-click="showAuthDialog($event)" title="{{buttonTitles.auth}}" class="hide-xs hide-sm" ng-if="!firebase.isSignedIn">
 		<i class="{{buttonIcons.auth}}"></i> {{buttonNames.auth}}
 	</a>
@@ -67,11 +64,6 @@
 			<md-menu-item>
 				<a md-button ng-href="{{buttonHrefs.blog}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.blog)}" title="{{buttonTitles.blog}}">
 					<i class="{{buttonIcons.blog}}"></i> {{buttonNames.blog}}
-				</a>
-			</md-menu-item>
-			<md-menu-item>
-				<a md-button ng-href="{{buttonHrefs.contact}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.contact)}" title="{{buttonTitles.contact}}">
-					<i class="{{buttonIcons.contact}}"></i> {{buttonNames.contact}}
 				</a>
 			</md-menu-item>
 			<md-menu-item ng-if="!firebase.isSignedIn">

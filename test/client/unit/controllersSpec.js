@@ -39,7 +39,6 @@ describe('Dnbhub controllers', () => {
 				freedownloads: jasmine.any(String),
 				reposts: jasmine.any(String),
 				blog: jasmine.any(String),
-				contact: jasmine.any(String),
 				about: jasmine.any(String)
 			}));
 			expect(scope.buttonIcons).toEqual(jasmine.objectContaining({
@@ -48,7 +47,6 @@ describe('Dnbhub controllers', () => {
 				freedownloads: jasmine.any(String),
 				reposts: jasmine.any(String),
 				blog: jasmine.any(String),
-				contact: jasmine.any(String),
 				about: jasmine.any(String)
 			}));
 			expect(scope.currentYear).toBeDefined();
@@ -58,7 +56,6 @@ describe('Dnbhub controllers', () => {
 				freedownloads: jasmine.any(String),
 				reposts: jasmine.any(String),
 				blog: jasmine.any(String),
-				contact: jasmine.any(String),
 				about: jasmine.any(String)
 			}));
 			expect(scope.buttonHrefs).toEqual(jasmine.objectContaining({
@@ -67,7 +64,6 @@ describe('Dnbhub controllers', () => {
 				freedownloads: jasmine.any(String),
 				reposts: jasmine.any(String),
 				blog: jasmine.any(String),
-				contact: jasmine.any(String),
 				about: jasmine.any(String)
 			}));
 			expect(scope.selectButton).toEqual(jasmine.any(Function));

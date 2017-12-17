@@ -12,7 +12,6 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 			freedownloads: 'Free Downloads - Hive and Soundcloud powered section featuring freely downloadable music, produced by Dnbhub in-house artists',
 			reposts: 'Featured - Soundcloud powered RePosts playlists featuring freely downloadable tracks',
 			blog: 'Blog - Drum and Bass related press releases',
-			contact: 'Contact form - use it for any enquires correlating with Drum and Bass Hub activities',
 			about: 'All trademarks and copyrights are property of their respective owners',
 			auth: 'Sign up / Log in',
 			admin: 'Admin controls',
@@ -25,7 +24,6 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 			freedownloads: 'fa fa-cloud-download',
 			reposts: 'fa fa-retweet',
 			blog: 'fa fa-th-large',
-			contact: 'fa fa-envelope',
 			about: 'fa fa-copyright',
 			auth: 'fa fa-sign-in',
 			admin: 'fa fa-user-secret',
@@ -39,7 +37,6 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 			freedownloads: 'Free Downloads',
 			reposts: 'Featured',
 			blog: 'Blog',
-			contact: 'Contact',
 			about: '2011-'+$scope.currentYear,
 			auth: 'Auth',
 			admin: 'Admin',
@@ -54,7 +51,6 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 			blog: 'blog',
 			admin: 'admin',
 			user: 'user',
-			contact: 'contact',
 			about: 'about'
 		};
 		$scope.selectButton = (href) => {
@@ -78,12 +74,12 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 		$scope.showAuthDialog = (event) => {
 			// console.log('event', event);
 			$mdDialog.show({
-				controller: dnbhubControllers.authDialogCtrl,
+				controller: 'authDialogCtrl',
 				templateUrl: './app/views/auth.html',
 				parent: angular.element(document.body),
 				targetEvent: event,
 				clickOutsideToClose: ($location.$$path === '/user' && !$scope.firebase.isSignedIn) ? false : true,
-				fullscreen: false
+				fullscreen: true
 			}).then(
 				(result) => console.log('submitted', result),
 				(rejected) => console.log('closed', rejected)
@@ -530,11 +526,11 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 			console.log('event', event);
 			$mdDialog.show({
 				controller: 'addBlogPostDialogCtrl',
-				templateUrl: 'app/views/add-blog-post-dialog.html',
+				templateUrl: './app/views/add-blog-post-dialog.html',
 				parent: angular.element(document.body),
 				targetEvent: event,
-				clickOutsideToClose: true,
-				fullscreen: false
+				clickOutsideToClose: false,
+				fullscreen: true
 			}).then(
 				(result) => {
 					console.log('result', result);
@@ -631,14 +627,14 @@ dnbhubControllers.controller('addBlogPostDialogCtrl', ['$scope', '$mdDialog', '$
 	}
 ]);
 
-dnbhubControllers.controller('contactCtrl', ['$scope', '$location', '$timeout', 'regXpatternsService', 'sendEmailService',
-	function($scope, $location, $timeout, regXpatternsService, sendEmailService) {
+dnbhubControllers.controller('contactCtrl', ['$scope', '$mdDialog', '$location', '$anchorScroll', '$timeout', 'regXpatternsService', 'sendEmailService',
+	function($scope, $mdDialog, $location, $anchorScroll, $timeout, regXpatternsService, sendEmailService) {
 		$scope.email = '';
 		$scope.name = '';
 		$scope.header = '';
 		$scope.message = '';
 		$scope.domain = $location.$$host;
-		$scope.buttonText = {reset: 'Reset all fields', submit: 'Send message'};
+		$scope.buttonText = {reset: 'Reset all fields', submit: 'Send message', cancel: 'Cancel'};
 		$scope.params = '';
 		$scope.patterns = regXpatternsService;
 		$scope.sendMailResponse = {error: '', success: ''};
@@ -676,6 +672,7 @@ dnbhubControllers.controller('contactCtrl', ['$scope', '$location', '$timeout', 
 						$scope.sendMailResponse.error = response.error || 'Unknown error';
 						$scope.sendMailResponse.success = '';
 					}
+					$scope.scrollToSubmissionResult();
 					$timeout(() => {
 						$scope.sendMailResponse.success = '';
 						$scope.sendMailResponse.error = '';
@@ -686,12 +683,26 @@ dnbhubControllers.controller('contactCtrl', ['$scope', '$location', '$timeout', 
 					// console.log('sendMessage error: ', error);
 					$scope.sendMailResponse.success = '';
 					$scope.sendMailResponse.error = error.status + ' : ' + error.statusText;
+					$scope.scrollToSubmissionResult();
 					$timeout(() => {
 						$scope.sendMailResponse.error = '';
 						$scope.loading = false;
 					},5000);
 				}
 			);
+		};
+		$scope.scrollToSubmissionResult = () => {
+			$location.hash('submission-result');
+			$anchorScroll();
+		};
+		/*
+		*	dialog controls
+		*/
+		$scope.hide = () => {
+			$mdDialog.hide();
+		};
+		$scope.cancel = () => {
+			$mdDialog.cancel();
 		};
 		/*
 		*	lifecycle
@@ -705,8 +716,8 @@ dnbhubControllers.controller('contactCtrl', ['$scope', '$location', '$timeout', 
 	}
 ]);
 
-dnbhubControllers.controller('aboutCtrl', ['$scope', '$route', 'dnbhubDetailsService', 'firebaseService',
-	function($scope, $route, dnbhubDetailsService, firebaseService) {
+dnbhubControllers.controller('aboutCtrl', ['$scope', '$route', '$mdDialog', 'dnbhubDetailsService', 'firebaseService',
+	function($scope, $route, $mdDialog, dnbhubDetailsService, firebaseService) {
 		$scope.dnbhubDetails = {};
 		$scope.firebase = firebaseService;
 		$scope.updateDnbhubDetails = () => {
@@ -735,6 +746,19 @@ dnbhubControllers.controller('aboutCtrl', ['$scope', '$route', 'dnbhubDetailsSer
 				});
 				$scope.$apply();
 			});
+		};
+		$scope.showContactDialog = (event) => {
+			$mdDialog.show({
+				controller: 'contactCtrl',
+				templateUrl: './app/views/contact.html',
+				parent: angular.element(document.body),
+				targetEvent: event,
+				clickOutsideToClose: false,
+				fullscreen: true
+			}).then(
+				(result) => console.log('submitted', result),
+				(rejected) => console.log('closed', rejected)
+			);
 		};
 		/*
 		*	lifecycle
