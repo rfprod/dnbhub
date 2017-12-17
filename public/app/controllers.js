@@ -595,7 +595,13 @@ dnbhubControllers.controller('addBlogPostDialogCtrl', ['$scope', '$mdDialog', '$
 		$scope.cancel = () => {
 			$mdDialog.cancel();
 		};
+		$scope.resetForm = () => {
+			$scope.form.email = '';
+			$scope.form.soundcloudPlaylistLink = '';
+		};
+		$scope.loading = false;
 		$scope.submit = () => {
+			$scope.loading = true;
 			const params = 'email=' + $scope.form.email + '&link=' + $scope.form.soundcloudPlaylistLink + '&domain=' + $scope.domain;
 			addBlogPostService.save({}, params).$promise.then(
 				(response) => {
@@ -608,8 +614,16 @@ dnbhubControllers.controller('addBlogPostDialogCtrl', ['$scope', '$mdDialog', '$
 						$scope.sendMailResponse.success = '';
 					}
 					$timeout(() => {
+						const hideDialog = ($scope.sendMailResponse.success) ? true : false;
 						$scope.sendMailResponse.success = '';
 						$scope.sendMailResponse.error = '';
+						$scope.loading = false;
+						if (hideDialog) {
+							/*
+							*	hide dialog on success only
+							*/
+							$scope.hide();
+						}
 					},5000);
 				},
 				(error) => {
@@ -618,6 +632,7 @@ dnbhubControllers.controller('addBlogPostDialogCtrl', ['$scope', '$mdDialog', '$
 					$scope.sendMailResponse.error = error.status + ' : ' + error.statusText;
 					$timeout(() => {
 						$scope.sendMailResponse.error = '';
+						$scope.loading = false;
 					},5000);
 				}
 			);
@@ -664,7 +679,9 @@ dnbhubControllers.controller('contactCtrl', ['$scope', '$location', '$timeout', 
 			$scope.header = '';
 			$scope.message = '';
 		};
+		$scope.loading = false;
 		$scope.submitForm = () => {
+			$scope.loading = true;
 			$scope.params = 'name=' + $scope.name + '&email=' + $scope.email + '&header=' + $scope.header + '&message=' + $scope.message + '&domain=' + $scope.domain;
 			sendEmailService.save({}, $scope.params).$promise.then(
 				(response) => {
@@ -680,6 +697,7 @@ dnbhubControllers.controller('contactCtrl', ['$scope', '$location', '$timeout', 
 					$timeout(() => {
 						$scope.sendMailResponse.success = '';
 						$scope.sendMailResponse.error = '';
+						$scope.loading = false;
 					},5000);
 				},
 				(error) => {
@@ -688,6 +706,7 @@ dnbhubControllers.controller('contactCtrl', ['$scope', '$location', '$timeout', 
 					$scope.sendMailResponse.error = error.status + ' : ' + error.statusText;
 					$timeout(() => {
 						$scope.sendMailResponse.error = '';
+						$scope.loading = false;
 					},5000);
 				}
 			);

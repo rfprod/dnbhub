@@ -1,4 +1,5 @@
 const functions = require('firebase-functions');
+const admin = require('firebase-admin');
 const nodemailer = require('nodemailer');
 
 /*
@@ -16,6 +17,11 @@ const nodemailer = require('nodemailer');
 *	load .env variables
 */
 require('dotenv').load();
+
+/*
+*	initialize admin SDK to access Firebase Realtime Database
+*/
+admin.initializeApp(functions.config().firebase);
 
 /*
 * nodemailer usage notice:
@@ -50,6 +56,27 @@ mailTransporter.verify((err, success) => {
 	}
 });
 
+/**
+ * Fallback function if mail transporter returns an error on sendEmail
+ */
+function saveEmailToDB(name, email, header, message, domain, res) {
+	const entry = {
+		name: name,
+		email: email,
+		header: header,
+		message: message,
+		domain: domain
+	};
+	admin.database().ref('/emails/messages').push(entry).then((snapshot) => {
+		res.status(200).json({success: 'Your message was successfully sent'});
+	}).catch((error) => {
+		res.status(500).send('Error: try again later, please');
+	});
+}
+
+/**
+ * Send email message using nodemailer
+ */
 function sendEmail(name, email, header, message, domain, res) {
 	const mailOptions = {
 		from: '"DNBHUB 👥" <' + process.env.MAILER_EMAIL +'>',
@@ -61,7 +88,12 @@ function sendEmail(name, email, header, message, domain, res) {
 	mailTransporter.sendMail(mailOptions, (err, info) => {
 		if (err) {
 			// console.log('Mail transporter error:', err);
-			res.status(500).send('Mail transporter error');
+			/*
+			*	do not report error to user yet
+			*	try recording message to DB first
+			*/
+			// res.status(500).send('Mail transporter error');
+			saveEmailToDB(name, email, header, message, domain, res);
 		} else {
 			// console.log('Message sent: ' + info.response);
 			res.status(200).json({success: 'Your message was successfully sent'});
@@ -69,6 +101,9 @@ function sendEmail(name, email, header, message, domain, res) {
 	});
 }
 
+/**
+ * actual send email message cloud function
+ */
 exports.sendEmail = functions.https.onRequest((req, res) => {
 	if (req.method !== 'POST') {
 		res.status(403).json({error: 'Forbidden method'});
@@ -78,14 +113,33 @@ exports.sendEmail = functions.https.onRequest((req, res) => {
 	const header = req.body.header || '';
 	const message = req.body.message || '';
 	const domain = req.body.domain || '';
-	if (name.length >= 2 && /\w{2}@\w{2,}(\.)?\w{2,}/.test(email) && header.length >= 5 && message.length >= 75 && domain.length >= 4) {
+	if (name.length >= 2 && /\w{2,}@\w{2,}(\.)?\w{2,}/.test(email) && header.length >= 5 && message.length >= 75 && domain.length >= 4) {
 		// res.status(200).json({'success': 'Your message was successfully sent.'});
 		sendEmail(name, email, header, message, domain, res);
 	} else {
-		res.status(400).json({error: 'Missing mandatory request parameters or invalid values'});
+		res.status(400).send('Missing mandatory request parameters or invalid values');
 	}
 });
 
+/**
+ * Fallback function if mail transporter returns an error on submitBlogPostOverEmail
+ */
+function saveBlogPostOverEmailToDB(email, link, domain, res) {
+	const entry = {
+		email: email,
+		link: link,
+		domain: domain
+	};
+	admin.database().ref('/emails/blogSubmissions').push(entry).then((snapshot) => {
+		res.status(200).json({success: 'Your message was successfully sent'});
+	}).catch((error) => {
+		res.status(500).send('Error: try again later, please');
+	});
+}
+
+/**
+ * Submit a blog post anonimously over email using nodemailer
+ */
 function submitBlogPostOverEmail(email, link, domain, res) {
 	const mailOptions = {
 		from: '"DNBHUB 👥" <' + process.env.MAILER_EMAIL +'>',
@@ -97,7 +151,12 @@ function submitBlogPostOverEmail(email, link, domain, res) {
 	mailTransporter.sendMail(mailOptions, (err, info) => {
 		if (err) {
 			// console.log('Mail transporter error:', err);
-			res.status(500).send('Mail transporter error');
+			/*
+			*	do not report error to user yet
+			*	try recording message to DB first
+			*/
+			// res.status(500).send('Mail transporter error');
+			saveBlogPostOverEmailToDB(email, link, domain, res);
 		} else {
 			// console.log('Message sent: ' + info.response);
 			res.status(200).json({success: 'Your message was successfully sent'});
@@ -105,6 +164,9 @@ function submitBlogPostOverEmail(email, link, domain, res) {
 	});
 }
 
+/**
+ * actual submit a blog post anonimously over email cloud function
+ */
 exports.submitBlogPostOverEmail = functions.https.onRequest((req, res) => {
 	if (req.method !== 'POST') {
 		res.status(403).json({error: 'Forbidden method'});
@@ -112,10 +174,10 @@ exports.submitBlogPostOverEmail = functions.https.onRequest((req, res) => {
 	const email = req.body.email || '';
 	const link = req.body.link || '';
 	const domain = req.body.domain || '';
-	if (/\w{2}@\w{2,}(\.)?\w{2,}/.test(email) && /https:\/\/soundcloud\.com\/\w+\/sets\/\w+/.test(link) && domain.length >= 4) {
+	if (/\w{2,}@\w{2,}(\.)?\w{2,}/.test(email) && /https:\/\/soundcloud\.com\/\w+\/sets\/\w+/.test(link) && domain.length >= 4) {
 		// res.status(200).json({'success': 'Your message was successfully sent.'});
 		submitBlogPostOverEmail(email, link, domain, res);
 	} else {
-		res.status(400).json({error: 'Missing mandatory request parameters or invalid values'});
+		res.status(400).send('Missing mandatory request parameters or invalid values');
 	}
 });

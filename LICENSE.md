@@ -1,6 +1,6 @@
-Drum'n'Bass Hub
+The MIT License (MIT)
 
-Copyright (c) 2016 rfprod.
+Copyright (c) 2016-2017 rfprod.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

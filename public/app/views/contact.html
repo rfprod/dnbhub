@@ -12,18 +12,6 @@
 			</span>
 		</span>
 	</div>
-	<div class="contact-instructions" ng-hide="sendMailResponse.success == '' && sendMailResponse.error == ''" layout-padding layout="column" layout-align="start stretch">
-		<span layout="row">
-			<h5 class="md-subhead" flex="100">{{instructions.intro}}</h5>
-			<a md-icon-button class="md-accent" ng-click="switchInstructionsVisibility()" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-			</a>
-		</span>
-		<span layout="column">
-			<p ng-hide="sendMailResponse.success == ''">{{sendMailResponse.success}}</p>
-			<p ng-hide="sendMailResponse.error == ''">{{sendMailResponse.error}}</p>
-		</span>
-	</div>
 	<form flex accept-charset="UTF-8" name="contactForm" layout="column" layout-padding align-items="start stretch">
 		<md-input-container>
 			<input type="text" name="email" ng-model="email" ng-pattern="patterns.email" placeholder="your_e-mail@domain.com" required>
@@ -33,31 +21,37 @@
 			</div>
 		</md-input-container>
 		<md-input-container>
-			<input type="text" name="name" ng-model="name" ng-pattern="patterns.text" placeholder="Your name" required>
+			<input type="text" name="name" ng-model="name" ng-pattern="patterns.name" placeholder="Your name" required>
 			<div ng-messages="contactForm.name.$error">
 				<div ng-message="required">This field is required</div>
-				<div ng-message="pattern">Invalid value, it should be at least 3 characters long</div>
+				<div ng-message="pattern">Invalid value, it should be at least 2 characters long</div>
 			</div>
 		</md-input-container>
 		<md-input-container>
-			<input type="text" name="header" ng-model="header" ng-pattern="patterns.text" placeholder="Message header" required>
+			<input type="text" name="header" ng-model="header" ng-pattern="patterns.header" placeholder="Message header" required>
 			<div ng-messages="contactForm.header.$error">
 				<div ng-message="required">This field is required</div>
-				<div ng-message="pattern">Invalid value, it should be at least 3 characters long</div>
+				<div ng-message="pattern">Invalid value, it should be at least 5 characters long</div>
 			</div>
 		</md-input-container>
 		<md-input-container>
-			<textarea type="text" name="message" ng-model="message" ng-pattern="patterns.text" placeholder="Message text" required>
+			<textarea type="text" name="message" ng-model="message" ng-pattern="patterns.message" placeholder="Message text" required>
 			</textarea>
 			<div ng-messages="contactForm.message.$error">
 				<div ng-message="required">This field is required</div>
-				<div ng-message="pattern">Invalid value, it should be at least 3 characters long</div>
+				<div ng-message="pattern">Invalid value, it should be at least 75 characters long</div>
 			</div>
 		</md-input-container>
+		<div class="contact-instructions" ng-hide="sendMailResponse.success == '' && sendMailResponse.error == ''" layout-padding layout="column" layout-align="start stretch">
+			<span layout="column">
+				<p ng-hide="sendMailResponse.success == ''" class="green-text">{{sendMailResponse.success}}</p>
+				<p ng-hide="sendMailResponse.error == ''" class="amber-text">{{sendMailResponse.error}}</p>
+			</span>
+		</div>
 		<br/>
 		<div>
-			<a md-button class="md-warn" ng-disabled="contactForm.$pristine" ng-click="resetForm()">{{buttonText.reset}}</a>
-			<a md-button class="md-accent" ng-disabled="contactForm.$invalid" ng-click="submitForm()" ng-class="{disabled: contactForm.$invalid}">{{buttonText.submit}}</a>
+			<a md-button class="md-warn" ng-disabled="contactForm.$pristine || loading" ng-click="resetForm()">{{buttonText.reset}}</a>
+			<a md-button class="md-accent" ng-disabled="contactForm.$invalid || loading" ng-click="submitForm()" ng-class="{disabled: contactForm.$invalid}">{{buttonText.submit}}</a>
 		</div>
 	</form>
 </div>

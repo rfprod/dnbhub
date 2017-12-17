@@ -1,8 +1,8 @@
 <md-dialog aria-label="Add blog post dialog">
 	<md-dialog-content>
 		<span layout="column" layout-padding>
-			<p class="green-text" ng-hide="sendMailResponse.success == ''">{{sendMailResponse.success}}</p>
-			<p class="amber-text" ng-hide="sendMailResponse.error == ''">{{sendMailResponse.error}}</p>
+			<p class="green-text" ng-hide="sendMailResponse.success == ''" class="green-text">{{sendMailResponse.success}}</p>
+			<p class="amber-text" ng-hide="sendMailResponse.error == ''" class="amber-text">{{sendMailResponse.error}}</p>
 		</span>
 		<form flex accept-charset="UTF-8" name="addBlogPostForm" layout="column" layout-padding align-items="start stretch">
 			<legend>In order to add a blog post about a release submit a soundcloud playlist link to release (you should have a soundcloud account and have a playlist created there) and your email. The submission will be reviewed and added to the blog section of Dnbhub if it satisfies genre requirements and passes general production quality control.</legend>
@@ -23,11 +23,11 @@
 		</form>
 	</md-dialog-content>
 	<md-dialog-actions layout="row" layout-align="center stretch">
-		<md-button ng-disabled="addBlogPostForm.$invalid" ng-class="{disabled: addBlogPostForm.$invalid}" ng-click="submit()">
+		<md-button ng-disabled="addBlogPostForm.$invalid || loading" ng-class="{disabled: addBlogPostForm.$invalid}" ng-click="submit()">
 			<md-icon md-font-icon="fa fa-check"></md-icon>
 			<span>Submit</span>
 		</md-button>
-		<md-button ng-click="cancel()">
+		<md-button ng-click="cancel()" ng-disabled="loading">
 			<md-icon md-font-icon="fa fa-close"></md-icon>
 			<span>Cancel</span>
 		</md-button>

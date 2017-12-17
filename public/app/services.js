@@ -11,6 +11,9 @@ dnbhubServices.factory('regXpatternsService', [ function() {
 		email: /\w{2}@\w{2,}(\.)?\w{2,}/,
 		soundcloudPlaylistLink: /https:\/\/soundcloud\.com\/\w+\/sets\/\w+/,
 		text: /\w{3,}/,
+		name: /\w{2,}/,
+		header: /\w{5,}/,
+		message: /\w{75,}/,
 		password: /\w{8,}/
 	};
 }]);
