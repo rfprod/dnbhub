@@ -694,6 +694,7 @@ dnbhubControllers.controller('contactCtrl', ['$scope', '$mdDialog', '$location',
 						$scope.sendMailResponse.success = '';
 						$scope.sendMailResponse.error = '';
 						$scope.loading = false;
+						$scope.hide();
 					},5000);
 				},
 				(error) => {
