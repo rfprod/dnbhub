@@ -39,10 +39,6 @@ dnbhub
 					templateUrl: 'app/views/reposts.html',
 					controller: 'repostsCtrl'
 				})
-				.when('/iluvdnb', {
-					templateUrl: 'app/views/iluvdnb.html',
-					controller: 'iluvdnbCtrl'
-				})
 				.when('/contact', {
 					templateUrl: 'app/views/contact.html',
 					controller: 'contactCtrl'
