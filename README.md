@@ -16,6 +16,7 @@ FIREBASE_DATABASE_URL=firebase_database_url
 FIREBASE_PROJECT_ID=firebase_project_id
 FIREBASE_STORAGE_BUCKET=firebase_storeage_bucket
 FIREBASE_MESSAGING_SENDER_ID=firebase_messaging_sender_id
+PRIVILEGED_ACCESS_FIREBASE_UID=privileged_access_firebase_uid
 ```
 
 ### Installation and Start

@@ -139,6 +139,7 @@ gulp.task('pack-app-js', () => {
 		.pipe(replace('firebase_project_id', env.FIREBASE_PROJECT_ID))
 		.pipe(replace('firebase_storage_bucket', env.FIREBASE_STORAGE_BUCKET))
 		.pipe(replace('firebase_messaging_sender_id', env.FIREBASE_MESSAGING_SENDER_ID))
+		.pipe(replace('privileged_access_firebase_uid', env.PRIVILEGED_ACCESS_FIREBASE_UID))
 		.pipe(uglify())
 		.pipe(plumber.stop())
 		.pipe(rename('packed-app.min.js'))

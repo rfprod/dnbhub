@@ -30,6 +30,9 @@
 	<a md-button ng-href="{{buttonHrefs.user}}" ng-class="{selected: selectButton(buttonHrefs.user)}" title="{{buttonTitles.user}}" class="hide-xs hide-sm" ng-if="firebase.isSignedIn">
 		<i class="{{buttonIcons.user}}"></i> {{buttonNames.user}}
 	</a>
+	<a md-button ng-href="{{buttonHrefs.admin}}" ng-class="{selected: selectButton(buttonHrefs.admin)}" title="{{buttonTitles.admin}}" class="hide-xs hide-sm" ng-if="firebase.isSignedIn && firebase.privilegedAccess()">
+		<i class="{{buttonIcons.admin}}"></i> {{buttonNames.admin}}
+	</a>
 	<a md-button ng-click="signout()" title="{{buttonTitles.signout}}" class="hide-xs hide-sm" ng-if="firebase.isSignedIn">
 		<i class="{{buttonIcons.signout}}"></i> {{buttonNames.signout}}
 	</a>
@@ -69,6 +72,16 @@
 			<md-menu-item ng-if="!firebase.isSignedIn">
 				<a md-button ng-click="showAuthDialog($event)" title="{{buttonTitles.auth}}">
 					<i class="{{buttonIcons.auth}}"></i> {{buttonNames.auth}}
+				</a>
+			</md-menu-item>
+			<md-menu-item ng-if="firebase.isSignedIn && firebase.privilegedAccess">
+				<a md-button ng-href="{{buttonHrefs.user}}" ng-class="{selected: selectButton(buttonHrefs.user)}" title="{{buttonTitles.user}}" class="hide-xs hide-sm">
+					<i class="{{buttonIcons.user}}"></i> {{buttonNames.user}}
+				</a>
+			</md-menu-item>
+			<md-menu-item ng-if="firebase.isSignedIn && firebase.privilegedAccess()">
+				<a md-button ng-href="{{buttonHrefs.admin}}" ng-class="{selected: selectButton(buttonHrefs.admin)}" title="{{buttonTitles.admin}}" class="hide-xs hide-sm">
+					<i class="{{buttonIcons.admin}}"></i> {{buttonNames.admin}}
 				</a>
 			</md-menu-item>
 			<md-menu-item ng-if="firebase.isSignedIn">

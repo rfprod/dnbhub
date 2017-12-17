@@ -7,7 +7,8 @@ var firebase = {
 		return {
 			ref: () => {
 				return {
-					once: () => true
+					once: () => true,
+					off: () => true
 				};
 			}
 		};

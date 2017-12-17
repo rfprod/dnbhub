@@ -65,8 +65,8 @@ dnbhub
 				.dark();
 		}
 	])
-	.run(['$rootScope', 'firebaseService', 'soundcloudService',
-		($rootScope, firebaseService, soundcloudService) => {
+	.run(['$rootScope', '$location', 'firebaseService', 'soundcloudService',
+		($rootScope, $location, firebaseService, soundcloudService) => {
 			/*
 			*	initialize firebase
 			*/
@@ -83,8 +83,20 @@ dnbhub
 				console.log('next', next);
 				if (/\/user.*$/.test(next)) {
 					console.log('user controls loaded, isSignedIn', firebaseService.isSignedIn);
+					/*
+					*	controller calls auth dialog if not authenticated
+					*/
 				} else if (/\/admin.*$/.test(next)) {
 					console.log('admin controls loaded, isSignedIn', firebaseService.isSignedIn);
+					/*
+					*	controller calls auth dialog if not authenticated
+					*/
+					if (firebaseService.isSignedIn && !firebaseService.privilegedAccess()) {
+						/*
+						*	redirect to user if authenticated but without privileged access rights
+						*/
+						$location.path('/user');
+					}
 				}
 			});
 		}

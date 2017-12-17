@@ -78,7 +78,7 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 				templateUrl: './app/views/auth.html',
 				parent: angular.element(document.body),
 				targetEvent: event,
-				clickOutsideToClose: ($location.$$path === '/user' && !$scope.firebase.isSignedIn) ? false : true,
+				clickOutsideToClose: (($location.$$path === '/user' || $location.$$path === '/admin') && !$scope.firebase.isSignedIn) ? false : true,
 				fullscreen: true
 			}).then(
 				(result) => console.log('submitted', result),
@@ -261,7 +261,7 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$locatio
 			$scope.showPassword = false;
 			$scope.signupMode = false;
 		};
-		$scope.disableDismissal = ($location.$$path === '/user' && !$scope.firebase.isSignedIn) ? true : false;
+		$scope.disableDismissal = (($location.$$path === '/user' || $location.$$path === '/admin') && !$scope.firebase.isSignedIn) ? true : false;
 		/*
 		*	lifecycle
 		*/
@@ -364,6 +364,7 @@ dnbhubControllers.controller('freeDownloadsCtrl', ['$scope', '$sce', '$location'
 		});
 		$scope.$on('$destroy', () => {
 			console.log('free downloads view controller destroyed');
+			$scope.firebase.getDB('freedownloads', true).off();
 		});
 	}
 ]);
@@ -570,6 +571,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 		});
 		$scope.$on('$destroy', () => {
 			console.log('blog view controller destroyed');
+			$scope.firebase.getDB('blog', true).off();
 		});
 	}
 ]);
@@ -790,13 +792,16 @@ dnbhubControllers.controller('aboutCtrl', ['$scope', '$route', '$mdDialog', 'dnb
 		});
 		$scope.$on('$destroy', () => {
 			console.log('about view controller destroyed');
+			$scope.firebase.getDB('about', true).off();
 		});
 	}
 ]);
 
 dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$timeout', 'firebaseService',
 	function($rootScope, $scope, $timeout, firebaseService) {
+		$scope.instructions = '';
 		$scope.firebase = firebaseService;
+		$scope.currentUser = undefined;
 
 		$scope.loading = false;
 		$scope.currentTimeout = undefined;
@@ -809,6 +814,43 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$timeout', '
 			}, 1000);
 		};
 
+		$scope.emails = {
+			messages: undefined,
+			messagesKeys: undefined,
+			blogSubmissions: undefined,
+			blogSubmissionsKeys: undefined
+		};
+		$scope.getEmailMessages = () => {
+			$scope.loading = true;
+			$scope.firebase.getDB('emails/messages').then((snapshot) => {
+				const response = snapshot.val();
+				$scope.emails.messages = response;
+				$scope.emails.messagesKeys = Object.keys(response);
+				console.log('$scope.emails.messages', $scope.emails.messages);
+				$scope.loaded();
+				$scope.$apply();
+			}).catch((error) => {
+				console.log('error', error);
+				$scope.loaded();
+				$scope.$apply();
+			});
+		};
+		$scope.getEmailBlogSubmissions = () => {
+			$scope.loading = true;
+			$scope.firebase.getDB('emails/blogSubmissions').then((snapshot) => {
+				const response = snapshot.val();
+				$scope.emails.blogSubmissions = response;
+				$scope.emails.blogSubmissionsKeys = Object.keys(response);
+				console.log('$scope.emails.blogSubmissions', $scope.emails.blogSubmissions);
+				$scope.loaded();
+				$scope.$apply();
+			}).catch((error) => {
+				console.log('error', error);
+				$scope.loaded();
+				$scope.$apply();
+			});
+		};
+
 		/*
 		*	lifecycle
 		*/
@@ -816,15 +858,22 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$timeout', '
 			console.log('admin view controller loaded');
 			if (!$scope.firebase.isSignedIn) {
 				$rootScope.$broadcast('showAuthDialog');
+				$rootScope.$on('hideAuthDialog', () => {
+					// console.log('$scope.firebase.user.providerData:', $scope.firebase.user.providerData);
+					$scope.currentUser = $scope.firebase.auth().currentUser;
+					$scope.getEmailMessages();
+					$scope.getEmailBlogSubmissions();
+				});
 			} else {
-				/*
-				*	TODO
-				*	init
-				*/
+				$scope.currentUser = $scope.firebase.auth().currentUser;
+				$scope.getEmailMessages();
+				$scope.getEmailBlogSubmissions();
 			}
 		});
 		$scope.$on('$destroy', () => {
 			console.log('admin view controller destroyed');
+			$scope.firebase.getDB('emails/messages', true).off();
+			$scope.firebase.getDB('emails/blogSubmissions', true).off();
 		});
 	}
 ]);
@@ -1213,6 +1262,7 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 		$scope.$on('$destroy', () => {
 			console.log('user view controller destroyed');
 			$scope.firebase.getDB('blogEntriesIDs', true).off();
+			$scope.firebase.getDB('users/' + $scope.currentUser.uid, true).off();
 		});
 	}
 ]);
