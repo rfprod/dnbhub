@@ -19,6 +19,16 @@ FIREBASE_MESSAGING_SENDER_ID=firebase_messaging_sender_id
 PRIVILEGED_ACCESS_FIREBASE_UID=privileged_access_firebase_uid
 ```
 
+alternatively a script `set-env.sh` can guide you through the process of setting environment variables, use it blogSubmissionsKeys
+
+```
+bash ./set-env.sh
+```
+or
+```
+npm run set-env
+```
+
 ### Installation and Start
 
 ```
