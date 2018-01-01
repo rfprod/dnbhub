@@ -20,6 +20,7 @@
 					<div ng-message="pattern">Invalid value, example link: https://soundcloud.com/dnbhub/sets/everything</div>
 				</div>
 			</md-input-container>
+			<md-button type="submit" aria-label="submit" aria-hidden="true" ng-hide="true" ng-disabled="addBlogPostForm.$invalid || loading" ng-click="submit()"></md-button>
 		</form>
 	</md-dialog-content>
 	<md-dialog-actions layout="row" layout-align="center stretch">

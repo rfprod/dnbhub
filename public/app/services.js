@@ -70,7 +70,6 @@ dnbhubServices.factory('dnbhubDetailsService', ['$resource', '$location', functi
 
 dnbhubServices.factory('sendEmailService', ['$resource', '$location', function($resource, $location) {
 	const baseUrl = setBaseUrl($location.$$absUrl);
-	// return $resource(baseUrl + '/php/contact.php', {}, { // TODO: remove this line as well as php script after migration to firebase is complete
 	// return $resource('https://us-central1-dnbhub-a5d9c.cloudfunctions.net/sendEmail', {}, {
 	return $resource( baseUrl + '/sendEmail', {}, {
 		save: {method: 'POST', params: {}, headers: {'Content-type': 'application/x-www-form-urlencoded'}, isArray: false,
@@ -86,7 +85,6 @@ dnbhubServices.factory('sendEmailService', ['$resource', '$location', function($
 
 dnbhubServices.factory('addBlogPostService', ['$resource', '$location', function($resource, $location) {
 	const baseUrl = setBaseUrl($location.$$absUrl);
-	// return $resource(baseUrl + '/php/add-blog-post.php', {}, { // TODO: remove this line as well as php script after migration to firebase is complete
 	// return $resource('https://us-central1-dnbhub-a5d9c.cloudfunctions.net/submitBlogPostOverEmail', {}, {
 	return $resource( baseUrl + '/submitBlogPostOverEmail', {}, {
 		save: {method: 'POST', params: {}, headers: {'Content-type': 'application/x-www-form-urlencoded'}, isArray: false,

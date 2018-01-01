@@ -62,7 +62,7 @@
 		"string": "^3.3.3"
 	},
 	"scripts": {
-		"postinstall": "echo 'postinstall empty'",
+		"postinstall": "npm run clean-build",
 		"prestart": "npm install",
 		"clean-build": "gulp clean-build",
 		"start": "gulp",

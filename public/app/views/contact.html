@@ -50,6 +50,7 @@
 						<p ng-hide="sendMailResponse.error == ''" class="amber-text">{{sendMailResponse.error}}</p>
 					</span>
 				</div>
+				<md-button type="submit" aria-label="submit" aria-hidden="true" ng-hide="true" ng-disabled="contactForm.$invalid || loading" ng-click="submitForm()"></md-button>
 			</form>
 		</div>
 	</md-dialog-content>
