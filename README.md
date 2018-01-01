@@ -25,12 +25,7 @@ PRIVILEGED_ACCESS_FIREBASE_UID=privileged_access_firebase_uid
 npm start
 ```
 
-installs local dependencies, sets file watchers for server, database, frontend, which trigger:
-
-* preprocession, concatenation, minification of the project files where needed
-* server or database restart
-* server testing
-* frontend testing
+installs local dependencies, clears build, sets file watchers, starts server
 
 ### Firebase deploment (hosting + cloud functions)
 
