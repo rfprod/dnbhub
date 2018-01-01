@@ -3,11 +3,14 @@
 		"public": "public",
 		"ignore": [
 			"firebase.json",
-			"**/.*",
 			"**/node_modules/**",
-			"public/components",
-			"public/php",
-			".env"
+			".env",
+			"**/.*",
+			"public/*.js",
+			"public/scss/**",
+			"test/**",
+			"**/*.sh",
+			"**/*.md"
 		],
 		"headers": [
 			{
