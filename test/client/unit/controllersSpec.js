@@ -33,38 +33,67 @@ describe('Dnbhub controllers', () => {
 
 		it('should have variables and methods defined', () => {
 			expect(scope.title).toEqual('Drum and Bass Hub');
-			expect(scope.buttonTitles).toEqual(jasmine.objectContaining({
-				index: jasmine.any(String),
-				singles: jasmine.any(String),
-				freedownloads: jasmine.any(String),
-				reposts: jasmine.any(String),
-				blog: jasmine.any(String),
-				about: jasmine.any(String)
-			}));
-			expect(scope.buttonIcons).toEqual(jasmine.objectContaining({
-				index: jasmine.any(String),
-				singles: jasmine.any(String),
-				freedownloads: jasmine.any(String),
-				reposts: jasmine.any(String),
-				blog: jasmine.any(String),
-				about: jasmine.any(String)
-			}));
-			expect(scope.currentYear).toBeDefined();
-			expect(scope.buttonNames).toEqual(jasmine.objectContaining({
-				index: jasmine.any(String),
-				singles: jasmine.any(String),
-				freedownloads: jasmine.any(String),
-				reposts: jasmine.any(String),
-				blog: jasmine.any(String),
-				about: jasmine.any(String)
-			}));
-			expect(scope.buttonHrefs).toEqual(jasmine.objectContaining({
-				index: jasmine.any(String),
-				singles: jasmine.any(String),
-				freedownloads: jasmine.any(String),
-				reposts: jasmine.any(String),
-				blog: jasmine.any(String),
-				about: jasmine.any(String)
+			expect(scope.button).toEqual(jasmine.objectContaining({
+				index: {
+					name: 'Index',
+					title: 'Index - Drum and Bass Hub index',
+					icon: 'fa fa-fire',
+					href: 'index'
+				},
+				singles: {
+					name: 'Singles',
+					title: 'Singles - Soundcloud powered production showcase; all downloadable sounds are free for personal use and/or promotional purposes only',
+					icon: 'fa fa-music',
+					href: 'singles'
+				},
+				freedownloads: {
+					name: 'Free Downloads',
+					title: 'Free Downloads - Hive and Soundcloud powered section featuring freely downloadable music, produced by Dnbhub in-house artists',
+					icon: 'fa fa-cloud-download',
+					href: 'freedownloads'
+				},
+				reposts: {
+					name: 'RePosts',
+					title: 'RePosts - Soundcloud powered playlists featuring freely downloadable tracks',
+					icon: 'fa fa-retweet',
+					href: 'reposts'
+				},
+				blog: {
+					name: 'Blog',
+					title: 'Blog - Drum and Bass related press releases',
+					icon: 'fa fa-th-large',
+					href: 'blog'
+				},
+				about: {
+					name: '2011-' + new Date().getFullYear(),
+					title: 'All trademarks and copyrights are property of their respective owners',
+					icon: 'fa fa-copyright',
+					href: 'about'
+				},
+				auth: {
+					name: 'Auth',
+					title: 'Sign up / Log in',
+					icon: 'fa fa-sign-in',
+					href: null
+				},
+				signout: {
+					name: 'Sign Out',
+					title: 'Sign out',
+					icon: 'fa fa-sign-out',
+					href: null
+				},
+				admin: {
+					name: 'Admin',
+					title: 'Admin controls',
+					icon: 'fa fa-user-secret',
+					href: 'admin'
+				},
+				user: {
+					name: 'User',
+					title: 'User controls',
+					icon: 'fa fa-user-circle',
+					href: 'user'
+				}
 			}));
 			expect(scope.selectButton).toEqual(jasmine.any(Function));
 			expect(scope.sounds).toEqual(jasmine.any(Array));

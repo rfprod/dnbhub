@@ -6,52 +6,67 @@ var dnbhubControllers = angular.module('dnbhubControllers', []);
 dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$element', '$location', '$route', '$mdComponentRegistry', '$mdSidenav', '$mdDialog', 'firebaseService',
 	function($rootScope, $scope, $document, $element, $location, $route, $mdComponentRegistry, $mdSidenav, $mdDialog, firebaseService) {
 		$scope.title = 'Drum and Bass Hub';
-		$scope.buttonTitles = {
-			index: 'Index - Drum and Bass Hub index',
-			singles: 'Singles - Soundcloud powered production showcase; all downloadable sounds are free for personal use and/or promotional purposes only',
-			freedownloads: 'Free Downloads - Hive and Soundcloud powered section featuring freely downloadable music, produced by Dnbhub in-house artists',
-			reposts: 'Featured - Soundcloud powered RePosts playlists featuring freely downloadable tracks',
-			blog: 'Blog - Drum and Bass related press releases',
-			about: 'All trademarks and copyrights are property of their respective owners',
-			auth: 'Sign up / Log in',
-			admin: 'Admin controls',
-			user: 'User controls',
-			signout: 'Sign out'
-		};
-		$scope.buttonIcons = {
-			index: 'fa fa-fire',
-			singles: 'fa fa-music',
-			freedownloads: 'fa fa-cloud-download',
-			reposts: 'fa fa-retweet',
-			blog: 'fa fa-th-large',
-			about: 'fa fa-copyright',
-			auth: 'fa fa-sign-in',
-			admin: 'fa fa-user-secret',
-			user: 'fa fa-user-circle',
-			signout: 'fa fa-sign-out'
-		};
-		$scope.currentYear = new Date().getFullYear();
-		$scope.buttonNames = {
-			index: 'Index',
-			singles: 'Singles',
-			freedownloads: 'Free Downloads',
-			reposts: 'Featured',
-			blog: 'Blog',
-			about: '2011-'+$scope.currentYear,
-			auth: 'Auth',
-			admin: 'Admin',
-			user: 'User',
-			signout: 'Sign Out'
-		};
-		$scope.buttonHrefs = {
-			index: 'index',
-			singles: 'singles',
-			freedownloads: 'freedownloads',
-			reposts: 'reposts',
-			blog: 'blog',
-			admin: 'admin',
-			user: 'user',
-			about: 'about'
+		$scope.button = {
+			index: {
+				name: 'Index',
+				title: 'Index - Drum and Bass Hub index',
+				icon: 'fa fa-fire',
+				href: 'index'
+			},
+			singles: {
+				name: 'Singles',
+				title: 'Singles - Soundcloud powered production showcase; all downloadable sounds are free for personal use and/or promotional purposes only',
+				icon: 'fa fa-music',
+				href: 'singles'
+			},
+			freedownloads: {
+				name: 'Free Downloads',
+				title: 'Free Downloads - Hive and Soundcloud powered section featuring freely downloadable music, produced by Dnbhub in-house artists',
+				icon: 'fa fa-cloud-download',
+				href: 'freedownloads'
+			},
+			reposts: {
+				name: 'RePosts',
+				title: 'RePosts - Soundcloud powered playlists featuring freely downloadable tracks',
+				icon: 'fa fa-retweet',
+				href: 'reposts'
+			},
+			blog: {
+				name: 'Blog',
+				title: 'Blog - Drum and Bass related press releases',
+				icon: 'fa fa-th-large',
+				href: 'blog'
+			},
+			about: {
+				name: '2011-' + new Date().getFullYear(),
+				title: 'All trademarks and copyrights are property of their respective owners',
+				icon: 'fa fa-copyright',
+				href: 'about'
+			},
+			auth: {
+				name: 'Auth',
+				title: 'Sign up / Log in',
+				icon: 'fa fa-sign-in',
+				href: null
+			},
+			signout: {
+				name: 'Sign Out',
+				title: 'Sign out',
+				icon: 'fa fa-sign-out',
+				href: null
+			},
+			admin: {
+				name: 'Admin',
+				title: 'Admin controls',
+				icon: 'fa fa-user-secret',
+				href: 'admin'
+			},
+			user: {
+				name: 'User',
+				title: 'User controls',
+				icon: 'fa fa-user-circle',
+				href: 'user'
+			}
 		};
 		$scope.selectButton = (href) => {
 			// console.log('selectButton, href:', href);
@@ -194,10 +209,17 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$locatio
 				if (!$scope.signupMode) {
 					$scope.firebase.authenticate('email', { email: $scope.form.email, password: $scope.form.password }).then(
 						(/*user*/) => {
-							// console.log('auth success', success);
+							// console.log('auth success, user', user);
 							console.log('auth success');
 							$mdDialog.hide(isValid);
-							$location.url('/user');
+							/*
+							* check which view to redirect to depending on privileges
+							*/
+							if (firebaseService.privilegedAccess()) {
+								$location.url('/admin');
+							} else {
+								$location.url('/user');
+							}
 						},
 						(error) => {
 							// console.log('auth error', error);
@@ -219,18 +241,14 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$locatio
 					);
 				} else {
 					$scope.firebase.create('email', { email: $scope.form.email, password: $scope.form.password }).then(
-						(user) => {
+						(/*user*/) => {
 							// console.log('signup success', user);
 							console.log('signup success');
 							$mdDialog.hide(isValid);
 							/*
-							*	TODO verify user.uid instead of user.email
+							* redirect to user view
 							*/
-							if (user.email === 'connect@rfprod.tk') {
-								$location.url('/admin');
-							} else {
-								$location.url('/user');
-							}
+							$location.url('/user');
 						},
 						(error) => {
 							// console.log('signup error', error);

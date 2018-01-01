@@ -9,35 +9,35 @@
 	<span class="splitter" layout="row" layout-align="center center">
 		<img class="logo hide-md hide-gt-md hide-lg hide-gt-lg hide-xl" alt="logo" title="{{title}}" src="img/svg/DH_logo-round_bg.svg"/>
 	</span>
-	<a md-button ng-href="{{buttonHrefs.index}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.index)}" title="{{buttonTitles.index}}" class="hide-xs hide-sm">
-		<i class="{{buttonIcons.index}}"></i> {{buttonNames.index}}
+	<a md-button ng-href="{{button.index.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.index.href)}" title="{{button.index.title}}" class="hide-xs hide-sm">
+		<i class="{{button.index.icon}}"></i> {{button.index.name}}
 	</a>
-	<a md-button ng-href="{{buttonHrefs.singles}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.singles)}" title="{{buttonTitles.singles}}" class="hide-xs hide-sm">
-		<i class="{{buttonIcons.singles}}"></i> {{buttonNames.singles}}
+	<a md-button ng-href="{{button.singles.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.singles.href)}" title="{{button.singles.title}}" class="hide-xs hide-sm">
+		<i class="{{button.singles.icon}}"></i> {{button.singles.name}}
 	</a>
-	<a md-button ng-href="{{buttonHrefs.freedownloads}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.freedownloads)}" title="{{buttonTitles.freedownloads}}" class="hide-xs hide-sm">
-		<i class="{{buttonIcons.freedownloads}}"></i> {{buttonNames.freedownloads}}
+	<a md-button ng-href="{{button.freedownloads.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.freedownloads.href)}" title="{{button.freedownloads.title}}" class="hide-xs hide-sm">
+		<i class="{{button.freedownloads.icon}}"></i> {{button.freedownloads.name}}
 	</a>
-	<a md-button ng-href="{{buttonHrefs.reposts}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.reposts)}" title="{{buttonTitles.reposts}}" class="hide-xs hide-sm">
-		<i class="{{buttonIcons.reposts}}"></i> {{buttonNames.reposts}}
+	<a md-button ng-href="{{button.reposts.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.reposts.href)}" title="{{button.reposts.title}}" class="hide-xs hide-sm">
+		<i class="{{button.reposts.icon}}"></i> {{button.reposts.name}}
 	</a>
-	<a md-button ng-href="{{buttonHrefs.blog}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.blog)}" title="{{buttonTitles.blog}}" class="hide-xs hide-sm">
-		<i class="{{buttonIcons.blog}}"></i> {{buttonNames.blog}}
+	<a md-button ng-href="{{button.blog.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.blog.href)}" title="{{button.blog.title}}" class="hide-xs hide-sm">
+		<i class="{{button.blog.icon}}"></i> {{button.blog.name}}
 	</a>
-	<a md-button ng-click="showAuthDialog($event)" title="{{buttonTitles.auth}}" class="hide-xs hide-sm" ng-if="!firebase.isSignedIn">
-		<i class="{{buttonIcons.auth}}"></i> {{buttonNames.auth}}
+	<a md-button ng-click="showAuthDialog($event)" title="{{button.auth.title}}" class="hide-xs hide-sm" ng-if="!firebase.isSignedIn">
+		<i class="{{button.auth.icon}}"></i> {{button.auth.name}}
 	</a>
-	<a md-button ng-href="{{buttonHrefs.user}}" ng-class="{selected: selectButton(buttonHrefs.user)}" title="{{buttonTitles.user}}" class="hide-xs hide-sm" ng-if="firebase.isSignedIn">
-		<i class="{{buttonIcons.user}}"></i> {{buttonNames.user}}
+	<a md-button ng-href="{{button.user.href}}" ng-class="{selected: selectButton(button.user.href)}" title="{{button.user.title}}" class="hide-xs hide-sm" ng-if="firebase.isSignedIn">
+		<i class="{{button.user.icon}}"></i> {{button.user.name}}
 	</a>
-	<a md-button ng-href="{{buttonHrefs.admin}}" ng-class="{selected: selectButton(buttonHrefs.admin)}" title="{{buttonTitles.admin}}" class="hide-xs hide-sm" ng-if="firebase.isSignedIn && firebase.privilegedAccess()">
-		<i class="{{buttonIcons.admin}}"></i> {{buttonNames.admin}}
+	<a md-button ng-href="{{button.admin.href}}" ng-class="{selected: selectButton(button.admin.href)}" title="{{button.admin.title}}" class="hide-xs hide-sm" ng-if="firebase.isSignedIn && firebase.privilegedAccess()">
+		<i class="{{button.admin.icon}}"></i> {{button.admin.name}}
 	</a>
-	<a md-button ng-click="signout()" title="{{buttonTitles.signout}}" class="hide-xs hide-sm" ng-if="firebase.isSignedIn">
-		<i class="{{buttonIcons.signout}}"></i> {{buttonNames.signout}}
+	<a md-button ng-click="signout()" title="{{button.signout.title}}" class="hide-xs hide-sm" ng-if="firebase.isSignedIn">
+		<i class="{{button.signout.icon}}"></i> {{button.signout.name}}
 	</a>
-	<a md-button ng-href="{{buttonHrefs.about}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.about)}" title="{{buttonTitles.about}}" class="hide-xs hide-sm" ng-if="!firebase.isSignedIn">
-		<i class="{{buttonIcons.about}}"></i> {{buttonNames.about}}
+	<a md-button ng-href="{{button.about.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.about.href)}" title="{{button.about.title}}" class="hide-xs hide-sm" ng-if="!firebase.isSignedIn">
+		<i class="{{button.about.icon}}"></i> {{button.about.name}}
 	</a>
 	<md-menu class="hide-md hide-lg hide-xl primary">
 		<md-button aria-label="Open navigation menu" class="md-icon-button" ng-click="$mdMenu.open()">
@@ -45,53 +45,53 @@
 		</md-button>
 		<md-menu-content id="dropdown-menu">
 			<md-menu-item>
-				<a md-button ng-href="{{buttonHrefs.index}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.index)}" title="{{buttonTitles.index}}">
-					<i class="{{buttonIcons.index}}"></i> {{buttonNames.index}}
+				<a md-button ng-href="{{button.index.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.index.href)}" title="{{button.index.title}}">
+					<i class="{{button.index.icon}}"></i> {{button.index.name}}
 				</a>
 			</md-menu-item>
 			<md-menu-item>
-				<a md-button ng-href="{{buttonHrefs.singles}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.singles)}" title="{{buttonTitles.singles}}">
-					<i class="{{buttonIcons.singles}}"></i> {{buttonNames.singles}}
+				<a md-button ng-href="{{button.singles.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.singles.href)}" title="{{button.singles.title}}">
+					<i class="{{button.singles.icon}}"></i> {{button.singles.name}}
 				</a>
 			</md-menu-item>
 			<md-menu-item>
-				<a md-button ng-href="{{buttonHrefs.freedownloads}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.freedownloads)}" title="{{buttonTitles.freedownloads}}">
-					<i class="{{buttonIcons.freedownloads}}"></i> {{buttonNames.freedownloads}}
+				<a md-button ng-href="{{button.freedownloads.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.freedownloads.href)}" title="{{button.freedownloads.title}}">
+					<i class="{{button.freedownloads.icon}}"></i> {{button.freedownloads.name}}
 				</a>
 			</md-menu-item>
 			<md-menu-item>
-				<a md-button ng-href="{{buttonHrefs.reposts}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.reposts)}" title="{{buttonTitles.reposts}}">
-					<i class="{{buttonIcons.reposts}}"></i> {{buttonNames.reposts}}
+				<a md-button ng-href="{{button.reposts.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.reposts.href)}" title="{{button.reposts.title}}">
+					<i class="{{button.reposts.icon}}"></i> {{button.reposts.name}}
 				</a>
 			</md-menu-item>
 			<md-menu-item>
-				<a md-button ng-href="{{buttonHrefs.blog}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.blog)}" title="{{buttonTitles.blog}}">
-					<i class="{{buttonIcons.blog}}"></i> {{buttonNames.blog}}
+				<a md-button ng-href="{{button.blog.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.blog.href)}" title="{{button.blog.title}}">
+					<i class="{{button.blog.icon}}"></i> {{button.blog.name}}
 				</a>
 			</md-menu-item>
 			<md-menu-item ng-if="!firebase.isSignedIn">
-				<a md-button ng-click="showAuthDialog($event)" title="{{buttonTitles.auth}}">
-					<i class="{{buttonIcons.auth}}"></i> {{buttonNames.auth}}
+				<a md-button ng-click="showAuthDialog($event)" title="{{button.auth.title}}">
+					<i class="{{button.auth.icon}}"></i> {{button.auth.name}}
 				</a>
 			</md-menu-item>
 			<md-menu-item ng-if="firebase.isSignedIn && firebase.privilegedAccess">
-				<a md-button ng-href="{{buttonHrefs.user}}" ng-class="{selected: selectButton(buttonHrefs.user)}" title="{{buttonTitles.user}}" class="hide-xs hide-sm">
-					<i class="{{buttonIcons.user}}"></i> {{buttonNames.user}}
+				<a md-button ng-href="{{button.user.href}}" ng-class="{selected: selectButton(button.user.href)}" title="{{button.user.title}}" class="hide-xs hide-sm">
+					<i class="{{button.user.icon}}"></i> {{button.user.name}}
 				</a>
 			</md-menu-item>
 			<md-menu-item ng-if="firebase.isSignedIn && firebase.privilegedAccess()">
-				<a md-button ng-href="{{buttonHrefs.admin}}" ng-class="{selected: selectButton(buttonHrefs.admin)}" title="{{buttonTitles.admin}}" class="hide-xs hide-sm">
-					<i class="{{buttonIcons.admin}}"></i> {{buttonNames.admin}}
+				<a md-button ng-href="{{button.admin.href}}" ng-class="{selected: selectButton(button.admin.href)}" title="{{button.admin.title}}" class="hide-xs hide-sm">
+					<i class="{{button.admin.icon}}"></i> {{button.admin.name}}
 				</a>
 			</md-menu-item>
 			<md-menu-item ng-if="firebase.isSignedIn">
-				<a md-button ng-click="signout()" title="{{buttonTitles.signout}}">
-					<i class="{{buttonIcons.signout}}"></i> {{buttonNames.signout}}
+				<a md-button ng-click="signout()" title="{{button.signout.title}}">
+					<i class="{{button.signout.icon}}"></i> {{button.signout.name}}
 				</a>
 			</md-menu-item>
 			<md-menu-item>
-				<a md-button ng-href="{{buttonHrefs.about}}" ng-click="playSound()" ng-class="{selected: selectButton(buttonHrefs.about)}" title="{{buttonTitles.about}}">
-					<i class="{{buttonIcons.about}}"></i> {{buttonNames.about}}
+				<a md-button ng-href="{{button.about.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.about.href)}" title="{{button.about.title}}">
+					<i class="{{button.about.icon}}"></i> {{button.about.name}}
 				</a>
 			</md-menu-item>
 		</md-menu-content>
