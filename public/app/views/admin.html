@@ -12,16 +12,16 @@
 			<md-tab flex layout="column">
 				<md-tab-label>email messages</md-tab-label>
 				<md-tab-body flex layout="column" class="md-padding">
-					<div flex layout="column" layout-align="start stretch" ng-if="emails.messages">
-						<md-grid-list flex="100" md-cols-xs="1" md-cols-sm="2" md-cols-md="2" md-cols-lg="3" md-cols-xl="4" md-gutter="50px" md-row-height="4:3">
+					<div class="data-container" flex layout="column" layout-align="start stretch" ng-if="emails.messages">
+						<md-grid-list flex="100" md-cols-xs="1" md-cols-sm="1" md-cols-md="2" md-cols-lg="3" md-cols-xl="4" md-gutter="50px" md-row-height="2.5:3" md-row-height-xs="1.5:3">
 							<md-grid-tile ng-repeat="message in emails.messages">
 								<md-grid-tile-header class="md-body-2" layout="row" layout-align="center center">
 									{{$index}}. {{ message.header }}
 								</md-grid-tile-header>
-								<div class="md-padding">
-									<div>From: {{ message.name }} < {{ message.email }} > </div>
-									<div>Message: {{ message.message }}</div>
-									<div>Sent from domain: {{ message.domain }}</div>
+								<div class="md-padding md-body-1">
+									<p flex="100">From: {{ message.name }} < {{ message.email }} ></p>
+									<p flex="100">Message: {{ message.message }}</p>
+									<p flex="100">Sent from domain: {{ message.domain }}</p>
 								</div>
 								<md-grid-tile-footer>
 									<md-button class="md-icon-button amber-text" ng-disabled="loading" ng-if="true" ng-click="dummyAction($index)" aria-label="Some action">
@@ -38,15 +38,15 @@
 			<md-tab flex layout="column">
 				<md-tab-label>email submissions</md-tab-label>
 				<md-tab-body flex layout="column" class="md-padding">
-					<div flex="100" layout="column" layout-align="start stretch" ng-if="emails.blogSubmissions">
-						<md-grid-list flex="100" md-cols-xs="1" md-cols-sm="2" md-cols-md="2" md-cols-lg="3" md-cols-xl="4" md-gutter="50px" md-row-height="4:3">
+					<div class="data-container" flex layout="column" layout-align="start stretch" ng-if="emails.blogSubmissions">
+						<md-grid-list flex="100" md-cols-xs="1" md-cols-sm="1" md-cols-md="2" md-cols-lg="3" md-cols-xl="4" md-gutter="50px" md-row-height="2.5:3">
 							<md-grid-tile ng-repeat="submission in emails.blogSubmissions">
 								<md-grid-tile-header class="md-body-2" layout="row" layout-align="center center">
 									{{$index}}. From: {{ submission.email }}
 								</md-grid-tile-header>
-								<div class="md-padding">
-									<div>Link: <a href="{{ submission.link }}" target=_blank>{{ submission.link }}</a></div>
-									<div>Sent from domain: {{ submission.domain }}</div>
+								<div class="md-padding md-body-1">
+									<p>Link: <a href="{{ submission.link }}" target=_blank>{{ submission.link }}</a></p>
+									<p>Sent from domain: {{ submission.domain }}</p>
 								</div>
 								<md-grid-tile-footer>
 									<md-button class="md-icon-button amber-text" ng-disabled="loading" ng-if="true" ng-click="dummyAction($index)" aria-label="Some action">

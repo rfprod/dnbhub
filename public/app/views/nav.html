@@ -74,13 +74,13 @@
 					<i class="{{button.auth.icon}}"></i> {{button.auth.name}}
 				</a>
 			</md-menu-item>
-			<md-menu-item ng-if="firebase.isSignedIn && firebase.privilegedAccess">
-				<a md-button ng-href="{{button.user.href}}" ng-class="{selected: selectButton(button.user.href)}" title="{{button.user.title}}" class="hide-xs hide-sm">
+			<md-menu-item ng-if="firebase.isSignedIn">
+				<a md-button ng-href="{{button.user.href}}" ng-class="{selected: selectButton(button.user.href)}" title="{{button.user.title}}">
 					<i class="{{button.user.icon}}"></i> {{button.user.name}}
 				</a>
 			</md-menu-item>
 			<md-menu-item ng-if="firebase.isSignedIn && firebase.privilegedAccess()">
-				<a md-button ng-href="{{button.admin.href}}" ng-class="{selected: selectButton(button.admin.href)}" title="{{button.admin.title}}" class="hide-xs hide-sm">
+				<a md-button ng-href="{{button.admin.href}}" ng-class="{selected: selectButton(button.admin.href)}" title="{{button.admin.title}}">
 					<i class="{{button.admin.icon}}"></i> {{button.admin.name}}
 				</a>
 			</md-menu-item>
