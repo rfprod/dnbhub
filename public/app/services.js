@@ -13,7 +13,7 @@ dnbhubServices.factory('regXpatternsService', [ function() {
 		text: /\w{3,}/,
 		name: /\w{2,}/,
 		header: /\w{5,}/,
-		message: /\w{75,}/,
+		message: /[\w\s_-]{75,}/,
 		password: /\w{8,}/
 	};
 }]);
