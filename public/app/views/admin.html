@@ -27,11 +27,11 @@
 									<md-button class="md-icon-button amber-text" ng-disabled="loading" ng-if="true" ng-click="deleteSubmission($index)" aria-label="delete submission">
 										<i class="fa fa-2x fa-remove"></i>
 									</md-button>
-									<md-button class="md-icon-button" ng-disabled="loading" ng-if="true" ng-click="showSubmissionPreview($index)" aria-label="preview submission">
-										<i class="fa fa-2x fa fa-th-large"></i>
+									<md-button class="md-icon-button" ng-disabled="alreadyAdded($index) || loading" ng-if="true" ng-click="showSubmissionPreview($index)" aria-label="preview submission">
+										<i class="fa fa-2x fa-th-large"></i>
 									</md-button>
-									<md-button class="md-icon-button" ng-disabled="loading" ng-if="true" ng-click="approveSubmission($index)" aria-label="approve submission">
-										<i class="fa fa-2x fa fa-ok"></i>
+									<md-button class="md-icon-button green-text" ng-disabled="alreadyAdded($index) || loading" ng-if="true" ng-click="approveSubmission($index)" aria-label="approve submission">
+										<i class="fa fa-2x fa-check"></i>
 									</md-button>
 								</md-grid-tile-footer>
 							</md-grid-tile>

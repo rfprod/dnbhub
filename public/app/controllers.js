@@ -908,7 +908,6 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 		};
 
 		$scope.showMessageText = (keyIndex) => {
-			console.log('TODO: show message text dialog', keyIndex);
 			const dbKey = $scope.emails.messagesKeys[keyIndex];
 			console.log('dbKey', dbKey);
 			const selectedMessage = $scope.emails.messages[dbKey];
@@ -968,6 +967,48 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 			$scope.blogPostPreview = undefined;
 		};
 
+		$scope.existingBlogEntriesIDs = undefined;
+		$scope.getExistingBlogEntriesIDs = () => {
+			$scope.loading = true;
+			$scope.firebase.getDB('blogEntriesIDs').then((snapshot) => {
+				const response = snapshot.val();
+				$scope.existingBlogEntriesIDs = response;
+				console.log('$scope.existingBlogEntriesIDs', $scope.existingBlogEntriesIDs);
+				$scope.loaded();
+				$scope.$apply();
+			}).catch((error) => {
+				console.log('error', error);
+				$scope.loaded();
+				$scope.$apply();
+			});
+		};
+		$scope.alreadyAdded = (keyIndex) => {
+			let added = false;
+			if (!$scope.existingBlogEntriesIDs) {
+				console.log('Unable to add blog posts, there was an error getting existing blog entries');
+				added = true;
+			} else {
+				const dbKey = $scope.emails.blogSubmissionsKeys[keyIndex];
+				const selectedSubmission = $scope.emails.blogSubmissions[dbKey];
+				if (selectedSubmission) {
+					if (!selectedSubmission.id) {
+						/*
+						*	resolve submission and save result temporarily
+						*/
+						SC.get('/resolve?url=' + selectedSubmission.link).then((data) => {
+							$scope.emails.blogSubmissions[dbKey].id = data.id;
+							$scope.emails.blogSubmissions[dbKey].scData = data;
+							added = ($scope.existingBlogEntriesIDs.hasOwnProperty(data.id)) ? true : added;
+							$scope.$apply();
+						});
+					} else {
+						added = ($scope.existingBlogEntriesIDs.hasOwnProperty(selectedSubmission.id)) ? true : added;
+					}
+				}
+			}
+			return added;
+		};
+
 		$scope.approveSubmission = (keyIndex) => {
 			const dbKey = $scope.emails.blogSubmissionsKeys[keyIndex];
 			const selectedSubmission = $scope.emails.blogSubmissions[dbKey];
@@ -986,17 +1027,20 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 					$scope.currentUser = $scope.firebase.auth().currentUser;
 					$scope.getEmailMessages();
 					$scope.getEmailBlogSubmissions();
+					$scope.getExistingBlogEntriesIDs();
 				});
 			} else {
 				$scope.currentUser = $scope.firebase.auth().currentUser;
 				$scope.getEmailMessages();
 				$scope.getEmailBlogSubmissions();
+				$scope.getExistingBlogEntriesIDs();
 			}
 		});
 		$scope.$on('$destroy', () => {
 			console.log('admin view controller destroyed');
 			$scope.firebase.getDB('emails/messages', true).off();
 			$scope.firebase.getDB('emails/blogSubmissions', true).off();
+			$scope.firebase.getDB('blogEntriesIDs', true).off();
 		});
 	}
 ]);
@@ -1278,12 +1322,10 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 			} else {
 				const post = $scope.SCdata.playlists[arrayIndex];
 				if (post) {
-					if ($scope.existingBlogEntriesIDs.hasOwnProperty(post.id) || $scope.alreadySubmitted(arrayIndex)) {
-						added = true;
-					}
+					added = ($scope.existingBlogEntriesIDs.hasOwnProperty(post.id)) ? true : added;
 				}
 			}
-			return added;
+			return added || $scope.alreadySubmitted(arrayIndex);
 		};
 		$scope.alreadySubmitted = (arrayIndex) => {
 			let alreadySubmitted = false;
@@ -1293,7 +1335,7 @@ dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$wind
 					alreadySubmitted = ($scope.userDBrecord.submittedPlaylists.hasOwnProperty(post.id)) ? true : alreadySubmitted;
 				}
 			}
-			return alreadySubmitted || $scope.alreadyAdded();
+			return alreadySubmitted;
 		};
 		$scope.unsubmittable = (arrayIndex) => {
 			let unsubmittable = false;
