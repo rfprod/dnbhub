@@ -1,4 +1,4 @@
-<div id="admin" flex layout="column" layout-fill layout-align="start stretch">
+<div id="admin" flex layout="column" layout-fill layout-align="start stretch" ng-if="!blogPostPreview">
 	<span ng-if="!firebase.isSignedIn" class="instructions md-body-2">You must me authenticated to access admin controls</span>
 	<span ng-if="!firebase.privilegedAccess()" class="instructions md-body-2">You must have privileged access rights to access admin controls</span>
 	<span ng-if="instructions" class="instructions md-body-2">{{ instructions }}</span>
@@ -9,31 +9,6 @@
 		</span>
 
 		<md-tabs flex="90" md-border-bottom md-swipe-content layout="column">
-			<md-tab flex layout="column">
-				<md-tab-label>email messages</md-tab-label>
-				<md-tab-body flex layout="column" class="md-padding">
-					<div class="data-container" flex layout="column" layout-align="start stretch" ng-if="emails.messages">
-						<md-grid-list flex="100" md-cols-xs="1" md-cols-sm="1" md-cols-md="2" md-cols-lg="3" md-cols-xl="4" md-gutter="50px" md-row-height="2.5:3" md-row-height-xs="1.5:3">
-							<md-grid-tile ng-repeat="message in emails.messages">
-								<md-grid-tile-header class="md-body-2" layout="row" layout-align="center center">
-									{{$index}}. {{ message.header }}
-								</md-grid-tile-header>
-								<div class="md-padding md-body-1">
-									<p flex="100">From: {{ message.name }} < {{ message.email }} ></p>
-									<p flex="100">Message: {{ message.message }}</p>
-									<p flex="100">Sent from domain: {{ message.domain }}</p>
-								</div>
-								<md-grid-tile-footer>
-									<md-button class="md-icon-button amber-text" ng-disabled="loading" ng-if="true" ng-click="dummyAction($index)" aria-label="Some action">
-										<i class="fa fa-2x fa-remove"></i>
-									</md-button>
-								</md-grid-tile-footer>
-							</md-grid-tile>
-						</md-grid-list>
-					</div>
-					<div flex="100" layout="column" layout-align="start stretch" ng-if="!emails.messages">the're are no incoming emails</div>
-				</md-tab-body>
-			</md-tab>
 
 			<md-tab flex layout="column">
 				<md-tab-label>email submissions</md-tab-label>
@@ -49,11 +24,14 @@
 									<p>Sent from domain: {{ submission.domain }}</p>
 								</div>
 								<md-grid-tile-footer>
-									<md-button class="md-icon-button amber-text" ng-disabled="loading" ng-if="true" ng-click="dummyAction($index)" aria-label="Some action">
+									<md-button class="md-icon-button amber-text" ng-disabled="loading" ng-if="true" ng-click="deleteSubmission($index)" aria-label="delete submission">
 										<i class="fa fa-2x fa-remove"></i>
 									</md-button>
-									<md-button class="md-icon-button" ng-disabled="loading" ng-if="true" ng-click="dummyAction($index)" aria-label="Another action">
+									<md-button class="md-icon-button" ng-disabled="loading" ng-if="true" ng-click="showSubmissionPreview($index)" aria-label="preview submission">
 										<i class="fa fa-2x fa fa-th-large"></i>
+									</md-button>
+									<md-button class="md-icon-button" ng-disabled="loading" ng-if="true" ng-click="approveSubmission($index)" aria-label="approve submission">
+										<i class="fa fa-2x fa fa-ok"></i>
 									</md-button>
 								</md-grid-tile-footer>
 							</md-grid-tile>
@@ -62,7 +40,64 @@
 					<div flex="100" layout="column" layout-align="start stretch" ng-if="!emails.blogSubmissions">the're are no blog submissions</div>
 				</md-tab-body>
 			</md-tab>
+
+			<md-tab flex layout="column">
+				<md-tab-label>email messages</md-tab-label>
+				<md-tab-body flex layout="column" class="md-padding">
+					<div class="data-container" flex layout="column" layout-align="start stretch" ng-if="emails.messages">
+						<md-grid-list flex="100" md-cols-xs="1" md-cols-sm="1" md-cols-md="2" md-cols-lg="3" md-cols-xl="4" md-gutter="50px" md-row-height="2.5:3">
+							<md-grid-tile ng-repeat="message in emails.messages">
+								<md-grid-tile-header class="md-body-2" layout="row" layout-align="center center">
+									{{$index}}. {{ message.header }}
+								</md-grid-tile-header>
+								<div class="md-padding md-body-1">
+									<p flex="100">From: {{ message.name }} < {{ message.email }} ></p>
+									<p flex="100">Sent from domain: {{ message.domain }}</p>
+								</div>
+								<md-grid-tile-footer>
+									<md-button class="md-icon-button amber-text" ng-disabled="loading" ng-if="true" ng-click="deleteMessage($index)" aria-label="delete message">
+										<i class="fa fa-2x fa-remove"></i>
+									</md-button>
+									<md-button class="md-icon-button" ng-disabled="loading" ng-if="true" ng-click="showMessageText($index)" aria-label="show message text">
+										<i class="fa fa-2x fa-envelope-open-o"></i>
+									</md-button>
+								</md-grid-tile-footer>
+							</md-grid-tile>
+						</md-grid-list>
+					</div>
+					<div flex="100" layout="column" layout-align="start stretch" ng-if="!emails.messages">the're are no incoming emails</div>
+				</md-tab-body>
+			</md-tab>
+
 		</md-tabs>
 
 	</span>
+</div>
+
+<div id="blog-post-preview" flex layout="row" layout-fill layout-align="start stretch" ng-if="blogPostPreview">
+	<div flex class="post" layout="column" layout-align="start stretch">
+		<md-button ng-click="hideSubmissionPreview()">close preview</md-button>
+		<div flex="15" flex-xs="30" class="heading" layout="row" layout-align="start center" layout-wrap>
+			<h4 flex flex-xs="100" flex-sm="100" flex-md="100" layout="row" layout-align="center center">
+				<a md-button flex="20" ng-disabled="true" aria-label="previous blog post" title="previous blog post" class="md-accent">
+					<i class="fa fa-chevron-left"></i>
+				</a>
+				<span flex="60" layout="row" layout-align="center center" layout-wrap>
+					<span flex="100">{{blogPostPreview.title}}</span>
+				</span>
+				<a md-button flex="20" ng-disabled="true" aria-label="next blog post" title="next blog post" class="md-accent">
+					<i class="fa fa-chevron-right"></i>
+				</a>
+			</h4>
+		</div>
+		<div flex layout="row" layout-wrap class="post-container">
+			<div flex flex-xs="100" flex-sm="100" ng-if="blogPostPreview">
+				<iframe width="100%" height="450" scrolling="no" frameborder="no" ng-src="{{widgetLink()}}" ng-if="widgetLink() !== '#'"></iframe>
+			</div>
+			<div flex="50" flex-xs="100" flex-sm="100" id="text" ng-if="blogPostPreview.description">
+				<div ng-bind-html="blogPostPreview.description"></div>
+				<p ng-if="blogPostPreview.release_year && blogPostPreview.release_month && blogPostPreview.release_day">Release date: {{blogPostPreview.release_year}}.{{blogPostPreview.release_month}}.{{blogPostPreview.release_day}}</p>
+			</div>
+		</div>
+	</div>
 </div>

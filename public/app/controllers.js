@@ -815,8 +815,8 @@ dnbhubControllers.controller('aboutCtrl', ['$scope', '$route', '$mdDialog', 'dnb
 	}
 ]);
 
-dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$timeout', 'firebaseService',
-	function($rootScope, $scope, $timeout, firebaseService) {
+dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$timeout', '$mdDialog', 'firebaseService',
+	function($rootScope, $scope, $sce, $timeout, $mdDialog, firebaseService) {
 		$scope.instructions = '';
 		$scope.firebase = firebaseService;
 		$scope.currentUser = undefined;
@@ -867,6 +867,111 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$timeout', '
 				$scope.loaded();
 				$scope.$apply();
 			});
+		};
+
+		$scope.deleteMessage = (keyIndex) => {
+			$scope.loading = true;
+			const dbKey = $scope.emails.messagesKeys[keyIndex];
+			$scope.firebase.getDB('emails/messages/' + dbKey, true).remove().then(() => {
+				console.log('message id ' + dbKey + ' successfully deleted');
+				$scope.loaded();
+				/*
+				*	update local models
+				*/
+				$scope.emails.messagesKeys.splice(keyIndex, 1);
+				delete $scope.emails.messages[dbKey];
+				$scope.$apply();
+			}).catch((error) => {
+				console.log('error deleting email message', error);
+				$scope.loaded();
+				$scope.$apply();
+			});
+		};
+
+		$scope.deleteSubmission = (keyIndex) => {
+			$scope.loading = true;
+			const dbKey = $scope.emails.blogSubmissionsKeys[keyIndex];
+			$scope.firebase.getDB('emails/blogSubmissions/' + dbKey, true).remove().then(() => {
+				console.log('submission id ' + dbKey + ' successfully deleted');
+				$scope.loaded();
+				/*
+				*	update local models
+				*/
+				$scope.emails.blogSubmissionsKeys.splice(keyIndex, 1);
+				delete $scope.emails.blogSubmissions[dbKey];
+				$scope.$apply();
+			}).catch((error) => {
+				console.log('error deleting email submission', error);
+				$scope.loaded();
+				$scope.$apply();
+			});
+		};
+
+		$scope.showMessageText = (keyIndex) => {
+			console.log('TODO: show message text dialog', keyIndex);
+			const dbKey = $scope.emails.messagesKeys[keyIndex];
+			console.log('dbKey', dbKey);
+			const selectedMessage = $scope.emails.messages[dbKey];
+			console.log('selectedMessage', selectedMessage);
+			$mdDialog.show(
+				$mdDialog.confirm()
+					.parent(angular.element(document.querySelector('#admin')))
+					.clickOutsideToClose(true)
+					.title(selectedMessage.header)
+					.textContent(selectedMessage.message)
+					.ariaLabel('Ok')
+					.ok('Ok')
+					.cancel('Dismiss')
+					.targetEvent(event)
+			).then((confirm) => {
+				console.log('confirmed', confirm);
+			}, (cancel) => {
+				console.log('cancel', cancel);
+			});
+		};
+
+		$scope.scWidgetLink = {
+			first: 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/',
+			last: '&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false'
+		};
+		$scope.widgetLink = () => {
+			return ($scope.blogPostPreview) ? $sce.trustAsResourceUrl($scope.scWidgetLink.first + $scope.blogPostPreview.id + $scope.scWidgetLink.last) : '#';
+		};
+		$scope.blogPostPreview = undefined;
+		$scope.processDescription = (unprocessed) => {
+			if (!unprocessed) { return unprocessed; }
+			/*
+			*	convert:
+			*	\n to <br/>
+			*	links to anchors
+			*/
+			const processed = unprocessed.replace(/\n/g, '<br/>')
+				.replace(/((http(s)?)?(:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._+~#=]{0,255}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*))/g, '<a href="$1" target=_blank><i class="fa fa-external-link"></i> <span class="md-caption">$1</span></a>') // parse all urls, full and partial
+				.replace(/href="((www\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._+~#=]{0,255}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*))"/g, 'href="http://$1"') // add to partial hrefs protocol prefix
+				.replace(/(@)([^@,\s<)\]]+)/g, '<a href="https://soundcloud.com/$2" target=_blank><i class="fa fa-external-link"></i> <span class="md-caption">$1$2</span></a>');
+			// console.log('processed', processed);
+			return processed;
+		};
+
+		$scope.showSubmissionPreview = (keyIndex) => {
+			const dbKey = $scope.emails.blogSubmissionsKeys[keyIndex];
+			const selectedSubmission = $scope.emails.blogSubmissions[dbKey];
+			SC.get('/resolve?url=' + selectedSubmission.link).then((data) => {
+				console.log('data', data);
+				$scope.blogPostPreview = data;
+				$scope.blogPostPreview.description = $scope.processDescription($scope.blogPostPreview.description);
+				$scope.$apply();
+			});
+		};
+
+		$scope.hideSubmissionPreview = () => {
+			$scope.blogPostPreview = undefined;
+		};
+
+		$scope.approveSubmission = (keyIndex) => {
+			const dbKey = $scope.emails.blogSubmissionsKeys[keyIndex];
+			const selectedSubmission = $scope.emails.blogSubmissions[dbKey];
+			console.log('TODO: approve submission', selectedSubmission);
 		};
 
 		/*
