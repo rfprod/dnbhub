@@ -69,6 +69,39 @@
 				</md-tab-body>
 			</md-tab>
 
+			<md-tab flex layout="column">
+				<md-tab-label>brands</md-tab-label>
+				<md-tab-body flex layout="column" class="md-padding">
+					<div class="data-container" flex layout="column" layout-align="start stretch" ng-if="brandsKeys.length">
+						<md-grid-list flex="100" md-cols-xs="1" md-cols-sm="2" md-cols-md="2" md-cols-lg="3" md-cols-xl="4" md-gutter="50px" md-row-height="2.5:3">
+							<md-grid-tile ng-repeat="brandKey in brandsKeys">
+								<md-grid-tile-header class="md-body-2" layout="row" layout-align="center center">
+									{{$index}}. {{ brandKey }}
+								</md-grid-tile-header>
+								<div class="md-padding md-body-1">
+									<p flex="100">Bandcamp <a href="{{ brands[brandKey].bandcamp }}" target=_blank ng-if="brands[brandKey].bandcamp">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
+									<p flex="100">Facebook <a href="{{ brands[brandKey].facebook }}" target=_blank ng-if="brands[brandKey].facebook">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
+									<p flex="100">Instagram <a href="{{ brands[brandKey].instagram }}" target=_blank ng-if="brands[brandKey].instagram">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
+									<p flex="100">Soundcloud <a href="{{ brands[brandKey].soundcloud }}" target=_blank ng-if="brands[brandKey].soundcloud">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
+									<p flex="100">Twitter <a href="{{ brands[brandKey].twitter }}" target=_blank ng-if="brands[brandKey].twitter">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
+									<p flex="100">Website <a href="{{ brands[brandKey].website }}" target=_blank ng-if="brands[brandKey].website">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
+									<p flex="100">Youtube <a href="{{ brands[brandKey].youtube }}" target=_blank ng-if="brands[brandKey].youtube">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
+								</div>
+								<md-grid-tile-footer>
+									<md-button class="md-icon-button amber-text" ng-disabled="loading" ng-if="true" ng-click="deleteBrand($index)" aria-label="delete brand">
+										<i class="fa fa-2x fa-remove"></i>
+									</md-button>
+									<md-button class="md-icon-button" ng-disabled="loading" ng-if="true" ng-click="editBrand($index)" aria-label="edit brand links">
+										<i class="fa fa-2x fa-pencil"></i>
+									</md-button>
+								</md-grid-tile-footer>
+							</md-grid-tile>
+						</md-grid-list>
+					</div>
+					<div flex="100" layout="column" layout-align="start stretch" ng-if="!emails.messages">the're are no incoming emails</div>
+				</md-tab-body>
+			</md-tab>
+
 		</md-tabs>
 
 	</span>

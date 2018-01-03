@@ -1009,10 +1009,40 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 			return added;
 		};
 
+		$scope.brands = {};
+		$scope.brandsKeys = [];
+		$scope.getBrands = () => {
+			$scope.loading = true;
+			$scope.firebase.getDB('brands').then((snapshot) => {
+				console.log('brands', snapshot.val());
+				$scope.brands = snapshot.val();
+				$scope.brandsKeys = Object.keys($scope.brands);
+				$scope.loaded();
+				$scope.$apply();
+			}).catch((error) => {
+				console.log('error', error);
+				$scope.loaded();
+				$scope.$apply();
+			});
+		};
+		$scope.deleteBrand = () => {
+			console.log('TODO: delete brand');
+		};
+		$scope.editBrand = () => {
+			console.log('TODO: edit brand');
+		};
+
 		$scope.approveSubmission = (keyIndex) => {
 			const dbKey = $scope.emails.blogSubmissionsKeys[keyIndex];
 			const selectedSubmission = $scope.emails.blogSubmissions[dbKey];
 			console.log('TODO: approve submission', selectedSubmission);
+		};
+
+		$scope.getAllData = () => {
+			$scope.getEmailMessages();
+			$scope.getEmailBlogSubmissions();
+			$scope.getExistingBlogEntriesIDs();
+			$scope.getBrands();
 		};
 
 		/*
@@ -1025,15 +1055,11 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 				$rootScope.$on('hideAuthDialog', () => {
 					// console.log('$scope.firebase.user.providerData:', $scope.firebase.user.providerData);
 					$scope.currentUser = $scope.firebase.auth().currentUser;
-					$scope.getEmailMessages();
-					$scope.getEmailBlogSubmissions();
-					$scope.getExistingBlogEntriesIDs();
+					$scope.getAllData();
 				});
 			} else {
 				$scope.currentUser = $scope.firebase.auth().currentUser;
-				$scope.getEmailMessages();
-				$scope.getEmailBlogSubmissions();
-				$scope.getExistingBlogEntriesIDs();
+				$scope.getAllData();
 			}
 		});
 		$scope.$on('$destroy', () => {
@@ -1041,6 +1067,7 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 			$scope.firebase.getDB('emails/messages', true).off();
 			$scope.firebase.getDB('emails/blogSubmissions', true).off();
 			$scope.firebase.getDB('blogEntriesIDs', true).off();
+			$scope.firebase.getDB('brands', true).off();
 		});
 	}
 ]);
