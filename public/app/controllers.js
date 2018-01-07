@@ -843,7 +843,7 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 			$scope.firebase.getDB('emails/messages').then((snapshot) => {
 				const response = snapshot.val();
 				$scope.emails.messages = response;
-				$scope.emails.messagesKeys = Object.keys(response);
+				$scope.emails.messagesKeys = (response) ? Object.keys(response) : [];
 				console.log('$scope.emails.messages', $scope.emails.messages);
 				$scope.loaded();
 				$scope.$apply();
@@ -858,7 +858,7 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 			$scope.firebase.getDB('emails/blogSubmissions').then((snapshot) => {
 				const response = snapshot.val();
 				$scope.emails.blogSubmissions = response;
-				$scope.emails.blogSubmissionsKeys = Object.keys(response);
+				$scope.emails.blogSubmissionsKeys = (response) ? Object.keys(response) : [];
 				console.log('$scope.emails.blogSubmissions', $scope.emails.blogSubmissions);
 				$scope.loaded();
 				$scope.$apply();
@@ -874,12 +874,12 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 			const dbKey = $scope.emails.messagesKeys[keyIndex];
 			$scope.firebase.getDB('emails/messages/' + dbKey, true).remove().then(() => {
 				console.log('message id ' + dbKey + ' successfully deleted');
-				$scope.loaded();
 				/*
 				*	update local models
 				*/
 				$scope.emails.messagesKeys.splice(keyIndex, 1);
 				delete $scope.emails.messages[dbKey];
+				$scope.loaded();
 				$scope.$apply();
 			}).catch((error) => {
 				console.log('error deleting email message', error);
@@ -893,18 +893,24 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 			const dbKey = $scope.emails.blogSubmissionsKeys[keyIndex];
 			$scope.firebase.getDB('emails/blogSubmissions/' + dbKey, true).remove().then(() => {
 				console.log('submission id ' + dbKey + ' successfully deleted');
-				$scope.loaded();
 				/*
 				*	update local models
 				*/
 				$scope.emails.blogSubmissionsKeys.splice(keyIndex, 1);
 				delete $scope.emails.blogSubmissions[dbKey];
+				$scope.loaded();
 				$scope.$apply();
 			}).catch((error) => {
 				console.log('error deleting email submission', error);
 				$scope.loaded();
 				$scope.$apply();
 			});
+		};
+
+		$scope.approveSubmission = (keyIndex) => {
+			const dbKey = $scope.emails.blogSubmissionsKeys[keyIndex];
+			const selectedSubmission = $scope.emails.blogSubmissions[dbKey];
+			console.log('TODO: approve submission', selectedSubmission);
 		};
 
 		$scope.showMessageText = (keyIndex) => {
@@ -1015,8 +1021,9 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 			$scope.loading = true;
 			$scope.firebase.getDB('brands').then((snapshot) => {
 				console.log('brands', snapshot.val());
-				$scope.brands = snapshot.val();
-				$scope.brandsKeys = Object.keys($scope.brands);
+				const response = snapshot.val();
+				$scope.brands = (response) ? response : {};
+				$scope.brandsKeys = (response) ? Object.keys(response) : [];
 				$scope.loaded();
 				$scope.$apply();
 			}).catch((error) => {
@@ -1025,17 +1032,27 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 				$scope.$apply();
 			});
 		};
-		$scope.deleteBrand = () => {
-			console.log('TODO: delete brand');
-		};
-		$scope.editBrand = () => {
-			console.log('TODO: edit brand');
-		};
+		$scope.deleteBrand = (keyIndex) => {
+			$scope.loading = true;
+			const dbKey = $scope.brandsKeys[keyIndex];
+			$scope.firebase.getDB('brands/' + dbKey, true).remove().then(() => {
+				console.log('brand id ' + dbKey + ' successfully deleted');
+				/*
+				*	update local models
+				*/
+				$scope.brandsKeys.splice(keyIndex, 1);
+				delete $scope.brands[dbKey];
+				$scope.loaded();
+				$scope.$apply();
+			}).catch((error) => {
+				console.log('error deleting brand', error);
+				$scope.loaded();
+				$scope.$apply();
+			});
 
-		$scope.approveSubmission = (keyIndex) => {
-			const dbKey = $scope.emails.blogSubmissionsKeys[keyIndex];
-			const selectedSubmission = $scope.emails.blogSubmissions[dbKey];
-			console.log('TODO: approve submission', selectedSubmission);
+		};
+		$scope.editBrand = (keyIndex) => {
+			console.log('TODO: edit brand, keyIndex', keyIndex);
 		};
 
 		$scope.getAllData = () => {
