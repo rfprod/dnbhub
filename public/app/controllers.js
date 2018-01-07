@@ -815,11 +815,13 @@ dnbhubControllers.controller('aboutCtrl', ['$scope', '$route', '$mdDialog', 'dnb
 	}
 ]);
 
-dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$timeout', '$mdDialog', 'firebaseService',
-	function($rootScope, $scope, $sce, $timeout, $mdDialog, firebaseService) {
+dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$timeout', '$mdDialog', 'firebaseService', 'regXpatternsService',
+	function($rootScope, $scope, $sce, $timeout, $mdDialog, firebaseService, regXpatternsService) {
 		$scope.instructions = '';
 		$scope.firebase = firebaseService;
 		$scope.currentUser = undefined;
+
+		$scope.patterns = regXpatternsService;
 
 		$scope.loading = false;
 		$scope.currentTimeout = undefined;
@@ -1049,10 +1051,23 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 				$scope.loaded();
 				$scope.$apply();
 			});
-
 		};
+		$scope.editableBrandKey = undefined;
+		$scope.isBrandEditable = (brandKey) => brandKey === $scope.editableBrandKey;
 		$scope.editBrand = (keyIndex) => {
 			console.log('TODO: edit brand, keyIndex', keyIndex);
+			/*
+			*	toggles mode if the same item is selected as an editable
+			*/
+			const editableBrandKey = $scope.brandsKeys[keyIndex];
+			$scope.editableBrandKey = (editableBrandKey !== $scope.editableBrandKey) ? editableBrandKey : undefined;
+		};
+		$scope.updateBrand = () => {
+			if (typeof $scope.brands[$scope.editableBrandKey] === 'object') {
+				console.log('TODO: update brand, editableBrandKey', $scope.editableBrandKey);
+			} else {
+				console.log('no brand is editable at the moment');
+			}
 		};
 
 		$scope.getAllData = () => {

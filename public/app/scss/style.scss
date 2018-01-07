@@ -408,5 +408,13 @@ html {
 			min-height: 100%;
 			height: auto!important;
 			width: 100%;
+
+			md-grid-tile {
+				form {
+					md-input-container {
+						margin: 2.5px 0 2.5px 0;
+					}
+				}
+			}
 		}
 	}

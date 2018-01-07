@@ -9,7 +9,16 @@ dnbhubServices.factory('regXpatternsService', [ function() {
 	*/
 	return {
 		email: /\w{2}@\w{2,}(\.)?\w{2,}/,
-		soundcloudPlaylistLink: /https:\/\/soundcloud\.com\/\w+\/sets\/\w+/,
+		soundcloudPlaylistLink: /^https:\/\/soundcloud\.com\/\w+\/sets\/\w+$/,
+		links: {
+			bandcamp: /^https:\/\/\w+\.bandcamp\.com(\/)?$/,
+			facebook: /^https:\/\/www\.facebook\.com\/[^/\s]+(\/)?$/,
+			instagram: /^https:\/\/www\.instagram\.com\/[^/\s]+(\/)?$/,
+			soundcloud: /^https:\/\/www\.soundcloud\.com\/[^/\s]+(\/)?$/,
+			twitter: /^https:\/\/twitter\.com\/[^/\s]+(\/)?$/,
+			website: /^http(s)?:\/\/(www\.)?[^/\s]+\.[a-z]{2,}(\/)?$/,
+			youtube: /^https:\/\/www\.youtube\.com\/(c|user)\/[^/\s]+(\/)?$/
+		},
 		text: /\w{3,}/,
 		name: /\w{2,}/,
 		header: /\w{5,}/,

@@ -25,7 +25,7 @@
 								</div>
 								<md-grid-tile-footer>
 									<md-button class="md-icon-button amber-text" ng-disabled="loading" ng-if="true" ng-click="deleteSubmission($index)" aria-label="delete submission">
-										<i class="fa fa-2x fa-remove"></i>
+										<i class="fa fa-2x fa-trash"></i>
 									</md-button>
 									<md-button class="md-icon-button" ng-disabled="alreadyAdded($index) || loading" ng-if="true" ng-click="showSubmissionPreview($index)" aria-label="preview submission">
 										<i class="fa fa-2x fa-th-large"></i>
@@ -56,7 +56,7 @@
 								</div>
 								<md-grid-tile-footer>
 									<md-button class="md-icon-button amber-text" ng-disabled="loading" ng-if="true" ng-click="deleteMessage($index)" aria-label="delete message">
-										<i class="fa fa-2x fa-remove"></i>
+										<i class="fa fa-2x fa-trash"></i>
 									</md-button>
 									<md-button class="md-icon-button" ng-disabled="loading" ng-if="true" ng-click="showMessageText($index)" aria-label="show message text">
 										<i class="fa fa-2x fa-envelope-open-o"></i>
@@ -73,26 +73,85 @@
 				<md-tab-label>brands</md-tab-label>
 				<md-tab-body flex layout="column" class="md-padding">
 					<div class="data-container" flex layout="column" layout-align="start stretch" ng-if="brandsKeys.length">
-						<md-grid-list flex="100" md-cols-xs="1" md-cols-sm="2" md-cols-md="2" md-cols-lg="3" md-cols-xl="4" md-gutter="50px" md-row-height="2.5:3">
+						<md-grid-list flex="100" md-cols-xs="1" md-cols-sm="1" md-cols-md="2" md-cols-lg="3" md-cols-xl="4" md-gutter="50px" md-row-height="557px">
 							<md-grid-tile ng-repeat="brandKey in brandsKeys">
 								<md-grid-tile-header class="md-body-2" layout="row" layout-align="center center">
 									{{$index}}. {{ brandKey }}
 								</md-grid-tile-header>
-								<div class="md-padding md-body-1">
-									<p flex="100">Bandcamp <a href="{{ brands[brandKey].bandcamp }}" target=_blank ng-if="brands[brandKey].bandcamp">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
-									<p flex="100">Facebook <a href="{{ brands[brandKey].facebook }}" target=_blank ng-if="brands[brandKey].facebook">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
-									<p flex="100">Instagram <a href="{{ brands[brandKey].instagram }}" target=_blank ng-if="brands[brandKey].instagram">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
-									<p flex="100">Soundcloud <a href="{{ brands[brandKey].soundcloud }}" target=_blank ng-if="brands[brandKey].soundcloud">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
-									<p flex="100">Twitter <a href="{{ brands[brandKey].twitter }}" target=_blank ng-if="brands[brandKey].twitter">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
-									<p flex="100">Website <a href="{{ brands[brandKey].website }}" target=_blank ng-if="brands[brandKey].website">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
-									<p flex="100">Youtube <a href="{{ brands[brandKey].youtube }}" target=_blank ng-if="brands[brandKey].youtube">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
+								<div flex class="md-padding md-body-1">
+									<div flex ng-if="!isBrandEditable(brandKey)">
+										<p flex="100">Bandcamp <a href="{{ brands[brandKey].bandcamp }}" target=_blank ng-if="brands[brandKey].bandcamp">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
+										<p flex="100">Facebook <a href="{{ brands[brandKey].facebook }}" target=_blank ng-if="brands[brandKey].facebook">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
+										<p flex="100">Instagram <a href="{{ brands[brandKey].instagram }}" target=_blank ng-if="brands[brandKey].instagram">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
+										<p flex="100">Soundcloud <a href="{{ brands[brandKey].soundcloud }}" target=_blank ng-if="brands[brandKey].soundcloud">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
+										<p flex="100">Twitter <a href="{{ brands[brandKey].twitter }}" target=_blank ng-if="brands[brandKey].twitter">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
+										<p flex="100">Website <a href="{{ brands[brandKey].website }}" target=_blank ng-if="brands[brandKey].website">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
+										<p flex="100">Youtube <a href="{{ brands[brandKey].youtube }}" target=_blank ng-if="brands[brandKey].youtube">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
+									</div>
+									<form flex name="editBrandForm" accept-charset="UTF-8" layout="column" align-items="start stretch" ng-if="isBrandEditable(brandKey)" ng-cloak>
+											<md-input-container>
+												<input type="text" name="bandcamp" ng-model="brands[brandKey].bandcamp" ng-pattern="patterns.links.bandcamp" placeholder="Bandcamp profile link, e.g.: https://some-name.bandcamp.com" required>
+												<div ng-messages="editBrandForm.bandcamp.$error">
+													<div ng-message="required">This field is required</div>
+													<div ng-message="pattern">Invalid value, example link: https://some-name.bandcamp.com</div>
+												</div>
+											</md-input-container>
+											<md-input-container>
+												<input type="text" name="facebook" ng-model="brands[brandKey].facebook" ng-pattern="patterns.links.facebook" placeholder="Facebook profile link, e.g.: https://www.facebook.com/some-name" required>
+												<div ng-messages="editBrandForm.facebook.$error">
+													<div ng-message="required">This field is required</div>
+													<div ng-message="pattern">Invalid value, example link: https://www.facebook.com/some-name</div>
+												</div>
+											</md-input-container>
+											<md-input-container>
+												<input type="text" name="instagram" ng-model="brands[brandKey].instagram" ng-pattern="patterns.links.instagram" placeholder="Instagram profile link, e.g.: https://www.instagram.com/some-name" required>
+												<div ng-messages="editBrandForm.instagram.$error">
+													<div ng-message="required">This field is required</div>
+													<div ng-message="pattern">Invalid value, example link: https://www.instagram.com/some-name</div>
+												</div>
+											</md-input-container>
+											<md-input-container>
+												<input type="text" name="soundcloud" ng-model="brands[brandKey].soundcloud" ng-pattern="patterns.links.soundcloud" placeholder="Soundcloud profile link, e.g.: https://www.soundcloud.com/some-name" required>
+												<div ng-messages="editBrandForm.soundcloud.$error">
+													<div ng-message="required">This field is required</div>
+													<div ng-message="pattern">Invalid value, example link: https://www.soundcloud.com/some-name</div>
+												</div>
+											</md-input-container>
+											<md-input-container>
+												<input type="text" name="twitter" ng-model="brands[brandKey].twitter" ng-pattern="patterns.links.twitter" placeholder="Twitter profile link, e.g.: https://twitter.com/some-name" required>
+												<div ng-messages="editBrandForm.twitter.$error">
+													<div ng-message="required">This field is required</div>
+													<div ng-message="pattern">Invalid value, example link: https://twitter.com/some-name</div>
+												</div>
+											</md-input-container>
+											<md-input-container>
+												<input type="text" name="website" ng-model="brands[brandKey].website" ng-pattern="patterns.links.website" placeholder="Brand's website link, e.g.: https://domain-name.top-level-domain" required>
+												<div ng-messages="editBrandForm.website.$error">
+													<div ng-message="required">This field is required</div>
+													<div ng-message="pattern">Invalid value, example link: https://domain-name.top-level-domain</div>
+												</div>
+											</md-input-container>
+											<md-input-container>
+												<input type="text" name="youtube" ng-model="brands[brandKey].youtube" ng-pattern="patterns.links.youtube" placeholder="Youtube channel or user link, e.g.: https://www.youtube.com/c_or_users/channelName" required>
+												<div ng-messages="editBrandForm.youtube.$error">
+													<div ng-message="required">This field is required</div>
+													<div ng-message="pattern">Invalid value, example link: https://www.youtube.com/c_or_users/channelName</div>
+												</div>
+											</md-input-container>
+										</form>
 								</div>
 								<md-grid-tile-footer>
-									<md-button class="md-icon-button amber-text" ng-disabled="loading" ng-if="true" ng-click="deleteBrand($index)" aria-label="delete brand">
-										<i class="fa fa-2x fa-remove"></i>
-									</md-button>
-									<md-button class="md-icon-button" ng-disabled="loading" ng-if="true" ng-click="editBrand($index)" aria-label="edit brand links">
+									<md-button class="md-icon-button" ng-disabled="loading" ng-if="!isBrandEditable(brandKey)" ng-click="editBrand($index)" aria-label="edit brand links">
 										<i class="fa fa-2x fa-pencil"></i>
+									</md-button>
+									<md-button class="md-icon-button" ng-disabled="loading" ng-if="isBrandEditable(brandKey)" ng-click="editBrand($index)" aria-label="cancel editing">
+										<i class="fa fa-2x fa-times"></i>
+									</md-button>
+									<md-button class="md-icon-button green-text" ng-disabled="loading" ng-if="isBrandEditable(brandKey)" ng-click="updateBrand($index)" aria-label="update brand">
+										<i class="fa fa-2x fa-check"></i>
+									</md-button>
+									<md-button class="md-icon-button amber-text" ng-disabled="loading" ng-if="isBrandEditable(brandKey)" ng-click="deleteBrand($index)" aria-label="delete brand">
+										<i class="fa fa-2x fa-trash"></i>
 									</md-button>
 								</md-grid-tile-footer>
 							</md-grid-tile>
