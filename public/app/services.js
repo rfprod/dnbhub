@@ -10,6 +10,7 @@ dnbhubServices.factory('regXpatternsService', [ function() {
 	return {
 		email: /\w{2}@\w{2,}(\.)?\w{2,}/,
 		soundcloudPlaylistLink: /^https:\/\/soundcloud\.com\/\w+\/sets\/\w+$/,
+		brandName: /^[a-zA-Z0-9]{2,}$/,
 		links: {
 			bandcamp: /^https:\/\/\w+\.bandcamp\.com(\/)?$/,
 			facebook: /^https:\/\/www\.facebook\.com\/[^/\s]+(\/)?$/,

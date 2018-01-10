@@ -1055,18 +1055,93 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 		$scope.editableBrandKey = undefined;
 		$scope.isBrandEditable = (brandKey) => brandKey === $scope.editableBrandKey;
 		$scope.editBrand = (keyIndex) => {
-			console.log('TODO: edit brand, keyIndex', keyIndex);
+			console.log('edit brand, keyIndex', keyIndex);
 			/*
-			*	toggles mode if the same item is selected as an editable
+			*	toggles mode off if the same item is selected as an editable
 			*/
 			const editableBrandKey = $scope.brandsKeys[keyIndex];
 			$scope.editableBrandKey = (editableBrandKey !== $scope.editableBrandKey) ? editableBrandKey : undefined;
 		};
 		$scope.updateBrand = () => {
 			if (typeof $scope.brands[$scope.editableBrandKey] === 'object') {
-				console.log('TODO: update brand, editableBrandKey', $scope.editableBrandKey);
+				$scope.loading = true;
+				const valuesObj = $scope.brands[$scope.editableBrandKey];
+				console.log('valuesObj', valuesObj);
+				for (const key of Object.keys(valuesObj)) {
+					console.log('key', key, '| value', valuesObj[key]);
+					if (typeof valuesObj[key] === undefined) {
+						/*
+						*	allow invalid form to be passed, set values to empty strings then
+						*/
+						valuesObj[key] = '';
+					}
+				}
+				$scope.firebase.getDB('brands/' + $scope.editableBrandKey, true).update(valuesObj)
+					.then(() => {
+						console.log('brand values set');
+						$scope.editableBrandKey = undefined;
+						$scope.loaded();
+						$scope.$apply();
+					}).catch((error) => {
+						console.log('error setting brand values', error);
+						$scope.loaded();
+						$scope.$apply();
+					});
 			} else {
 				console.log('no brand is editable at the moment');
+			}
+		};
+
+		$scope.newBrand = {
+			name: undefined,
+			bandcamp: undefined,
+			facebook: undefined,
+			instagram: undefined,
+			soundcloud: undefined,
+			twitter: undefined,
+			website: undefined,
+			youtube: undefined
+		};
+		$scope.newBrandCreateMode = false;
+		$scope.createBrand = () => {
+			if (!$scope.newBrandCreateMode) {
+				for (const key of Object.keys($scope.newBrand)) {
+					$scope.newBrand[key] = '';
+				}
+				$scope.newBrandCreateMode = true;
+			} else {
+				for (const key of Object.keys($scope.newBrand)) {
+					$scope.newBrand[key] = undefined;
+				}
+				$scope.newBrandCreateMode = false;
+			}
+		};
+		$scope.submitNewBrand = () => {
+			if ($scope.newBrand.name) {
+				console.log('submit new brand');
+				const valuesObj = {
+					bandcamp: $scope.newBrand.bandcamp || '',
+					facebook: $scope.newBrand.facebook || '',
+					instagram: $scope.newBrand.instagram || '',
+					soundcloud: $scope.newBrand.soundcloud || '',
+					twitter: $scope.newBrand.twitter || '',
+					website: $scope.newBrand.website || '',
+					youtube: $scope.newBrand.youtube || ''
+				};
+				$scope.firebase.getDB('brands', true).child($scope.newBrand.name).set(valuesObj)
+					.then(() => {
+						console.log('brand values set');
+						$scope.createBrand();
+						$scope.getBrands();
+						$scope.loaded();
+						$scope.$apply();
+					}).catch((error) => {
+						console.log('error setting brand values', error);
+						$scope.loaded();
+						$scope.$apply();
+					});
+			} else {
+				console.log('error submitting brand: name is mandatory');
 			}
 		};
 

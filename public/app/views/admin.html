@@ -72,8 +72,83 @@
 			<md-tab flex layout="column">
 				<md-tab-label>brands</md-tab-label>
 				<md-tab-body flex layout="column" class="md-padding">
-					<div class="data-container" flex layout="column" layout-align="start stretch" ng-if="brandsKeys.length">
+					<div class="data-container" flex layout="column" layout-align="start stretch">
 						<md-grid-list flex="100" md-cols-xs="1" md-cols-sm="1" md-cols-md="2" md-cols-lg="3" md-cols-xl="4" md-gutter="50px" md-row-height="557px">
+							<md-grid-tile ng-if="!newBrandCreateMode">
+								<md-button class="md-icon-button" type="button" ng-disabled="loading" ng-click="createBrand()" aria-label="add a new brand">
+									<i class="fa fa-2x fa-plus green-text"></i>
+								</md-button>
+							</md-grid-tile>
+							<md-grid-tile ng-if="newBrandCreateMode">
+								<div flex class="md-padding md-body-1" ng-if="newBrandCreateMode">
+									<form flex name="newBrandForm" accept-charset="UTF-8" layout="column" align-items="start stretch" ng-if="isBrandEditable(brandKey)" ng-cloak>
+										<md-input-container>
+											<input type="text" name="name" ng-model="newBrand.name" ng-pattern="patterns.name" placeholder="Brand name without spaces in CamelCase" required>
+											<div ng-messages="newBrandForm.name.$error">
+												<div ng-message="required">This field is required</div>
+												<div ng-message="pattern">Invalid value: 2+ English letters, digits</div>
+											</div>
+										</md-input-container>
+											<md-input-container>
+												<input type="text" name="bandcamp" ng-model="newBrand.bandcamp" ng-pattern="patterns.links.bandcamp" placeholder="Bandcamp profile link, e.g.: https://some-name.bandcamp.com" required>
+												<div ng-messages="newBrandForm.bandcamp.$error">
+													<div ng-message="required">This field is required</div>
+													<div ng-message="pattern">Invalid value, example link: https://some-name.bandcamp.com</div>
+												</div>
+											</md-input-container>
+											<md-input-container>
+												<input type="text" name="facebook" ng-model="newBrand.facebook" ng-pattern="patterns.links.facebook" placeholder="Facebook profile link, e.g.: https://www.facebook.com/some-name" required>
+												<div ng-messages="newBrandForm.facebook.$error">
+													<div ng-message="required">This field is required</div>
+													<div ng-message="pattern">Invalid value, example link: https://www.facebook.com/some-name</div>
+												</div>
+											</md-input-container>
+											<md-input-container>
+												<input type="text" name="instagram" ng-model="newBrand.instagram" ng-pattern="patterns.links.instagram" placeholder="Instagram profile link, e.g.: https://www.instagram.com/some-name" required>
+												<div ng-messages="newBrandForm.instagram.$error">
+													<div ng-message="required">This field is required</div>
+													<div ng-message="pattern">Invalid value, example link: https://www.instagram.com/some-name</div>
+												</div>
+											</md-input-container>
+											<md-input-container>
+												<input type="text" name="soundcloud" ng-model="newBrand.soundcloud" ng-pattern="patterns.links.soundcloud" placeholder="Soundcloud profile link, e.g.: https://www.soundcloud.com/some-name" required>
+												<div ng-messages="newBrandForm.soundcloud.$error">
+													<div ng-message="required">This field is required</div>
+													<div ng-message="pattern">Invalid value, example link: https://www.soundcloud.com/some-name</div>
+												</div>
+											</md-input-container>
+											<md-input-container>
+												<input type="text" name="twitter" ng-model="newBrand.twitter" ng-pattern="patterns.links.twitter" placeholder="Twitter profile link, e.g.: https://twitter.com/some-name" required>
+												<div ng-messages="newBrandForm.twitter.$error">
+													<div ng-message="required">This field is required</div>
+													<div ng-message="pattern">Invalid value, example link: https://twitter.com/some-name</div>
+												</div>
+											</md-input-container>
+											<md-input-container>
+												<input type="text" name="website" ng-model="newBrand.website" ng-pattern="patterns.links.website" placeholder="Brand's website link, e.g.: https://domain-name.top-level-domain" required>
+												<div ng-messages="newBrandForm.website.$error">
+													<div ng-message="required">This field is required</div>
+													<div ng-message="pattern">Invalid value, example link: https://domain-name.top-level-domain</div>
+												</div>
+											</md-input-container>
+											<md-input-container>
+												<input type="text" name="youtube" ng-model="newBrand.youtube" ng-pattern="patterns.links.youtube" placeholder="Youtube channel or user link, e.g.: https://www.youtube.com/c_or_users/channelName" required>
+												<div ng-messages="newBrandForm.youtube.$error">
+													<div ng-message="required">This field is required</div>
+													<div ng-message="pattern">Invalid value, example link: https://www.youtube.com/c_or_users/channelName</div>
+												</div>
+											</md-input-container>
+										</form>
+								</div>
+								<md-grid-tile-footer ng-if="newBrandCreateMode">
+									<md-button class="md-icon-button" type="button" ng-disabled="loading" ng-click="createBrand()" aria-label="cancel brand creation">
+										<i class="fa fa-2x fa-times"></i>
+									</md-button>
+									<md-button class="md-icon-button green-text" type="submit" ng-disabled="loading" ng-click="submitNewBrand()" aria-label="sumit new brand">
+										<i class="fa fa-2x fa-check"></i>
+									</md-button>
+								</md-grid-tile-footer>
+							</md-grid-tile>
 							<md-grid-tile ng-repeat="brandKey in brandsKeys">
 								<md-grid-tile-header class="md-body-2" layout="row" layout-align="center center">
 									{{$index}}. {{ brandKey }}
@@ -141,23 +216,22 @@
 										</form>
 								</div>
 								<md-grid-tile-footer>
-									<md-button class="md-icon-button" ng-disabled="loading" ng-if="!isBrandEditable(brandKey)" ng-click="editBrand($index)" aria-label="edit brand links">
+									<md-button class="md-icon-button" type="button" ng-disabled="loading" ng-if="!isBrandEditable(brandKey)" ng-click="editBrand($index)" aria-label="edit brand links">
 										<i class="fa fa-2x fa-pencil"></i>
 									</md-button>
-									<md-button class="md-icon-button" ng-disabled="loading" ng-if="isBrandEditable(brandKey)" ng-click="editBrand($index)" aria-label="cancel editing">
+									<md-button class="md-icon-button" type="button" ng-disabled="loading" ng-if="isBrandEditable(brandKey)" ng-click="editBrand($index)" aria-label="cancel editing">
 										<i class="fa fa-2x fa-times"></i>
 									</md-button>
-									<md-button class="md-icon-button green-text" ng-disabled="loading" ng-if="isBrandEditable(brandKey)" ng-click="updateBrand($index)" aria-label="update brand">
+									<md-button class="md-icon-button green-text" type="submit" ng-disabled="loading" ng-if="isBrandEditable(brandKey)" ng-click="updateBrand()" aria-label="update brand">
 										<i class="fa fa-2x fa-check"></i>
 									</md-button>
-									<md-button class="md-icon-button amber-text" ng-disabled="loading" ng-if="isBrandEditable(brandKey)" ng-click="deleteBrand($index)" aria-label="delete brand">
+									<md-button class="md-icon-button amber-text" type="button" ng-disabled="loading" ng-if="isBrandEditable(brandKey)" ng-click="deleteBrand($index)" aria-label="delete brand">
 										<i class="fa fa-2x fa-trash"></i>
 									</md-button>
 								</md-grid-tile-footer>
 							</md-grid-tile>
 						</md-grid-list>
 					</div>
-					<div flex="100" layout="column" layout-align="start stretch" ng-if="!emails.messages">the're are no incoming emails</div>
 				</md-tab-body>
 			</md-tab>
 
