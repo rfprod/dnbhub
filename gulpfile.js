@@ -51,7 +51,7 @@ gulp.task('server', () => {
 
 gulp.task('server-test', () => {
 	return gulp.src(['./test/server/*.js'], { read: false })
-		.pipe(mocha({ reporter: 'spec' }))
+		.pipe(mocha({ reporter: 'nyan' }))
 		.on('error', gutil.log);
 });
 
