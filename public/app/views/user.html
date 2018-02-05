@@ -44,31 +44,29 @@
 			<span class="md-body-2">Playlists: {{ SCdata.me.playlist_count }}</span>
 			<span show-gt-sm hide-xs="true" hide-sm="true" flex="grow" class="md-body-1" ng-bind-html="SCdata.me.description"></span>
 		</span>
-		<span id="soundcloud-playlists" flex="80" flex-xs="100" flex-sm="100" layout="column" layout-align="start stretch" ng-if="SCdata.playlists">
-			<md-grid-list flex="100" md-cols-xs="1" md-cols-sm="2" md-cols-md="2" md-cols-lg="3" md-cols-xl="4" md-gutter="50px" md-row-height="2:3" md-row-height-xs="2:4">
-				<md-grid-tile ng-repeat="playlist in SCdata.playlists">
-					<md-grid-tile-header class="md-body-2" layout="row" layout-align="center center">
-						{{ playlist.title }}
-					</md-grid-tile-header>
-					<iframe ng-src="{{widgetLink(playlist.id)}}" width="100%" height="80%" scrolling="no" frameborder="no"></iframe>
-					<md-grid-tile-footer>
-						<md-button class="md-icon-button green-text" ng-disabled="alreadyAdded($index) || loading" ng-click="submitBlogPost($index)" aria-label="Submit to blog">
-							<i ng-if="!alreadyAdded($index)" class="fa fa-2x fa-plus" title="Submit to blog"></i>
-							<i ng-if="alreadyAdded($index) && unsubmittable($index)" class="fa fa-2x fa-clock-o" title="Submission is in procession"></i>
-							<i ng-if="alreadyAdded($index) && !unsubmittable($index)" class="fa fa-2x fa-check" title="Submitted to blog"></i>
-						</md-button>
-						<md-button class="md-icon-button amber-text" ng-disabled="loading" ng-if="alreadySubmitted($index) && unsubmittable($index)" ng-click="unsubmitBlogPost($index)" aria-label="Unsubmit playlist: available only before moderation happens" title="Unsubmit playlist: available only before moderation happens">
-							<i class="fa fa-2x fa-remove"></i>
-						</md-button>
-						<md-button class="md-icon-button" ng-disabled="alreadyAdded($index) || loading" ng-if="unsubmittable($index)" ng-click="toggleBlogPostPreview($index)" aria-label="Preview blog post" title="Preview blog post">
-							<i class="fa fa-2x fa fa-th-large"></i>
-						</md-button>
-						<md-button class="md-icon-button green-text" ng-disabled="loading" ng-if="alreadyAdded($index) && !unsubmittable($index)" ng-click="goToBlogEntry($index)" aria-label="Go to blog entry" title="Go to blog entry">
-							<i class="fa fa-2x fa-link"></i>
-						</md-button>
-					</md-grid-tile-footer>
-				</md-grid-tile>
-			</md-grid-list>
+		<span id="soundcloud-playlists" flex="80" flex-xs="100" flex-sm="100" layout="row" layout-align="start stretch" layout-wrap ng-if="SCdata.playlists">
+			<div class="playlist" ng-repeat="playlist in SCdata.playlists" flex-xs="100" flex-sm="50" flex="33" layout="column" layout-align="start stretch">
+				<span flex class="md-body-2" layout="row" layout-align="center center">
+					{{ playlist.title }}
+				</span>
+				<iframe ng-src="{{widgetLink(playlist.id)}}" width="100%" height="350px" scrolling="no" frameborder="no"></iframe>
+				<span flex layout-align="start center" layout-wrap>
+					<md-button class="md-icon-button green-text" ng-disabled="alreadyAdded($index) || loading" ng-click="submitBlogPost($index)" aria-label="Submit to blog">
+						<i ng-if="!alreadyAdded($index)" class="fa fa-2x fa-plus" title="Submit to blog"></i>
+						<i ng-if="alreadyAdded($index) && unsubmittable($index)" class="fa fa-2x fa-clock-o" title="Submission is in procession"></i>
+						<i ng-if="alreadyAdded($index) && !unsubmittable($index)" class="fa fa-2x fa-check" title="Submitted to blog"></i>
+					</md-button>
+					<md-button class="md-icon-button amber-text" ng-disabled="loading" ng-if="alreadySubmitted($index) && unsubmittable($index)" ng-click="unsubmitBlogPost($index)" aria-label="Unsubmit playlist: available only before moderation happens" title="Unsubmit playlist: available only before moderation happens">
+						<i class="fa fa-2x fa-remove"></i>
+					</md-button>
+					<md-button class="md-icon-button" ng-disabled="alreadyAdded($index) || loading" ng-if="unsubmittable($index)" ng-click="toggleBlogPostPreview($index)" aria-label="Preview blog post" title="Preview blog post">
+						<i class="fa fa-2x fa fa-th-large"></i>
+					</md-button>
+					<md-button class="md-icon-button green-text" ng-disabled="loading" ng-if="alreadyAdded($index) && !unsubmittable($index)" ng-click="goToBlogEntry($index)" aria-label="Go to blog entry" title="Go to blog entry">
+						<i class="fa fa-2x fa-link"></i>
+					</md-button>
+				</span>
+			</div>
 		</span>
 	</span>
 </div>
