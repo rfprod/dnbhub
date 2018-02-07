@@ -385,14 +385,14 @@ html {
 */
 	#user {
 		#soundcloud-user {
+			overflow-y: auto;
 			span {
 				padding: $padding;
 			}
 		}
 
 		#soundcloud-playlists {
-			overflow-y: scroll;
-			padding: 0 50px 0 50px;
+			overflow-y: auto;
 
 			.playlist {
 				padding: $padding;

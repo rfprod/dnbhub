@@ -4,7 +4,7 @@
 	<span ng-if="firebase.isSignedIn" layout="column" layout-align="start stretch">
 		<form ng-cloak accept-charset="UTF-8" name="profileForm" layout="column" layout-align="start stretch">
 			<span layout="row" layout-wrap layout-align="center center">
-				<md-input-container>
+				<md-input-container flex flex-md="30" flex-lg="25" flex-xl="20">
 					<md-icon class="fa fa-paper-plane amber-text hover-pointer" ng-if="!currentUser.emailVerified" title="your email is not verified, click here to request a verification link" ng-click="resendVerificationEmail()"></md-icon>
 					<md-icon class="fa fa-check green-text" ng-if="currentUser.emailVerified" title="your email is verified"></md-icon>
 					<input type="email" name="email" ng-model="profile.email" ng-pattern="patterns.email" placeholder="your_email@domain.tld" ng-disabled="!mode.edit || !mode.updateEmail" required>
@@ -14,7 +14,7 @@
 						<div ng-message="pattern">Invalid value, it should be an email</div>
 					</div>
 				</md-input-container>
-				<md-input-container>
+				<md-input-container flex flex-md="30" flex-lg="25" flex-xl="20">
 					<input type="text" name="name" ng-model="profile.name" placeholder="your display name" ng-disabled="!mode.edit">
 					<md-icon class="fa fa-user-circle-o"></md-icon>
 				</md-input-container>
@@ -38,13 +38,13 @@
 		</form>
 	</span>
 	<span flex layout="row" layout-wrap layout-align="start stretch" ng-if="firebase.isSignedIn && SCdata.me">
-		<span id="soundcloud-user" flex="20" flex-xs="100" flex-sm="100" layout-xs="row" layout-sm="row" layout="column" layout-align="start stretch" layout-align-xs="center start" layout-align-sm="center start" ng-if="SCdata.me">
+		<span id="soundcloud-user" flex="25" flex-xs="100" flex-sm="100" layout-xs="row" layout-sm="row" layout="column" layout-align="start stretch" layout-align-xs="center start" layout-align-sm="center start" ng-if="SCdata.me">
 			<span class="md-body-2">{{ SCdata.me.username }}</span>
 			<span class="md-body-2">{{ SCdata.me.full_name }}</span>
 			<span class="md-body-2">Playlists: {{ SCdata.me.playlist_count }}</span>
-			<span show-gt-sm hide-xs="true" hide-sm="true" flex="grow" class="md-body-1" ng-bind-html="SCdata.me.description"></span>
+			<span show-gt-sm hide-xs="true" hide-sm="true" class="md-body-1" ng-bind-html="SCdata.me.description"></span>
 		</span>
-		<span id="soundcloud-playlists" flex="80" flex-xs="100" flex-sm="100" layout="row" layout-align="start stretch" layout-wrap ng-if="SCdata.playlists">
+		<span id="soundcloud-playlists" flex="75" flex-xs="100" flex-sm="100" layout="row" layout-align="start stretch" layout-wrap ng-if="SCdata.playlists">
 			<div class="playlist" ng-repeat="playlist in SCdata.playlists" flex-xs="100" flex-sm="50" flex="33" layout="column" layout-align="start stretch">
 				<span flex class="md-body-2" layout="row" layout-align="center center">
 					{{ playlist.title }}
