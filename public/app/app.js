@@ -19,37 +19,37 @@ dnbhub
 			$routeProvider
 				.when('/index', {
 					templateUrl: 'app/views/index.html',
-					controller: 'indexCtrl'
+					controller: 'indexController'
 				})
 				.when('/blog', {
 					templateUrl: 'app/views/blog.html',
-					controller: 'blogCtrl',
+					controller: 'blogController',
 					reloadOnSearch: false
 				})
 				.when('/singles', {
 					templateUrl: 'app/views/singles.html',
-					controller: 'singlesCtrl'
+					controller: 'singlesController'
 				})
 				.when('/freedownloads', {
 					templateUrl: 'app/views/freedownloads.html',
-					controller: 'freeDownloadsCtrl',
+					controller: 'freeDownloadsController',
 					reloadOnSearch: false
 				})
 				.when('/reposts', {
 					templateUrl: 'app/views/reposts.html',
-					controller: 'repostsCtrl'
+					controller: 'repostsController'
 				})
 				.when('/about', {
 					templateUrl: 'app/views/about.html',
-					controller: 'aboutCtrl'
+					controller: 'aboutController'
 				})
 				.when('/admin', {
 					templateUrl: 'app/views/admin.html',
-					controller: 'adminCtrl'
+					controller: 'adminController'
 				})
 				.when('/user', {
 					templateUrl: 'app/views/user.html',
-					controller: 'userCtrl'
+					controller: 'userController'
 				})
 				.otherwise({
 					redirectTo: '/index'

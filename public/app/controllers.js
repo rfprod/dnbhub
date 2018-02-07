@@ -3,7 +3,7 @@
 
 var dnbhubControllers = angular.module('dnbhubControllers', []);
 
-dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$element', '$location', '$route', '$mdComponentRegistry', '$mdSidenav', '$mdDialog', 'firebaseService',
+dnbhubControllers.controller('navController', ['$rootScope', '$scope', '$document', '$element', '$location', '$route', '$mdComponentRegistry', '$mdSidenav', '$mdDialog', 'firebaseService',
 	function($rootScope, $scope, $document, $element, $location, $route, $mdComponentRegistry, $mdSidenav, $mdDialog, firebaseService) {
 		$scope.title = 'Drum and Bass Hub';
 		$scope.button = {
@@ -89,7 +89,7 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 		$scope.showAuthDialog = (event) => {
 			// console.log('event', event);
 			$mdDialog.show({
-				controller: 'authDialogCtrl',
+				controller: 'authDialogController',
 				templateUrl: './app/views/auth.html',
 				parent: angular.element(document.body),
 				targetEvent: event,
@@ -161,7 +161,7 @@ dnbhubControllers.controller('navCtrl', ['$rootScope', '$scope', '$document', '$
 	}
 ]);
 
-dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$location', '$timeout', 'regXpatternsService', 'firebaseService',
+dnbhubControllers.controller('authDialogController', ['$scope', '$mdDialog', '$location', '$timeout', 'regXpatternsService', 'firebaseService',
 	function($scope, $mdDialog, $location, $timeout, regXpatternsService, firebaseService) {
 		$scope.instructions = undefined;
 		$scope.form = {
@@ -292,7 +292,7 @@ dnbhubControllers.controller('authDialogCtrl', ['$scope', '$mdDialog', '$locatio
 	}
 ]);
 
-dnbhubControllers.controller('indexCtrl', ['$scope',
+dnbhubControllers.controller('indexController', ['$scope',
 	function($scope) {
 		$scope.tracks = [];
 		$scope.getTracks = (callback) => {
@@ -317,7 +317,7 @@ dnbhubControllers.controller('indexCtrl', ['$scope',
 	}
 ]);
 
-dnbhubControllers.controller('singlesCtrl', ['$scope',
+dnbhubControllers.controller('singlesController', ['$scope',
 	function($scope) {
 		/*
 		*	lifecycle
@@ -331,7 +331,7 @@ dnbhubControllers.controller('singlesCtrl', ['$scope',
 	}
 ]);
 
-dnbhubControllers.controller('freeDownloadsCtrl', ['$scope', '$sce', '$location', '$mdSidenav', 'freedownloadsService', 'firebaseService',
+dnbhubControllers.controller('freeDownloadsController', ['$scope', '$sce', '$location', '$mdSidenav', 'freedownloadsService', 'firebaseService',
 	function($scope, $sce, $location, $mdSidenav, freedownloadsService, firebaseService) {
 		$scope.freedownloadsData = [];
 		$scope.selectedWidget = 1;
@@ -387,7 +387,7 @@ dnbhubControllers.controller('freeDownloadsCtrl', ['$scope', '$sce', '$location'
 	}
 ]);
 
-dnbhubControllers.controller('repostsCtrl', ['$scope',
+dnbhubControllers.controller('repostsController', ['$scope',
 	function($scope) {
 		/*
 		*	lifecycle
@@ -401,7 +401,7 @@ dnbhubControllers.controller('repostsCtrl', ['$scope',
 	}
 ]);
 
-dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location', '$mdDialog', 'blogPostsService', 'firebaseService',
+dnbhubControllers.controller('blogController', ['$scope', '$sce', '$route', '$location', '$mdDialog', 'blogPostsService', 'firebaseService',
 	function($scope, $sce, $route, $location, $mdDialog, blogPostsService, firebaseService) {
 		$scope.inputReleaseCode = undefined;
 		$scope.blogPosts = [];
@@ -560,7 +560,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 		$scope.showAddBlogPostDialog = (event) => {
 			console.log('event', event);
 			$mdDialog.show({
-				controller: 'addBlogPostDialogCtrl',
+				controller: 'addBlogPostDialogController',
 				templateUrl: './app/views/add-blog-post-dialog.html',
 				parent: angular.element(document.body),
 				targetEvent: event,
@@ -594,7 +594,7 @@ dnbhubControllers.controller('blogCtrl', ['$scope', '$sce', '$route', '$location
 	}
 ]);
 
-dnbhubControllers.controller('addBlogPostDialogCtrl', ['$scope', '$mdDialog', '$location', '$timeout', 'regXpatternsService', 'addBlogPostService',
+dnbhubControllers.controller('addBlogPostDialogController', ['$scope', '$mdDialog', '$location', '$timeout', 'regXpatternsService', 'addBlogPostService',
 	function($scope, $mdDialog, $location, $timeout, regXpatternsService, addBlogPostService) {
 		$scope.form = {
 			email: '',
@@ -663,7 +663,7 @@ dnbhubControllers.controller('addBlogPostDialogCtrl', ['$scope', '$mdDialog', '$
 	}
 ]);
 
-dnbhubControllers.controller('contactCtrl', ['$scope', '$mdDialog', '$location', '$anchorScroll', '$timeout', 'regXpatternsService', 'sendEmailService',
+dnbhubControllers.controller('contactController', ['$scope', '$mdDialog', '$location', '$anchorScroll', '$timeout', 'regXpatternsService', 'sendEmailService',
 	function($scope, $mdDialog, $location, $anchorScroll, $timeout, regXpatternsService, sendEmailService) {
 		$scope.email = '';
 		$scope.name = '';
@@ -757,7 +757,7 @@ dnbhubControllers.controller('contactCtrl', ['$scope', '$mdDialog', '$location',
 	}
 ]);
 
-dnbhubControllers.controller('aboutCtrl', ['$scope', '$route', '$mdDialog', 'dnbhubDetailsService', 'firebaseService',
+dnbhubControllers.controller('aboutController', ['$scope', '$route', '$mdDialog', 'dnbhubDetailsService', 'firebaseService',
 	function($scope, $route, $mdDialog, dnbhubDetailsService, firebaseService) {
 		$scope.dnbhubDetails = {};
 		$scope.firebase = firebaseService;
@@ -790,7 +790,7 @@ dnbhubControllers.controller('aboutCtrl', ['$scope', '$route', '$mdDialog', 'dnb
 		};
 		$scope.showContactDialog = (event) => {
 			$mdDialog.show({
-				controller: 'contactCtrl',
+				controller: 'contactController',
 				templateUrl: './app/views/contact.html',
 				parent: angular.element(document.body),
 				targetEvent: event,
@@ -815,7 +815,7 @@ dnbhubControllers.controller('aboutCtrl', ['$scope', '$route', '$mdDialog', 'dnb
 	}
 ]);
 
-dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$timeout', '$mdDialog', 'firebaseService', 'regXpatternsService',
+dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$sce', '$timeout', '$mdDialog', 'firebaseService', 'regXpatternsService',
 	function($rootScope, $scope, $sce, $timeout, $mdDialog, firebaseService, regXpatternsService) {
 		$scope.instructions = '';
 		$scope.firebase = firebaseService;
@@ -874,8 +874,8 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 		$scope.deleteMessage = (keyIndex) => {
 			$scope.loading = true;
 			const dbKey = $scope.emails.messagesKeys[keyIndex];
-			$scope.firebase.getDB('emails/messages/' + dbKey, true).remove().then(() => {
-				console.log('message id ' + dbKey + ' successfully deleted');
+			$scope.firebase.getDB(`emails/messages/${dbKey}`, true).remove().then(() => {
+				console.log(`message id ${dbKey} was successfully deleted`);
 				/*
 				*	update local models
 				*/
@@ -893,8 +893,8 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 		$scope.deleteSubmission = (keyIndex) => {
 			$scope.loading = true;
 			const dbKey = $scope.emails.blogSubmissionsKeys[keyIndex];
-			$scope.firebase.getDB('emails/blogSubmissions/' + dbKey, true).remove().then(() => {
-				console.log('submission id ' + dbKey + ' successfully deleted');
+			$scope.firebase.getDB(`emails/blogSubmissions/${dbKey}`, true).remove().then(() => {
+				console.log(`submission id ${dbKey} was successfully deleted`);
 				/*
 				*	update local models
 				*/
@@ -917,7 +917,7 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 
 		$scope.showMessageText = (keyIndex) => {
 			const dbKey = $scope.emails.messagesKeys[keyIndex];
-			console.log('dbKey', dbKey);
+			console.log(`dbKey ${dbKey}`);
 			const selectedMessage = $scope.emails.messages[dbKey];
 			console.log('selectedMessage', selectedMessage);
 			$mdDialog.show(
@@ -963,7 +963,7 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 		$scope.showSubmissionPreview = (keyIndex) => {
 			const dbKey = $scope.emails.blogSubmissionsKeys[keyIndex];
 			const selectedSubmission = $scope.emails.blogSubmissions[dbKey];
-			SC.get('/resolve?url=' + selectedSubmission.link).then((data) => {
+			SC.get(`/resolve?url=${selectedSubmission.link}`).then((data) => {
 				console.log('data', data);
 				$scope.blogPostPreview = data;
 				$scope.blogPostPreview.description = $scope.processDescription($scope.blogPostPreview.description);
@@ -993,7 +993,7 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 		$scope.alreadyAdded = (keyIndex) => {
 			let added = false;
 			if (!$scope.existingBlogEntriesIDs) {
-				console.log('Unable to add blog posts, there was an error getting existing blog entries');
+				console.log('Unable to add blog posts, existingBlogEntriesIDs is not initialized yet');
 				added = true;
 			} else {
 				const dbKey = $scope.emails.blogSubmissionsKeys[keyIndex];
@@ -1003,7 +1003,7 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 						/*
 						*	resolve submission and save result temporarily
 						*/
-						SC.get('/resolve?url=' + selectedSubmission.link).then((data) => {
+						SC.get(`/resolve?url=${selectedSubmission.link}`).then((data) => {
 							$scope.emails.blogSubmissions[dbKey].id = data.id;
 							$scope.emails.blogSubmissions[dbKey].scData = data;
 							added = ($scope.existingBlogEntriesIDs.hasOwnProperty(data.id)) ? true : added;
@@ -1037,8 +1037,8 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 		$scope.deleteBrand = (keyIndex) => {
 			$scope.loading = true;
 			const dbKey = $scope.brandsKeys[keyIndex];
-			$scope.firebase.getDB('brands/' + dbKey, true).remove().then(() => {
-				console.log('brand id ' + dbKey + ' successfully deleted');
+			$scope.firebase.getDB(`brands/${dbKey}`, true).remove().then(() => {
+				console.log(`brand id ${dbKey} was successfully deleted`);
 				/*
 				*	update local models
 				*/
@@ -1055,7 +1055,7 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 		$scope.editableBrandKey = undefined;
 		$scope.isBrandEditable = (brandKey) => brandKey === $scope.editableBrandKey;
 		$scope.editBrand = (keyIndex) => {
-			console.log('edit brand, keyIndex', keyIndex);
+			console.log(`edit brand, keyIndex: ${keyIndex}`);
 			/*
 			*	toggles mode off if the same item is selected as an editable
 			*/
@@ -1068,7 +1068,7 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 				const valuesObj = $scope.brands[$scope.editableBrandKey];
 				console.log('valuesObj', valuesObj);
 				for (const key of Object.keys(valuesObj)) {
-					console.log('key', key, '| value', valuesObj[key]);
+					console.log(`key ${key} | value ${valuesObj[key]}`);
 					if (typeof valuesObj[key] === undefined) {
 						/*
 						*	allow invalid form to be passed, set values to empty strings then
@@ -1076,7 +1076,7 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 						valuesObj[key] = '';
 					}
 				}
-				$scope.firebase.getDB('brands/' + $scope.editableBrandKey, true).update(valuesObj)
+				$scope.firebase.getDB(`brands/${$scope.editableBrandKey}`, true).update(valuesObj)
 					.then(() => {
 						console.log('brand values set');
 						$scope.editableBrandKey = undefined;
@@ -1179,7 +1179,7 @@ dnbhubControllers.controller('adminCtrl', ['$rootScope', '$scope', '$sce', '$tim
 	}
 ]);
 
-dnbhubControllers.controller('userCtrl', ['$rootScope', '$scope', '$sce', '$window', '$timeout', '$location', '$mdDialog', 'firebaseService',
+dnbhubControllers.controller('userController', ['$rootScope', '$scope', '$sce', '$window', '$timeout', '$location', '$mdDialog', 'firebaseService',
 	function($rootScope, $scope, $sce, $window, $timeout, $location, $mdDialog, firebaseService) {
 		$scope.instructions = '';
 		$scope.firebase = firebaseService;

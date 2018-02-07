@@ -12,7 +12,7 @@ describe('Dnbhub controllers', () => {
 
 	beforeEach(module('dnbhub'));
 
-	describe('navCtrl', () => {
+	describe('navController', () => {
 		let scope, ctrl, doc, el, loc, compReg, sidenav, dialog, firebaseService;
 
 		beforeEach(inject(($rootScope, $controller, _$document_, _$location_, _$mdComponentRegistry_, _$mdSidenav_, _$mdDialog_, _firebaseService_) => {
@@ -24,7 +24,7 @@ describe('Dnbhub controllers', () => {
 			sidenav = _$mdSidenav_;
 			dialog = _$mdDialog_;
 			firebaseService = _firebaseService_;
-			ctrl = $controller('navCtrl', { $scope: scope, $document: doc, $element: el, $location: loc, $mdComponentRegistry: compReg, $mdSidenav: sidenav, $mdDialog: dialog, firebaseService: firebaseService });
+			ctrl = $controller('navController', { $scope: scope, $document: doc, $element: el, $location: loc, $mdComponentRegistry: compReg, $mdSidenav: sidenav, $mdDialog: dialog, firebaseService: firebaseService });
 		}));
 
 		it('should be defined', () => {
@@ -106,13 +106,13 @@ describe('Dnbhub controllers', () => {
 		});
 	});
 
-	describe('indexCtrl', () => {
+	describe('indexController', () => {
 		let scope, ctrl, soundcloudService;
 
 		beforeEach(inject(($rootScope, $controller, _soundcloudService_) => {
 			scope = $rootScope.$new();
 			soundcloudService = _soundcloudService_;
-			ctrl = $controller('indexCtrl', { $scope: scope, soundcloudService: soundcloudService });
+			ctrl = $controller('indexController', { $scope: scope, soundcloudService: soundcloudService });
 		}));
 
 		it('should be defined', () => {
@@ -127,12 +127,12 @@ describe('Dnbhub controllers', () => {
 
 	});
 
-	describe('singlesCtrl', () => {
+	describe('singlesController', () => {
 		let scope, ctrl;
 
 		beforeEach(inject(($rootScope, $controller) => {
 			scope = $rootScope.$new();
-			ctrl = $controller('singlesCtrl', { $scope: scope });
+			ctrl = $controller('singlesController', { $scope: scope });
 		}));
 
 		it('should be defined', () => {
@@ -141,7 +141,7 @@ describe('Dnbhub controllers', () => {
 
 	});
 
-	describe('freedownloadsCtrl', () => {
+	describe('freedownloadsController', () => {
 		let scope, ctrl, sce, loc, sidenav, freedownloadsService, firebaseService;
 
 		beforeEach(inject(($rootScope, $controller, _$sce_, _$location_, _$mdSidenav_, _freedownloadsService_, _firebaseService_) => {
@@ -152,7 +152,7 @@ describe('Dnbhub controllers', () => {
 			freedownloadsService = _freedownloadsService_;
 			spyOn(freedownloadsService,'query').and.callFake(() => []);
 			firebaseService = _firebaseService_;
-			ctrl = $controller('freeDownloadsCtrl', { $scope: scope, $sce: sce, $location: loc, $mdSidenav: sidenav, freedownloadsService: freedownloadsService, firebaseService: firebaseService });
+			ctrl = $controller('freeDownloadsController', { $scope: scope, $sce: sce, $location: loc, $mdSidenav: sidenav, freedownloadsService: freedownloadsService, firebaseService: firebaseService });
 		}));
 
 		it('should be defined', () => {
@@ -175,12 +175,12 @@ describe('Dnbhub controllers', () => {
 
 	});
 
-	describe('repostsCtrl', () => {
+	describe('repostsController', () => {
 		let scope, ctrl;
 
 		beforeEach(inject(($rootScope, $controller) => {
 			scope = $rootScope.$new();
-			ctrl = $controller('repostsCtrl', { $scope: scope });
+			ctrl = $controller('repostsController', { $scope: scope });
 		}));
 
 		it('should be defined', () => {
@@ -189,7 +189,7 @@ describe('Dnbhub controllers', () => {
 
 	});
 
-	describe('blogCtrl', () => {
+	describe('blogController', () => {
 		let scope, ctrl, sce, route, loc, sidenav, blogPostsService, firebaseService, soundcloudService;
 
 		beforeEach(inject(($rootScope, $controller, _$sce_, _$route_, _$location_, _$mdSidenav_, _blogPostsService_, _firebaseService_, _soundcloudService_) => {
@@ -202,7 +202,7 @@ describe('Dnbhub controllers', () => {
 			spyOn(blogPostsService,'query').and.callFake(() => []);
 			firebaseService = _firebaseService_;
 			soundcloudService = _soundcloudService_;
-			ctrl = $controller('blogCtrl', { $scope: scope, $sce: sce, $route: route, $location: loc, $mdSidenav: sidenav, blogPostsService: blogPostsService, firebaseService: firebaseService, soundcloudService: soundcloudService });
+			ctrl = $controller('blogController', { $scope: scope, $sce: sce, $route: route, $location: loc, $mdSidenav: sidenav, blogPostsService: blogPostsService, firebaseService: firebaseService, soundcloudService: soundcloudService });
 		}));
 
 		it('should be defined', () => {
@@ -234,7 +234,7 @@ describe('Dnbhub controllers', () => {
 
 	});
 
-	describe('addBlogPostDialogCtrl', () => {
+	describe('addBlogPostDialogController', () => {
 		let scope, ctrl, dialog, location, timeout, regXpatternsService, addBlogPostService;
 
 		beforeEach(inject(($rootScope, $controller, _$mdDialog_, _$location_, _$timeout_, _regXpatternsService_, _addBlogPostService_) => {
@@ -245,7 +245,7 @@ describe('Dnbhub controllers', () => {
 			regXpatternsService = _regXpatternsService_;
 			addBlogPostService = _addBlogPostService_;
 			spyOn(addBlogPostService,'save').and.callFake(() => []);
-			ctrl = $controller('addBlogPostDialogCtrl', { $scope: scope, $mdDialog: dialog, $location: location, $timeout: timeout, regXpatternsService: regXpatternsService, addBlogPostService: addBlogPostService });
+			ctrl = $controller('addBlogPostDialogController', { $scope: scope, $mdDialog: dialog, $location: location, $timeout: timeout, regXpatternsService: regXpatternsService, addBlogPostService: addBlogPostService });
 		}));
 
 		it('should be defined', () => {
@@ -269,7 +269,7 @@ describe('Dnbhub controllers', () => {
 
 	});
 
-	describe('contactCtrl', () => {
+	describe('contactController', () => {
 		let scope, ctrl, location, timeout, regXpatternsService, sendEmailService;
 
 		beforeEach(inject(($rootScope, $controller, _$location_, _$timeout_, _regXpatternsService_, _sendEmailService_) => {
@@ -279,7 +279,7 @@ describe('Dnbhub controllers', () => {
 			regXpatternsService = _regXpatternsService_;
 			sendEmailService = _sendEmailService_;
 			spyOn(sendEmailService,'save').and.callFake(() => []);
-			ctrl = $controller('contactCtrl', { $scope: scope, $location: location, $timeout: timeout, regXpatternsService: regXpatternsService, sendEmailService: sendEmailService });
+			ctrl = $controller('contactController', { $scope: scope, $location: location, $timeout: timeout, regXpatternsService: regXpatternsService, sendEmailService: sendEmailService });
 		}));
 
 		it('should be defined', () => {
@@ -313,7 +313,7 @@ describe('Dnbhub controllers', () => {
 
 	});
 
-	describe('aboutCtrl', () => {
+	describe('aboutController', () => {
 		let scope, ctrl, route, dnbhubDetailsService, firebaseService;
 
 		beforeEach(inject(($rootScope, $controller, _$route_, _dnbhubDetailsService_, _firebaseService_) => {
@@ -322,7 +322,7 @@ describe('Dnbhub controllers', () => {
 			dnbhubDetailsService = _dnbhubDetailsService_;
 			spyOn(dnbhubDetailsService,'query').and.callFake(() => []);
 			firebaseService = _firebaseService_;
-			ctrl = $controller('aboutCtrl', { $scope: scope, $route: route, dnbhubDetailsService: dnbhubDetailsService, firebaseService: firebaseService });
+			ctrl = $controller('aboutController', { $scope: scope, $route: route, dnbhubDetailsService: dnbhubDetailsService, firebaseService: firebaseService });
 		}));
 
 		it('should be defined', () => {

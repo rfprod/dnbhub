@@ -1,4 +1,4 @@
-<md-toolbar flex class="md-toolbar-tools md-medium" layout="row" ng-controller="navCtrl">
+<md-toolbar flex class="md-toolbar-tools md-medium" layout="row" ng-controller="navController">
 	<audio id="speaker" class="hide"></audio> <!-- invisible speaker -->
 	<md-button id="sidebar-toggler" class="md-icon-button hide-md hide-gt-md hide-lg hide-gt-lg hide-xl" title="toggle tracks list" ng-click="toggleSidenav()" ng-disabled="disableToggler()" ng-hide="disableToggler()" aria-label="toggle sidebar">
 		<i class="fa" ng-class="{'fa-chevron-right': !isSidenavOpen(), 'fa-chevron-left': isSidenavOpen()}"></i>
