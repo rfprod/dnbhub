@@ -174,7 +174,7 @@ exports.submitBlogPostOverEmail = functions.https.onRequest((req, res) => {
 	const email = req.body.email || '';
 	const link = req.body.link || '';
 	const domain = req.body.domain || '';
-	if (/\w{2,}@\w{2,}(\.)?\w{2,}/.test(email) && /https:\/\/soundcloud\.com\/\w+\/sets\/\w+/.test(link) && domain.length >= 4) {
+	if (/\w{2,}@\w{2,}(\.)?\w{2,}/.test(email) && /https:\/\/soundcloud\.com\/\w+[^/]*\/sets\/\w+[^/]*/.test(link) && domain.length >= 4) {
 		// res.status(200).json({'success': 'Your message was successfully sent.'});
 		submitBlogPostOverEmail(email, link, domain, res);
 	} else {
