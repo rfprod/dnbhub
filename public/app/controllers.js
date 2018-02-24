@@ -1145,11 +1145,30 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$sce',
 			}
 		};
 
+		$scope.users = {};
+		$scope.usersKeys = [];
+		$scope.getUsers = () => {
+			$scope.loading = true;
+			$scope.firebase.getDB('users').then((snapshot) => {
+				console.log('users', snapshot.val());
+				const response = snapshot.val();
+				$scope.users = (response) ? response : {};
+				$scope.usersKeys = (response) ? Object.keys(response) : [];
+				$scope.loaded();
+				$scope.$apply();
+			}).catch((error) => {
+				console.log('error', error);
+				$scope.loaded();
+				$scope.$apply();
+			});
+		};
+
 		$scope.getAllData = () => {
 			$scope.getEmailMessages();
 			$scope.getEmailBlogSubmissions();
 			$scope.getExistingBlogEntriesIDs();
 			$scope.getBrands();
+			$scope.getUsers();
 		};
 
 		/*
@@ -1175,6 +1194,7 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$sce',
 			$scope.firebase.getDB('emails/blogSubmissions', true).off();
 			$scope.firebase.getDB('blogEntriesIDs', true).off();
 			$scope.firebase.getDB('brands', true).off();
+			$scope.firebase.getDB('users', true).off();
 		});
 	}
 ]);

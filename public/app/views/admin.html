@@ -228,6 +228,32 @@
 				</md-tab-body>
 			</md-tab>
 
+			<md-tab flex layout="column">
+				<md-tab-label>users</md-tab-label>
+				<md-tab-body flex layout="column" class="md-padding">
+					<div class="data-container" flex layout="row" layout-align="start stretch" layout-wrap>
+						<div ng-repeat="userKey in usersKeys" flex-xs="100" flex-sm="50" flex="33" layout="column" layout-align="center stretch">
+							<span flex="1" class="md-body-2" layout="row" layout-align="center center">
+								{{$index}}. {{ userKey }}
+							</span>
+							<span flex="2" class="md-padding md-body-1">
+								<div flex>
+									<p flex="100" ng-if="users[userKey].created">Created {{ users[userKey].created | date }}</p>
+									<p flex="100" ng-if="users[userKey].sc_id">Soundcloud ID {{ users[userKey].sc_id }}</p>
+									<p flex="100" ng-if="users[userKey].submittedPlaylists">Submitted Playlists
+										<div>
+											<div ng-repeat="(playlistId, submitted) in users[userKey].submittedPlaylists">
+												{{ playlistId }}: {{ submitted }}
+											</div>
+										</div>
+									</p>
+								</div>
+							</span>
+						</div>
+					</div>
+				</md-tab-body>
+			</md-tab>
+
 		</md-tabs>
 
 	</span>
