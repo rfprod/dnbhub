@@ -75,4 +75,4 @@ firebase deploy --only functions
 
 ## Licenses
 
-* [`Dnbhub`](LICENSE.md)
+* [`Dnbhub`](LICENSE)
