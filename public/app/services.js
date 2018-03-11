@@ -116,9 +116,8 @@ dnbhubServices.service('soundcloudService', [function() {
 	};
 	const service = {
 		/* global SC */
-		init: () => {
-			return SC.initialize(options);
-		}
+		init: () => SC.initialize(options),
+		getLinkWithId: (href) => href + '?client_id=' + scid
 	};
 	return service;
 }]);

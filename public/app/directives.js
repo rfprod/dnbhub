@@ -25,8 +25,8 @@ dnbhubDirectives.directive('setElementDimensionsOnload', ['$window',
 	}
 ]);
 
-dnbhubDirectives.directive('customSoundcloudPlayer', [
-	function() {
+dnbhubDirectives.directive('customSoundcloudPlayer', [ 'soundcloudService',
+	function(soundcloudService) {
 		'use strict';
 		return {
 			restrict: 'A',
@@ -34,6 +34,7 @@ dnbhubDirectives.directive('customSoundcloudPlayer', [
 			templateUrl: 'app/views/custom-soundcloud-player.html',
 			link: (scope, element) => {
 				scope.selectedTrack;
+				scope.sc = soundcloudService;
 				scope.selectTrack = (index) => {
 					scope.selectedTrack = index;
 				};

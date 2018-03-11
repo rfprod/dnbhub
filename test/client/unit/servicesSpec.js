@@ -197,10 +197,11 @@ describe('Dnbhub services', () => {
 		it('must be defined', () => {
 			expect(service).toBeDefined();
 		});
-		it('must have variables and methods definitions', async () => {
+		it('must have variables and methods definitions', () => {
 			expect(service.init).toEqual(jasmine.any(Function));
+			expect(service.getLinkWithId).toEqual(jasmine.any(Function));
 		});
-		it('must have call SC.initialize method with given options on the init mehod call', async () => {
+		it('must have call SC.initialize method with given options on the init mehod call', () => {
 			spyOn(SC, 'initialize').and.callThrough();
 			service.init();
 			expect(SC.initialize).toHaveBeenCalledWith({
@@ -222,7 +223,7 @@ describe('Dnbhub services', () => {
 		it('must be defined', () => {
 			expect(service).toBeDefined();
 		});
-		it('must have variables and methods definitions', async () => {
+		it('must have variables and methods definitions', () => {
 			expect(service.initFirebase).toEqual(jasmine.any(Function));
 			expect(service.hasOwnProperty('db')).toBeTruthy();
 			expect(service.db).toBeUndefined();
