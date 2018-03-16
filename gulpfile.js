@@ -129,7 +129,7 @@ gulp.task('pack-app-js', () => {
 		.pipe(plumber())
 		.pipe(sourcemaps.init())
 		.pipe(babel({
-			presets: ['babel-preset-es2015', 'babel-preset-es2016', 'babel-preset-es2017']
+			presets: ['env']
 		}))
 		.pipe(concat('packed-app.js'))
 		.pipe(replace('soundcloud_client_id', env.SOUNDCLOUD_CLIENT_ID))
