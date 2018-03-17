@@ -8,6 +8,9 @@ language: node_js
 # define nodejs version(s) to use
 node_js:
   - "8.9.1"
+# install chromium-browser
+before_install:
+  - sudo apt-get install chromium-browser
 # cache node_modules
 ## npm install will run on every build and update/install new depencencies
 ## defined in package.json
