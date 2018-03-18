@@ -108,16 +108,26 @@ dnbhubServices.factory('addBlogPostService', ['$resource', '$location', function
 	});
 }]);
 
-dnbhubServices.service('soundcloudService', [function() {
+dnbhubServices.service('soundcloudService', ['$sce', function($sce) {
 	const scid = 'soundcloud_client_id';
 	const options = {
 		client_id: scid,
 		redirect_uri: 'http://dnbhub.com/callback.html'
 	};
+	const scWidgetLink = {
+		playlistFirst: () => 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/',
+		playlistLast: () => '&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false',
+		trackFirst: () => 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/',
+		trackLast: () => '&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false'
+	};
 	const service = {
 		/* global SC */
 		init: () => SC.initialize(options),
-		getLinkWithId: (href) => href + '?client_id=' + scid
+		getLinkWithId: (href) => href + '?client_id=' + scid,
+		widgetLink: {
+			playlist: (soundcloudPlaylistID) => $sce.trustAsResourceUrl(scWidgetLink.playlistFirst() + soundcloudPlaylistID + scWidgetLink.playlistLast()),
+			track: (soundcloudTrackID) => $sce.trustAsResourceUrl(scWidgetLink.trackFirst() + soundcloudTrackID + scWidgetLink.trackLast()),
+		}
 	};
 	return service;
 }]);

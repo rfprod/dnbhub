@@ -241,9 +241,18 @@
 									<p flex="100" ng-if="users[userKey].created">Created {{ users[userKey].created | date }}</p>
 									<p flex="100" ng-if="users[userKey].sc_id">Soundcloud ID {{ users[userKey].sc_id }}</p>
 									<p flex="100" ng-if="users[userKey].submittedPlaylists">Submitted Playlists
-										<div>
-											<div ng-repeat="(playlistId, submitted) in users[userKey].submittedPlaylists">
-												{{ playlistId }}: {{ submitted }}
+										<div layout="row" layout-wrap>
+											<div flex="50" flex.xs="100" flex-sm="100" flex-md="100" ng-repeat="(playlistId, submitted) in users[userKey].submittedPlaylists">
+												<span layout="row" layout-wrap>
+													<p>id: <strong>{{playlistId}}</strong></p>
+													<md-button class="md-icon-button green-text" type="submit" ng-disabled="loading" ng-if="!submitted" ng-click="approvePost(playlistId)" aria-label="approve post" title="approve post">
+														<i class="fa fa-2x fa-check"></i>
+													</md-button>
+													<md-button class="md-icon-button amber-text" type="button" ng-disabled="loading" ng-if="!submitted" ng-click="rejectPost(playlistId)" aria-label="reject post" title="reject post">
+														<i class="fa fa-2x fa-trash"></i>
+													</md-button>
+												</span>
+												<iframe width="97%" height="350" scrolling="no" frameborder="no" ng-src="{{widgetLink(playlistId)}}" ng-if="widgetLink(playlistId) !== '#'"></iframe>
 											</div>
 										</div>
 									</p>
@@ -277,7 +286,7 @@
 		</div>
 		<div flex layout="row" layout-wrap class="post-container">
 			<div flex flex-xs="100" flex-sm="100" ng-if="blogPostPreview">
-				<iframe width="100%" height="450" scrolling="no" frameborder="no" ng-src="{{widgetLink()}}" ng-if="widgetLink() !== '#'"></iframe>
+				<iframe width="100%" height="450" scrolling="no" frameborder="no" ng-src="{{widgetLink(blogPostPreview.id)}}" ng-if="widgetLink(blogPostPreview.id) !== '#'"></iframe>
 			</div>
 			<div flex="50" flex-xs="100" flex-sm="100" id="text" ng-if="blogPostPreview.description">
 				<div ng-bind-html="blogPostPreview.description"></div>

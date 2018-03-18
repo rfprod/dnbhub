@@ -200,6 +200,10 @@ describe('Dnbhub services', () => {
 		it('must have variables and methods definitions', () => {
 			expect(service.init).toEqual(jasmine.any(Function));
 			expect(service.getLinkWithId).toEqual(jasmine.any(Function));
+			expect(service.widgetLink).toEqual(jasmine.objectContaining({
+				playlist: jasmine.any(Function),
+				track: jasmine.any(Function)
+			}));
 		});
 		it('must have call SC.initialize method with given options on the init mehod call', () => {
 			spyOn(SC, 'initialize').and.callThrough();

@@ -142,17 +142,17 @@ describe('Dnbhub controllers', () => {
 	});
 
 	describe('freedownloadsController', () => {
-		let scope, ctrl, sce, loc, sidenav, freedownloadsService, firebaseService;
+		let scope, ctrl, loc, sidenav, freedownloadsService, firebaseService, soundcloudService;
 
-		beforeEach(inject(($rootScope, $controller, _$sce_, _$location_, _$mdSidenav_, _freedownloadsService_, _firebaseService_) => {
+		beforeEach(inject(($rootScope, $controller, _$location_, _$mdSidenav_, _freedownloadsService_, _firebaseService_, _soundcloudService_) => {
 			scope = $rootScope.$new();
-			sce = _$sce_;
 			loc = _$location_;
 			sidenav = _$mdSidenav_;
 			freedownloadsService = _freedownloadsService_;
+			soundcloudService = _soundcloudService_;
 			spyOn(freedownloadsService,'query').and.callFake(() => []);
 			firebaseService = _firebaseService_;
-			ctrl = $controller('freeDownloadsController', { $scope: scope, $sce: sce, $location: loc, $mdSidenav: sidenav, freedownloadsService: freedownloadsService, firebaseService: firebaseService });
+			ctrl = $controller('freeDownloadsController', { $scope: scope, $location: loc, $mdSidenav: sidenav, freedownloadsService: freedownloadsService, firebaseService: firebaseService, soundcloudService: soundcloudService });
 		}));
 
 		it('should be defined', () => {
@@ -163,10 +163,7 @@ describe('Dnbhub controllers', () => {
 			expect(scope.freedownloadsData).toEqual(jasmine.any(Array));
 			expect(scope.freedownloadsData.length).toEqual(0);
 			expect(scope.selectedWidget).toEqual(1);
-			expect(scope.scWidgetLink).toEqual(jasmine.objectContaining({
-				first: jasmine.any(String),
-				last: jasmine.any(String)
-			}));
+			expect(scope.scService).toEqual(jasmine.any(Object));
 			expect(scope.widgetLink).toEqual(jasmine.any(Function));
 			expect(scope.firebase).toEqual(firebaseService);
 			expect(scope.updateFreedownloadsData).toEqual(jasmine.any(Function));
@@ -190,11 +187,10 @@ describe('Dnbhub controllers', () => {
 	});
 
 	describe('blogController', () => {
-		let scope, ctrl, sce, route, loc, sidenav, blogPostsService, firebaseService, soundcloudService;
+		let scope, ctrl, route, loc, sidenav, blogPostsService, firebaseService, soundcloudService;
 
-		beforeEach(inject(($rootScope, $controller, _$sce_, _$route_, _$location_, _$mdSidenav_, _blogPostsService_, _firebaseService_, _soundcloudService_) => {
+		beforeEach(inject(($rootScope, $controller, _$route_, _$location_, _$mdSidenav_, _blogPostsService_, _firebaseService_, _soundcloudService_) => {
 			scope = $rootScope.$new();
-			sce = _$sce_;
 			route = _$route_;
 			loc = _$location_;
 			sidenav = _$mdSidenav_;
@@ -202,7 +198,7 @@ describe('Dnbhub controllers', () => {
 			spyOn(blogPostsService,'query').and.callFake(() => []);
 			firebaseService = _firebaseService_;
 			soundcloudService = _soundcloudService_;
-			ctrl = $controller('blogController', { $scope: scope, $sce: sce, $route: route, $location: loc, $mdSidenav: sidenav, blogPostsService: blogPostsService, firebaseService: firebaseService, soundcloudService: soundcloudService });
+			ctrl = $controller('blogController', { $scope: scope, $route: route, $location: loc, $mdSidenav: sidenav, blogPostsService: blogPostsService, firebaseService: firebaseService, soundcloudService: soundcloudService });
 		}));
 
 		it('should be defined', () => {
@@ -216,7 +212,7 @@ describe('Dnbhub controllers', () => {
 			expect(scope.selectedBlogPostId).toEqual(0);
 			expect(scope.selectedBlogPost).toEqual(jasmine.objectContaining({}));
 			expect(scope.disableBlogPostSelector).toEqual(jasmine.any(Function));
-			expect(scope.returnWidgetLink).toEqual(jasmine.any(Function));
+			expect(scope.widgetLink).toEqual(jasmine.any(Function));
 			expect(scope.tracks).toEqual(jasmine.any(Array));
 			expect(scope.tracks.length).toEqual(0);
 			expect(scope.getTracks).toEqual(jasmine.any(Function));

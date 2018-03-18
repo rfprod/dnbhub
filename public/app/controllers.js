@@ -331,17 +331,12 @@ dnbhubControllers.controller('singlesController', ['$scope',
 	}
 ]);
 
-dnbhubControllers.controller('freeDownloadsController', ['$scope', '$sce', '$location', '$mdSidenav', 'freedownloadsService', 'firebaseService',
-	function($scope, $sce, $location, $mdSidenav, freedownloadsService, firebaseService) {
+dnbhubControllers.controller('freeDownloadsController', ['$scope', '$location', '$mdSidenav', 'freedownloadsService', 'firebaseService', 'soundcloudService',
+	function($scope, $location, $mdSidenav, freedownloadsService, firebaseService, soundcloudService) {
 		$scope.freedownloadsData = [];
 		$scope.selectedWidget = 1;
-		$scope.scWidgetLink = {
-			first: 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/',
-			last: '&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false'
-		};
-		$scope.widgetLink = (soundcloudTrackID) => {
-			return $sce.trustAsResourceUrl($scope.scWidgetLink.first + soundcloudTrackID + $scope.scWidgetLink.last);
-		};
+		$scope.scService = soundcloudService;
+		$scope.widgetLink = (soundcloudTrackID) => $scope.scService.widgetLink.track(soundcloudTrackID);
 		$scope.firebase = firebaseService;
 		$scope.updateFreedownloadsData = () => {
 			$scope.firebase.getDB('freedownloads').then((snapshot) => {
@@ -401,8 +396,8 @@ dnbhubControllers.controller('repostsController', ['$scope',
 	}
 ]);
 
-dnbhubControllers.controller('blogController', ['$scope', '$sce', '$route', '$location', '$mdDialog', 'blogPostsService', 'firebaseService',
-	function($scope, $sce, $route, $location, $mdDialog, blogPostsService, firebaseService) {
+dnbhubControllers.controller('blogController', ['$scope', '$route', '$location', '$mdDialog', 'blogPostsService', 'firebaseService', 'soundcloudService',
+	function($scope, $route, $location, $mdDialog, blogPostsService, firebaseService, soundcloudService) {
 		$scope.inputReleaseCode = undefined;
 		$scope.blogPosts = [];
 		$scope.selectedBlogPostId = 0;
@@ -414,13 +409,8 @@ dnbhubControllers.controller('blogController', ['$scope', '$sce', '$route', '$lo
 				return ($scope.selectedBlogPostId === 0) ? true : false;
 			}
 		};
-		$scope.widgetLink = {
-			prefix: 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/',
-			suffix: '&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true'
-		};
-		$scope.returnWidgetLink = () => {
-			return ($scope.selectedBlogPost.playlistId) ? $sce.trustAsResourceUrl($scope.widgetLink.prefix + $scope.selectedBlogPost.playlistId + $scope.widgetLink.suffix) : '#';
-		};
+		$scope.scService = soundcloudService;
+		$scope.widgetLink = (playlistID) => (playlistID) ? $scope.scService.widgetLink.playlist(playlistID) : '#';
 		/*
 		*	sidebar soundcloud player
 		*/
@@ -815,8 +805,8 @@ dnbhubControllers.controller('aboutController', ['$scope', '$route', '$mdDialog'
 	}
 ]);
 
-dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$sce', '$timeout', '$mdDialog', 'firebaseService', 'regXpatternsService',
-	function($rootScope, $scope, $sce, $timeout, $mdDialog, firebaseService, regXpatternsService) {
+dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeout', '$mdDialog', 'firebaseService', 'regXpatternsService', 'soundcloudService',
+	function($rootScope, $scope, $timeout, $mdDialog, firebaseService, regXpatternsService, soundcloudService) {
 		$scope.instructions = '';
 		$scope.firebase = firebaseService;
 		$scope.currentUser = undefined;
@@ -937,13 +927,9 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$sce',
 			});
 		};
 
-		$scope.scWidgetLink = {
-			first: 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/',
-			last: '&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false'
-		};
-		$scope.widgetLink = () => {
-			return ($scope.blogPostPreview) ? $sce.trustAsResourceUrl($scope.scWidgetLink.first + $scope.blogPostPreview.id + $scope.scWidgetLink.last) : '#';
-		};
+		$scope.scService = soundcloudService;
+		$scope.widgetLink = (platlistID) => (platlistID) ? $scope.scService.widgetLink.playlist(platlistID) : '#';
+
 		$scope.blogPostPreview = undefined;
 		$scope.processDescription = (unprocessed) => {
 			if (!unprocessed) { return unprocessed; }
@@ -1162,6 +1148,8 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$sce',
 				$scope.$apply();
 			});
 		};
+		$scope.approvePost = (platlistID) => console.log('TODO: approve post, playlistID', platlistID);
+		$scope.rejectPost = (platlistID) => console.log('TODO: reject post, playlistID', platlistID);
 
 		$scope.getAllData = () => {
 			$scope.getEmailMessages();
@@ -1199,8 +1187,8 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$sce',
 	}
 ]);
 
-dnbhubControllers.controller('userController', ['$rootScope', '$scope', '$sce', '$window', '$timeout', '$location', '$mdDialog', 'firebaseService',
-	function($rootScope, $scope, $sce, $window, $timeout, $location, $mdDialog, firebaseService) {
+dnbhubControllers.controller('userController', ['$rootScope', '$scope', '$window', '$timeout', '$location', '$mdDialog', 'firebaseService', 'soundcloudService',
+	function($rootScope, $scope, $window, $timeout, $location, $mdDialog, firebaseService, soundcloudService) {
 		$scope.instructions = '';
 		$scope.firebase = firebaseService;
 		$scope.currentUser = undefined;
@@ -1419,13 +1407,8 @@ dnbhubControllers.controller('userController', ['$rootScope', '$scope', '$sce', 
 					return playlists;
 				});
 		};
-		$scope.scWidgetLink = {
-			first: 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/',
-			last: '&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false'
-		};
-		$scope.widgetLink = (soundcloudPlaylistID) => {
-			return $sce.trustAsResourceUrl($scope.scWidgetLink.first + soundcloudPlaylistID + $scope.scWidgetLink.last);
-		};
+		$scope.scService = soundcloudService;
+		$scope.widgetLink = (soundcloudPlaylistID) => $scope.scService.widgetLink.playlist(soundcloudPlaylistID);
 		$scope.blogPostPreview = undefined;
 		$scope.toggleBlogPostPreview = (arrayIndex) => {
 			/*
