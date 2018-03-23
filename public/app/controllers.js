@@ -899,10 +899,30 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 			});
 		};
 
-		$scope.approveSubmission = (keyIndex) => {
+		$scope.approveEmailSubmission = (keyIndex) => {
 			const dbKey = $scope.emails.blogSubmissionsKeys[keyIndex];
+			console.log('TODO: approve submission, dbKey', dbKey);
 			const selectedSubmission = $scope.emails.blogSubmissions[dbKey];
 			console.log('TODO: approve submission', selectedSubmission);
+			$scope.firebase.blogEntryExists(selectedSubmission.id).then((result) => {
+				console.log('blogEntryExists', result);
+				if (result) {
+					/*
+					*	entry does exist, call delete submission automatically
+					*/
+					$scope.deleteSubmission(keyIndex);
+				} else {
+					/*
+					*	TODO: add record
+					*	- add entry to blog collection
+					*	- add entry to blogEntriesIDs
+					*	- remove entry from email/blogSubmissions
+					*	$scope.deleteSubmission(keyIndex);
+					*/
+				}
+				$scope.loaded();
+				$scope.$apply();
+			});
 		};
 
 		$scope.showMessageText = (keyIndex) => {

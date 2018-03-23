@@ -347,6 +347,17 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 					def.reject(error);
 				});
 			return def.promise;
+		},
+
+		blogEntryExists: (dbKey) => {
+			const def = $q.defer();
+			service.getDB('blogEntriesIDs', true).orderByValue().equalTo(dbKey).on('value', (snapshot) => {
+				const response = snapshot.val();
+				// console.log('blogEntryExists, blogEntriesIDs response', response);
+				// null - not found
+				def.resolve(response);
+			});
+			return def.promise;
 		}
 	};
 
