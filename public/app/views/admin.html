@@ -19,7 +19,9 @@
 								{{$index}}. From: {{ submission.email }}
 							</span>
 							<span flex class="md-padding md-body-1">
-								<p>Link: <a hide show-xs href="{{ submission.link }}" target=_blank><i class="fa fa-1x fa-external-link"></i></a> <a hide show-sm show-gt-sm href="{{ submission.link }}" target=_blank>{{ submission.link }}</a></p>
+								<p>Link:
+									<a hide show-xs show-sm href="{{ submission.link }}" target=_blank><i class="fa fa-1x fa-external-link"></i></a>
+									<a hide show-gt-sm href="{{ submission.link }}" target=_blank>{{ submission.link }}</a></p>
 								<p>Sent from domain: {{ submission.domain }}</p>
 							</span>
 							<span flex layout="row" layout-align="start center" layout-wrap>
