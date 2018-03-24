@@ -14,7 +14,7 @@
 				<md-tab-label>email submissions</md-tab-label>
 				<md-tab-body flex layout="column" class="md-padding">
 					<div class="data-container" flex layout="row" layout-align="start stretch" layout-wrap ng-if="emails.blogSubmissions">
-						<div ng-repeat="submission in emails.blogSubmissions" flex-xs="100" flex="33" layout="column" layout-align="start stretch">
+						<div ng-repeat="submission in emails.blogSubmissions" flex-xs="100" flex="33" layout="column" layout-align="start stretch" ng-if="(selectedBrandId >= 0 && selectedBrandId === $index) || (!selectedBrandId && selectedBrandId !== 0)">
 							<span flex class="md-body-2" layout="row" layout-align="center center">
 								{{$index}}. From: {{ submission.email }}
 							</span>
@@ -24,14 +24,30 @@
 									<a hide show-gt-sm href="{{ submission.link }}" target=_blank>{{ submission.link }}</a></p>
 								<p>Sent from domain: {{ submission.domain }}</p>
 							</span>
+							<span flex class="md-padding md-body-1" ng-if="selectedBrandId >= 0">
+								<p>Selected label links:</p>
+								<span ng-repeat="(key, value) in getSelectedBrand()">
+									{{key}}: <a ng-if="value !== ''" href="{{value}}" terget=_blank><i class="fa fa-1x fa-external-link"></i></a>
+									<i ng-if="value === ''" class="fa fa-1x fa-external-link" title="empty link field"></i>, 
+								</span>
+							</span>
 							<span flex layout="row" layout-align="start center" layout-wrap>
-								<md-button class="md-icon-button amber-text" ng-disabled="loading" ng-if="true" ng-click="deleteSubmission($index)" aria-label="delete submission" title="delete submission">
+								<md-autocomplete flex="100" md-no-cache="true" md-selected-item="selectedBrandKey" md-items="brand in getMatchedBrands(searchBrands)" md-search-text="searchBrands" md-item-text="brand" md-clear-button="true" md-selected-item-change="selectBrandFromList(brand)" placeholder="select brand" ng-if="selectedBrandId >= 0">
+									<span>{{brand}}</span>
+								</md-autocomplete>
+								<md-button class="md-icon-button amber-text" ng-disabled="loading" ng-if="true" ng-click="deleteEmailSubmission($index)" aria-label="delete submission" title="delete submission">
 									<i class="fa fa-2x fa-trash"></i>
 								</md-button>
 								<md-button class="md-icon-button" ng-disabled="alreadyAdded($index) || loading" ng-if="true" ng-click="showSubmissionPreview($index)" aria-label="preview submission" title="preview submission">
 									<i class="fa fa-2x fa-th-large"></i>
 								</md-button>
-								<md-button class="md-icon-button green-text" ng-disabled="alreadyAdded($index) || loading" ng-if="true" ng-click="approveEmailSubmission($index)" aria-label="approve email submission" title="approve email submission">
+								<md-button class="md-icon-button green-text" ng-disabled="alreadyAdded($index) || loading" ng-if="!selectedBrandId && selectedBrandId !== 0" ng-click="selectBrand($index)" aria-label="select a brand to approve an email submission" title="select a brand to approve an email submission">
+									<i class="fa fa-2x fa-address-book"></i>
+								</md-button>
+								<md-button class="md-icon-button amber-text" ng-disabled="alreadyAdded($index) || loading" ng-if="selectedBrandId >= 0" ng-click="selectBrand(null)" aria-label="deselect a brand for approval" title="deselect a brand for approval">
+									<i class="fa fa-2x fa-undo"></i>
+								</md-button>
+								<md-button class="md-icon-button green-text" ng-disabled="alreadyAdded($index) || loading" ng-if="selectedBrandId >= 0" ng-click="approveEmailSubmission($index)" aria-label="approve email submission" title="approve email submission">
 									<i class="fa fa-2x fa-check"></i>
 								</md-button>
 							</span>

@@ -264,6 +264,54 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 			return def.promise;
 		},
 
+		addBlogPost: (valuesObj) => {
+			/*
+			*	create new records, delete submission record
+			*/
+			const def = $q.defer();
+			if (typeof valuesObj === 'object'
+				&& typeof valuesObj.code === 'string'
+				&& typeof valuesObj.links === 'object'
+				&& valuesObj.links.hasOwnProperty('bandcamp')
+				&& valuesObj.links.hasOwnProperty('facebook')
+				&& valuesObj.links.hasOwnProperty('instagram')
+				&& valuesObj.links.hasOwnProperty('soundcloud')
+				&& valuesObj.links.hasOwnProperty('twitter')
+				&& valuesObj.links.hasOwnProperty('website')
+				&& valuesObj.links.hasOwnProperty('youtube')
+				&& typeof valuesObj.playlistId === 'number'
+				&& typeof valuesObj.soundcloudUserId === 'number'
+			) {
+				service.authErrorCheck();
+				service.checkDBuserUID()
+					.then((data) => {
+						console.log('checkDBuserUID', JSON.stringify(data));
+						service.db.ref('blogEntriesIDs/' + valuesObj.playlistId).set(valuesObj.playlistId)
+							.then(() => {
+								const newRecord = service.db.ref('blog').push();
+								newRecord.set(valuesObj)
+									.then(() => {
+										console.log('blog post added');
+										def.resolve({ valuesSet: true });
+									}).catch((error) => {
+										console.log('error adding blog post entry', error);
+										def.reject({ valuesSet: false });
+									});
+							})
+							.catch((error) => {
+								console.log('error adding blog post entry ref to blogEntriesIDs collection', error);
+								def.reject({ valuesSet: false });
+							});
+					}).catch((error) => {
+						console.log('addBlogPost, user db profile check error', error);
+						def.reject(error);
+					});
+			} else {
+				def.reject(new TypeError('valuesObj is missing required properties'));
+			}
+			return def.promise;
+		},
+
 		authenticate: (mode, payload) => {
 			const def = $q.defer();
 			if (mode !== 'email' && mode !== 'twitter') {
@@ -349,9 +397,20 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 			return def.promise;
 		},
 
-		blogEntryExists: (dbKey) => {
+		blogEntryExistsByValue: (dbKey) => {
 			const def = $q.defer();
 			service.getDB('blogEntriesIDs', true).orderByValue().equalTo(dbKey).on('value', (snapshot) => {
+				const response = snapshot.val();
+				// console.log('blogEntryExists, blogEntriesIDs response', response);
+				// null - not found
+				def.resolve(response);
+			});
+			return def.promise;
+		},
+
+		blogEntryExistsByChildValue: (childKey, value) => {
+			const def = $q.defer();
+			service.getDB('blog', true).orderByChild(childKey).equalTo(value).on('value', (snapshot) => {
 				const response = snapshot.val();
 				// console.log('blogEntryExists, blogEntriesIDs response', response);
 				// null - not found

@@ -467,9 +467,10 @@ dnbhubControllers.controller('blogController', ['$scope', '$route', '$location',
 				console.log('blog', snapshot.val());
 				const response = snapshot.val();
 				$scope.blogPosts = [];
-				response.forEach((element) => {
-					$scope.blogPosts.push(element);
-				});
+				for (let key in response) {
+					const item = response[key];
+					$scope.blogPosts.push(item);
+				}
 				if ($scope.inputReleaseCode) {
 					$scope.blogPosts.forEach((value, index) => {
 						if (value.code === $scope.inputReleaseCode) {
@@ -880,7 +881,7 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 			});
 		};
 
-		$scope.deleteSubmission = (keyIndex) => {
+		$scope.deleteEmailSubmission = (keyIndex) => {
 			$scope.loading = true;
 			const dbKey = $scope.emails.blogSubmissionsKeys[keyIndex];
 			$scope.firebase.getDB(`emails/blogSubmissions/${dbKey}`, true).remove().then(() => {
@@ -899,29 +900,79 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 			});
 		};
 
+		$scope.blankBlogPostModel = () =>  new Object({
+			code: null,
+			links: {
+				bandcamp: '',
+				facebook: '',
+				instagram: '',
+				soundcloud: '',
+				twitter: '',
+				website: '',
+				youtube: ''
+			},
+			playlistId: null,
+			soundcloudUserId: null
+		});
+
+		$scope.selectedBrandId = undefined;
+		$scope.selectBrand = (index) => {
+			$scope.selectedBrandId = (index !== null) ? index : undefined;
+			if (index === null) {
+				$scope.selectedBrandKey = undefined;
+			}
+		};
+		$scope.selectedBrandKey = undefined;
+		$scope.getMatchedBrands = (substring) => {
+			console.log('substring', substring);
+			const matchedKeys = $scope.brandsKeys.filter((item) => new RegExp(substring, 'i').test(item));
+			console.log('matchedKeys', matchedKeys);
+			return matchedKeys;
+		};
+		$scope.selectBrandFromList = (brandKey, index) => {
+			$scope.selectedBrandKey = brandKey;
+			console.log('$scope.selectedBrandKey', $scope.selectedBrandKey);
+			$scope.selectedBrandIndex = index;
+		};
+		$scope.getSelectedBrand = () => $scope.brands[$scope.selectedBrandKey];
 		$scope.approveEmailSubmission = (keyIndex) => {
+			$scope.loading = true;
 			const dbKey = $scope.emails.blogSubmissionsKeys[keyIndex];
 			console.log('TODO: approve submission, dbKey', dbKey);
 			const selectedSubmission = $scope.emails.blogSubmissions[dbKey];
 			console.log('TODO: approve submission', selectedSubmission);
-			$scope.firebase.blogEntryExists(selectedSubmission.id).then((result) => {
-				console.log('blogEntryExists', result);
+			$scope.firebase.blogEntryExistsByValue(selectedSubmission.id).then((result) => {
+				console.log('blogEntryExistsByValue', result);
 				if (result) {
 					/*
 					*	entry does exist, call delete submission automatically
 					*/
-					$scope.deleteSubmission(keyIndex);
+					$scope.deleteEmailSubmission(keyIndex);
 				} else {
 					/*
-					*	TODO: add record
-					*	- add entry to blog collection
-					*	- add entry to blogEntriesIDs
-					*	- remove entry from email/blogSubmissions
-					*	$scope.deleteSubmission(keyIndex);
+					*	create new records, delete submission record
 					*/
+					const valuesObj = $scope.blankBlogPostModel();
+					valuesObj.code = selectedSubmission.scData.user.username.replace(/\s/, '') + selectedSubmission.scData.permalink.toUpperCase();
+					valuesObj.links = $scope.getSelectedBrand();
+					delete valuesObj.links.rss;
+					valuesObj.playlistId = selectedSubmission.scData.id;
+					valuesObj.soundcloudUserId = selectedSubmission.scData.user.id;
+					console.log(valuesObj);
+					$scope.firebase.addBlogPost(valuesObj)
+						.then(() => {
+							console.log('blog entry values set');
+							$scope.getEmailBlogSubmissions();
+							$scope.deleteEmailSubmission(keyIndex);
+							$scope.getExistingBlogEntriesIDs();
+							$scope.selectedBrandId = undefined;
+							$scope.loaded();
+						}).catch((error) => {
+							console.log('error setting blod entry values', error);
+							$scope.selectedBrandId = undefined;
+							$scope.loaded();
+						});
 				}
-				$scope.loaded();
-				$scope.$apply();
 			});
 		};
 
