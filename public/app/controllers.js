@@ -463,13 +463,14 @@ dnbhubControllers.controller('blogController', ['$scope', '$route', '$location',
 		};
 		$scope.firebase = firebaseService;
 		$scope.updateBlogPosts = (callback) => {
-			$scope.firebase.getDB('blog').then((snapshot) => {
+			// limit to last 50 records and show in reverse order by playlist number
+			$scope.firebase.getDB('blog', true).limitToLast(50).once('value').then((snapshot) => {
 				console.log('blog', snapshot.val());
 				const response = snapshot.val();
 				$scope.blogPosts = [];
 				for (let key in response) {
 					const item = response[key];
-					$scope.blogPosts.push(item);
+					$scope.blogPosts.unshift(item);
 				}
 				if ($scope.inputReleaseCode) {
 					$scope.blogPosts.forEach((value, index) => {
