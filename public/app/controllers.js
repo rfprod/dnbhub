@@ -963,8 +963,8 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 					$scope.firebase.addBlogPost(valuesObj)
 						.then(() => {
 							console.log('blog entry values set');
-							$scope.getEmailBlogSubmissions();
 							$scope.deleteEmailSubmission(keyIndex);
+							$scope.getEmailBlogSubmissions();
 							$scope.getExistingBlogEntriesIDs();
 							$scope.selectedBrandId = undefined;
 							$scope.loaded();
@@ -1038,7 +1038,7 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 			$scope.loading = true;
 			$scope.firebase.getDB('blogEntriesIDs').then((snapshot) => {
 				const response = snapshot.val();
-				$scope.existingBlogEntriesIDs = response;
+				$scope.existingBlogEntriesIDs = response[0];
 				console.log('$scope.existingBlogEntriesIDs', $scope.existingBlogEntriesIDs);
 				$scope.loaded();
 				$scope.$apply();
@@ -1064,11 +1064,11 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 						SC.get(`/resolve?url=${selectedSubmission.link}`).then((data) => {
 							$scope.emails.blogSubmissions[dbKey].id = data.id;
 							$scope.emails.blogSubmissions[dbKey].scData = data;
-							added = ($scope.existingBlogEntriesIDs.hasOwnProperty(data.id)) ? true : added;
+							added = ($scope.existingBlogEntriesIDs.includes(data.id)) ? true : added;
 							$scope.$apply();
 						});
 					} else {
-						added = ($scope.existingBlogEntriesIDs.hasOwnProperty(selectedSubmission.id)) ? true : added;
+						added = ($scope.existingBlogEntriesIDs.includes(selectedSubmission.id)) ? true : added;
 					}
 				}
 			}
@@ -1220,7 +1220,58 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 				$scope.$apply();
 			});
 		};
-		$scope.approvePost = (platlistID) => console.log('TODO: approve post, playlistID', platlistID);
+		$scope.approvePost = (platlistID) => {
+			$scope.loading = true;
+			const dbKey = playlistID;
+			console.log('TODO: approve post, playlistID/dbkey', dbKey);
+			const selectedSubmission = $scope.users[userKey].submittedPlaylists[dbKey];
+			console.log('TODO: approve submission', selectedSubmission);
+			if (!selectedSubmission.id || !selectedSubmission.id.scData) {
+				SC.get(`/playlists/${playlistID}`).then((data) => {
+					$scope.emails.blogSubmissions[data.id].id = data.id;
+					$scope.emails.blogSubmissions[data.id].scData = data;
+					$scope.checkAndAddUserPlaylist(selectedSubmission);
+					$scope.$apply();
+				});
+			} else {
+				$scope.checkAndAddUserPlaylist(selectedSubmission);
+			}
+		}
+		$scope.checkAndAddUserPlaylist = (selectedSubmission) => {
+			$scope.firebase.blogEntryExistsByValue(selectedSubmission.id).then((result) => {
+				console.log('blogEntryExistsByValue', result);
+				if (result) {
+					/*
+					*	entry does exist, call delete submission automatically
+					*/
+					$scope.deleteEmailSubmission(keyIndex);
+				} else {
+					/*
+					*	create new records, delete submission record
+					*/
+					const valuesObj = $scope.blankBlogPostModel();
+					valuesObj.code = selectedSubmission.scData.user.username.replace(/\s/, '') + selectedSubmission.scData.permalink.toUpperCase();
+					valuesObj.links = $scope.getSelectedBrand();
+					delete valuesObj.links.rss;
+					valuesObj.playlistId = selectedSubmission.scData.id;
+					valuesObj.soundcloudUserId = selectedSubmission.scData.user.id;
+					console.log(valuesObj);
+					$scope.firebase.addBlogPost(valuesObj)
+						.then(() => {
+							console.log('blog entry values set');
+							$scope.deleteUserSubmission(selectedSubmission.id);
+							$scope.getUsers();
+							$scope.getExistingBlogEntriesIDs();
+							$scope.selectedBrandId = undefined;
+							$scope.loaded();
+						}).catch((error) => {
+							console.log('error setting blod entry values', error);
+							$scope.selectedBrandId = undefined;
+							$scope.loaded();
+						});
+				}
+			});
+		}
 		$scope.rejectPost = (platlistID) => console.log('TODO: reject post, playlistID', platlistID);
 
 		$scope.getAllData = () => {
@@ -1513,7 +1564,7 @@ dnbhubControllers.controller('userController', ['$rootScope', '$scope', '$window
 			$scope.loading = true;
 			$scope.firebase.getDB('blogEntriesIDs').then((snapshot) => {
 				const response = snapshot.val();
-				$scope.existingBlogEntriesIDs = response;
+				$scope.existingBlogEntriesIDs = response[0];
 				console.log('$scope.existingBlogEntriesIDs', $scope.existingBlogEntriesIDs);
 				$scope.loaded();
 				$scope.$apply();
@@ -1531,7 +1582,7 @@ dnbhubControllers.controller('userController', ['$rootScope', '$scope', '$window
 			} else {
 				const post = $scope.SCdata.playlists[arrayIndex];
 				if (post) {
-					added = ($scope.existingBlogEntriesIDs.hasOwnProperty(post.id)) ? true : added;
+					added = ($scope.existingBlogEntriesIDs.includes(post.id)) ? true : added;
 				}
 			}
 			return added || $scope.alreadySubmitted(arrayIndex);

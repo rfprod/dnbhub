@@ -286,22 +286,28 @@ dnbhubServices.service('firebaseService', ['$rootScope', '$q', '$route', '$windo
 				service.checkDBuserUID()
 					.then((data) => {
 						console.log('checkDBuserUID', JSON.stringify(data));
-						service.db.ref('blogEntriesIDs/' + valuesObj.playlistId).set(valuesObj.playlistId)
-							.then(() => {
-								const newRecord = service.db.ref('blog').push();
-								newRecord.set(valuesObj)
-									.then(() => {
-										console.log('blog post added');
-										def.resolve({ valuesSet: true });
-									}).catch((error) => {
-										console.log('error adding blog post entry', error);
-										def.reject({ valuesSet: false });
-									});
-							})
-							.catch((error) => {
-								console.log('error adding blog post entry ref to blogEntriesIDs collection', error);
-								def.reject({ valuesSet: false });
-							});
+						service.db.getDB('blogEntriesIDs/0').then((idsArray) => {
+							idsArray.push(valuesObj.playlistId);
+							service.db.ref('blogEntriesIDs/0').setValue(idsArray) // update blog entries ids
+								.then(() => {
+									const newRecord = service.db.ref('blog').push(); // update blog
+									newRecord.set(valuesObj)
+										.then(() => {
+											console.log('blog post added');
+											def.resolve({ valuesSet: true });
+										}).catch((error) => {
+											console.log('error adding blog post entry', error);
+											def.reject({ valuesSet: false });
+										});
+								})
+								.catch((error) => {
+									console.log('error adding blog post entry ref to blogEntriesIDs collection', error);
+									def.reject({ valuesSet: false });
+								});
+						}).catch((error) => {
+							console.log('error getting blog post entries ids from blogEntriesIDs collection', error);
+							def.reject({ valuesSet: false });
+						});
 					}).catch((error) => {
 						console.log('addBlogPost, user db profile check error', error);
 						def.reject(error);
