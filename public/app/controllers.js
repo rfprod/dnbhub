@@ -331,8 +331,8 @@ dnbhubControllers.controller('singlesController', ['$scope',
 	}
 ]);
 
-dnbhubControllers.controller('freeDownloadsController', ['$scope', '$location', '$mdSidenav', 'freedownloadsService', 'firebaseService', 'soundcloudService',
-	function($scope, $location, $mdSidenav, freedownloadsService, firebaseService, soundcloudService) {
+dnbhubControllers.controller('freeDownloadsController', ['$scope', '$location', '$mdSidenav', 'firebaseService', 'soundcloudService',
+	function($scope, $location, $mdSidenav, firebaseService, soundcloudService) {
 		$scope.freedownloadsData = [];
 		$scope.selectedWidget = 1;
 		$scope.scService = soundcloudService;
@@ -352,13 +352,9 @@ dnbhubControllers.controller('freeDownloadsController', ['$scope', '$location', 
 			}).catch((error) => {
 				console.log('error', error);
 				// fallback to static json hosted on client
-				freedownloadsService.query({}).$promise.then((response) => {
-					$scope.freedownloadsData = [];
-					response.forEach((element) => {
-						$scope.freedownloadsData.push(element);
-					});
-					$scope.welectedWidget = 0;
-				});
+				/*
+				*	TODO show error
+				*/
 				// console.log('$scope.freedownloadsData:', $scope.freedownloadsData);
 				$scope.$apply();
 			});
@@ -396,8 +392,8 @@ dnbhubControllers.controller('repostsController', ['$scope',
 	}
 ]);
 
-dnbhubControllers.controller('blogController', ['$scope', '$route', '$location', '$mdDialog', 'blogPostsService', 'firebaseService', 'soundcloudService',
-	function($scope, $route, $location, $mdDialog, blogPostsService, firebaseService, soundcloudService) {
+dnbhubControllers.controller('blogController', ['$scope', '$route', '$location', '$mdDialog', 'firebaseService', 'soundcloudService',
+	function($scope, $route, $location, $mdDialog, firebaseService, soundcloudService) {
 		$scope.inputReleaseCode = undefined;
 		$scope.blogPosts = [];
 		$scope.selectedBlogPostId = 0;
@@ -490,25 +486,9 @@ dnbhubControllers.controller('blogController', ['$scope', '$route', '$location',
 			}).catch((error) => {
 				console.log('error', error);
 				// fallback to static json hosted on client
-				blogPostsService.query({}).$promise.then((response) => {
-					$scope.blogPosts = [];
-					response.forEach((element) => {
-						$scope.blogPosts.push(element);
-					});
-					if ($scope.inputReleaseCode) {
-						$scope.blogPosts.forEach((value, index) => {
-							if (value.code === $scope.inputReleaseCode) {
-								$scope.selectedBlogPostId = index;
-							}
-						});
-						$scope.inputReleaseCode = undefined;
-						$scope.selectedBlogPost = $scope.blogPosts[$scope.selectedBlogPostId];
-						if ($scope.selectedBlogPostId === 0) { $scope.setProperSearchParam(); }
-					}else{
-						$scope.selectedBlogPost = $scope.blogPosts[$scope.selectedBlogPostId];
-						$scope.setProperSearchParam();
-					}
-				});
+				/*
+				*	TODO show error
+				*/
 				callback();
 				$scope.$apply();
 			});
@@ -749,8 +729,8 @@ dnbhubControllers.controller('contactController', ['$scope', '$mdDialog', '$loca
 	}
 ]);
 
-dnbhubControllers.controller('aboutController', ['$scope', '$route', '$mdDialog', 'dnbhubDetailsService', 'firebaseService',
-	function($scope, $route, $mdDialog, dnbhubDetailsService, firebaseService) {
+dnbhubControllers.controller('aboutController', ['$scope', '$route', '$mdDialog', 'firebaseService',
+	function($scope, $route, $mdDialog, firebaseService) {
 		$scope.dnbhubDetails = {};
 		$scope.firebase = firebaseService;
 		$scope.updateDnbhubDetails = () => {
@@ -768,15 +748,9 @@ dnbhubControllers.controller('aboutController', ['$scope', '$route', '$mdDialog'
 			}).catch((error) => {
 				console.log('error', error);
 				// fallback to static json hosted on client
-				dnbhubDetailsService.query({}).$promise.then((response) => {
-					$scope.dnbhubDetails = {};
-					const keys = Object.keys(response);
-					// console.log('keys, response:', keys, ',', response);
-					keys.forEach((key) => {
-						$scope.dnbhubDetails[key] = response[key];
-					});
-					// console.log('$scope.dnbhubDetails:', $scope.dnbhubDetails);
-				});
+				/*
+				*	TODO show error
+				*/
 				$scope.$apply();
 			});
 		};
@@ -1220,13 +1194,15 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 				$scope.$apply();
 			});
 		};
-		$scope.approvePost = (platlistID) => {
+		$scope.approvePost = (playlistID) => {
 			$scope.loading = true;
 			const dbKey = playlistID;
 			console.log('TODO: approve post, playlistID/dbkey', dbKey);
-			const selectedSubmission = $scope.users[userKey].submittedPlaylists[dbKey];
+			const selectedSubmission = {
+				id: dbKey
+			};
 			console.log('TODO: approve submission', selectedSubmission);
-			if (!selectedSubmission.id || !selectedSubmission.id.scData) {
+			if (!selectedSubmission.id || !selectedSubmission.scData) {
 				SC.get(`/playlists/${playlistID}`).then((data) => {
 					$scope.emails.blogSubmissions[data.id].id = data.id;
 					$scope.emails.blogSubmissions[data.id].scData = data;
@@ -1236,7 +1212,21 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 			} else {
 				$scope.checkAndAddUserPlaylist(selectedSubmission);
 			}
-		}
+		};
+		$scope.deleteUserSubmission = (dbKey) => {
+			$scope.loading = true;
+			const userKey = $scope.firebase.user.uid;
+			$scope.firebase.getDB(`users/${userKey}/submittedPlaylists/${dbKey}`, true).remove().then(() => {
+				console.log(`user ${userKey} submission ${dbKey} was successfully deleted`);
+				delete $scope.users[userKey].submittedPlaylists[dbKey];
+				$scope.loaded();
+				$scope.$apply();
+			}).catch((error) => {
+				console.log('error deleting user submission', error);
+				$scope.loaded();
+				$scope.$apply();
+			});
+		};
 		$scope.checkAndAddUserPlaylist = (selectedSubmission) => {
 			$scope.firebase.blogEntryExistsByValue(selectedSubmission.id).then((result) => {
 				console.log('blogEntryExistsByValue', result);
@@ -1244,7 +1234,8 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 					/*
 					*	entry does exist, call delete submission automatically
 					*/
-					$scope.deleteEmailSubmission(keyIndex);
+					$scope.deleteUserSubmission(selectedSubmission.id);
+					$scope.getUsers();
 				} else {
 					/*
 					*	create new records, delete submission record
@@ -1271,7 +1262,7 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 						});
 				}
 			});
-		}
+		};
 		$scope.rejectPost = (platlistID) => console.log('TODO: reject post, playlistID', platlistID);
 
 		$scope.getAllData = () => {

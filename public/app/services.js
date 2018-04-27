@@ -36,52 +36,10 @@ function setBaseUrl(absUrl) {
 	return absUrl.match(new RegExp('http(s)?://[^/]+'))[0];
 }
 
-dnbhubServices.factory('freedownloadsService', ['$resource', '$location', function($resource, $location) {
-	const baseUrl = setBaseUrl($location.$$absUrl);
-	return $resource(baseUrl + '/data/freedownloads-data.json', {}, {
-		query: {method: 'GET', params: {}, isArray: true,
-			interceptor: {
-				response: (response) => {
-					response.resource.$httpHeaders = response.headers;
-					return response.resource;
-				}
-			}
-		}
-	});
-}]);
-
-dnbhubServices.factory('blogPostsService', ['$resource', '$location', function($resource, $location) {
-	const baseUrl = setBaseUrl($location.$$absUrl);
-	return $resource(baseUrl + '/data/blog-posts.json', {}, {
-		query: {method: 'GET', params: {}, isArray: true,
-			interceptor: {
-				response: (response) => {
-					response.resource.$httpHeaders = response.headers;
-					return response.resource;
-				}
-			}
-		}
-	});
-}]);
-
-dnbhubServices.factory('dnbhubDetailsService', ['$resource', '$location', function($resource, $location) {
-	const baseUrl = setBaseUrl($location.$$absUrl);
-	return $resource(baseUrl + '/data/dnbhub-details.json', {}, {
-		query: {method: 'GET', params: {}, isArray: false,
-			interceptor: {
-				response: (response) => {
-					response.resource.$httpHeaders = response.headers;
-					return response.resource;
-				}
-			}
-		}
-	});
-}]);
-
 dnbhubServices.factory('sendEmailService', ['$resource', '$location', function($resource, $location) {
 	const baseUrl = setBaseUrl($location.$$absUrl);
 	// return $resource('https://us-central1-dnbhub-a5d9c.cloudfunctions.net/sendEmail', {}, {
-	return $resource( baseUrl + '/sendEmail', {}, {
+	return $resource(baseUrl + '/sendEmail', {}, {
 		save: {method: 'POST', params: {}, headers: {'Content-type': 'application/x-www-form-urlencoded'}, isArray: false,
 			interceptor: {
 				response: (response) => {
@@ -96,7 +54,7 @@ dnbhubServices.factory('sendEmailService', ['$resource', '$location', function($
 dnbhubServices.factory('addBlogPostService', ['$resource', '$location', function($resource, $location) {
 	const baseUrl = setBaseUrl($location.$$absUrl);
 	// return $resource('https://us-central1-dnbhub-a5d9c.cloudfunctions.net/submitBlogPostOverEmail', {}, {
-	return $resource( baseUrl + '/submitBlogPostOverEmail', {}, {
+	return $resource(baseUrl + '/submitBlogPostOverEmail', {}, {
 		save: {method: 'POST', params: {}, headers: {'Content-type': 'application/x-www-form-urlencoded'}, isArray: false,
 			interceptor: {
 				response: (response) => {

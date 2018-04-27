@@ -154,7 +154,7 @@
 									<md-button class="md-icon-button" type="button" ng-disabled="loading" ng-click="createBrand()" aria-label="cancel brand creation" title="cancel brand creation">
 										<i class="fa fa-2x fa-times"></i>
 									</md-button>
-									<md-button class="md-icon-button green-text" type="submit" ng-disabled="loading" ng-click="submitNewBrand()" aria-label="submit a new brand" title="submit a new brand">
+									<md-button class="md-icon-button green-text" ng-disabled="loading" ng-click="submitNewBrand()" aria-label="submit a new brand" title="submit a new brand">
 										<i class="fa fa-2x fa-check"></i>
 									</md-button>
 								</span>
@@ -233,7 +233,7 @@
 									<md-button class="md-icon-button" type="button" ng-disabled="loading" ng-if="isBrandEditable(brandKey)" ng-click="editBrand($index)" aria-label="cancel editing" title="cancel editing">
 										<i class="fa fa-2x fa-times"></i>
 									</md-button>
-									<md-button class="md-icon-button green-text" type="submit" ng-disabled="loading" ng-if="isBrandEditable(brandKey)" ng-click="updateBrand()" aria-label="update brand" title="update brand">
+									<md-button class="md-icon-button green-text" ng-disabled="loading" ng-if="isBrandEditable(brandKey)" ng-click="updateBrand()" aria-label="update brand" title="update brand">
 										<i class="fa fa-2x fa-check"></i>
 									</md-button>
 									<md-button class="md-icon-button amber-text" type="button" ng-disabled="loading" ng-if="isBrandEditable(brandKey)" ng-click="deleteBrand($index)" aria-label="delete brand" title="delete brand">
@@ -263,7 +263,7 @@
 											<div flex="50" flex.xs="100" flex-sm="100" flex-md="100" ng-repeat="(playlistId, submitted) in users[userKey].submittedPlaylists">
 												<span layout="row" layout-wrap>
 													<p>id: <strong>{{playlistId}}</strong></p>
-													<md-button class="md-icon-button green-text" type="submit" ng-disabled="loading" ng-if="!submitted" ng-click="approvePost(playlistId)" aria-label="approve post" title="approve post">
+													<md-button class="md-icon-button green-text" ng-disabled="loading" ng-if="!submitted" ng-click="approvePost(playlistId)" aria-label="approve post" title="approve post">
 														<i class="fa fa-2x fa-check"></i>
 													</md-button>
 													<md-button class="md-icon-button amber-text" type="button" ng-disabled="loading" ng-if="!submitted" ng-click="rejectPost(playlistId)" aria-label="reject post" title="reject post">
