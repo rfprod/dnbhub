@@ -280,10 +280,12 @@ gulp.task('bump-version-prerelease', () => {
 		.pipe(gulp.dest('./'));
 });
 
-process.on('exit', function() {
-	if (node) node.kill();
+process.on('exit', function(code) {
+	console.log(`PROCESS EXIT CODE ${code}`);
 });
 
+/*
 process.on('SIGINT', function() {
 	killProcessByName('gulp');
 });
+*/
