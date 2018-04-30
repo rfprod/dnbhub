@@ -790,15 +790,10 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 		$scope.patterns = regXpatternsService;
 
 		$scope.loading = false;
-		$scope.currentTimeout = undefined;
-		$scope.loaded = () => {
-			if ($scope.currentTimeout) {
-				clearTimeout($scope.currentTimeout);
-			}
-			$scope.currentTimeout = $timeout(() => {
-				$scope.loading = false;
-			}, 1000);
+		$scope.isLoading = (state) => {
+			$scope.loading = state;
 		};
+		$scope.currentTimeout = undefined;
 
 		$scope.emails = {
 			messages: undefined,
@@ -807,38 +802,38 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 			blogSubmissionsKeys: undefined
 		};
 		$scope.getEmailMessages = () => {
-			$scope.loading = true;
+			$scope.isLoading(true);
 			$scope.firebase.getDB('emails/messages').then((snapshot) => {
 				const response = snapshot.val();
 				$scope.emails.messages = response;
 				$scope.emails.messagesKeys = (response) ? Object.keys(response) : [];
 				console.log('$scope.emails.messages', $scope.emails.messages);
-				$scope.loaded();
+				$scope.isLoading(false);
 				$scope.$apply();
 			}).catch((error) => {
 				console.log('error', error);
-				$scope.loaded();
+				$scope.isLoading(false);
 				$scope.$apply();
 			});
 		};
 		$scope.getEmailBlogSubmissions = () => {
-			$scope.loading = true;
+			$scope.isLoading(true);
 			$scope.firebase.getDB('emails/blogSubmissions').then((snapshot) => {
 				const response = snapshot.val();
 				$scope.emails.blogSubmissions = response;
 				$scope.emails.blogSubmissionsKeys = (response) ? Object.keys(response) : [];
 				console.log('$scope.emails.blogSubmissions', $scope.emails.blogSubmissions);
-				$scope.loaded();
+				$scope.isLoading(false);
 				$scope.$apply();
 			}).catch((error) => {
 				console.log('error', error);
-				$scope.loaded();
+				$scope.isLoading(false);
 				$scope.$apply();
 			});
 		};
 
 		$scope.deleteMessage = (keyIndex) => {
-			$scope.loading = true;
+			$scope.isLoading(true);
 			const dbKey = $scope.emails.messagesKeys[keyIndex];
 			$scope.firebase.getDB(`emails/messages/${dbKey}`, true).remove().then(() => {
 				console.log(`message id ${dbKey} was successfully deleted`);
@@ -847,17 +842,17 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 				*/
 				$scope.emails.messagesKeys.splice(keyIndex, 1);
 				delete $scope.emails.messages[dbKey];
-				$scope.loaded();
+				$scope.isLoading(false);
 				$scope.$apply();
 			}).catch((error) => {
 				console.log('error deleting email message', error);
-				$scope.loaded();
+				$scope.isLoading(false);
 				$scope.$apply();
 			});
 		};
 
 		$scope.deleteEmailSubmission = (keyIndex) => {
-			$scope.loading = true;
+			$scope.isLoading(true);
 			const dbKey = $scope.emails.blogSubmissionsKeys[keyIndex];
 			$scope.firebase.getDB(`emails/blogSubmissions/${dbKey}`, true).remove().then(() => {
 				console.log(`submission id ${dbKey} was successfully deleted`);
@@ -866,11 +861,11 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 				*/
 				$scope.emails.blogSubmissionsKeys.splice(keyIndex, 1);
 				delete $scope.emails.blogSubmissions[dbKey];
-				$scope.loaded();
+				$scope.isLoading(false);
 				$scope.$apply();
 			}).catch((error) => {
 				console.log('error deleting email submission', error);
-				$scope.loaded();
+				$scope.isLoading(false);
 				$scope.$apply();
 			});
 		};
@@ -911,7 +906,7 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 		};
 		$scope.getSelectedBrand = () => $scope.brands[$scope.selectedBrandKey];
 		$scope.approveEmailSubmission = (keyIndex) => {
-			$scope.loading = true;
+			$scope.isLoading(true);
 			const dbKey = $scope.emails.blogSubmissionsKeys[keyIndex];
 			console.log('TODO: approve submission, dbKey', dbKey);
 			const selectedSubmission = $scope.emails.blogSubmissions[dbKey];
@@ -930,10 +925,12 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 					const valuesObj = $scope.blankBlogPostModel();
 					valuesObj.code = selectedSubmission.scData.user.username.replace(/\s/, '') + selectedSubmission.scData.permalink.toUpperCase();
 					valuesObj.links = $scope.getSelectedBrand();
-					delete valuesObj.links.rss;
+					if (valuesObj.links.rss) {
+						delete valuesObj.links.rss;
+					}
 					valuesObj.playlistId = selectedSubmission.scData.id;
 					valuesObj.soundcloudUserId = selectedSubmission.scData.user.id;
-					console.log(valuesObj);
+					console.log('valuesObj', valuesObj);
 					$scope.firebase.addBlogPost(valuesObj)
 						.then(() => {
 							console.log('blog entry values set');
@@ -941,11 +938,12 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 							$scope.getEmailBlogSubmissions();
 							$scope.getExistingBlogEntriesIDs();
 							$scope.selectedBrandId = undefined;
-							$scope.loaded();
+							$scope.isLoading(false);
 						}).catch((error) => {
 							console.log('error setting blod entry values', error);
 							$scope.selectedBrandId = undefined;
 							$scope.loaded();
+							$scope.isLoading(false);
 						});
 				}
 			});
@@ -1009,16 +1007,16 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 
 		$scope.existingBlogEntriesIDs = undefined;
 		$scope.getExistingBlogEntriesIDs = () => {
-			$scope.loading = true;
+			$scope.isLoading(true);
 			$scope.firebase.getDB('blogEntriesIDs').then((snapshot) => {
 				const response = snapshot.val();
 				$scope.existingBlogEntriesIDs = response[0];
 				console.log('$scope.existingBlogEntriesIDs', $scope.existingBlogEntriesIDs);
-				$scope.loaded();
+				$scope.isLoading(false);
 				$scope.$apply();
 			}).catch((error) => {
 				console.log('error', error);
-				$scope.loaded();
+				$scope.isLoading(false);
 				$scope.$apply();
 			});
 		};
@@ -1052,22 +1050,22 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 		$scope.brands = {};
 		$scope.brandsKeys = [];
 		$scope.getBrands = () => {
-			$scope.loading = true;
+			$scope.isLoading(true);
 			$scope.firebase.getDB('brands').then((snapshot) => {
 				console.log('brands', snapshot.val());
 				const response = snapshot.val();
 				$scope.brands = (response) ? response : {};
 				$scope.brandsKeys = (response) ? Object.keys(response) : [];
-				$scope.loaded();
+				$scope.isLoading(false);
 				$scope.$apply();
 			}).catch((error) => {
 				console.log('error', error);
-				$scope.loaded();
+				$scope.isLoading(false);
 				$scope.$apply();
 			});
 		};
 		$scope.deleteBrand = (keyIndex) => {
-			$scope.loading = true;
+			$scope.isLoading(true);
 			const dbKey = $scope.brandsKeys[keyIndex];
 			$scope.firebase.getDB(`brands/${dbKey}`, true).remove().then(() => {
 				console.log(`brand id ${dbKey} was successfully deleted`);
@@ -1076,11 +1074,11 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 				*/
 				$scope.brandsKeys.splice(keyIndex, 1);
 				delete $scope.brands[dbKey];
-				$scope.loaded();
+				$scope.isLoading(false);
 				$scope.$apply();
 			}).catch((error) => {
 				console.log('error deleting brand', error);
-				$scope.loaded();
+				$scope.isLoading(false);
 				$scope.$apply();
 			});
 		};
@@ -1096,7 +1094,7 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 		};
 		$scope.updateBrand = () => {
 			if (typeof $scope.brands[$scope.editableBrandKey] === 'object') {
-				$scope.loading = true;
+				$scope.isLoading(true);
 				const valuesObj = $scope.brands[$scope.editableBrandKey];
 				console.log('valuesObj', valuesObj);
 				for (const key of Object.keys(valuesObj)) {
@@ -1112,11 +1110,11 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 					.then(() => {
 						console.log('brand values set');
 						$scope.editableBrandKey = undefined;
-						$scope.loaded();
+						$scope.isLoading(false);
 						$scope.$apply();
 					}).catch((error) => {
 						console.log('error setting brand values', error);
-						$scope.loaded();
+						$scope.isLoading(false);
 						$scope.$apply();
 					});
 			} else {
@@ -1149,6 +1147,7 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 			}
 		};
 		$scope.submitNewBrand = () => {
+			$scope.isLoading(true);
 			if ($scope.newBrand.name) {
 				console.log('submit new brand');
 				const valuesObj = {
@@ -1165,11 +1164,11 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 						console.log('brand values set');
 						$scope.createBrand();
 						$scope.getBrands();
-						$scope.loaded();
+						$scope.isLoading(false);
 						$scope.$apply();
 					}).catch((error) => {
 						console.log('error setting brand values', error);
-						$scope.loaded();
+						$scope.isLoading(false);
 						$scope.$apply();
 					});
 			} else {
@@ -1180,54 +1179,59 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 		$scope.users = {};
 		$scope.usersKeys = [];
 		$scope.getUsers = () => {
-			$scope.loading = true;
+			$scope.isLoading(true);
 			$scope.firebase.getDB('users').then((snapshot) => {
 				console.log('users', snapshot.val());
 				const response = snapshot.val();
 				$scope.users = (response) ? response : {};
 				$scope.usersKeys = (response) ? Object.keys(response) : [];
-				$scope.loaded();
+				$scope.isLoading(false);
 				$scope.$apply();
 			}).catch((error) => {
 				console.log('error', error);
-				$scope.loaded();
+				$scope.isLoading(false);
 				$scope.$apply();
 			});
 		};
 		$scope.approvePost = (playlistID) => {
-			$scope.loading = true;
+			$scope.isLoading(true);
 			const dbKey = playlistID;
 			console.log('TODO: approve post, playlistID/dbkey', dbKey);
 			const selectedSubmission = {
 				id: dbKey
 			};
 			console.log('TODO: approve submission', selectedSubmission);
-			if (!selectedSubmission.id || !selectedSubmission.scData) {
-				SC.get(`/playlists/${playlistID}`).then((data) => {
-					$scope.emails.blogSubmissions[data.id].id = data.id;
-					$scope.emails.blogSubmissions[data.id].scData = data;
+			if (!selectedSubmission.scData) {
+				console.log('should send req');
+				SC.get(`/playlists/${selectedSubmission.id}`).then((data) => {
+					console.log('any data', data);
+					selectedSubmission.scData = data;
 					$scope.checkAndAddUserPlaylist(selectedSubmission);
+					$scope.isLoading(false);
 					$scope.$apply();
 				});
 			} else {
 				$scope.checkAndAddUserPlaylist(selectedSubmission);
+				$scope.isLoading(false);
 			}
 		};
 		$scope.deleteUserSubmission = (dbKey) => {
-			$scope.loading = true;
+			$scope.isLoading(true);
 			const userKey = $scope.firebase.user.uid;
 			$scope.firebase.getDB(`users/${userKey}/submittedPlaylists/${dbKey}`, true).remove().then(() => {
 				console.log(`user ${userKey} submission ${dbKey} was successfully deleted`);
 				delete $scope.users[userKey].submittedPlaylists[dbKey];
-				$scope.loaded();
+				$scope.isLoading(false);
 				$scope.$apply();
 			}).catch((error) => {
 				console.log('error deleting user submission', error);
-				$scope.loaded();
+				$scope.isLoading(false);
 				$scope.$apply();
 			});
 		};
 		$scope.checkAndAddUserPlaylist = (selectedSubmission) => {
+			$scope.isLoading(true);
+			console.log('checkAndAddUserPlaylist, selectedSubmission', selectedSubmission);
 			$scope.firebase.blogEntryExistsByValue(selectedSubmission.id).then((result) => {
 				console.log('blogEntryExistsByValue', result);
 				if (result) {
@@ -1236,6 +1240,7 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 					*/
 					$scope.deleteUserSubmission(selectedSubmission.id);
 					$scope.getUsers();
+					$scope.isLoading(false);
 				} else {
 					/*
 					*	create new records, delete submission record
@@ -1243,7 +1248,9 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 					const valuesObj = $scope.blankBlogPostModel();
 					valuesObj.code = selectedSubmission.scData.user.username.replace(/\s/, '') + selectedSubmission.scData.permalink.toUpperCase();
 					valuesObj.links = $scope.getSelectedBrand();
-					delete valuesObj.links.rss;
+					if (valuesObj.links.rss) {
+						delete valuesObj.links.rss;
+					}
 					valuesObj.playlistId = selectedSubmission.scData.id;
 					valuesObj.soundcloudUserId = selectedSubmission.scData.user.id;
 					console.log(valuesObj);
@@ -1254,11 +1261,11 @@ dnbhubControllers.controller('adminController', ['$rootScope', '$scope', '$timeo
 							$scope.getUsers();
 							$scope.getExistingBlogEntriesIDs();
 							$scope.selectedBrandId = undefined;
-							$scope.loaded();
+							$scope.isLoading(false);
 						}).catch((error) => {
 							console.log('error setting blod entry values', error);
 							$scope.selectedBrandId = undefined;
-							$scope.loaded();
+							$scope.isLoading(false);
 						});
 				}
 			});

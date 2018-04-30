@@ -263,12 +263,25 @@
 											<div flex="50" flex.xs="100" flex-sm="100" flex-md="100" ng-repeat="(playlistId, submitted) in users[userKey].submittedPlaylists">
 												<span layout="row" layout-wrap>
 													<p>id: <strong>{{playlistId}}</strong></p>
-													<md-button class="md-icon-button green-text" ng-disabled="loading" ng-if="!submitted" ng-click="approvePost(playlistId)" aria-label="approve post" title="approve post">
+													<md-button class="md-icon-button green-text" ng-disabled="alreadyAdded($index) || loading" ng-if="!submitted && selectedBrandId >= 0" ng-click="approvePost(playlistId)" aria-label="approve post" title="approve post">
 														<i class="fa fa-2x fa-check"></i>
+													</md-button>
+													<md-button class="md-icon-button green-text" ng-disabled="alreadyAdded($index) || loading" ng-if="!selectedBrandId && selectedBrandId !== 0" ng-click="selectBrand(0)" aria-label="select a brand to approve an email submission" title="select a brand to approve an email submission">
+														<i class="fa fa-2x fa-address-book"></i>
 													</md-button>
 													<md-button class="md-icon-button amber-text" type="button" ng-disabled="loading" ng-if="!submitted" ng-click="rejectPost(playlistId)" aria-label="reject post" title="reject post">
 														<i class="fa fa-2x fa-trash"></i>
 													</md-button>
+													<md-autocomplete flex="100" md-no-cache="true" md-selected-item="selectedBrandKey" md-items="brand in getMatchedBrands(searchBrands)" md-search-text="searchBrands" md-item-text="brand" md-clear-button="true" md-selected-item-change="selectBrandFromList(brand)" placeholder="select brand" ng-if="selectedBrandId >= 0">
+														<span>{{brand}}</span>
+													</md-autocomplete>
+												</span>
+												<span flex class="md-padding md-body-1" ng-if="selectedBrandId >= 0">
+													<p>Selected label links:</p>
+													<span ng-repeat="(key, value) in getSelectedBrand()">
+														{{key}}: <a ng-if="value !== ''" href="{{value}}" terget=_blank><i class="fa fa-1x fa-external-link"></i></a>
+														<i ng-if="value === ''" class="fa fa-1x fa-external-link" title="empty link field"></i>, 
+													</span>
 												</span>
 												<iframe width="97%" height="350" scrolling="no" frameborder="no" ng-src="{{widgetLink(playlistId)}}" ng-if="widgetLink(playlistId) !== '#'"></iframe>
 											</div>
