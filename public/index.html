@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="dnbhub">
+<html class="mat-typography">
 	<head>
 		<title>Drum'n'Bass Hub: digital multimedia production & promotion</title>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
@@ -46,39 +46,42 @@
 		<link type="image/x-icon" rel="icon" href="/favicon.ico"/>
 		<link type="image/x-icon" rel="shortcut icon" href="/favicon.ico"/>
 		<link type="image/x-icon" rel="apple-touch-icon" href="/favicon.ico"/>
-	<!-- vendor stylesheets -->
-		<link type="text/css" rel="stylesheet" href="css/vendor-pack.min.css"/>
-	<!-- Roboto font for angular material -->
-		<link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic"/>
-	<!-- app styles -->
-		<link type="text/css" rel="stylesheet" href="css/packed-app.min.css"/>
+
+		<!-- Roboto font for angular material -->
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700"/>
+
+		<link rel="stylesheet" href="css/vendor-pack.min.css"/>
+		<link rel="stylesheet" href="css/packed-app.min.css" />
+
 		<base href="/">
 	</head>
-	<body ng-cloak layout="column">
+	<body class="mat-body-1">
 
-		<div data-ng-include src="'app/views/nav.html'"></div>
+		<span id="init">
+			<object data="/img/DH_logo-no_bg_greyscale.svg" type="image/svg+xml">
+				Loading Angular...
+			</object>
+			Drum'n'Bass Hub
+		</span>
 
-		<md-content flex>
-			<div ng-view class="view-frame md-body-2" layout="column" layout-fill layout-align="start stretch"></div>
-		</md-content>
+		<app></app>
 
-	<!-- Pinterest dependency - pinIt for every image on the website - Please call pinit.js only once per page -->
-		<script async data-pin-hover="true" type="application/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
-	<!-- Soundcloud connect -->
-		<script type="application/javascript" src="//connect.soundcloud.com/sdk/sdk-3.2.2.js"></script>
-	<!-- Production mode -->
-		<script type="application/javascript" src="js/vendor-pack.min.js"></script>
-		<script type="application/javascript" src="js/packed-app.min.js"></script>
-	<!-- Production mode -->
+		<!-- load app in dev mode -->
+		<!--
+		<script src="/node_modules/systemjs/dist/system.src.js"></script>
+		<script src="systemjs.config.js"></script>
+		<script>System.import('app').catch(function(err){console.error(err);});</script>
+		-->
+		<!-- load app in dev mode -->
 
-	<!-- mailchimp -->
-	<!--
-
-	TODO - improve functionality of floating signup form:
-	> bugs on Samsung Galaxy S6 - Even though I have just subscribed and confirmed it keeps asking me to subscribe again when I go back to the page and not letting me do anything else
-
-		<script src="//s3.amazonaws.com/downloads.mailchimp.com/js/signup-forms/popup/embed.js" data-dojo-config="usePlainJson: true, isDebug: false"></script><script type="text/javascript">require(["mojo/signup-forms/Loader"], function(L) { L.start({"baseUrl":"mc.us3.list-manage.com","uuid":"3eeba7cfe8388b91c662bdf95","lid":"8cca3229c8"}) })</script>
-	-->
+		<!-- Pinterest dependency - pinIt for every image on the website - Please call pinit.js only once per page -->
+			<script async data-pin-hover="true" type="application/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
+		<!-- Soundcloud connect -->
+			<script src="https://connect.soundcloud.com/sdk/sdk-3.3.0.js"></script>
+		<!-- Production mode -->
+			<script src="js/vendor-pack.min.js"></script>
+			<script src="js/packed-app.min.js"></script>
+		<!-- Production mode -->
 
 	</body>
 </html>

@@ -1,412 +1,309 @@
-$white: #ffffff;
-$black: #000000;
-$grey: #c5c5c5;
-$darkGreen: #003300;
-$green: #009900;
-$amber: #ffc107;
-$lightGreen: #00cc33;
-$lightBlue: #00cccc;
-$yellow: #ffed00;
+/* Angular Material Theme, and Typography customization */
+	@import '../../../node_modules/@angular/material/_theming.scss';
+
+	/*
+	*	Define a custom typography config that overrides font-family, and all levels.
+	*/
+	$custom-typography: mat-typography-config(
+		$font-family:	'Roboto, monospace, "Helvetica Neue", sans-serif',
+		$display-4:		mat-typography-level(112px, 112px, 300),
+		$display-3:		mat-typography-level(56px, 56px, 400),
+		$display-2:		mat-typography-level(45px, 48px, 400),
+		$display-1:		mat-typography-level(34px, 40px, 400),
+		$headline:		mat-typography-level(24px, 32px, 400), // h1
+		$title:			mat-typography-level(20px, 32px, 500), // h2
+		$subheading-2:	mat-typography-level(16px, 28px, 400), // h3
+		$subheading-1:	mat-typography-level(15px, 24px, 400), // h4
+		$body-2:		mat-typography-level(14px, 24px, 500), // bolder body text
+		$body-1:		mat-typography-level(14px, 20px, 400), // base body text
+		$caption:		mat-typography-level(12px, 20px, 400), // smaller hint text
+		$button:		mat-typography-level(14px, 14px, 500),
+		// Line-height must be unit-less fraction of the font-size.
+		$input:			mat-typography-level(inherit, 1.125, 400) // form input text
+	);
+
+	/*
+	*	Include the common styles for Angular Material. Include this here so that you only
+	*	have to load a single css file for Angular Material in your app.
+	*	Be sure to include this mixin once!
+	*	Custom typography config is passed to mat-core.
+	*/
+	@include mat-core($custom-typography);
+
+	// Define a custom light theme.
+	$candy-app-primary: mat-palette($mat-purple, 400);
+	$candy-app-accent: mat-palette($mat-yellow, 400);
+	$candy-app-warn: mat-palette($mat-red, 'A700');
+	$candy-app-theme: mat-light-theme($candy-app-primary, $candy-app-accent, $candy-app-warn);
+
+	// Include the custom light theme styles.
+	@include angular-material-theme($candy-app-theme);
+/* Angular Material Theme, and Typography customization */
+
+/* General colours */
+	$white: #ffffff;
+	$black: #000000;
+	$grey: #c5c5c5;
+	$darkGreen: #003300;
+	$green: #009900;
+	$amber: #ffc107;
+	$lightGreen: #00cc33;
+	$lightBlue: #00cccc;
+	$yellow: #ffed00;
+/* General colours */
 
 $selected: rgba(0, 0, 0, 0.4);
+
+/* required in case of self hosting of material-design-icons */
+	@font-face {
+		font-family: 'Material Icons';
+		font-style: normal;
+		font-weight: 400;
+		src: url(../webfonts/MaterialIcons-Regular.eot); /* For IE6-8 */
+		src: local('Material Icons'),
+			local('MaterialIcons-Regular'),
+			url(../webfonts/MaterialIcons-Regular.woff2) format('woff2'),
+			url(../webfonts/MaterialIcons-Regular.woff) format('woff'),
+			url(../webfonts/MaterialIcons-Regular.ttf) format('truetype');
+	}
+	.material-icons {
+		font-family: 'Material Icons';
+		font-weight: normal;
+		font-style: normal;
+		font-size: 24px;  /* Preferred icon size */
+		display: inline-block;
+		line-height: 1;
+		text-transform: none;
+		letter-spacing: normal;
+		word-wrap: normal;
+		white-space: nowrap;
+		direction: ltr;
+
+		/* Support for all WebKit browsers. */
+		-webkit-font-smoothing: antialiased;
+		/* Support for Safari and Chrome. */
+		text-rendering: optimizeLegibility;
+
+		/* Support for Firefox. */
+		-moz-osx-font-smoothing: grayscale;
+
+		/* Support for IE. */
+		font-feature-settings: 'liga';
+
+		&:hover {
+			cursor: default;
+		}
+	}
+	.material-icons-fab { // font-awesome brands
+		font-size: 20px;  /* Preferred icon size */
+		display: inline-block;
+		line-height: 1;
+		text-align: center;
+		text-transform: none;
+		letter-spacing: normal;
+		word-wrap: normal;
+		white-space: nowrap;
+		direction: ltr;
+
+		/* Support for all WebKit browsers. */
+		-webkit-font-smoothing: antialiased;
+		/* Support for Safari and Chrome. */
+		text-rendering: optimizeLegibility;
+
+		/* Support for Firefox. */
+		-moz-osx-font-smoothing: grayscale;
+
+		/* Support for IE. */
+		font-feature-settings: 'liga';
+
+		&:hover {
+			cursor: default;
+		}
+	}
+	.material-icons-fas { // font-awesome solid
+		font-size: 20px;  /* Preferred icon size */
+		display: inline-block;
+		line-height: 1;
+		text-align: center;
+		text-transform: none;
+		letter-spacing: normal;
+		word-wrap: normal;
+		white-space: nowrap;
+		direction: ltr;
+
+		/* Support for all WebKit browsers. */
+		-webkit-font-smoothing: antialiased;
+		/* Support for Safari and Chrome. */
+		text-rendering: optimizeLegibility;
+
+		/* Support for Firefox. */
+		-moz-osx-font-smoothing: grayscale;
+
+		/* Support for IE. */
+		font-feature-settings: 'liga';
+
+		&:hover {
+			cursor: default;
+		}
+	}
+	a, button {
+		.material-icons, .material-icons-fas, .material-icons-fab {
+			&:hover {
+				cursor: pointer;
+			}
+		}
+	}
+/* required in case of self hosting of material-design-icons */
 
 $padding: 0.5em;
 
 html {
-	height: 100vh;
+	display: block;
+	height: 100%;
 	width: 100vw;
-
-	body {
-		height: 100vh;
-		width: 100vw;
-		background: #000 url(../img/electric-circuit.png) center center no-repeat;
-		background-attachment: fixed;
-	}
+	margin: 0;
+	padding: 0;
 }
 
-/*
-*	general
-*/
-	:focus { outline: 0; }
-	a {
-		color: $green;
-		outline: none;
-		text-decoration: none;
+body {
+	display: block;
+	height: 100%;
+	width: 100vw;
+	background: #000 url(../img/electric-circuit.png) center center no-repeat;
+	background-attachment: fixed;
+	margin: 0;
+	padding: 0;
 
-		&:hover {
-			cursor: pointer;
-			color: $amber;
+	/*
+	*	Initialization indicator.
+	*/
+	#init {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+
+	app {
+		height: 100%;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		align-content: stretch;
+		justify-content: flex-start;
+
+		mat-sidenav {
+			width: 60vw;
+
+			mat-grid-tile {
+				&:hover {
+					cursor: pointer;
+					border: 1px dotted $black;
+				}
+			}
+		}
+
+		// overrider mat drawer styling
+		.mat-drawer-content {
+			height: auto!important;
+			overflow-y: auto;
+		}
+	}
+
+	app-index, app-singles, app-freedownloads, app-reposts, app-blog, app-user, app-admin, app-about{
+		flex: 1 1 auto;
+		max-width: 100vw;
+
+		soundcloud-player {
+			flex: 1 1 auto;
+			max-width: 100%;
+		}
+	}
+
+/*
+*	DOM elements general
+*/
+	a {
+		text-decoration: none;
+		&:hover, &:focus {
 			text-decoration: none;
 		}
-	}
-	.hover-pointer {
-		&:hover {
-			cursor: pointer;
-		}
-	}
-	h1, h2, h3, h4, h5, h6 {
-		margin: 0;
-		&:hover { cursor: default; }
-	}
-	img { border: none; }
-	input { vertical-align: middle; }
-
-	.splitter {
-		flex: 1;
+		&:hover {cursor: pointer}
 	}
 
-	md-content {
-		background: transparent;
+	h1:hover, h2:hover, h3:hover, h4:hover, p:hover { cursor: default; }
+	h1, h2, h3, h4 {
+		margin-top: 20px;
+		margin-bottom: 10px;
 	}
 
-	.border { /* common class for bordered blocks, mostly soundcloud widgets */
-		box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.33) !important;
-		border-width: 0px 0px 0px !important;
-		border-style: none none solid !important;
-		border-color: -moz-use-text-color -moz-use-text-color rgba(0, 0, 0, 0.09) !important;
-		-moz-border-top-colors: none !important;
-		-moz-border-right-colors: none !important;
-		-moz-border-bottom-colors: none !important;
-		-moz-border-left-colors: none !important;
-		border-image: none !important;
-		overflow:hidden;
-	}
-
-	.visibility-toggler {
-		&:hover {
-			cursor: pointer;
-		}
-	}
-
-/*
-*	colouring
-*/
-	.green-text { color: $lightGreen; }
-	.amber-text { color: $amber; }
-	.yellow-text { color: $yellow; }
-	.selected {
-		background: $selected;
-		color: $white;
-	}
-
-/*
-*	scrollbars
-*/
-	::-webkit-scrollbar {
-		width: 10px;
-		height: 10px;
-	}
-	::-webkit-scrollbar-track {
-		background: rgba(0, 0, 0, 0.1);
-	}
-	::-webkit-scrollbar-thumb {
-		background: rgba(255, 255, 255, 0.5);
-	}
-
-/*
-*	navbar
-*/
-	#speaker { display: none; }
-
-	.logo {
-		height: 42px;
-		width: 42px;
-		border: 1px $grey solid;
-		border-radius: 50%;
-	}
-
-	#dropdown-menu {
-		height: auto!important;
-		max-height: 95vh;
-	}
-
-	#sidebar-toggler {
-		margin-left: 0;
-	}
-
-	md-menu-item {
-		a {
+	form {
+		legend {
 			&:hover {
-				cursor: pointer;
-				color: $black;
-				text-decoration: none;
+				cursor: default;
 			}
+		}
+		textarea {
+			resize: vertical;
 		}
 	}
 
 /*
-*	singles, reposts styling
+*	layout
 */
-	#singles, #reposts {
-		height: 100%;
-	}
 
-/*
-*	freedownloads styling
-*/
-	#freedownloads {
-		margin: 0;
-		background: transparent;
-
-		#freedownloads-list {
-			overflow-x: hidden;
-			background-color: rgba(0, 0, 0, 0.9);
-			font-weight: bold;
-
-			a {
-				color: $white;
-				padding: 0 $padding 0 $padding;
-				min-height: 50px;
-
-				&:hover {
-					text-decoration: none;
-					color: $amber;
-				}
-
-				&.selected { color: $amber; }
-			}
-		}
-
-		#freedownloads-details {
-			padding: 0;
-			overflow-x: hidden;
-
-			iframe {
-				&.selected {
-					border: 0.25em $amber dotted;
-				}
-			}
-		}
-	}
-
-/*
-*	about styling
-*/
-	#about {
-		color: $white;
-
-		h4 {
-			text-transform: uppercase;
-			font-weight: bold;
-			text-align: center;
-		}
-
-		#text {
-			padding: 0 $padding 0 $padding;
-			font-size: 1.1em;
-		}
-
-		.links {
-			a {
-				min-width: 55px;
-				&:hover {
-					color: $amber;
-				}
-			}
-		}
-
-		#dialog-trigger {
-			min-width: 55px;
-			&:hover {
-				color: $amber;
-			}
-		}
-	}
-
-	#showcase {
-		min-width: 30vw;
-		// overflow-y: hidden;
-		overflow-x: hidden;
-
-		/* custom embedded mailchimp subscribe form */
-		#mc_embed_signup {
-			background: $black;
-			height: auto!important;
-			clear: left;
-			padding: 0;
-
-			#mc-embedded-subscribe-form { padding-left: 0; }
-
-			label {
-				width: 100%;
-				text-align: center;
-			}
-
-			#mce-EMAIL { width: 100%; }
-
-			.clear {
-				#mc-embedded-subscribe {
-					width: 100%;
-
-					&:hover {
-						background: $amber;
-						width: 100%;
-						color: $black;
-					}
-				}
-			}
-		}
-
-		/* custom soundcloud player */
-		#sc-player {
-			width: 100%;
-			border-radius: 0;
-			text-align: left;
-			background: $black;
-
-			iframe { border: 0; width: 100%; }
-
-			div {
-				&:hover {
-					cursor: default;
-				}
-			}
-		}
-
-		/* used in about section */
-		#powered_by {
-			background: rgba(255,255,255, 0.5);
-			color: $black;
-		}
-	}
-
-	#twitter {
-		overflow-y: scroll;
-		overflow-x: hidden;
-		display: block;
-		box-sizing: border-box;
-		position: relative;
-		padding-left: 0.5em;
-		font-variant: small-caps;
-		height: 100%;
-		z-index: 10;
-		background-color: rgba(0, 0, 0, 0.5);
-
-		iframe {
-			width: 100%;
-			height: 100%;
-			padding-left: 0.1em;
-			padding-right: 0.1em;
-			background-color: transparent;
-
-			html {
-				body {
-					.root { background-color: transparent; }
-				}
-			}
-		}
-	}
-
-/*
-*	blog styling
-*/
-	#blog, #blog-post-preview {
-
-		.post {
-			color: $white;
-			padding: 0 $padding 0 $padding;
-
-			.heading {
-				margin: ($padding * 2) 0 ($padding * 2) 0;
-				text-transform: uppercase;
-
-				h4 {
-					text-align: center;
-
-					.label-logo {
-						//height: 28px;
-						height: auto !important;
-						width: auto !important;
-						box-sizing: border-box;
-						// border: 1px white dashed;
-					}
-				}
-
-				.links {
-					a {
-						min-width: 55px;
-						&:hover {
-							color: $amber;
-						}
-					}
-				}
-
-			}
-
-			#text {
-				padding: 0 $padding 0 $padding;
-				font-size: 13pt;
-				overflow-y: scroll;
-
-				@media (max-width: 959px) {
-					height: auto !important;
-					overflow: visible;
-				}
-			}
-
-			iframe {
-				height: calc(100vh / 2);
-			}
-		}
-	}
-
-/*
-*	actions speed dial
-*/
-	#actions {
+	#spinner {
+		display: flex;
 		position: fixed;
-		bottom: 0;
-		right: 0.6em;
-		background: transparent;
-	}
-/*
-*	contact
-*/
-	#contact {
-		flex: 1 1 auto;
-		align-self: stretch;
+		align-items: center;
+		justify-content: center;
+		width: 100vw;
+		height: 100vh;
+		text-align: center;
+		z-index: 100000;
+		background: rgba(0, 0, 0, 0.15);
 
-		.contact-instructions {
-			color: $white;
-			background: rgba(0, 0, 0, 0.5);
-			display: block;
-			min-height: auto!important;
-		}
-
-	}
-
-	// common instructions container
-	.instructions {
-		padding: $padding;
-	}
-
-/*
-*	user
-*/
-	#user {
-		#soundcloud-user {
-			overflow-y: auto;
-			span {
-				padding: $padding;
-			}
-		}
-
-		#soundcloud-playlists {
-			overflow-y: auto;
-
-			.playlist {
-				padding: $padding;
-			}
-		}
-	}
-
-/*
-*	admin
-*/
-	#admin {
-		.data-container {
-			min-height: 100%;
+		mat-spinner {
+			width: 20vh;
 			height: auto!important;
-			width: 100%;
 		}
 	}
+
+/*
+*	general helper classes
+*/
+	.nohover {
+		&:hover {
+			cursor: default;
+		}
+	}
+
+	.selected {
+		background-color: lightgrey;
+	}
+
+	.clamp-flex {
+		text-overflow: ellipsis;
+		/* Needed to make it work */
+		overflow: hidden;
+		white-space: nowrap;
+		width: 150px;
+		text-align: left;
+	}
+
+/*
+*	override some material selectors
+*/	
+	mat-form-field {
+		padding-top: $boxPadding * 2;
+		padding-bottom: $boxPadding * 2;
+	}
+
+}

@@ -1,0 +1,64 @@
+<h2 mat-dialog-title>{{ 'contact.title' | translate }}</h2>
+
+<mat-dialog-content>
+
+	<div *ngIf="feedback" fxLayout="row" fxLayoutAlign="center center">
+		<span fxFlex="0 1 auto">{{feedback}}</span>
+	</div>
+
+	<form fxLayout="row wrap" fxLayoutAlign="start stretch" fxLayoutGap="10px" [formGroup]="emailForm" (ngSubmit)="submitForm()" novalidate class="mat-body-2">
+
+		<mat-form-field fxFlex="100">
+			<input matInput type="text" name="email" [formControl]="emailForm.controls.email" placeholder="{{ 'form.email' | translate }}" />
+			<mat-error *ngIf="emailForm.controls.email.invalid" class="mat-body-1">
+				{{ 'form.invalid.email' | translate }}
+			</mat-error>
+		</mat-form-field>
+
+		<mat-form-field fxFlex="100">
+			<input matInput type="text" name="name" [formControl]="emailForm.controls.name" placeholder="{{ 'form.name' | translate }}" />
+			<mat-error *ngIf="emailForm.controls.name.invalid" class="mat-body-1">
+				{{ 'form.invalid.name' | translate }}
+			</mat-error>
+		</mat-form-field>
+
+		<mat-form-field fxFlex="100">
+			<input matInput type="text" name="header" [formControl]="emailForm.controls.header" placeholder="{{ 'form.header' | translate }}" />
+			<mat-error *ngIf="emailForm.controls.header.invalid" class="mat-body-1">
+				{{ 'form.invalid.header' | translate }}
+			</mat-error>
+		</mat-form-field>
+
+		<mat-form-field fxFlex="100">
+			<textarea matInput type="text" name="message" [formControl]="emailForm.controls.message" placeholder="{{ 'form.message' | translate }}"></textarea>
+			<mat-error *ngIf="emailForm.controls.message.invalid" class="mat-body-1">
+				{{ 'form.invalid.message' | translate }}
+			</mat-error>
+		</mat-form-field>
+
+		<div>
+			<span fxFlex fxHide="true">
+				<mat-toolbar class="controls" fxLayout.xs="row wrap" fxLayoutAlign="center center">
+					<button mat-button tabindex="-1" type="submit" [disabled]="emailForm.invalid || emailForm.pristine" [attr.aria-label]="submit" color="accent">
+						<mat-icon class="metarial-icons">done</mat-icon> {{ 'form.submit' | translate }}
+					</button>
+				</mat-toolbar>
+			</span>
+		</div>
+
+	</form>
+
+</mat-dialog-content>
+<mat-dialog-actions fxLayoutAlign="center center">
+
+	<mat-progress-bar mode="indeterminate" *ngIf="!loaded()"></mat-progress-bar>
+
+	<button mat-button tabindex="-1" (click)="submitForm()" [disabled]="emailForm.invalid || emailForm.pristine" matTooltip="{{ 'action.confirm' | translate }}" color="accent" *ngIf="loaded()">
+		<mat-icon class="metarial-icons">done</mat-icon><span [fxHide.xs]="true"> {{ 'action.confirm' | translate }}</span>
+	</button>
+
+	<button mat-button tabindex="-1" (click)="closeDialog()" matTooltip="{{ 'action.close' | translate }}" *ngIf="loaded()">
+		<mat-icon class="metarial-icons">close</mat-icon><span [fxHide.xs]="true"> {{ 'action.close' | translate }}</span>
+	</button>
+
+</mat-dialog-actions>

@@ -19,7 +19,7 @@ cache:
     - "node_modules"
 # install global and local dependencies
 install:
-  - npm install -g gulp-cli
+  - npm install -g gulp-cli typescript
   - npm install
 # export required environment variables before running tests
 before_script:
@@ -29,7 +29,10 @@ before_script:
   - sleep 2
 # build app, start it, and run tests
 script:
-  - gulp build
+  - gulp lint
+  - gulp compile-and-build
+  - gulp set-build-hash
   - gulp server & # ampersand is required to run server in background
-  - gulp unit-tests
-  # - gulp client-e2e-test # uncomment to run e2e tests but it requires correct env variables setup via travis-ci.org UI
+  - gulp server-test
+  - gulp client-unit-test
+  - gulp client-e2e-test

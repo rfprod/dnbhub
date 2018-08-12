@@ -4,13 +4,19 @@
 		"ignore": [
 			"firebase.json",
 			"**/node_modules/**",
-			".env",
 			"**/.*",
-			"public/*.js",
-			"public/scss/**",
-			"test/**",
 			"**/*.sh",
-			"**/*.md"
+			"**/*.md",
+			"public/app/components",
+			"public/app/directives",
+			"public/app/interfaces",
+			"public/app/modules",
+			"public/app/pipes",
+			"public/app/scss",
+			"public/app/services",
+			"public/app/*.*",
+			"test/**",
+			"logs/**"			
 		],
 		"headers": [
 			{

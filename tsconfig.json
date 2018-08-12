@@ -1,0 +1,47 @@
+{
+	"compilerOptions": {
+		"allowSyntheticDefaultImports": true,
+		"alwaysStrict": true,
+		"importHelpers": true,
+		"baseUrl": ".",
+		"paths": {
+			"tslib": ["node_modules/tslib/tslib.d.ts"],
+			"rxjs": ["node_modules/rxjs/bundles/rxjs.umd.js"],
+			"*": ["*"]
+		},
+		"emitDecoratorMetadata": true,
+		"esModuleInterop": true,
+		"experimentalDecorators": true,
+		"forceConsistentCasingInFileNames": true,
+		"lib": ["es5", "es2015", "es2017", "dom", "ScriptHost"],
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"noImplicitAny": false,
+		"removeComments": true,
+		"sourceMap": true,
+		"suppressImplicitAnyIndexErrors": true,
+		"target": "es5",
+		"typeRoots": ["./node_modules/@types"],
+		"types": ["node", "jasmine", "hammerjs", "core-js", "jquery"]
+	},
+	"angularCompilerOptions": {
+		"fullTemplateTypeCheck": true,
+		"preserveWhiteSpace": false,
+		"strictInjectionParameters": true
+	},
+	"include": [
+		"public/app",
+		"test/client"
+	],
+	"exclude": [
+		".git",
+		"app",
+		"node_modules",
+		"public/css",
+		"public/img",
+		"public/js",
+		"test/*.*",
+		"test/server",
+		"test/e2e"
+	]
+}
