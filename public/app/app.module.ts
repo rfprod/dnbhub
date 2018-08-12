@@ -47,10 +47,14 @@ import { SendEmailService } from './services/send-email.service';
 import { GoogleApiService } from './services/google-api.service';
 import { SoundcloudService } from './services/soundcloud.service';
 import { FacebookService } from './services/facebook.service';
+import { TwitterService } from './services/twitter.service';
 
 import { IframeContentLoadedDirective } from './directives/iframe-content-loaded.directive';
 import { ImageLoadedDirective } from './directives/image-loaded.directive';
 
+/**
+ * Main application module.
+ */
 @NgModule({
 	declarations: [ AppComponent, AppNavComponent, AppIndexComponent, AppSinglesComponent, AppFreedownloadsComponent,
 									AppRepostsComponent, AppBlogComponent, AppAboutComponent, AppUserComponent, AppAdminComponent,
@@ -64,7 +68,7 @@ import { ImageLoadedDirective } from './directives/image-loaded.directive';
 	providers 	: [ { provide: APP_BASE_HREF, useValue: '/' }, { provide: LocationStrategy, useClass: PathLocationStrategy },
 									{ provide: 'Window', useValue: window }, CustomServiceWorkerService, CustomDeferredService,
 									CustomHttpHandlersService, EventEmitterService, UserInterfaceUtilsService,
-									FirebaseService, SendEmailService, GoogleApiService, SoundcloudService, FacebookService
+									FirebaseService, SendEmailService, GoogleApiService, SoundcloudService, FacebookService, TwitterService
 								],
 	schemas 		: [ CUSTOM_ELEMENTS_SCHEMA ],
 	bootstrap 	: [ AppComponent ]

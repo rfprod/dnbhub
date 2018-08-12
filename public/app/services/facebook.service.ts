@@ -66,7 +66,7 @@ export class FacebookService {
 		// removed both script and fb-root
 		if (js) {
 			ref.parentNode.removeChild(js); // sdk script
-			// ref.parentNode.removeChild(ref); // fb-root
+			ref.parentNode.removeChild(ref); // fb-root
 		}
 	}
 

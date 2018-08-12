@@ -9,6 +9,8 @@ export const LANG_RU_TRANSLATIONS = {
 	reposts: 'Репосты',
 	blog: 'Блог',
 	auth: 'Аутентификация',
+	user: 'Пользователь',
+	admin: 'Администратор',
 	about: 'Информация',
 	language: {
 		title: 'Язык',

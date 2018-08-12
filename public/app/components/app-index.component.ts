@@ -6,6 +6,7 @@ import { EventEmitterService } from '../services/event-emitter.service';
 import { CustomDeferredService } from '../services/custom-deferred.service';
 import { FirebaseService } from '../services/firebase.service';
 import { FacebookService } from '../services/facebook.service';
+import { TwitterService } from '../services/twitter.service';
 import { SoundcloudService } from '../services/soundcloud.service';
 
 @Component({
@@ -25,6 +26,7 @@ export class AppIndexComponent implements OnInit, AfterViewInit, OnDestroy {
 	 * @param renderer Application renderer
 	 * @param firebaseService Service for making firebase requests
 	 * @param facebookService Facebook API wrapper
+	 * @param twitterService Twitter API wrapper
 	 * @param soundcloudService Soundcloud API wrapper
 	 * @param window Window reference
 	 */
@@ -36,6 +38,7 @@ export class AppIndexComponent implements OnInit, AfterViewInit, OnDestroy {
 		private renderer: Renderer2,
 		private firebaseService: FirebaseService,
 		private facebookService: FacebookService,
+		private twitterService: TwitterService,
 		private soundcloudService: SoundcloudService,
 		@Inject('Window') private window: Window
 	) {
@@ -121,6 +124,7 @@ export class AppIndexComponent implements OnInit, AfterViewInit, OnDestroy {
 		console.log('ngAfterViewInit: AppIndexComponent view initialized');
 		// rerender facebook widget
 		this.facebookService.renderFacebookWidget();
+		this.twitterService.renderTwitterWidget();
 	}
 	/**
 	 * Lifecycle hook called after component is destroyed.

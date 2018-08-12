@@ -146,8 +146,38 @@ $selected: rgba(0, 0, 0, 0.4);
 			cursor: default;
 		}
 	}
+	/*
+	*	class for custom svg icons
+	*/
+	.material-icons-svg {
+		font-weight: normal;
+		font-style: normal;
+		font-size: 24px;  /* Preferred icon size */
+		display: inline-block;
+		line-height: 1;
+		text-transform: none;
+		letter-spacing: normal;
+		word-wrap: normal;
+		white-space: nowrap;
+		direction: ltr;
+
+		/* Support for all WebKit browsers. */
+		-webkit-font-smoothing: antialiased;
+		/* Support for Safari and Chrome. */
+		text-rendering: optimizeLegibility;
+
+		/* Support for Firefox. */
+		-moz-osx-font-smoothing: grayscale;
+
+		/* Support for IE. */
+		font-feature-settings: 'liga';
+
+		&:hover {
+			cursor: default;
+		}
+	}
 	a, button {
-		.material-icons, .material-icons-fas, .material-icons-fab {
+		.material-icons, .material-icons-fas, .material-icons-fab, .material-icons-svg {
 			&:hover {
 				cursor: pointer;
 			}
@@ -169,8 +199,6 @@ body {
 	display: block;
 	height: 100%;
 	width: 100vw;
-	background: #000 url(../img/electric-circuit.png) center center no-repeat;
-	background-attachment: fixed;
 	margin: 0;
 	padding: 0;
 
@@ -188,6 +216,11 @@ body {
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+		max-height: 100%;
+
+		object {
+			height: 100%;
+		}
 	}
 
 	app {
@@ -201,29 +234,30 @@ body {
 
 		mat-sidenav {
 			width: 60vw;
-
-			mat-grid-tile {
-				&:hover {
-					cursor: pointer;
-					border: 1px dotted $black;
-				}
-			}
 		}
 
 		// overrider mat drawer styling
 		.mat-drawer-content {
 			height: auto!important;
 			overflow-y: auto;
+			// background: #000 url(../img/electric-circuit.png) center center no-repeat; // TODO:client make it lighter
+			background-attachment: fixed;
+		}
+
+		.twitter-timeline {
+			background: #000 url(../img/electric-circuit.png) center center no-repeat; // TODO:client make it lighter
+			background-attachment: fixed;
 		}
 	}
 
-	app-index, app-singles, app-freedownloads, app-reposts, app-blog, app-user, app-admin, app-about{
+	app-index, app-singles, app-freedownloads, app-reposts, app-blog, app-user, app-admin, app-about {
 		flex: 1 1 auto;
-		max-width: 100vw;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		max-width: 100%;
 
 		soundcloud-player {
-			flex: 1 1 auto;
-			max-width: 100%;
+			min-width: 300px;
 		}
 	}
 

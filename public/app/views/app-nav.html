@@ -1,0 +1,82 @@
+<mat-toolbar color="primary">
+	<span fxLayout="row" fxLayoutAlign="start stretch">
+		<mat-icon svgIcon="dnbhub-logo-roundbg" class="material-icons-svg" alt="{{ 'title' | translate }}" title="{{ 'title' | translate  }}"></mat-icon>
+	</span>
+	<span fxFlex="1 1 auto"></span>
+	<span fxFlex="0 1 auto" fxLayout="row" fxLayoutAlign="center center" class="nohover">
+		<span fxFlex="0 1 auto" *ngIf="navButtonsState[0]">
+			<mat-icon fontSet="fas" fontIcon="fa-fire" class="material-icons-fas"></mat-icon> {{ 'index' | translate }}
+		</span>
+		<span fxFlex="0 1 auto" *ngIf="navButtonsState[1]">
+			<mat-icon fontSet="fab" fontIcon="fa-soundcloud" class="material-icons-fab"></mat-icon> {{ 'singles' | translate }}
+		</span>
+		<span fxFlex="0 1 auto" *ngIf="navButtonsState[2]">
+			<mat-icon fontSet="fab" fontIcon="fa-soundcloud" class="material-icons-fab"></mat-icon> {{ 'freedownloads' | translate }}
+		</span>
+		<span fxFlex="0 1 auto" *ngIf="navButtonsState[3]">
+			<mat-icon fontSet="fab" fontIcon="fa-soundcloud" class="material-icons-fab"></mat-icon> {{ 'reposts' | translate }}
+		</span>
+		<span fxFlex="0 1 auto" *ngIf="navButtonsState[4]">
+			<mat-icon fontSet="fas" fontIcon="fa-th-large" class="material-icons-fas"></mat-icon> {{ 'blog' | translate }}
+		</span>
+		<span fxFlex="0 1 auto" *ngIf="navButtonsState[5]">
+			<mat-icon fontSet="fas" fontIcon="fa-info" class="material-icons-fas"></mat-icon> {{ 'about' | translate }}
+		</span>
+		<span fxFlex="0 1 auto" *ngIf="navButtonsState[6]">
+			<mat-icon fontSet="fas" fontIcon="fa-user" class="material-icons-fas"></mat-icon> {{ 'user' | translate }}
+		</span>
+		<span fxFlex="0 1 auto" *ngIf="navButtonsState[7]">
+			<mat-icon fontSet="fas" fontIcon="fa-user-secret" class="material-icons-fas"></mat-icon> {{ 'admin' | translate }}
+		</span>
+	</span>
+	<span fxFlex="1 1 auto"></span>
+	<span class="mat-toolbar-tools">
+		<button mat-icon-button [matMenuTriggerFor]="mobileMenu">
+			<mat-icon fontSet="fas" fontIcon="fa-ellipsis-v" class="material-icons-fas"></mat-icon>
+		</button>
+		<mat-menu #mobileMenu="matMenu" [fxHide.md]="true" [fxHide.lg]="true">
+			<span mat-menu-item [routerLink]="['index']" (click)="switchNavButtons($event, 'index')" [disabled]="navButtonsState[0]">
+				<mat-icon fontSet="fas" fontIcon="fa-fire" class="material-icons-fas"></mat-icon> {{ 'index' | translate }}
+			</span>
+			<mat-divider></mat-divider>
+			<span mat-menu-item [routerLink]="['singles']" (click)="switchNavButtons($event, 'singles')" [disabled]="navButtonsState[1]">
+				<mat-icon fontSet="fab" fontIcon="fa-soundcloud" class="material-icons-fab"></mat-icon> {{ 'singles' | translate }}
+			</span>
+			<mat-divider></mat-divider>
+			<span mat-menu-item [routerLink]="['freedownloads']" (click)="switchNavButtons($event, 'freedownloads')" [disabled]="navButtonsState[2]">
+				<mat-icon fontSet="fab" fontIcon="fa-soundcloud" class="material-icons-fab"></mat-icon> {{ 'freedownloads' | translate }}
+			</span>
+			<mat-divider></mat-divider>
+			<span mat-menu-item [routerLink]="['reposts']" (click)="switchNavButtons($event, 'reposts')" [disabled]="navButtonsState[3]">
+				<mat-icon fontSet="fab" fontIcon="fa-soundcloud" class="material-icons-fab"></mat-icon> {{ 'reposts' | translate }}
+			</span>
+			<mat-divider></mat-divider>
+			<span mat-menu-item [routerLink]="['blog']" (click)="switchNavButtons($event, 'blog')" [disabled]="navButtonsState[4]">
+				<mat-icon fontSet="fas" fontIcon="fa-th-large" class="material-icons-fas"></mat-icon> {{ 'blog' | translate }}
+			</span>
+			<mat-divider></mat-divider>
+			<span mat-menu-item [routerLink]="['about']" (click)="switchNavButtons($event, 'about')" [disabled]="navButtonsState[5]">
+				<mat-icon fontSet="fas" fontIcon="fa-info" class="material-icons-fas"></mat-icon> {{ 'about' | translate }}
+			</span>
+			<mat-divider></mat-divider>
+			<span mat-menu-item (click)="showAuthDialog()">
+				<mat-icon fontSet="fas" fontIcon="fa-sign-in-alt" class="material-icons-fas"></mat-icon> {{ 'auth' | translate }}
+			</span>
+			<mat-divider></mat-divider>
+			<span mat-menu-item [routerLink]="['user']" (click)="switchNavButtons($event, 'user')" [disabled]="navButtonsState[6]">
+				<mat-icon fontSet="fas" fontIcon="fa-user" class="material-icons-fas"></mat-icon> {{ 'user' | translate }}
+			</span>
+			<mat-divider></mat-divider>
+			<span mat-menu-item [routerLink]="['admin']" (click)="switchNavButtons($event, 'admin')" [disabled]="navButtonsState[7]">
+				<mat-icon fontSet="fas" fontIcon="fa-user-secret" class="material-icons-fas"></mat-icon> {{ 'admin' | translate }}
+			</span>
+			<mat-divider></mat-divider>
+			<span mat-menu-item [disabled]="true">
+				<mat-icon fontSet="fas" fontIcon="fa-globe" class="material-icons-fas"></mat-icon> {{ 'language.title' | translate }}
+			</span>
+			<span fxFlex fxLayout="row" fxLayoutAlign="center center">
+				<button mat-button *ngFor="let lang of supportedLanguages" [disabled]="isLanguageSelected(lang.key)" (click)="selectLanguage(lang.key)">{{ 'language.' + lang.key | translate}}</button>
+			</span>
+		</mat-menu>
+	</span>
+</mat-toolbar>

@@ -1,4 +1,9 @@
-<div fxFlex="100" fxLayout="row wrap">
-	<soundcloud-player fxFlex="50" fxFlex.lt-sm="100" [mode]="'pl-reposts1'"></soundcloud-player>
-	<soundcloud-player fxFlex="50" fxFlex.lt-sm="100" [mode]="'pl-reposts2'"></soundcloud-player>
+<div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between start" #content>
+	<soundcloud-player fxFlex="49" fxFlex.lt-sm="100" [mode]="'pl-reposts1'"></soundcloud-player>
+	<soundcloud-player fxFlex="49" fxFlex.lt-sm="100" fxShow fxHide.lt-sm [mode]="'pl-reposts2'"></soundcloud-player>
 </div>
+
+<!--
+	TODO:client debug this layout
+	when user scrolls down and hovers fifth track cover from top, layout bugs, scrollbard appear
+-->

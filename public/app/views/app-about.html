@@ -31,25 +31,30 @@
 				</a>
 			</div>
 		</div>
-		<div fxFlex="100" class="mat-body-1" [ngStyle]="{'padding': '5px'}">
-			<span [innerHtml]="details.text"></span>
-			<button mat-icon-button (click)="showContactDialog()" title="{{ 'contact.open' | translate }}">
-				<mat-icon fontSet="fas" fontIcon="fa-envelope" class="material-icons-fas"></mat-icon>
-			</button>
+		<div fxFlex="100" fxLayout="row wrap" class="mat-body-1" [ngStyle]="{'padding': '5px'}">
+			<span fxFlex="100" [innerHtml]="details.text"></span>
+			<mat-toolbar fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center center">
+				<button mat-button (click)="showContactDialog()" title="{{ 'contact.open' | translate }}">
+					<mat-icon fontSet="fas" fontIcon="fa-envelope" class="material-icons-fas"></mat-icon>
+					{{ 'contact.open' | translate }}
+				</button>
+				<a mat-button type="button" [attr.aria-label]="submit" href="https://dnbhub.us3.list-manage.com/subscribe/post?u=3eeba7cfe8388b91c662bdf95&id=8cca3229c8" target=_blank>
+					<mat-icon fontSet="fas" fontIcon="fa-newspaper" class="material-icons-fas"></mat-icon>
+					{{ 'subscribe.title' | translate }}
+				</a>
+			</mat-toolbar>
 		</div>
 	</div>
 
 	<div fxFlex="25" fxHide.xs fxLayout="row wrap" fxLayoutAlign="start start">
-		<div fxFlex="100" fxLayout="row" fxLayoutAlign="center center">
-			<mat-toolbar fxFlex="100" fxLayout="row" fxLayoutAlign="center center">
-				<a mat-button type="button" [attr.aria-label]="submit" color="accent" href="https://dnbhub.us3.list-manage.com/subscribe/post?u=3eeba7cfe8388b91c662bdf95&id=8cca3229c8" target=_blank>
-					<mat-icon class="metarial-icons">email</mat-icon> {{ 'subscribe.title' | translate }}
-				</a>
-			</mat-toolbar>
-		</div>
+		<h2 fxFlex="100" fxLayout="row" fxLayoutAlign="center center">
+			Powered By
+		</h2>
 		<div fxFlex="100" fxLayout="column" fxLayoutAlign="center center">
-			<img [ngStyle]="{'max-width': '275px', 'width': '90%'}" src="img/svg/DH_logo-no_bg_greyscale.svg">
-			<img fxFlex *ngFor="let item of dnbhubDetails.poweredBy" title="{{item.name}}" src="{{item.logo}}"/>
+			<img fxFlex *ngFor="let item of details.poweredBy" [ngStyle]="{'max-width': '275px', 'width': '90%', 'max-height': '100px'}" title="{{item.name}}" src="{{item.logo}}"/>
 		</div>
+		<small fxFlex="100">
+			Some icons are made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">flaticon.com</a>,<br/>licence <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+		</small>
 	</div>
 </div>

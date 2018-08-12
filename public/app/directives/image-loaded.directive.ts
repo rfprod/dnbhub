@@ -20,7 +20,7 @@ export class ImageLoadedDirective implements OnInit {
 	 * Removes event listener only.
 	 */
 	private loadEventListener(event: any): void {
-		console.log('imageload, loadEventListener, event', event);
+		// console.log('imageload, loadEventListener, event', event);
 		const el: ElementRef = new ElementRef(event.path[0]);
 		el.nativeElement.removeEventListener('load', this.loadEventListener);
 	}
@@ -30,9 +30,9 @@ export class ImageLoadedDirective implements OnInit {
 	 * Replaces errored image with default one, and removes event listener.
 	 */
 	private errorEventListener(event: any): void {
-		console.log('imageload, errorEventListener, event', event);
+		// console.log('imageload, errorEventListener, event', event);
 		const el: ElementRef = new ElementRef(event.path[0]);
-		el.nativeElement.src = window.location.origin + '/img/kosmos_square.svg';
+		el.nativeElement.src = window.location.origin + '/img/svg/no_image_placeholder.svg';
 		el.nativeElement.removeEventListener('load', this.loadEventListener);
 	}
 

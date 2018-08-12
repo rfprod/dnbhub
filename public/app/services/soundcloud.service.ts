@@ -52,12 +52,15 @@ export class SoundcloudService {
 	/**
 	 * Shared Soundcloud data.
 	 */
-	public data: { tracks: ISoundcloudTracksLinkedPartitioning, playlist: any[] } = {
+	public data: { tracks: ISoundcloudTracksLinkedPartitioning, playlist: { description: string, tracks: any[] } } = {
 		tracks: {
 			collection: [],
 			next_href: ''
 		},
-		playlist: []
+		playlist: {
+			description: '',
+			tracks: []
+		}
 	};
 
 	/**
@@ -75,7 +78,10 @@ export class SoundcloudService {
 				collection: [],
 				next_href: ''
 			},
-			playlist: []
+			playlist: {
+				description: '',
+				tracks: []
+			}
 		};
 		this.noMoreTracks = false;
 	}
@@ -156,6 +162,7 @@ export class SoundcloudService {
 					track.description = this.processDescription(track.description);
 					return track;
 				});
+				this.data.playlist = playlist;
 				def.resolve(playlist);
 			})
 			.catch((error: any) => def.reject(error));

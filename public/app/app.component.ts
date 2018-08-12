@@ -21,15 +21,15 @@ declare let $: JQueryStatic;
 export class AppComponent implements OnInit, OnDestroy {
 
 	/**
-	 * @param el Element reference
-	 * @param matIconRegistry Material icons registry
-	 * @param dateAdapter Material moment date adapter
-	 * @param dialog Reusable dialog
-	 * @param domSanitizer DOM sanitizer
-	 * @param emitter Event emitter service - components interaction
-	 * @param translateService Translate service - UI translation to predefined languages
-	 * @param facebookService Facebook service - Facebook JavaScrip SDK wrapper
-	 * @param serviceWorker Service worker service
+	 * @param el Element reference.
+	 * @param matIconRegistry Material icons registry.
+	 * @param dateAdapter Material moment date adapter.
+	 * @param dialog Reusable dialog.
+	 * @param domSanitizer DOM sanitizer.
+	 * @param emitter Event emitter service - components interaction.
+	 * @param translateService Translate service - UI translation to predefined languages.
+	 * @param facebookService Facebook service - Facebook JavaScrip SDK wrapper.
+	 * @param serviceWorker Service worker service.
 	 */
 	constructor(
 		private el: ElementRef,

@@ -9,6 +9,8 @@ export const LANG_EN_TRANSLATIONS = {
 	reposts: 'Reposts',
 	blog: 'Blog',
 	auth: 'Authentication',
+	user: 'User',
+	admin: 'Admin',
 	about: 'About',
 	language: {
 		title: 'Language',

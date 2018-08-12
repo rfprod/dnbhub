@@ -55,7 +55,10 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
 	/**
 	 * Predefined
 	 */
-	private predefinedIDs = {
+	private predefinedIDs: {
+		user: { dnbhub: string },
+		playlist: { everything: string, reposts1: string, reposts2: string, freedownloads: string, samplepacks: string }
+	} = {
 		user: {
 			dnbhub: '1275637'
 		},
@@ -86,7 +89,12 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
 	/**
 	 * Soundcloud playlist.
 	 */
-	public playlist: any = {};
+	public playlist: any[] = this.soundcloudService.data.playlist.tracks.slice();
+
+	/**
+	 * Actual output, array of tracks either from user profile or from playlist.
+	 */
+	public tracksOutput: any[] = [];
 
 	/**
 	 * Selected track index.
@@ -133,6 +141,8 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
 						this.noMoreTracks = true;
 					}
 					this.tracks = this.soundcloudService.data.tracks.collection.slice();
+					this.tracksOutput = this.tracks;
+					this.renderTracks = this.tracks.length;
 					this.loading = false;
 					this.emitter.emitSpinnerStopEvent();
 				},
@@ -142,6 +152,45 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
 					this.emitter.emitSpinnerStopEvent();
 				}
 			);
+		} else {
+			console.log('Soundcloud player: no more tracks');
+		}
+	}
+
+	/**
+	 * Indicates how many tracks should be rendered in playlist moder.
+	 */
+	private renderTracks: number = 0;
+
+	/**
+	 * Loads playlist.
+	 */
+	private loadPlaylist(): void {
+		this.loading = true;
+		this.emitter.emitSpinnerStartEvent();
+		this.soundcloudService.getPlaylist(this.playlistId).then(
+			(playlist: any) => {
+				console.log('got playlist', playlist);
+				this.playlist = playlist.tracks.slice();
+				this.renderMoreTracks();
+				this.loading = false;
+				this.emitter.emitSpinnerStopEvent();
+			},
+			(error: any) => {
+				console.log('soundcloudService.getUserTracks, error', error);
+				this.loading = false;
+				this.emitter.emitSpinnerStopEvent();
+			}
+		);
+	}
+
+	/**
+	 * Renders more tracks, applicable in playlist mode.
+	 */
+	private renderMoreTracks(): void {
+		if (this.renderTracks <= this.playlist.length) {
+			this.renderTracks += 10;
+			this.tracksOutput = this.playlist.slice(0, this.renderTracks + 1);
 		} else {
 			console.log('Soundcloud player: no more tracks');
 		}
@@ -268,12 +317,14 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
 	/**
 	 * Resets player.
 	 * Is used when mode Input chanes.
-	 * Kills player, resets soundcloud service data.
+	 * Kills player, resets soundcloud service data, local data, local flags.
 	 */
 	private resetPlayer(): void {
 		this.playerKill();
 		this.soundcloudService.resetServiceData();
 		this.tracks = [];
+		this.playlist = [];
+		this.noMoreTracks = false;
 	}
 
 	/**
@@ -285,13 +336,10 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
 		if (/dnbhub/.test(this.mode)) {
 			this.loadMoreTracks();
 		} else if (/pl\-/.test(this.mode)) {
-			this.soundcloudService.getPlaylist(this.playlistId).then(
-				(playlist: object) => {
-					console.log('got playlist', playlist);
-					this.playlist = playlist;
-				},
-				(error: any) => console.log('soundcloudService.getUserTracks, error', error)
-			);
+			const playlistKey: string = this.mode.slice(3);
+			console.log('playlistKey', playlistKey);
+			this.playlistId = this.predefinedIDs.playlist[playlistKey];
+			this.loadPlaylist();
 		}
 
 		const sub: any = this.emitter.getEmitter().subscribe((event: any) => {
@@ -299,6 +347,10 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
 			if (event.soundcloud === 'loadMoreTracks') {
 				if (!this.noMoreTracks) {
 					this.loadMoreTracks();
+				}
+			} else if (event.soundcloud === 'renderMoreTracks') {
+				if (!this.noMoreTracks) {
+					this.renderMoreTracks();
 				}
 			}
 		});
@@ -317,8 +369,8 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
 			this.resetPlayer();
 			const playlistKey: string = changes.mode.currentValue.slice(3);
 			console.log('playlistKey', playlistKey);
-			this.playlist = this.predefinedIDs.user[playlistKey];
-			this.loadMoreTracks();
+			this.playlistId = this.predefinedIDs.playlist[playlistKey];
+			this.loadPlaylist();
 		}
 	}
 	/**
