@@ -6,4 +6,4 @@ node_modules/**
 *.html
 *.min.js
 *.json
-*.php
+*.md

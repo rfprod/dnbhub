@@ -1,8 +1,32 @@
+# dependencies
 node_modules/
-.env
+
+# environment variables
+*.env
+.*.env
+
+# logs
 *.log
-public/css/*.min.css
+logs/*
+!logs/*.gitkeep
+
+# compiled client app
+public/app/*.js
+public/app/*.js.map
+public/app/**/*.js
+public/app/**/*.js.map
+
+# compiled client tests
+test/client/*.js
+test/client/*.js.map
+test/client/**/*.js
+test/client/**/*.js.map
+
+# built client app files
 public/js/*.min.js
 public/js/*.min.js.map
-public/fonts/*.*
-!public/fonts/*.gitkeep
+public/css/*.min.css
+public/webfonts/*.*
+!public/webfonts/*.gitkeep
+public/SHA1SUMS.json
+public/hashsum.json

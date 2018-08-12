@@ -114,8 +114,6 @@ module.exports = function(config){
 			reportName: 'client'
 		},
 
-		browserNoActivityTimeout: 20000,
-
 		failOnEmptyTestSuite: false, // overrides the error, warn instead - by default returns error if there're no tests defined
 
 		hostname: process.env.IP,

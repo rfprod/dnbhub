@@ -101,8 +101,8 @@
 	},
 	"scripts": {
 		"prestart": "npm install && npm run clear-ts-build",
-		"clear-ts-build": "find ./public/app/ ./test/client/ ./public/js/ -type f -name \"*.js\" -exec rm {} \\; && npm run clear-js-maps",
-		"clear-js-maps": "find ./public/app/ ./test/client/ -type f -regex \".*\\.js\\..*\" -exec rm {} \\;",
+		"clear-ts-build": "find ./public/app/ ./test/client/unit ./public/js/ -type f -name \"*.js\" -exec rm {} \\; && npm run clear-js-maps",
+		"clear-js-maps": "find ./public/app/ ./test/client/unit -type f -regex \".*\\.js\\..*\" -exec rm {} \\;",
 		"start": "gulp",
 		"pretest": "npm install",
 		"test": "gulp test",
