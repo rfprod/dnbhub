@@ -2,7 +2,8 @@ const testUtils = require('./test-utils');
 const headlessChromeFlags = testUtils.karmaHeadlessChromeFlags();
 const karmaBrowserTimeoutValue = testUtils.karmaBrowserTimeoutValue();
 
-module.exports = function(config){
+module.exports = function(config) {
+
 	config.set({
 
 		basePath : '../',
@@ -131,5 +132,6 @@ module.exports = function(config){
 		},
 		colors: true
 
-  });
+	});
+
 };

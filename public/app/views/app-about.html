@@ -48,8 +48,8 @@
 			</mat-toolbar>
 		</div>
 		<div fxFlex="100" fxLayout="column" fxLayoutAlign="center center">
-			<img [ngStyle]="{'max-width': '275px', 'width': '90%'}" src="./img/svg/DH_logo-no_bg_greyscale.svg">
-			<img fxFlex *ngFor="let item of dnbhubDetails.poweredBy" title="{{item.name}}" ng-src="{{item.logo}}"/>
+			<img [ngStyle]="{'max-width': '275px', 'width': '90%'}" src="img/svg/DH_logo-no_bg_greyscale.svg">
+			<img fxFlex *ngFor="let item of dnbhubDetails.poweredBy" title="{{item.name}}" src="{{item.logo}}"/>
 		</div>
 	</div>
 </div>

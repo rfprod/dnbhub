@@ -1,9 +1,9 @@
-const assert = require('chai').assert,
-	expect = require('chai').expect;
+const assert = require('chai').assert;
+const expect = require('chai').expect;
 
 const request = require('request');
-const cheerio = require('cheerio'),
-	str = require('string');
+const cheerio = require('cheerio');
+const str = require('string');
 
 const baseUrl = 'http://localhost:3000';
 
