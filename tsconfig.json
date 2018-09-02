@@ -13,7 +13,7 @@
 		"esModuleInterop": true,
 		"experimentalDecorators": true,
 		"forceConsistentCasingInFileNames": true,
-		"lib": ["es5", "es2015", "es2017", "dom", "ScriptHost"],
+		"lib": ["es5", "es2015", "es2017", "dom", "scripthost"],
 		"module": "commonjs",
 		"moduleResolution": "node",
 		"noImplicitAny": false,
