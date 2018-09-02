@@ -52,6 +52,7 @@ export const LANG_RU_TRANSLATIONS = {
 		close: 'Закрыть',
 		play: 'Играть',
 		download: 'Скачать',
-		buy: 'Купить'
+		buy: 'Купить',
+		select: 'Выбрать'
 	}
 };

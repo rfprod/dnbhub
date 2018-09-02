@@ -52,6 +52,7 @@ export const LANG_EN_TRANSLATIONS = {
 		close: 'Close',
 		play: 'Play',
 		download: 'Download',
-		buy: 'Buy'
+		buy: 'Buy',
+		select: 'Select'
 	}
 };

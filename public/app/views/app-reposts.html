@@ -1,9 +1,12 @@
-<div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between start" #content>
-	<soundcloud-player fxFlex="49" fxFlex.lt-sm="100" [mode]="'pl-reposts1'"></soundcloud-player>
-	<soundcloud-player fxFlex="49" fxFlex.lt-sm="100" fxShow fxHide.lt-sm [mode]="'pl-reposts2'"></soundcloud-player>
+<div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="space-between start" #content>
+	<mat-toolbar fxLayoutAlign="center center">
+		<mat-button-toggle-group #playlistSelector="matButtonToggleGroup" name="playlistSelector" aria-label="{{ 'action.select' | translate }}">
+			<mat-button-toggle checked value="pl-reposts1">Reposts #1</mat-button-toggle>
+			<mat-button-toggle value="pl-reposts2">Reposts #2</mat-button-toggle>
+		</mat-button-toggle-group>
+	</mat-toolbar>
+	<span fxFlex="100" fxLayout="row">
+		<soundcloud-player fxFlex="100" [fxHide]="playlistSelector.value !== 'pl-reposts1'" [mode]="'pl-reposts1'"></soundcloud-player>
+		<soundcloud-player fxFlex="100" [fxHide]="playlistSelector.value !== 'pl-reposts2'" [mode]="'pl-reposts2'"></soundcloud-player>
+	</span>
 </div>
-
-<!--
-	TODO:client debug this layout
-	when user scrolls down and hovers fifth track cover from top, layout bugs, scrollbard appear
--->

@@ -1,4 +1,4 @@
-export interface ISoundcloudTracksLinkedPartitioning {
-	collection: any[];
-	next_href: string;
+export class ISoundcloudTracksLinkedPartitioning {
+	public collection: any[] = [];
+	public next_href: string;
 }
