@@ -22,7 +22,7 @@
 		"suppressImplicitAnyIndexErrors": true,
 		"target": "es5",
 		"typeRoots": ["./node_modules/@types"],
-		"types": ["node", "jasmine", "hammerjs", "core-js", "jquery"]
+		"types": ["node", "jasmine", "hammerjs", "core-js"]
 	},
 	"angularCompilerOptions": {
 		"fullTemplateTypeCheck": true,

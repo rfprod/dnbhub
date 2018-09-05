@@ -259,6 +259,7 @@ gulp.task('build-system-js', () => {
 		.pipe(replace('firebase_storage_bucket', env.FIREBASE_STORAGE_BUCKET))
 		.pipe(replace('firebase_messaging_sender_id', env.FIREBASE_MESSAGING_SENDER_ID))
 		.pipe(replace('privileged_access_firebase_uid', env.PRIVILEGED_ACCESS_FIREBASE_UID))
+		.pipe(replace('google_apis_browser_key', env.GOOGLE_APIS_BROWSER_KEY))
 		.pipe(gulp.dest('./public/js'));
 });
 
@@ -271,11 +272,7 @@ gulp.task('pack-vendor-js', () => {
 		'./node_modules/core-js/client/shim.js',
 		'./node_modules/zone.js/dist/zone.min.js',
 		'./node_modules/reflect-metadata/Reflect.js',
-		'./node_modules/web-animations-js/web-animations.min.js',
-
-		'./node_modules/jquery/dist/jquery.js',
-
-		'./node_modules/firebase/firebase.js'
+		'./node_modules/web-animations-js/web-animations.min.js'
 	])
 		.pipe(plumber())
 		.pipe(concat('vendor-pack.js'))

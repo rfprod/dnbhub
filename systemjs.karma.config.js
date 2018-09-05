@@ -59,7 +59,19 @@
 		'@angular/cdk/text-field': 							'npm:@angular/cdk/bundles/cdk-text-field.umd.js',
 		'@angular/cdk/tree': 										'npm:@angular/cdk/bundles/cdk-tree.umd.js',
 		'@angular/material-moment-adapter': 		'npm:@angular/material-moment-adapter/bundles/material-moment-adapter.umd.js',
-		'moment': 															'npm:moment/min/moment-with-locales.min.js' // reconfig reference: https://github.com/angular/material2/commit/9545427c73627f0cf91b5086efd5d727459fc44f
+		'moment': 															'npm:moment/min/moment-with-locales.min.js', // reconfig reference: https://github.com/angular/material2/commit/9545427c73627f0cf91b5086efd5d727459fc44f
+		'firebase':															'npm:firebase/firebase.js',
+		'firebase/app':													'npm:firebase/app/dist/index.cjs.js',
+		'firebase/database':										'npm:firebase/database/dist/index.cjs.js',
+		'@firebase/app':												'npm:@firebase/app/dist/index.cjs.js',
+		'@firebase/database':										'npm:@firebase/database/dist/index.cjs.js',
+		'@firebase/polyfill':										'npm:@firebase/polyfill/dist/index.cjs.js',
+		//'promise-polyfill':											'npm:promise-polyfill/dist/polyfill.min.js',
+		'whatwg-fetch':													'npm:whatwg-fetch/fetch.js',
+		'@firebase/util':												'npm:@firebase/util/dist/index.cjs.js',
+		'@firebase/logger':											'npm:@firebase/logger/dist/index.cjs.js',
+		'angularfire2':													'npm:angularfire2/bundles/core.umd.js',
+		'angularfire2/database':								'npm:angularfire2/bundles/database.umd.js'
 	};
 	// how to load packages
 	var packages = {

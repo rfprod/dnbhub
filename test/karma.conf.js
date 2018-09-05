@@ -9,10 +9,6 @@ module.exports = function(config) {
 		basePath : '../',
 
 		files : [
-			'node_modules/jquery/dist/jquery.js',
-
-			'node_modules/firebase/firebase.js',
-
 			'node_modules/core-js/client/shim.js',
 			'node_modules/reflect-metadata/Reflect.js',
 
@@ -35,6 +31,10 @@ module.exports = function(config) {
 
 			'node_modules/hammerjs/hammer.js',
 			{ pattern: 'node_modules/@angular/**', included: false, watched: false },
+			{ pattern: 'node_modules/angularfire2/bundles/**', included: false, watched: false },
+			{ pattern: 'node_modules/firebase/**', included: false, watched: false },
+			{ pattern: 'node_modules/@firebase/**', included: false, watched: false },
+			{ pattern: 'node_modules/whatwg-fetch/**', included: false, watched: false },
 			{ pattern: 'node_modules/rxjs/**', included: false, watched: false },
 
 			{ pattern: 'node_modules/tslib/**', included: false, watched: false },

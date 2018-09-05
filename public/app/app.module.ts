@@ -10,14 +10,14 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
-import { AppRoutingModule } from './app.routing.module';
-
 /*
 *	Some material components rely on hammerjs
 *	CustomMaterialModule loads exact material modules
 */
 import '../../node_modules/hammerjs/hammer.js';
 import { CustomMaterialModule } from './modules/custom-material.module';
+
+import { AppRoutingModule } from './app.routing.module';
 
 import { AppComponent } from './app.component';
 import { AppNavComponent } from './components/app-nav.component';
@@ -36,6 +36,9 @@ import { SoundcloudPlayerComponent } from './components/soundcloud-player.compon
 
 import { TranslateModule } from './modules/translate/index';
 
+import { AngularFireModule } from 'angularfire2';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+
 import { CustomServiceWorkerService } from './services/custom-service-worker.service';
 import { CustomDeferredService } from './services/custom-deferred.service';
 import { CustomHttpHandlersService } from './services/custom-http-handlers.service';
@@ -52,6 +55,8 @@ import { TwitterService } from './services/twitter.service';
 import { IframeContentLoadedDirective } from './directives/iframe-content-loaded.directive';
 import { ImageLoadedDirective } from './directives/image-loaded.directive';
 
+import { ENV } from './app.environment';
+
 /**
  * Main application module.
  */
@@ -63,11 +68,14 @@ import { ImageLoadedDirective } from './directives/image-loaded.directive';
 								],
 	entryComponents: [ AppContactDialog ],
 	imports 		: [ BrowserModule, BrowserAnimationsModule, FlexLayoutModule, CustomMaterialModule,
-									FormsModule, ReactiveFormsModule, HttpClientModule, TranslateModule.forRoot(), AppRoutingModule
+									FormsModule, ReactiveFormsModule, HttpClientModule, TranslateModule.forRoot(),
+									AngularFireModule.initializeApp(ENV.firebase, 'dnbhub'), AngularFireDatabaseModule,
+									AppRoutingModule
 								],
 	providers 	: [ { provide: APP_BASE_HREF, useValue: '/' }, { provide: LocationStrategy, useClass: PathLocationStrategy },
-									{ provide: 'Window', useValue: window }, CustomServiceWorkerService, CustomDeferredService,
-									CustomHttpHandlersService, EventEmitterService, UserInterfaceUtilsService,
+									{ provide: 'Window', useValue: window }, { provide: ENV, useValue: ENV },
+									CustomServiceWorkerService, CustomDeferredService, CustomHttpHandlersService,
+									EventEmitterService, UserInterfaceUtilsService,
 									FirebaseService, SendEmailService, GoogleApiService, SoundcloudService, FacebookService, TwitterService
 								],
 	schemas 		: [ CUSTOM_ELEMENTS_SCHEMA ],

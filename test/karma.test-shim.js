@@ -35,6 +35,7 @@ System.config({
 	map: {
 		'@angular/core/testing': '/base/node_modules/@angular/core/bundles/core-testing.umd.js',
 		'@angular/common/testing': '/base/node_modules/@angular/common/bundles/common-testing.umd.js',
+		'@angular/common/http/testing': '/base/node_modules/@angular/common/bundles/common-http-testing.umd.js',
 		'@angular/compiler/testing': '/base/node_modules/@angular/compiler/bundles/compiler-testing.umd.js',
 		'@angular/forms/testing': '/base/node_modules/@angular/forms/bundles/forms-testing.umd.js',
 		'@angular/http/testing': '/base/node_modules/@angular/http/bundles/http-testing.umd.js',

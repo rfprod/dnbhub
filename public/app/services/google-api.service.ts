@@ -3,6 +3,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { CustomHttpHandlersService } from './custom-http-handlers.service';
 
+import { ENV, IEnvironmentInterface, IGoogleApiENVInterface } from '../app.environment';
+
 import { Observable } from 'rxjs';
 import { timeout, take, map, catchError } from 'rxjs/operators';
 
@@ -12,7 +14,7 @@ export class GoogleApiService {
 	constructor(
 		private http: HttpClient,
 		private handlers: CustomHttpHandlersService,
-		@Inject('Window') private window: Window
+		@Inject(ENV) private environment: IEnvironmentInterface
 	) {
 		console.log('GoogleApiService constructor');
 	}
@@ -29,13 +31,7 @@ export class GoogleApiService {
 	/**
 	 * Google API authentication data.
 	 */
-	private config: { browserKey: string, channelId: string, part: string, order: string, maxResults: string } = {
-		browserKey: 'google_apis_browser_key',
-		channelId: 'UC2HOUBVyZw9mPM3joMShYKQ', // TODO:client reconfigure this, consider making a config object with several channel ids to be able to swap between channels
-		part: 'snippet,contentDetails,statistics,topicDetails,status,brandingSettings,invideoPromotion,contentOwnerDetails',
-		order: 'date',
-		maxResults: '50'
-	};
+	private config: IGoogleApiENVInterface = this.environment.gapi;
 
 	/**
 	 * Gets youtube channel data.

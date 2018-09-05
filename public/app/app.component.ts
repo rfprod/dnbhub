@@ -9,8 +9,6 @@ import { FacebookService } from './services/facebook.service';
 
 import { AppContactDialog } from './components/app-contact.component';
 
-declare let $: JQueryStatic;
-
 /**
  * Application root component.
  */
@@ -144,10 +142,19 @@ export class AppComponent implements OnInit, OnDestroy {
 		}
 	}
 
+	/**
+	 * Removes UI initialization object, kind of splashscreen.
+	 */
+	private removeUIinit(): void {
+		const initUIobj: HTMLElement = this.window.document.getElementById('init');
+		console.log('initUIobj', initUIobj);
+		initUIobj.parentNode.removeChild(initUIobj);
+	}
+
 	public ngOnInit(): void {
 		console.log('ngOnInit: AppComponent initialized');
 
-		$('#init').remove(); // remove initialization text
+		this.removeUIinit();
 
 		let sub: any = this.emitter.getEmitter().subscribe((event: any) => {
 			console.log('AppComponent, event:', event);
