@@ -1,6 +1,9 @@
 # dependencies
 node_modules/
 
+# firebase cache
+.firebase/
+
 # environment variables
 *.env
 .*.env
