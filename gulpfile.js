@@ -378,10 +378,6 @@ gulp.task('compile-and-test', (done) => {
 	runSequence('tsc', 'client-unit-test', done);
 });
 
-gulp.task('test', (done) => {
-	runSequence('server-test', 'compile-and-test', 'client-e2e-test', done);
-});
-
 /*
 *	Build
 */

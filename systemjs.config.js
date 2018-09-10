@@ -39,6 +39,7 @@
 		'@angular/flex-layout/server': 					'npm:@angular/flex-layout/bundles/flex-layout-server.umd.js',
 		'@angular/flex-layout/grid': 						'npm:@angular/flex-layout/bundles/flex-layout-grid.umd.js',
 		'@angular/material': 										'npm:@angular/material/bundles/material.umd.js',
+		'@angular/material/core': 							'npm:@angular/material/bundles/material-core.umd.js',
 		'@angular/cdk': 												'npm:@angular/cdk/bundles/cdk.umd.js',
 		'@angular/cdk/a11y': 										'npm:@angular/cdk/bundles/cdk-a11y.umd.js',
 		'@angular/cdk/accordion': 							'npm:@angular/cdk/bundles/cdk-accordion.umd.js',
@@ -69,8 +70,8 @@
 		'whatwg-fetch':													'npm:whatwg-fetch/fetch.js',
 		'@firebase/util':												'npm:@firebase/util/dist/index.cjs.js',
 		'@firebase/logger':											'npm:@firebase/logger/dist/index.cjs.js',
-		'angularfire2':													'npm:angularfire2/bundles/core.umd.js',
-		'angularfire2/database':								'npm:angularfire2/bundles/database.umd.js'
+		'@angular/fire':												'npm:@angular/fire/bundles/core.umd.js',
+		'@angular/fire/database':								'npm:@angular/fire/bundles/database.umd.js'
 	};
 	// how to load packages
 	var packages = {

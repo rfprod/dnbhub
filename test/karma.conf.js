@@ -30,7 +30,7 @@ module.exports = function(config) {
 			{ pattern: 'systemjs.config.extras.js', included: false, watched: false },
 
 			'node_modules/hammerjs/hammer.js',
-			{ pattern: 'node_modules/@angular/**', included: false, watched: false },
+			{ pattern: 'node_modules/@angular/**/bundles/**', included: false, watched: false },
 			{ pattern: 'node_modules/angularfire2/bundles/**', included: false, watched: false },
 			{ pattern: 'node_modules/firebase/**', included: false, watched: false },
 			{ pattern: 'node_modules/@firebase/**', included: false, watched: false },

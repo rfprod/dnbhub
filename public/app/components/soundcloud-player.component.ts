@@ -95,10 +95,16 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
 	public renderPlaylistTracks: number = 15;
 
 	/**
+	 * Rendered playlist.
+	 */
+	public renderedPlaylist: any[] = this.soundcloudService.data.playlist.tracks.slice(0, this.renderPlaylistTracks) || [];
+
+	/**
 	 * Renders more playlist tracks.
 	 */
 	private renderMorePlaylistTracks(): void {
 		this.renderPlaylistTracks = (this.playlist.tracks.length - this.renderPlaylistTracks > 25) ? this.renderPlaylistTracks + 25 : this.playlist.tracks.length;
+		this.renderedPlaylist = this.soundcloudService.data.playlist.tracks.slice(0, this.renderPlaylistTracks) || [];
 	}
 
 	/**
@@ -164,6 +170,7 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
 						console.log('new playlist value', playlist);
 						this.noMoreTracks = true;
 						this.playlist = this.soundcloudService.data.playlist;
+						this.renderedPlaylist = this.soundcloudService.data.playlist.tracks.slice(0, this.renderPlaylistTracks) || [];
 						this.loading = false;
 						this.emitter.emitSpinnerStopEvent();
 					},
@@ -303,13 +310,17 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
 	 * Resets player.
 	 * Is used when mode Input chanes.
 	 * Kills player, resets soundcloud service data, local data, local flags.
+	 * @param onlyProgress if only progress interval should be reset
 	 */
-	private resetPlayer(): void {
-		this.playerKill();
-		this.soundcloudService.resetServiceData();
-		this.tracks = [];
-		this.playlist = new ISoundcloudPlaylist();
-		this.noMoreTracks = false;
+	private resetPlayer(onlyProgress?: boolean): void {
+		if (!onlyProgress) {
+			this.playerKill();
+			this.soundcloudService.resetServiceData();
+			this.tracks = [];
+			this.playlist = new ISoundcloudPlaylist();
+			this.noMoreTracks = false;
+		}
+		clearInterval(this.waveformProgressInterval);
 	}
 
 	/**
@@ -354,6 +365,7 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
 	 */
 	public ngOnDestroy(): void {
 		console.log('ngOnDestroy: SoundcloudPlayerComponent destroyed');
+		this.resetPlayer(true);
 		if (this.subscriptions.length) {
 			for (const sub of this.subscriptions) {
 				sub.unsubscribe();

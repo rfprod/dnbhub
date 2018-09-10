@@ -36,8 +36,8 @@ import { SoundcloudPlayerComponent } from './components/soundcloud-player.compon
 
 import { TranslateModule } from './modules/translate/index';
 
-import { AngularFireModule } from 'angularfire2';
-import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFireDatabaseModule } from '@angular/fire/database';
 
 import { CustomServiceWorkerService } from './services/custom-service-worker.service';
 import { CustomDeferredService } from './services/custom-deferred.service';
