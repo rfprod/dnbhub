@@ -9,7 +9,7 @@ export class FirebaseService {
 		private fireDB: AngularFireDatabase
 	) {}
 
-	public getDB(collection: 'about'|'mastering'|'bandcamp', refOnly: boolean): any {
+	public getDB(collection: 'about'|'blog'|'bandcamp', refOnly: boolean): any {
 		return (!refOnly) ? this.fireDB.database.ref('/' + collection).once('value') : this.fireDB.database.ref('/' + collection);
 	}
 }

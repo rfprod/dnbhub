@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
 import { CustomHttpHandlersService } from './custom-http-handlers.service';
 import { CustomDeferredService } from './custom-deferred.service';
 
@@ -17,10 +19,12 @@ export class SoundcloudService {
 	/**
 	 * @param http HttpClient
 	 * @param handlers Custom Http Handlers
+	 * @param sanitizer DOM sanitizer
 	 */
 	constructor(
 		private http: HttpClient,
-		private handlers: CustomHttpHandlersService
+		private handlers: CustomHttpHandlersService,
+		private sanitizer: DomSanitizer
 	) {
 		console.log('SoundcloudService constructor');
 		this.init();
@@ -191,5 +195,28 @@ export class SoundcloudService {
 			.catch((error: any) => def.reject(error));
 		return def.promise;
 	}
+
+	/**
+	 * Widget link conftructor.
+	 */
+	private widgetLinkConstructor: {
+		playlistFirst: () => string,
+		playlistLast: () => string,
+		trackFirst: () => string,
+		trackLast: () => string
+	} = {
+		playlistFirst: () => 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/',
+		playlistLast: () => '&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false',
+		trackFirst: () => 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/',
+		trackLast: () => '&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false'
+	};
+
+	public widgetLink: {
+		playlist: (scPlaylistID: number) => SafeResourceUrl,
+		track: (scTrackID: number) => SafeResourceUrl
+	} = {
+		playlist: (scPlaylistID: number) => this.sanitizer.bypassSecurityTrustResourceUrl(this.widgetLinkConstructor.playlistFirst() + scPlaylistID + this.widgetLinkConstructor.playlistLast()),
+		track: (scTrackID: number) => this.sanitizer.bypassSecurityTrustResourceUrl(this.widgetLinkConstructor.trackFirst() + scTrackID + this.widgetLinkConstructor.trackLast()),
+	};
 
 }

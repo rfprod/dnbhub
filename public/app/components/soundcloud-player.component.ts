@@ -48,7 +48,7 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
 	/**
 	 * Soundcloud player mode.
 	 */
-	@Input('mode') private mode: 'dnbhub'|'pl-everything'|'pl-reposts1'|'pl-reposts2'|'pl-freedownloads'|'pl-samplepacks' = 'dnbhub';
+	@Input('mode') private mode: 'dnbhub'|'user'|'pl-everything'|'pl-reposts1'|'pl-reposts2'|'pl-freedownloads'|'pl-samplepacks'|'playlist' = 'dnbhub';
 
 	/**
 	 * Predefined
@@ -143,7 +143,7 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
 		if (!this.noMoreTracks && !this.loading) {
 			this.loading = true;
 			this.emitter.emitSpinnerStartEvent();
-			if (/(dnbhub)/.test(this.mode)) {
+			if (/(dnbhub|user)/.test(this.mode)) {
 				console.log('this.tracks.length', this.tracks.length);
 				this.soundcloudService.getUserTracks(this.userId).then(
 					(collection: any[]) => {
@@ -162,7 +162,7 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
 						this.emitter.emitSpinnerStopEvent();
 					}
 				);
-			} else if (/(pl\-everything|pl\-reposts1|pl\-reposts2|pl\-freedownloads|pl\-samplepacks)/.test(this.mode)) {
+			} else if (/(pl\-everything|pl\-reposts1|pl\-reposts2|pl\-freedownloads|pl\-samplepacks|playlist)/.test(this.mode)) {
 				console.log('this.playlist', this.playlist);
 				this.soundcloudService.getPlaylist(this.playlistId).then(
 					(playlist: ISoundcloudPlaylist) => {
@@ -181,7 +181,7 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
 					}
 				);
 			}
-		} else if (/(pl\-)/.test(this.mode) && this.renderPlaylistTracks < this.playlist.tracks.length) {
+		} else if (/(pl\-|playlist)/.test(this.mode) && this.renderPlaylistTracks < this.playlist.tracks.length) {
 			this.renderMorePlaylistTracks();
 		} else {
 			console.log('Soundcloud player: no more tracks');
@@ -348,16 +348,30 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
 	 */
 	public ngOnChanges(changes: SimpleChanges): void {
 		console.log('SoundcloudPlayerComponent, changes', changes);
-		if (changes.mode.currentValue === 'dnbhub') {
-			this.resetPlayer();
-			this.userId = this.predefinedIDs.user.dnbhub;
-			this.loadMoreTracks();
-		} else if (/pl\-/.test(changes.mode.currentValue)) {
-			this.resetPlayer();
-			const playlistKey: string = changes.mode.currentValue.slice(3);
-			console.log('playlistKey', playlistKey);
-			this.playlistId = this.predefinedIDs.playlist[playlistKey];
-			this.loadMoreTracks();
+		if (changes.mode) {
+			if (changes.mode.currentValue === 'dnbhub') {
+				this.resetPlayer();
+				this.userId = this.predefinedIDs.user.dnbhub;
+				this.loadMoreTracks();
+			} else if (/pl\-/.test(changes.mode.currentValue)) {
+				this.resetPlayer();
+				const playlistKey: string = changes.mode.currentValue.slice(3);
+				console.log('playlistKey', playlistKey);
+				this.playlistId = this.predefinedIDs.playlist[playlistKey];
+				this.loadMoreTracks();
+			}
+		} else if (changes.userId) {
+			if (this.mode === 'user' && changes.userId.currentValue) {
+				this.resetPlayer();
+				this.userId = changes.userId.currentValue;
+				this.loadMoreTracks();
+			}
+		} else if (changes.playlistId) {
+			if (this.mode === 'playlist' && changes.playlistId.currentValue) {
+				this.resetPlayer();
+				this.playlistId = changes.playlistId.currentValue;
+				this.loadMoreTracks();
+			}	
 		}
 	}
 	/**

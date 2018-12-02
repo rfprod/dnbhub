@@ -24,7 +24,7 @@ export class AppAboutComponent implements OnInit, OnDestroy {
 	 * @param fb Form builder
 	 * @param emitter Event emitter service
 	 * @param translateService Translate service - UI translation to predefined languages
-	 * @param firebaseService Firebase interaction service
+	 * @param firebaseService Firebase service
 	 * @param window Window reference
 	 */
 	constructor(
