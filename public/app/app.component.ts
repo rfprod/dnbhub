@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy, ElementRef, Inject, HostBinding } from '@
 import { MatIconRegistry, DateAdapter, MatDialog } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 
+import { MediaChange, ObservableMedia } from '@angular/flex-layout';
+
 import { EventEmitterService } from './services/event-emitter.service';
 import { TranslateService } from './modules/translate/index';
 import { CustomServiceWorkerService } from './services/custom-service-worker.service';
@@ -28,6 +30,8 @@ export class AppComponent implements OnInit, OnDestroy {
 	 * @param translateService Translate service - UI translation to predefined languages.
 	 * @param facebookService Facebook service - Facebook JavaScrip SDK wrapper.
 	 * @param serviceWorker Service worker service.
+	 * @param media Observable media
+	 * @param window Browser window reference
 	 */
 	constructor(
 		private el: ElementRef,
@@ -39,19 +43,13 @@ export class AppComponent implements OnInit, OnDestroy {
 		private translate: TranslateService,
 		private facebookService: FacebookService,
 		private serviceWorker: CustomServiceWorkerService,
+		private media: ObservableMedia,
 		@Inject('Window') private window: Window
 	) {
 		this.toggleConsoleOutput();
 	}
 
 	private subscriptions: any[] = [];
-
-	/**
-	 * TODO action
-	 */
-	public activateSomething(): void {
-		console.log('TODO activate something');
-	}
 
 	/**
 	 * Indicates if progress spinner should be shown.
@@ -90,6 +88,18 @@ export class AppComponent implements OnInit, OnDestroy {
 			this.translate.use(key); // set current language
 			this.setDatepickersLocale(key); // set datepickers locale
 		}
+	}
+	/**
+	 * Sets preferred UI language.
+	 * 
+	 * check preferred language, respect preference if dictionary exists
+	 * for now there are only dictionaries only: English, Russian
+	 * set Russian if it is preferred, else use English
+	 */
+	private setPreferredLanguage(): void {
+		const nav: any = this.window.navigator;
+		const userPreference: string = (nav.language === 'ru-RU' || nav.language === 'ru' || nav.languages[0] === 'ru') ? 'ru' : 'en';
+		this.selectLanguage(userPreference); // set default language
 	}
 	/**
 	 * Sets datepickers locale.
@@ -151,12 +161,68 @@ export class AppComponent implements OnInit, OnDestroy {
 		initUIobj.parentNode.removeChild(initUIobj);
 	}
 
-	public ngOnInit(): void {
-		console.log('ngOnInit: AppComponent initialized');
+	/**
+	 * Sidenav grid configuration object.
+	 */
+	public gridConfig: any = {
+		cols: '3',
+		rowHeight: '1:1'
+	};
+	/**
+	 * Sets sidenav config object values.
+	 */
+	private setGridConfig(cols: string, rowHeight?: string): void {
+		this.gridConfig.cols = cols;
+		this.gridConfig.rowHeight = (rowHeight) ? rowHeight : this.gridConfig.rowHeight;
+	}
 
-		this.removeUIinit();
+	/**
+	 * Adds icons to mate icons registry.
+	 * 
+	 * register fontawesome for usage in mat-icon by adding directives
+	 * fontSet="fab" fontIcon="fa-icon"
+	 * fontSet="fas" fontIcon="fa-icon"
+	 *
+	 * note: free plan includes only fab (font-awesome-brands) and fas (font-awesome-solid) groups
+	 *
+	 * icons reference: https://fontawesome.com/icons/
+	 */
+	private addIconsToRegistry(): void {
+		this.matIconRegistry.registerFontClassAlias('fontawesome-all');
 
-		let sub: any = this.emitter.getEmitter().subscribe((event: any) => {
+		this.matIconRegistry.addSvgIcon('angular-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/Angular_logo.svg'));
+		this.matIconRegistry.addSvgIcon('mailchimp-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/MailChimp_logo.svg'));
+		this.matIconRegistry.addSvgIcon('soundcloud-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/SoundCloud_logo.svg'));
+		this.matIconRegistry.addSvgIcon('twitter-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/TwitterBird_logo.svg'));
+		this.matIconRegistry.addSvgIcon('dnbhub-logo-nobg-greyscale', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/DH_logo-no_bg_greyscale.svg'));
+		this.matIconRegistry.addSvgIcon('dnbhub-logo-roundbg', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/DH_logo-round_bg.svg'));
+		this.matIconRegistry.addSvgIcon('dnbhub-logo-roundbg-greyscale', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/DH_logo-round_bg_greyscale.svg'));
+	}
+
+	/**
+	 * Subscribes to media change events.
+	 */
+	private mediaChangeSubscribe(): void {
+		const sub: any = this.media.asObservable().subscribe((event: MediaChange) => {
+			// console.log('flex-layout media change event', event);
+			if (/(lg|xl)/.test(event.mqAlias)) {
+				this.setGridConfig('4', '2:1');
+			} else if (/(md)/.test(event.mqAlias)) {
+				this.setGridConfig('3', '1:1');
+			} else if (/(sm)/.test(event.mqAlias)) {
+				this.setGridConfig('2', '2:1');
+			} else {
+				this.setGridConfig('1', '2.5:1');
+			}
+		});
+		this.subscriptions.push(sub);
+	}
+
+	/**
+	 * Subscribes to event emitter events.
+	 */
+	public eventEmitterSubscribe(): void {
+		const sub: any = this.emitter.getEmitter().subscribe((event: any) => {
 			console.log('AppComponent, event:', event);
 			if (event.spinner) {
 				if (event.spinner === 'start') {
@@ -177,42 +243,32 @@ export class AppComponent implements OnInit, OnDestroy {
 			}
 		});
 		this.subscriptions.push(sub);
+	}
 
-		sub = this.dateAdapter.localeChanges.subscribe(() => {
+	/**
+	 * Subscribes to date adapter locale chage events.
+	 */
+	private dateAdapterLocaleChangeSubscribe(): void {
+		const sub: any = this.dateAdapter.localeChanges.subscribe(() => {
 			console.log('dateAdapter.localeChanges, changed according to the language');
 		});
 		this.subscriptions.push(sub);
+	}
 
-		/*
-		* check preferred language, respect preference if dictionary exists
-		*	for now there are only dictionaries only: English, Russian
-		*	set Russian if it is preferred, else use English
-		*/
-		const nav: any = this.window.navigator;
-		const userPreference: string = (nav.language === 'ru-RU' || nav.language === 'ru' || nav.languages[0] === 'ru') ? 'ru' : 'en';
-		this.selectLanguage(userPreference); // set default language
+	public ngOnInit(): void {
+		console.log('ngOnInit: AppComponent initialized');
 
-		/*
-		*	register fontawesome for usage in mat-icon by adding directives
-		*	fontSet="fab" fontIcon="fa-icon"
-		*	fontSet="fas" fontIcon="fa-icon"
-		*
-		*	note: free plan includes only fab (font-awesome-brands) and fas (font-awesome-solid) groups
-		*
-		*	icons reference: https://fontawesome.com/icons/
-		*/
-		this.matIconRegistry.registerFontClassAlias('fontawesome-all');
+		this.removeUIinit();
 
-		/*
-		* add svgs
-		*/
-		this.matIconRegistry.addSvgIcon('angular-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/Angular_logo.svg'));
-		this.matIconRegistry.addSvgIcon('mailchimp-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/MailChimp_logo.svg'));
-		this.matIconRegistry.addSvgIcon('soundcloud-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/SoundCloud_logo.svg'));
-		this.matIconRegistry.addSvgIcon('twitter-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/TwitterBird_logo.svg'));
-		this.matIconRegistry.addSvgIcon('dnbhub-logo-nobg-greyscale', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/DH_logo-no_bg_greyscale.svg'));
-		this.matIconRegistry.addSvgIcon('dnbhub-logo-roundbg', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/DH_logo-round_bg.svg'));
-		this.matIconRegistry.addSvgIcon('dnbhub-logo-roundbg-greyscale', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/DH_logo-round_bg_greyscale.svg'));
+		this.eventEmitterSubscribe();
+
+		this.dateAdapterLocaleChangeSubscribe();
+
+		this.setPreferredLanguage();
+
+		this.addIconsToRegistry();
+
+		this.mediaChangeSubscribe();
 	}
 
 	public ngOnDestroy(): void {
