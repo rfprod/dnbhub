@@ -1,6 +1,8 @@
 export const LANG_RU_NAME = 'ru';
 
-// keys map for Russian language
+/**
+ * Russian substrings for UI.
+ */
 export const LANG_RU_TRANSLATIONS = {
 	title: 'DNBHUB',
 	index: 'Индекс',

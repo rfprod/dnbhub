@@ -15,7 +15,7 @@ import { HttpClientModule } from '@angular/common/http';
 *	CustomMaterialModule loads exact material modules
 */
 import '../../node_modules/hammerjs/hammer.js';
-import { CustomMaterialModule } from './modules/custom-material.module';
+import { CustomMaterialModule } from './modules/material/custom-material.module';
 
 import { AppRoutingModule } from './app.routing.module';
 
@@ -61,24 +61,30 @@ import { ENV } from './app.environment';
  * Main application module.
  */
 @NgModule({
-	declarations: [ AppComponent, AppNavComponent, AppIndexComponent, AppSinglesComponent, AppFreedownloadsComponent,
-									AppRepostsComponent, AppBlogComponent, AppAboutComponent, AppUserComponent, AppAdminComponent,
-									SoundcloudPlayerComponent, AppContactDialog,
-									IframeContentLoadedDirective, ImageLoadedDirective
-								],
-	entryComponents: [ AppContactDialog ],
-	imports 		: [ BrowserModule, BrowserAnimationsModule, FlexLayoutModule, CustomMaterialModule,
-									FormsModule, ReactiveFormsModule, HttpClientModule, TranslateModule.forRoot(),
-									AngularFireModule.initializeApp(ENV.firebase, 'dnbhub'), AngularFireDatabaseModule,
-									AppRoutingModule
-								],
-	providers 	: [ { provide: APP_BASE_HREF, useValue: '/' }, { provide: LocationStrategy, useClass: PathLocationStrategy },
-									{ provide: 'Window', useValue: window }, { provide: ENV, useValue: ENV },
-									CustomServiceWorkerService, CustomDeferredService, CustomHttpHandlersService,
-									EventEmitterService, UserInterfaceUtilsService,
-									FirebaseService, SendEmailService, GoogleApiService, SoundcloudService, FacebookService, TwitterService
-								],
-	schemas 		: [ CUSTOM_ELEMENTS_SCHEMA ],
-	bootstrap 	: [ AppComponent ]
+	declarations: [
+		AppComponent, AppNavComponent, AppIndexComponent, AppSinglesComponent, AppFreedownloadsComponent,
+		AppRepostsComponent, AppBlogComponent, AppAboutComponent, AppUserComponent, AppAdminComponent,
+		SoundcloudPlayerComponent, AppContactDialog,
+		IframeContentLoadedDirective, ImageLoadedDirective
+	],
+	entryComponents: [
+		AppContactDialog
+	],
+	imports: [
+		BrowserModule, BrowserAnimationsModule, FlexLayoutModule, CustomMaterialModule,
+		FormsModule, ReactiveFormsModule, HttpClientModule, TranslateModule.forRoot(),
+		AngularFireModule.initializeApp(ENV.firebase, 'dnbhub'), AngularFireDatabaseModule,
+		AppRoutingModule
+	],
+	providers: [
+		{ provide: APP_BASE_HREF, useValue: '/' },
+		{ provide: LocationStrategy, useClass: PathLocationStrategy },
+		{ provide: 'Window', useValue: window }, { provide: ENV, useValue: ENV },
+		CustomServiceWorkerService, CustomDeferredService, CustomHttpHandlersService,
+		EventEmitterService, UserInterfaceUtilsService,
+		FirebaseService, SendEmailService, GoogleApiService, SoundcloudService, FacebookService, TwitterService
+	],
+	schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
+	bootstrap: [ AppComponent ]
 })
 export class AppModule {}

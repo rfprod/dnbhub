@@ -1,3 +1,7 @@
+/**
+ * Soundcloud playlist interface.
+ * API Documentation https://developers.soundcloud.com/docs/api/reference#playlists
+ */
 export class ISoundcloudPlaylist {
 	public kind: string;
 	public id: number;

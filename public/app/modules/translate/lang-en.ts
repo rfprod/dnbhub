@@ -1,6 +1,8 @@
 export const LANG_EN_NAME = 'en';
 
-// keys map for English language
+/**
+ * English substrings for UI.
+ */
 export const LANG_EN_TRANSLATIONS = {
 	title: 'DNBHUB',
 	index: 'Index',

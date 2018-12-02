@@ -1,6 +1,9 @@
 import { Injectable, Inject } from '@angular/core';
-import { TRANSLATIONS } from './translations'; // injection token reference
+import { TRANSLATIONS } from './translations';
 
+/**
+ * Translate service for UI.
+ */
 @Injectable()
 export class TranslateService {
 
@@ -32,7 +35,7 @@ export class TranslateService {
 	}
 
 	/**
-	 * Primate method for translation resolution.
+	 * Private method for translation resolution.
 	 *
 	 * If key contains dots '.', it will be parsed as a sequence of keys, e.g.:
 	 * translate('page.title') reads a translations dictionary like so { page: { title: 'page title value' } }.
