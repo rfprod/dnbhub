@@ -64,15 +64,18 @@
 		'firebase':															'npm:firebase/firebase.js',
 		'firebase/app':													'npm:firebase/app/dist/index.cjs.js',
 		'firebase/database':										'npm:firebase/database/dist/index.cjs.js',
+		'firebase/auth':												'npm:firebase/auth/dist/index.cjs.js',
 		'@firebase/app':												'npm:@firebase/app/dist/index.cjs.js',
 		'@firebase/database':										'npm:@firebase/database/dist/index.cjs.js',
+		'@firebase/auth':												'npm:@firebase/auth/dist/auth.js',
 		'@firebase/polyfill':										'npm:@firebase/polyfill/dist/index.cjs.js',
 		//'promise-polyfill':											'npm:promise-polyfill/dist/polyfill.min.js',
 		'whatwg-fetch':													'npm:whatwg-fetch/fetch.js',
 		'@firebase/util':												'npm:@firebase/util/dist/index.cjs.js',
 		'@firebase/logger':											'npm:@firebase/logger/dist/index.cjs.js',
 		'@angular/fire':												'npm:@angular/fire/bundles/core.umd.js',
-		'@angular/fire/database':								'npm:@angular/fire/bundles/database.umd.js'
+		'@angular/fire/database':								'npm:@angular/fire/bundles/database.umd.js',
+		'@angular/fire/auth':										'npm:@angular/fire/bundles/auth.umd.js'
 	};
 	// how to load packages
 	var packages = {

@@ -10,7 +10,8 @@ export const LANG_EN_TRANSLATIONS = {
 	freedownloads: 'Free downloads',
 	reposts: 'Reposts',
 	blog: 'Blog',
-	auth: 'Authentication',
+	login: 'Login',
+	logout: 'Logout',
 	user: 'User',
 	admin: 'Admin',
 	about: 'About',
@@ -36,12 +37,14 @@ export const LANG_EN_TRANSLATIONS = {
 	},
 	form: {
 		email: 'Email',
+		password: 'Password',
 		name: 'Name',
 		link: 'Link',
 		header: 'Header',
 		message: 'Message',
 		invalid: {
 			email: 'Invalid email',
+			password: 'Invalid password, 8+ characters',
 			name: 'Invalid name: 2+ characters',
 			link: 'Invalid link, format: http(s)://...',
 			header: 'Invalid header: 3+ characters',
@@ -55,6 +58,8 @@ export const LANG_EN_TRANSLATIONS = {
 		play: 'Play',
 		download: 'Download',
 		buy: 'Buy',
-		select: 'Select'
+		select: 'Select',
+		resetPassword: 'Reset password',
+		createAccount: 'Create account'
 	}
 };

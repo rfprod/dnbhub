@@ -59,15 +59,18 @@
 				<mat-icon fontSet="fas" fontIcon="fa-info" class="material-icons-fas"></mat-icon> {{ 'about' | translate }}
 			</span>
 			<mat-divider></mat-divider>
-			<span mat-menu-item (click)="showAuthDialog()">
-				<mat-icon fontSet="fas" fontIcon="fa-sign-in-alt" class="material-icons-fas"></mat-icon> {{ 'auth' | translate }}
+			<span mat-menu-item (click)="showAuthDialog()" *ngIf="anonUser()">
+				<mat-icon fontSet="fas" fontIcon="fa-sign-in-alt" class="material-icons-fas"></mat-icon> {{ 'login' | translate }}
+			</span>
+			<span mat-menu-item (click)="logout()" *ngIf="!anonUser()">
+				<mat-icon fontSet="fas" fontIcon="fa-sign-out-alt" class="material-icons-fas"></mat-icon> {{ 'logout' | translate }}
 			</span>
 			<mat-divider></mat-divider>
-			<span mat-menu-item [routerLink]="['user']" (click)="switchNavButtons($event, 'user')" [disabled]="navButtonsState[6]">
+			<span mat-menu-item [routerLink]="['user']" (click)="switchNavButtons($event, 'user')" [disabled]="navButtonsState[6]" *ngIf="!anonUser() && !isAdmin()">
 				<mat-icon fontSet="fas" fontIcon="fa-user" class="material-icons-fas"></mat-icon> {{ 'user' | translate }}
 			</span>
 			<mat-divider></mat-divider>
-			<span mat-menu-item [routerLink]="['admin']" (click)="switchNavButtons($event, 'admin')" [disabled]="navButtonsState[7]">
+			<span mat-menu-item [routerLink]="['admin']" (click)="switchNavButtons($event, 'admin')" [disabled]="navButtonsState[7]" *ngIf="!anonUser() && isAdmin()">
 				<mat-icon fontSet="fas" fontIcon="fa-user-secret" class="material-icons-fas"></mat-icon> {{ 'admin' | translate }}
 			</span>
 			<mat-divider></mat-divider>

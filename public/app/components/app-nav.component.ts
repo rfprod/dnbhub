@@ -1,9 +1,14 @@
 import { Component, OnInit, OnDestroy, ElementRef, Inject } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 
+import { MatDialog, MatDialogRef } from '@angular/material';
+
 import { EventEmitterService } from '../services/event-emitter.service';
 import { CustomServiceWorkerService } from '../services/custom-service-worker.service';
 import { TranslateService } from '../modules/translate/index';
+import { FirebaseService } from '../services/firebase.service';
+
+import { AppLoginDialog } from '../components/app-login.component';
 
 /**
  * Application navigation component.
@@ -22,6 +27,9 @@ export class AppNavComponent implements OnInit, OnDestroy {
 	 * @param emitter Event emitter service - components interaction.
 	 * @param serviceWorker Service worker service.
 	 * @param router Application router.
+	 * @param dialog Material dialog.
+	 * @param translateService Translate service
+	 * @param firebaseService Firebase service
 	 * @param window Window reference.
 	 */
 	constructor(
@@ -29,7 +37,9 @@ export class AppNavComponent implements OnInit, OnDestroy {
 		private emitter: EventEmitterService,
 		private serviceWorker: CustomServiceWorkerService,
 		private router: Router,
+		private dialog: MatDialog,
 		private translateService: TranslateService,
+		private firebaseService: FirebaseService,
 		@Inject('Window') private window: Window
 	) {}
 
@@ -152,6 +162,34 @@ export class AppNavComponent implements OnInit, OnDestroy {
 	 */
 	public showAuthDialog(): void {
 		console.log('TODO:client show auth dialog');
+		const dialogRef: MatDialogRef<AppLoginDialog> = this.dialog.open(AppLoginDialog, {
+			data: {}
+		});
+		dialogRef.afterClosed().subscribe((result: any) => {
+			console.log('AppLoginDialog closed with result', result);
+		});
+	}
+
+	/**
+	 * Signs user out.
+	 */
+	public logout(): void {
+		this.firebaseService.signout();
+		this.router.navigate(['/index']);
+	}
+
+	/**
+	 * Insicates if user is anonymous.
+	 */
+	public anonUser(): boolean {
+		return this.firebaseService.anonUser();
+	}
+
+	/**
+	 * Indicates if user had admin role.
+	 */
+	public isAdmin(): boolean {
+		return this.firebaseService.privilegedAccess();
 	}
 
 	/**

@@ -1,6 +1,7 @@
-import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { EventEmitterService } from '../services/event-emitter.service';
+import { FirebaseService } from '../services/firebase.service';
 
 @Component({
 	selector: 'app-user',
@@ -13,13 +14,12 @@ export class AppUserComponent implements OnInit, OnDestroy {
 
 	/**
 	 * @param emitter Event emitter service
+	 * @param firebaseService Firebase service
 	 */
 	constructor(
-		private emitter: EventEmitterService
+		private emitter: EventEmitterService,
+		private firebaseService: FirebaseService
 	) {}
-
-	@HostBinding('fxLayout') public fxLayout: string = 'row';
-	@HostBinding('fxLayoutAlign') public fxLayoutAlign: string = 'start stretch';
 
 	public details: any = {};
 

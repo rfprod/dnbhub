@@ -10,7 +10,8 @@ export const LANG_RU_TRANSLATIONS = {
 	freedownloads: 'Свободное скачивание',
 	reposts: 'Репосты',
 	blog: 'Блог',
-	auth: 'Аутентификация',
+	login: 'Вход',
+	logout: 'Выход',
 	user: 'Пользователь',
 	admin: 'Администратор',
 	about: 'Информация',
@@ -36,12 +37,14 @@ export const LANG_RU_TRANSLATIONS = {
 	},
 	form: {
 		email: 'Эл. почта',
+		password: 'Пароль',
 		name: 'Имя',
 		link: 'Ссылка',
 		header: 'Заголовок',
 		message: 'Сообщение',
 		invalid: {
 			email: 'Неправильный адрес эл. почты',
+			password: 'Неправильный пароль, 8+ символов',
 			name: 'Неправильное имя: 2+ знаков',
 			link: 'Неправильная ссылка, формат: http(s)://...',
 			header: 'Неправильный заголовок: 3+ знаков',
@@ -55,6 +58,8 @@ export const LANG_RU_TRANSLATIONS = {
 		play: 'Играть',
 		download: 'Скачать',
 		buy: 'Купить',
-		select: 'Выбрать'
+		select: 'Выбрать',
+		resetPassword: 'Сбросить пароль',
+		createAccount: 'Создать учётую запись'
 	}
 };

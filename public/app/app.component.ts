@@ -91,7 +91,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	}
 	/**
 	 * Sets preferred UI language.
-	 * 
+	 *
 	 * check preferred language, respect preference if dictionary exists
 	 * for now there are only dictionaries only: English, Russian
 	 * set Russian if it is preferred, else use English
@@ -178,7 +178,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
 	/**
 	 * Adds icons to mate icons registry.
-	 * 
+	 *
 	 * register fontawesome for usage in mat-icon by adding directives
 	 * fontSet="fab" fontIcon="fa-icon"
 	 * fontSet="fas" fontIcon="fa-icon"

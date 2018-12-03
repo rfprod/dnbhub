@@ -31,6 +31,9 @@ import { AppUserComponent } from './components/app-user.component';
 import { AppAdminComponent } from './components/app-admin.component';
 
 import { AppContactDialog } from './components/app-contact.component';
+import { AppLoginDialog } from './components/app-login.component';
+
+import { AnonymousGuard } from './services/anonymous-guard.service';
 
 import { SoundcloudPlayerComponent } from './components/soundcloud-player.component';
 
@@ -38,6 +41,7 @@ import { TranslateModule } from './modules/translate/index';
 
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
+import { AngularFireAuthModule } from '@angular/fire/auth';
 
 import { CustomServiceWorkerService } from './services/custom-service-worker.service';
 import { CustomDeferredService } from './services/custom-deferred.service';
@@ -64,16 +68,16 @@ import { ENV } from './app.environment';
 	declarations: [
 		AppComponent, AppNavComponent, AppIndexComponent, AppSinglesComponent, AppFreedownloadsComponent,
 		AppRepostsComponent, AppBlogComponent, AppAboutComponent, AppUserComponent, AppAdminComponent,
-		SoundcloudPlayerComponent, AppContactDialog,
+		SoundcloudPlayerComponent, AppContactDialog, AppLoginDialog,
 		IframeContentLoadedDirective, ImageLoadedDirective
 	],
 	entryComponents: [
-		AppContactDialog
+		AppContactDialog, AppLoginDialog
 	],
 	imports: [
 		BrowserModule, BrowserAnimationsModule, FlexLayoutModule, CustomMaterialModule,
 		FormsModule, ReactiveFormsModule, HttpClientModule, TranslateModule.forRoot(),
-		AngularFireModule.initializeApp(ENV.firebase, 'dnbhub'), AngularFireDatabaseModule,
+		AngularFireModule.initializeApp(ENV.firebase, 'dnbhub'), AngularFireDatabaseModule, AngularFireAuthModule,
 		AppRoutingModule
 	],
 	providers: [
@@ -82,7 +86,8 @@ import { ENV } from './app.environment';
 		{ provide: 'Window', useValue: window }, { provide: ENV, useValue: ENV },
 		CustomServiceWorkerService, CustomDeferredService, CustomHttpHandlersService,
 		EventEmitterService, UserInterfaceUtilsService,
-		FirebaseService, SendEmailService, GoogleApiService, SoundcloudService, FacebookService, TwitterService
+		FirebaseService, SendEmailService, GoogleApiService, SoundcloudService, FacebookService, TwitterService,
+		AnonymousGuard
 	],
 	schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
 	bootstrap: [ AppComponent ]

@@ -371,7 +371,7 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
 				this.resetPlayer();
 				this.playlistId = changes.playlistId.currentValue;
 				this.loadMoreTracks();
-			}	
+			}
 		}
 	}
 	/**
