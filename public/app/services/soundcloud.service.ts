@@ -56,7 +56,18 @@ export class SoundcloudService {
 	/**
 	 * Shared Soundcloud data.
 	 */
-	public data: { tracks: ISoundcloudTracksLinkedPartitioning, playlist: ISoundcloudPlaylist } = {
+	public data: {
+		user: {
+			me: any,
+			playlists: ISoundcloudPlaylist[]
+		},
+		tracks: ISoundcloudTracksLinkedPartitioning,
+		playlist: ISoundcloudPlaylist
+	} = {
+		user: {
+			me: {},
+			playlists: []
+		},
 		tracks: new ISoundcloudTracksLinkedPartitioning(),
 		playlist: new ISoundcloudPlaylist()
 	};
@@ -72,6 +83,10 @@ export class SoundcloudService {
 	 */
 	public resetServiceData(): void {
 		this.data = {
+			user: {
+				me: {},
+				playlists: []
+			},
 			tracks: new ISoundcloudTracksLinkedPartitioning(),
 			playlist: new ISoundcloudPlaylist()
 		};
@@ -101,6 +116,28 @@ export class SoundcloudService {
 		}
 		this.data.tracks.next_href = data.next_href;
 		return processedTracks;
+	}
+
+	/**
+	 * Gets user details from Sourndcloud.
+	 * @param userScId User Soundcloud id
+	 */
+	public getMe(userScId: string): Promise<{ me: any, playlists: ISoundcloudPlaylist[]}> {
+		console.log('getMe, use has got a token');
+		return SC.get('users/' + userScId)
+			.then((me: any) => {
+				console.log('SC.me.then, me', me);
+				if (me.description) {
+					me.description = this.processDescription(me.description);
+				}
+				this.data.user.me = me;
+				return SC.get('users/' + me.id + '/playlists');
+			}).then((playlists) => {
+				console.log('SC.playlists.then, playlists', playlists);
+				this.data.user.playlists = playlists;
+				const user = this.data.user;
+				return user;
+			});
 	}
 
 	/**

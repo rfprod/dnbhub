@@ -21,10 +21,10 @@ app.use(express.static(path.resolve(__dirname, 'public')));
 *	user if user requests dnbhub.com/index by typing it in browser's address bar
 */
 app.use((req, res) => {
-	res.sendFile(__dirname + '/public/index.html');
+  res.sendFile(__dirname + '/public/index.html');
 });
 
 server.listen(process.env.PORT || 3000, process.env.IP || '0.0.0.0', () => {
-	const addr = server.address();
-	console.log(`Dnbhub server listening at ${addr.address}:${addr.port}`);
+  const addr = server.address();
+  console.log(`Dnbhub server listening at ${addr.address}:${addr.port}`);
 });
