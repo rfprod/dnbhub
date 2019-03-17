@@ -2,9 +2,18 @@
   "extends": "tslint:recommended",
   "rules": {
     "eofline": true,
-    "indent": [ true, "tabs"],
-    "max-line-length": [140, { "ignore-pattern": "" }],
-    "member-ordering": [ false,
+    "indent": [
+      true,
+      "spaces"
+    ],
+    "max-line-length": [
+      140,
+      {
+        "ignore-pattern": ""
+      }
+    ],
+    "member-ordering": [
+      false,
       "public-before-private",
       "static-before-instance",
       "variables-before-functions"
@@ -17,11 +26,21 @@
     "one-variable-per-declaration": false,
     "only-arrow-functions": true,
     "ordered-imports": false,
-    "semicolon": [ true, "always"],
-    "quotemark": [ true, "single", "avoid-escape"],
-    "variable-name": [ true,
+    "semicolon": [
+      true,
+      "always"
+    ],
+    "quotemark": [
+      true,
+      "single",
+      "avoid-escape"
+    ],
+    "variable-name": [
+      true,
       "ban-keywords",
-      "check-format"
+      "check-format",
+      "allow-pascal-case",
+      "allow-snake-case"
     ],
     "trailing-comma": false
   }

@@ -379,9 +379,10 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
       }
     }
   }
+
   /**
-  * Lifecycle hook called after component is destroyed.
-  */
+   * Lifecycle hook called after component is destroyed.
+   */
   public ngOnDestroy(): void {
     console.log('ngOnDestroy: SoundcloudPlayerComponent destroyed');
     this.resetPlayer(true);
@@ -391,4 +392,5 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
       }
     }
   }
+
 }

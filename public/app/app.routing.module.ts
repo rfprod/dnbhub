@@ -12,23 +12,23 @@ import { AppAdminComponent } from './components/app-admin.component';
 import { AnonymousGuard } from './services/anonymous-guard.service';
 
 export const APP_ROUTES: Routes = [
-	{ path: 'index', component: AppIndexComponent },
-	{ path: 'singles', component: AppSinglesComponent },
-	{ path: 'freedownloads', component: AppFreedownloadsComponent },
-	{ path: 'reposts', component: AppRepostsComponent },
-	{ path: 'blog', component: AppBlogComponent },
-	{ path: 'user', component: AppUserComponent, canActivate: [AnonymousGuard] },
-	{ path: 'admin', component: AppAdminComponent, canActivate: [AnonymousGuard] },
-	{ path: 'about', component: AppAboutComponent },
-	{ path: '', redirectTo: 'index', pathMatch: 'full'},
-	{ path: '**', redirectTo: 'index' }
+  { path: 'index', component: AppIndexComponent },
+  { path: 'singles', component: AppSinglesComponent },
+  { path: 'freedownloads', component: AppFreedownloadsComponent },
+  { path: 'reposts', component: AppRepostsComponent },
+  { path: 'blog', component: AppBlogComponent },
+  { path: 'user', component: AppUserComponent, canActivate: [AnonymousGuard] },
+  { path: 'admin', component: AppAdminComponent, canActivate: [AnonymousGuard] },
+  { path: 'about', component: AppAboutComponent },
+  { path: '', redirectTo: 'index', pathMatch: 'full'},
+  { path: '**', redirectTo: 'index' }
 ];
 
 /**
  * Application routing module.
  */
 @NgModule({
-	imports: [ RouterModule.forRoot(APP_ROUTES) ],
-	exports: [ RouterModule ]
+  imports: [ RouterModule.forRoot(APP_ROUTES) ],
+  exports: [ RouterModule ]
 })
 export class AppRoutingModule {}

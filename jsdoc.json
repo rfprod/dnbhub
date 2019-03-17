@@ -1,7 +1,10 @@
 {
   "tags": {
     "allowUnknownTags": true,
-    "dictionaries": [ "jsdoc", "closure" ]
+    "dictionaries": [
+      "jsdoc",
+      "closure"
+    ]
   },
   "opts": {
     "destination": "./logs/jsdoc"
@@ -20,7 +23,6 @@
     "theme": "flatly",
     "linenums": true,
     "dateFormat": "MMMM DD YYYY, h:mm:ss a",
-
     "systemName": "Dnbhub JsDoc",
     "footer": "",
     "copyright": "",

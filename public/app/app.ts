@@ -5,5 +5,5 @@ import { AppModule } from './app.module';
 enableProdMode();
 
 platformBrowserDynamic().bootstrapModule(AppModule).catch((err) => {
-	console.log('platform bootstrap error:', err);
+  console.log('platform bootstrap error:', err);
 });

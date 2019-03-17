@@ -57,29 +57,29 @@ cat ./.env
 printf "\n${LIGHT_BLUE}  >> step ${YELLOW}11/11 ${LIGHT_BLUE}: Continue and create/overwrite ${YELLOW}.env${LIGHT_BLUE} file${DEFAULT} \n"
 read -p "   > continue (y/n) :" userChoice
 case $userChoice in
-	y|Y )
-		# write file contents
-		echo "SOUNDCLOUD_CLIENT_ID=${soundcloudUserId}" > ./.env
-		echo "FIREBASE_API_KEY=${firebaseApiKey}" >> ./.env
-		echo "FIREBASE_AUTH_DOMAIN=${firebaseAuthDomain}" >> ./.env
-		echo "FIREBASE_DATABASE_URL=${firebaseDatabaseUrl}" >> ./.env
-		echo "FIREBASE_PROJECT_ID=${firebaseProjectId}" >> ./.env
-		echo "FIREBASE_STORAGE_BUCKET=${firebaseStorageBucket}" >> ./.env
-		echo "FIREBASE_MESSAGING_SENDER_ID=${firebaseMessagingSenderId}" >> ./.env
-		echo "PRIVILEGED_ACCESS_FIREBASE_UID=${privilegedAccessFirebaseUid}" >> ./.env
-		echo "GOOGLE_APIS_BROWSER_KEY=${googleApisBrowserKey}" >> ./.env
-		echo "GOOGLE_APIS_CLIENT_ID=${googleApisClientId}" >> ./.env
-		# notify user
-		printf "${YELLOW}  >> OK: ${GREEN}environment variables set in ${YELLOW}.env${LIGHT_BLUE} file${DEFAULT} \n\n"
-		cat ./.env
-		printf "\n"
-		;;
-	n|N )
-		# notify user
-		printf " ${GREEN}  >> cancelled by user, user choice: $userChoice ${DEFAULT} \n"
-		;;
-	* )
-		# notify user
-		printf " ${LIGHT_BLUE}  >> invalid value, user choise: ${RED}$userChoice ${DEFAULT} \n"
-		;;
+  y|Y )
+    # write file contents
+    echo "SOUNDCLOUD_CLIENT_ID=${soundcloudUserId}" > ./.env
+    echo "FIREBASE_API_KEY=${firebaseApiKey}" >> ./.env
+    echo "FIREBASE_AUTH_DOMAIN=${firebaseAuthDomain}" >> ./.env
+    echo "FIREBASE_DATABASE_URL=${firebaseDatabaseUrl}" >> ./.env
+    echo "FIREBASE_PROJECT_ID=${firebaseProjectId}" >> ./.env
+    echo "FIREBASE_STORAGE_BUCKET=${firebaseStorageBucket}" >> ./.env
+    echo "FIREBASE_MESSAGING_SENDER_ID=${firebaseMessagingSenderId}" >> ./.env
+    echo "PRIVILEGED_ACCESS_FIREBASE_UID=${privilegedAccessFirebaseUid}" >> ./.env
+    echo "GOOGLE_APIS_BROWSER_KEY=${googleApisBrowserKey}" >> ./.env
+    echo "GOOGLE_APIS_CLIENT_ID=${googleApisClientId}" >> ./.env
+    # notify user
+    printf "${YELLOW}  >> OK: ${GREEN}environment variables set in ${YELLOW}.env${LIGHT_BLUE} file${DEFAULT} \n\n"
+    cat ./.env
+    printf "\n"
+    ;;
+  n|N )
+    # notify user
+    printf " ${GREEN}  >> cancelled by user, user choice: $userChoice ${DEFAULT} \n"
+    ;;
+  * )
+    # notify user
+    printf " ${LIGHT_BLUE}  >> invalid value, user choise: ${RED}$userChoice ${DEFAULT} \n"
+    ;;
 esac

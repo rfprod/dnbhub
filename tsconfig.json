@@ -5,15 +5,27 @@
     "importHelpers": true,
     "baseUrl": ".",
     "paths": {
-      "tslib": ["node_modules/tslib/tslib.d.ts"],
-      "rxjs": ["node_modules/rxjs/bundles/rxjs.umd.js"],
-      "*": ["*"]
+      "tslib": [
+        "node_modules/tslib/tslib.d.ts"
+      ],
+      "rxjs": [
+        "node_modules/rxjs/bundles/rxjs.umd.js"
+      ],
+      "*": [
+        "*"
+      ]
     },
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
-    "lib": ["es5", "es2015", "es2017", "dom", "scripthost"],
+    "lib": [
+      "es5",
+      "es2015",
+      "es2017",
+      "dom",
+      "scripthost"
+    ],
     "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitAny": false,
@@ -21,8 +33,15 @@
     "sourceMap": true,
     "suppressImplicitAnyIndexErrors": true,
     "target": "es5",
-    "typeRoots": ["./node_modules/@types"],
-    "types": ["node", "jasmine", "hammerjs", "core-js"]
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "types": [
+      "node",
+      "jasmine",
+      "hammerjs",
+      "core-js"
+    ]
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
