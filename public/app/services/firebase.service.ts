@@ -4,6 +4,8 @@ import { CustomDeferredService } from './custom-deferred.service';
 
 import { AngularFireDatabase } from '@angular/fire/database';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { DataSnapshot, DatabaseReference } from '@angular/fire/database/interfaces';
+import { FirebaseDatabase, FirebaseAuth } from '@angular/fire';
 
 /**
  * Firebase service, uses Angular Fire.
@@ -18,15 +20,12 @@ export class FirebaseService {
   constructor(
     private fireDB: AngularFireDatabase,
     private fireAuth: AngularFireAuth
-  ) {
-    console.log('fireDB', this.fireDB);
-    console.log('fireAuth', this.fireAuth);
-  }
+  ) {}
 
   /**
    * Angular fire public shortcuts.
    */
-  public fire: { db: any, auth: any } = {
+  public fire: { db: FirebaseDatabase, auth: FirebaseAuth } = {
     db: this.fireDB.database,
     auth: this.fireAuth.auth
   };
@@ -44,8 +43,10 @@ export class FirebaseService {
    * @param collection firebase collection name
    * @param refOnly indicates if db reference only should be returned
    */
-  public getDB(collection: 'about'|'blog'|'bandcamp'|string, refOnly: boolean): any {
-    return (!refOnly) ? this.fireDB.database.ref('/' + collection).once('value') : this.fireDB.database.ref('/' + collection);
+  public getDB(collection: 'about'|'blog'|'blogEntriesIDs'|'brands'|'emails'|'freedownloads'|'users'|string, refOnly: boolean): Promise<DataSnapshot>|DatabaseReference {
+    const db: Promise<DataSnapshot>|DatabaseReference = (!refOnly) ? this.fireDB.database.ref('/' + collection).once('value') : this.fireDB.database.ref('/' + collection);
+    // console.log('firebaseService, getDB', db);
+    return db;
   }
 
   /**
@@ -91,7 +92,7 @@ export class FirebaseService {
    * Signs user out.
    */
   public signout(): void {
-    console.log('signout', this.fireAuth.auth);
+    console.log('signout', this.fireAuth);
     if (this.fireAuth.auth.currentUser) {
       this.fireAuth.auth.signOut();
     }
@@ -134,7 +135,7 @@ export class FirebaseService {
     this.fireAuth.user.reauthenticateWithCredential(credential)
       .then(() => {
         // console.log('successfully reauthenticated');
-        this.getDB('users/' + this.fireAuth.user.uid, true).remove(); // delete user db profile also
+        (this.getDB('users/' + this.fireAuth.user.uid, true) as DatabaseReference).remove(); // delete user db profile also
         this.fireAuth.user.delete()
           .then(() => {
             def.resolve(true);

@@ -6,6 +6,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 
 import { IUserProfileForm, ISoundcloudPlaylist } from '../interfaces/index';
 import { SoundcloudService } from '../services/soundcloud.service';
+import { DatabaseReference, DataSnapshot } from '@angular/fire/database/interfaces';
 
 /**
  * Application user component.
@@ -35,9 +36,12 @@ export class AppUserComponent implements OnInit, OnDestroy {
   /**
    * Component data.
    */
-  public details: any = {
-    currentUser: {},
-    userDBrecord: {},
+  public details: {
+    currentUser: any,
+    userDBrecord: any
+  } = {
+    currentUser: this.firebaseService.fire.auth.currentUser,
+    userDBrecord: {}
   };
 
   /**
@@ -89,7 +93,7 @@ export class AppUserComponent implements OnInit, OnDestroy {
    */
   public resetPassword(): void {
     console.log('send email with password reset link');
-    this.firebaseService.fire.auth().sendPasswordResetEmail(this.details.currentUser.email)
+    this.firebaseService.fire.auth.sendPasswordResetEmail(this.details.currentUser.email)
       .then(() => {
         console.log('TODO:snackbar - Password reset email was sent to ' + this.details.currentUser.email);
       })
@@ -119,7 +123,6 @@ export class AppUserComponent implements OnInit, OnDestroy {
    * Gets user details from Sourndcloud.
    */
   private getMe(): void {
-    console.log('getMe, use has got a token');
     this.soundcloudService.getMe(this.details.userDBrecord.sc_id)
       .then((user: {me: any, playlists: ISoundcloudPlaylist[]}) => {
         console.log('getMe, user', user);
@@ -131,8 +134,7 @@ export class AppUserComponent implements OnInit, OnDestroy {
    * @param [passGetMeMethodCall] indicates if soundcloud 'get me' api call should be passed
    */
   private getDBuser(passGetMeMethodCall?: boolean): void {
-    this.firebaseService.getDB('users/' + this.details.currentUser.uid, true).then((snapshot) => {
-      // console.log('users/' + $scope.currentUser.uid, snapshot.val());
+    (this.firebaseService.getDB('users/' + this.details.currentUser.uid, false) as Promise<DataSnapshot>).then((snapshot) => {
       this.details.userDBrecord = snapshot.val();
       if (this.details.userDBrecord.sc_id && !passGetMeMethodCall) {
         this.getMe();
@@ -158,6 +160,6 @@ export class AppUserComponent implements OnInit, OnDestroy {
    */
   public ngOnDestroy(): void {
     console.log('ngOnDestroy: AppUserComponent destroyed');
-    this.firebaseService.getDB('users/' + this.details.currentUser.uid, true).off();
+    (this.firebaseService.getDB('users/' + this.details.currentUser.uid, true) as DatabaseReference).off();
   }
 }

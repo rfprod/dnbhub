@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { EventEmitterService } from '../services/event-emitter.service';
 import { CustomDeferredService } from '../services/custom-deferred.service';
@@ -9,6 +9,7 @@ import { FirebaseService } from '../services/firebase.service';
 import { AppContactDialog } from './app-contact.component';
 
 import { TranslateService } from '../modules/translate/translate.service';
+import { DataSnapshot, DatabaseReference } from '@angular/fire/database/interfaces';
 
 @Component({
   selector: 'app-about',
@@ -47,7 +48,7 @@ export class AppAboutComponent implements OnInit, OnDestroy {
   private getDetails(): Promise<any> {
     const def = new CustomDeferredService<any>();
     this.emitter.emitSpinnerStartEvent();
-    this.firebaseService.getDB('about', false)
+    (this.firebaseService.getDB('about', false) as Promise<DataSnapshot>)
       .then((snapshot) => {
         console.log('getDetails, about', snapshot.val());
         const response = snapshot.val();
@@ -108,6 +109,6 @@ export class AppAboutComponent implements OnInit, OnDestroy {
    */
   public ngOnDestroy(): void {
     console.log('ngOnDestroy: AppAboutComponent destroyed');
-    this.firebaseService.getDB('about', true).off();
+    (this.firebaseService.getDB('about', true) as DatabaseReference).off();
   }
 }

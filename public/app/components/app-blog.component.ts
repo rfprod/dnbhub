@@ -7,6 +7,7 @@ import { FirebaseService } from '../services/firebase.service';
 import { SoundcloudService } from '../services/soundcloud.service';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { CustomDeferredService } from '../services/custom-deferred.service';
+import { DatabaseReference } from '@angular/fire/database/interfaces';
 
 @Component({
   selector: 'app-blog',
@@ -90,7 +91,7 @@ export class AppBlogComponent implements OnInit, OnDestroy {
   private updateBlogPosts(): Promise<any> {
     const def = new CustomDeferredService<any>();
     // limit to last 50 records and show in reverse order by playlist number
-    this.firebaseService.getDB('blog', true).limitToLast(50).once('value').then((snapshot) => {
+    (this.firebaseService.getDB('blog', true) as DatabaseReference).limitToLast(50).once('value').then((snapshot) => {
       console.log('blog', snapshot.val());
       const response = snapshot.val();
       this.blogPosts = [];
