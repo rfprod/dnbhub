@@ -69,6 +69,7 @@
     '@firebase/database':										'npm:@firebase/database/dist/index.cjs.js',
     '@firebase/auth':												'npm:@firebase/auth/dist/auth.js',
     '@firebase/polyfill':										'npm:@firebase/polyfill/dist/index.cjs.js',
+    'promise-polyfill':											'npm:promise-polyfill/dist/polyfill.min.js',
     'whatwg-fetch':													'npm:whatwg-fetch/fetch.js',
     '@firebase/util':												'npm:@firebase/util/dist/index.cjs.js',
     '@firebase/logger':											'npm:@firebase/logger/dist/index.cjs.js',

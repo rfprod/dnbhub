@@ -16,7 +16,7 @@ const nodemailer = require('nodemailer');
 /*
 *	load .env variables
 */
-require('dotenv').load();
+require('dotenv').config();
 
 /*
 *	initialize admin SDK to access Firebase Realtime Database

@@ -244,7 +244,7 @@ gulp.task('build-system-js', () => {
   *	this task builds angular application
   *	components, angular modules, and some dependencies
   */
-  require('dotenv').load();
+  require('dotenv').config();
   const env = process.env;
   return systemjsBuilder('/','./systemjs.config.js')
     .buildStatic('app', 'packed-app.min.js', {
