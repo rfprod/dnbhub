@@ -18,8 +18,8 @@
     "application"
   ],
   "engines": {
-    "node": "^8.12.0",
-    "npm": "^6.4.1"
+    "node": "^8.15.1",
+    "npm": "^6.9.0"
   },
   "dependencies": {
     "@angular/animations": "^7.1.2",
