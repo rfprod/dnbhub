@@ -1,21 +1,16 @@
 {
   "hosting": {
-    "public": "public",
+    "public": "dist",
     "ignore": [
       "firebase.json",
       "**/node_modules/**",
-      "**/.*",
+      ".editorconfig",
+      ".eslintignore",
+      ".eslintrc.json",
+      ".gitignore",
+      ".editorconfig",
       "**/*.sh",
       "**/*.md",
-      "public/app/components",
-      "public/app/directives",
-      "public/app/interfaces",
-      "public/app/modules",
-      "public/app/pipes",
-      "public/app/scss",
-      "public/app/services",
-      "public/app/*.*",
-      "test/**",
       "logs/**"
     ],
     "headers": [

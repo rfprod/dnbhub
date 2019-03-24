@@ -5,7 +5,7 @@ import { LANG_RU_NAME, LANG_RU_TRANSLATIONS } from './lang-ru';
 
 export const TRANSLATIONS = new InjectionToken('translations');
 
-const dictionary = {
+export const dictionary = {
   [LANG_EN_NAME]: LANG_EN_TRANSLATIONS,
   [LANG_RU_NAME]: LANG_RU_TRANSLATIONS
 };
