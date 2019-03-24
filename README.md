@@ -1,5 +1,7 @@
 # Dnbhub
 
+[![Azure DevOps Build Status](https://rfprod.visualstudio.com/Dnbhub/_apis/build/status/Dnbhub-Angular-Upgrade-CI?branchName=angular-upgrade)](https://rfprod.visualstudio.com/Dnbhub/_build/latest?definitionId=11&branchName=angular-upgrade)
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.6.
 
 ## Development server
