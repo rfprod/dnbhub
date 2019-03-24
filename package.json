@@ -22,6 +22,8 @@
     "build-prod": "ng build --prod",
     "e2e": "ng e2e",
     "express-prod": "node server.js prod",
+    "install": "bash shell/install.sh",
+    "install-global": "bash shell/install.sh global",
     "postinstall": "npx sort-package-json",
     "lint": "ng lint",
     "ng": "ng",
