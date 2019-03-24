@@ -16,13 +16,14 @@ steps:
     npm update
     bash install.sh
     npm install -g typescript
-    npm install -g gulp-cli
+    npm install -g angular/cli
     npm install -g firebase-tools
     bash set-env.sh $SOUNDCLOUD_CLIENT_ID $FIREBASE_API_KEY $FIREBASE_AUTH_DOMAIN $FIREBASE_DATABASE_URL $FIREBASE_PROJECT_ID $FIREBASE_STORAGE_BUCKET $FIREBASE_MESSAGING_SENDER_ID $FIREBASE_DEPLOY_TOKEN $PRIVILEGED_ACCESS_FIREBASE_UID $GOOGLE_APIS_BROWSER_KEY $GOOGLE_APIS_CLIENT_ID $MAILER_HOST $MAILER_PORT $MAILER_EMAIL $MAILER_CLIENT_ID $MAILER_CLIENT_SECRET $MAILER_REFRESH_TOKEN $MAILER_ACCESS_TOKEN $MAILER_RECIPIENT_EMAIL
-    gulp compile-and-build
-    rm ./.env ./functions/.env
-    # gulp client-unit
+    npm run set-client-app-env
+    npm run build
+    npm run reset-client-app-env
     firebase deploy --token $FIREBASE_DEPLOY_TOKEN
+    rm ./.env ./functions/.env
   env:
     FIREBASE_DEPLOY_TOKEN: $(firebaseDeployToken)
     SOUNDCLOUD_CLIENT_ID: $(SOUNDCLOUD_CLIENT_ID)

@@ -1,35 +1,46 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+/dist
+/tmp
+/out-tsc
+# Only exists if Bazel was run
+/bazel-out
+
 # dependencies
-node_modules/
+/node_modules
 
-# firebase cache
-.firebase/
+# profiling files
+chrome-profiler-events.json
+speed-measure-plugin.json
 
-# environment variables
-*.env
-.*.env
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 
-# logs
-*.log
-logs/*
-!logs/*.gitkeep
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
 
-# compiled client app
-public/app/*.js
-public/app/*.js.map
-public/app/**/*.js
-public/app/**/*.js.map
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
 
-# compiled client tests
-test/client/*.js
-test/client/*.js.map
-test/client/**/*.js
-test/client/**/*.js.map
-
-# built client app files
-public/js/*.min.js
-public/js/*.min.js.map
-public/css/*.min.css
-public/webfonts/*.*
-!public/webfonts/*.gitkeep
-public/SHA1SUMS.json
-public/hashsum.json
+# System Files
+.DS_Store
+Thumbs.db

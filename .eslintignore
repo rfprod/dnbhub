@@ -1,9 +1,7 @@
 node_modules/**
-*.ico
-*.svg
+**/assets/**
 *.css
 *.scss
 *.html
-*.min.js
 *.json
 *.md
