@@ -1,0 +1,99 @@
+<md-toolbar flex class="md-toolbar-tools md-medium" layout="row" ng-controller="navController">
+	<audio id="speaker" class="hide"></audio> <!-- invisible speaker -->
+	<md-button id="sidebar-toggler" class="md-icon-button hide-md hide-gt-md hide-lg hide-gt-lg hide-xl" title="toggle tracks list" ng-click="toggleSidenav()" ng-disabled="disableToggler()" ng-hide="disableToggler()" aria-label="toggle sidebar">
+		<i class="fa" ng-class="{'fa-chevron-right': !isSidenavOpen(), 'fa-chevron-left': isSidenavOpen()}"></i>
+	</md-button>
+	<h1 class="hide-xs hide-gt-xs hide-sm hide-gt-sm show-md show-gt-md show-lg show-gt-lg show-xl">
+		<img class="logo" alt="logo" title="{{title}}" src="img/svg/DH_logo-round_bg.svg"/>
+	</h1>
+	<span class="splitter" layout="row" layout-align="center center">
+		<img class="logo hide-md hide-gt-md hide-lg hide-gt-lg hide-xl" alt="logo" title="{{title}}" src="img/svg/DH_logo-round_bg.svg"/>
+	</span>
+	<a md-button ng-href="{{button.index.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.index.href)}" title="{{button.index.title}}" class="hide-xs hide-sm">
+		<i class="{{button.index.icon}}"></i> {{button.index.name}}
+	</a>
+	<a md-button ng-href="{{button.singles.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.singles.href)}" title="{{button.singles.title}}" class="hide-xs hide-sm">
+		<i class="{{button.singles.icon}}"></i> {{button.singles.name}}
+	</a>
+	<a md-button ng-href="{{button.freedownloads.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.freedownloads.href)}" title="{{button.freedownloads.title}}" class="hide-xs hide-sm">
+		<i class="{{button.freedownloads.icon}}"></i> {{button.freedownloads.name}}
+	</a>
+	<a md-button ng-href="{{button.reposts.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.reposts.href)}" title="{{button.reposts.title}}" class="hide-xs hide-sm">
+		<i class="{{button.reposts.icon}}"></i> {{button.reposts.name}}
+	</a>
+	<a md-button ng-href="{{button.blog.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.blog.href)}" title="{{button.blog.title}}" class="hide-xs hide-sm">
+		<i class="{{button.blog.icon}}"></i> {{button.blog.name}}
+	</a>
+	<a md-button ng-click="showAuthDialog($event)" title="{{button.auth.title}}" class="hide-xs hide-sm" ng-if="!firebase.isSignedIn">
+		<i class="{{button.auth.icon}}"></i> {{button.auth.name}}
+	</a>
+	<a md-button ng-href="{{button.user.href}}" ng-class="{selected: selectButton(button.user.href)}" title="{{button.user.title}}" class="hide-xs hide-sm" ng-if="firebase.isSignedIn">
+		<i class="{{button.user.icon}}"></i> {{button.user.name}}
+	</a>
+	<a md-button ng-href="{{button.admin.href}}" ng-class="{selected: selectButton(button.admin.href)}" title="{{button.admin.title}}" class="hide-xs hide-sm" ng-if="firebase.isSignedIn && firebase.privilegedAccess()">
+		<i class="{{button.admin.icon}}"></i> {{button.admin.name}}
+	</a>
+	<a md-button ng-click="signout()" title="{{button.signout.title}}" class="hide-xs hide-sm" ng-if="firebase.isSignedIn">
+		<i class="{{button.signout.icon}}"></i> {{button.signout.name}}
+	</a>
+	<a md-button ng-href="{{button.about.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.about.href)}" title="{{button.about.title}}" class="hide-xs hide-sm" ng-if="!firebase.isSignedIn">
+		<i class="{{button.about.icon}}"></i> {{button.about.name}}
+	</a>
+	<md-menu class="hide-md hide-lg hide-xl primary">
+		<md-button aria-label="Open navigation menu" class="md-icon-button" ng-click="$mdMenu.open()">
+			<i class="fa fa-bars"></i>
+		</md-button>
+		<md-menu-content id="dropdown-menu">
+			<md-menu-item>
+				<a md-button ng-href="{{button.index.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.index.href)}" title="{{button.index.title}}">
+					<i class="{{button.index.icon}}"></i> {{button.index.name}}
+				</a>
+			</md-menu-item>
+			<md-menu-item>
+				<a md-button ng-href="{{button.singles.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.singles.href)}" title="{{button.singles.title}}">
+					<i class="{{button.singles.icon}}"></i> {{button.singles.name}}
+				</a>
+			</md-menu-item>
+			<md-menu-item>
+				<a md-button ng-href="{{button.freedownloads.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.freedownloads.href)}" title="{{button.freedownloads.title}}">
+					<i class="{{button.freedownloads.icon}}"></i> {{button.freedownloads.name}}
+				</a>
+			</md-menu-item>
+			<md-menu-item>
+				<a md-button ng-href="{{button.reposts.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.reposts.href)}" title="{{button.reposts.title}}">
+					<i class="{{button.reposts.icon}}"></i> {{button.reposts.name}}
+				</a>
+			</md-menu-item>
+			<md-menu-item>
+				<a md-button ng-href="{{button.blog.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.blog.href)}" title="{{button.blog.title}}">
+					<i class="{{button.blog.icon}}"></i> {{button.blog.name}}
+				</a>
+			</md-menu-item>
+			<md-menu-item ng-if="!firebase.isSignedIn">
+				<a md-button ng-click="showAuthDialog($event)" title="{{button.auth.title}}">
+					<i class="{{button.auth.icon}}"></i> {{button.auth.name}}
+				</a>
+			</md-menu-item>
+			<md-menu-item ng-if="firebase.isSignedIn">
+				<a md-button ng-href="{{button.user.href}}" ng-class="{selected: selectButton(button.user.href)}" title="{{button.user.title}}">
+					<i class="{{button.user.icon}}"></i> {{button.user.name}}
+				</a>
+			</md-menu-item>
+			<md-menu-item ng-if="firebase.isSignedIn && firebase.privilegedAccess()">
+				<a md-button ng-href="{{button.admin.href}}" ng-class="{selected: selectButton(button.admin.href)}" title="{{button.admin.title}}">
+					<i class="{{button.admin.icon}}"></i> {{button.admin.name}}
+				</a>
+			</md-menu-item>
+			<md-menu-item ng-if="firebase.isSignedIn">
+				<a md-button ng-click="signout()" title="{{button.signout.title}}">
+					<i class="{{button.signout.icon}}"></i> {{button.signout.name}}
+				</a>
+			</md-menu-item>
+			<md-menu-item>
+				<a md-button ng-href="{{button.about.href}}" ng-click="playSound()" ng-class="{selected: selectButton(button.about.href)}" title="{{button.about.title}}">
+					<i class="{{button.about.icon}}"></i> {{button.about.name}}
+				</a>
+			</md-menu-item>
+		</md-menu-content>
+	</md-menu>
+</md-toolbar>
