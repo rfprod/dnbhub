@@ -184,7 +184,7 @@ if [ 1 -gt $# ]; then
       printf " ${LIGHT_BLUE}  >> invalid value, user choise: ${RED}$userChoice ${DEFAULT} \n"
       ;;
   esac
-elif [ 19 -eq $# ]
+elif [ 19 -eq $# ]; then
   # map arguments
   soundcloudClientId=$1
   firebaseApiKey=$2
