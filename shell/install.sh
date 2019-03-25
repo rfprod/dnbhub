@@ -20,7 +20,7 @@ source shell/colors.sh
 ##
 installFirebaseDependencies () {
   printf "\n ${LIGHT_BLUE}<< INSTALLING FIREBASE FUNCTIONS DEPENDENCIES >>${DEFAULT}\n\n"
-  cd ./functions
+  cd functions
   npm install
 }
 
@@ -29,7 +29,6 @@ installFirebaseDependencies () {
 ##
 installProjectDependencies () {
   printf "\n ${LIGHT_BLUE}<< INSTALLING PROJECT DEPENDENCIES >>${DEFAULT}\n\n"
-  cd ..
   npm install
 }
 
