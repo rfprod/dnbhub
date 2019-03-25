@@ -83,7 +83,7 @@ import { ENV } from './app.environment';
   providers: [
     { provide: APP_BASE_HREF, useValue: '/' },
     { provide: LocationStrategy, useClass: PathLocationStrategy },
-    { provide: 'Window', useValue: window }, { provide: ENV, useValue: ENV },
+    { provide: 'Window', useValue: window },
     CustomServiceWorkerService, CustomDeferredService, CustomHttpHandlersService,
     EventEmitterService, UserInterfaceUtilsService,
     FirebaseService, SendEmailService, GoogleApiService, SoundcloudService, FacebookService, TwitterService,

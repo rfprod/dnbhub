@@ -6,13 +6,15 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { CustomHttpHandlersService } from 'src/app/services/custom-http-handlers/custom-http-handlers.service';
 import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
 
-import { timeout, take, map, catchError } from 'rxjs/operators';
-
 import {
   ISoundcloudTracksLinkedPartitioning,
-  ISoundcloudPlaylist
+  ISoundcloudPlaylist,
+  ISoundcloudENVInterface
 } from 'src/app/interfaces/index';
-import { ENV } from 'src/app/app.environment';
+
+import { AppEnvironmentConfig } from 'src/app/app.environment';
+
+import { timeout, take, map, catchError } from 'rxjs/operators';
 
 declare let SC;
 
@@ -38,10 +40,15 @@ export class SoundcloudService {
   }
 
   /**
+   * Application environment: Firebase API.
+   */
+  private config: ISoundcloudENVInterface = new AppEnvironmentConfig().soundcloud;
+
+  /**
    * Soundcloud client id.
    */
   private options: { client_id, redirect_uri } = {
-    client_id: ENV.soundcloud.clientId,
+    client_id: this.config.clientId,
     redirect_uri: 'http://dnbhub.com/callback.html' // TODO: replace callback url after API key issue
   };
 

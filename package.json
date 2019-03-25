@@ -18,8 +18,10 @@
   "author": "rfprod <support@dnbhub.com> (https://github.com/rfprod)",
   "main": "server.js",
   "scripts": {
-    "build": "ng build",
-    "build-prod": "ng build --prod",
+    "ng-build": "ng build",
+    "ng-build-prod": "ng build --prod",
+    "build": "bash shell/build.sh",
+    "build-prod": "bash shell/build.sh prod",
     "e2e": "ng e2e",
     "express-prod": "node server.js prod",
     "postinstall": "npx sort-package-json",

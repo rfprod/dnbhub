@@ -37,7 +37,7 @@
         ]
       },
       {
-        "source": "/sendEmail",
+        "source": "/(sendEmail|submitBlogPostOverEmail)",
         "headers": [
           {
             "key": "Cache-Control",

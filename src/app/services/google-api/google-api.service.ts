@@ -1,13 +1,10 @@
-import { Injectable, Inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { CustomHttpHandlersService } from 'src/app/services/custom-http-handlers/custom-http-handlers.service';
 
-import { ENV } from 'src/app/app.environment';
-import {
-  IEnvironmentInterface,
-  IGoogleApiENVInterface
-} from 'src/app/interfaces/index';
+import { AppEnvironmentConfig } from 'src/app/app.environment';
+import { IGoogleApiENVInterface } from 'src/app/interfaces/index';
 
 import { Observable } from 'rxjs';
 import { timeout, take, map, catchError } from 'rxjs/operators';
@@ -18,10 +15,13 @@ import { timeout, take, map, catchError } from 'rxjs/operators';
 @Injectable()
 export class GoogleApiService {
 
+  /**
+   * @param http Http client
+   * @param handlers Custom http handlers service
+   */
   constructor(
     private http: HttpClient,
-    private handlers: CustomHttpHandlersService,
-    @Inject(ENV) private environment: IEnvironmentInterface
+    private handlers: CustomHttpHandlersService
   ) {
     console.log('GoogleApiService constructor');
   }
@@ -36,9 +36,9 @@ export class GoogleApiService {
   };
 
   /**
-   * Google API authentication data.
+   * Application environment: Google API (authentication data).
    */
-  private config: IGoogleApiENVInterface = this.environment.gapi;
+  private config: IGoogleApiENVInterface = new AppEnvironmentConfig().gapi;
 
   /**
    * Gets youtube channel data.

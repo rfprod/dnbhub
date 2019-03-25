@@ -16,6 +16,6 @@
     "**/*.d.ts"
   ],
   "exclude": [
-    "set-env.ts"
+    "**/set-env.ts"
   ]
 }

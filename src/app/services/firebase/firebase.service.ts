@@ -6,7 +6,9 @@ import { AngularFireDatabase } from '@angular/fire/database';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { DataSnapshot, DatabaseReference } from '@angular/fire/database/interfaces';
 import { FirebaseDatabase, FirebaseAuth } from '@angular/fire';
-import { ENV } from 'src/app/app.environment';
+
+import { AppEnvironmentConfig } from 'src/app/app.environment';
+import { IFirebaseENVInterface } from 'src/app/interfaces';
 
 /**
  * Firebase service, uses Angular Fire.
@@ -24,6 +26,11 @@ export class FirebaseService {
   ) {
     this.fireAuthUserSubscription();
   }
+
+  /**
+   * Application environment: Firebase API.
+   */
+  private config: IFirebaseENVInterface = new AppEnvironmentConfig().firebase;
 
   /**
    * Angular fire public shortcuts.
@@ -68,7 +75,7 @@ export class FirebaseService {
    * Resolves if user has privileged access.
    */
   public privilegedAccess(): boolean {
-    return (!this.fire.authUser) ? false : (this.fire.authUser.uid !== ENV.firebase.privilegedAccessUID) ? false : true;
+    return (!this.fire.authUser) ? false : (this.fire.authUser.uid !== this.config.privilegedAccessUID) ? false : true;
   }
 
   /**

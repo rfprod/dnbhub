@@ -144,7 +144,8 @@
           "options": {
             "tsConfig": "e2e/tsconfig.e2e.json",
             "exclude": [
-              "**/node_modules/**"
+              "**/node_modules/**",
+              "**/set-env.ts"
             ]
           }
         }

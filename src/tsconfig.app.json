@@ -7,6 +7,6 @@
   "exclude": [
     "test.ts",
     "**/*.spec.ts",
-    "set-env.ts"
+    "**/set-env.ts"
   ]
 }
