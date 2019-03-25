@@ -65,7 +65,7 @@
       },
       {
         "source": "**/!(sendEmail|submitBlogPostOverEmail)",
-        "destination": "/index.html"
+        "destination": "dnbhub-cli/index.html"
       }
     ]
   }
