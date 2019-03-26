@@ -37,6 +37,23 @@
         ]
       },
       {
+        "source": "/dnbhub",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, no-cache, no-store, must-ravalidate, max-age=0"
+          },
+          {
+            "key": "Expires",
+            "value": "-1"
+          },
+          {
+            "key": "Pragma",
+            "value": "no-cache"
+          }
+        ]
+      },
+      {
         "source": "/(sendEmail|submitBlogPostOverEmail)",
         "headers": [
           {
@@ -64,8 +81,12 @@
         "function": "submitBlogPostOverEmail"
       },
       {
+        "source": "/dnbhub",
+        "destination": "/dnbhub/index.html"
+      },
+      {
         "source": "**/!(sendEmail|submitBlogPostOverEmail)",
-        "destination": "dnbhub-cli/index.html"
+        "destination": "/dnbhub/index.html"
       }
     ]
   }
