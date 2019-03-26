@@ -21,7 +21,7 @@ if (process.argv[2] === 'prod') {
    * user if user requests dnbhub.com/index by typing it in browser's address bar.
    */
   app.use((req, res) => {
-    res.sendFile(__dirname + '/dist/index.html');
+    res.sendFile(__dirname + '/dist/dnbhub/index.html');
   });
 }
 
@@ -39,7 +39,7 @@ function terminator(sig) {
   if (typeof sig === 'string') {
     console.log(`\n${Date(Date.now())}: Received signal ${sig} - terminating app...\n`);
     console.log(`${Date(Date.now())}: Node server stopped`);
-    if (sig !== 'exit') {
+    if (sig === 'exit') {
       /**
        * Resets client environment variables configuration to default.
        */

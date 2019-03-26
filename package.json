@@ -20,8 +20,10 @@
   "scripts": {
     "ng-build": "ng build",
     "ng-build-prod": "ng build --prod",
+    "ng-build-prod-firebase": "ng build --prod --baseHref /dnbhub/",
     "build": "bash shell/build.sh",
     "build-prod": "bash shell/build.sh prod",
+    "build-prod-firebase": "bash shell/build.sh prod firebase",
     "e2e": "ng e2e",
     "express-prod": "node server.js prod",
     "postinstall": "npx sort-package-json",

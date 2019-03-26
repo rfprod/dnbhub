@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "dnbhub-cli": {
+    "dnbhub": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -18,7 +18,7 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "baseHref": "/",
-            "outputPath": "dist/dnbhub-cli",
+            "outputPath": "dist/dnbhub",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -71,18 +71,18 @@
           "options": {
             "baseHref": "/",
             "proxyConfig": "proxy.conf.json",
-            "browserTarget": "dnbhub-cli:build"
+            "browserTarget": "dnbhub:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "dnbhub-cli:build:production"
+              "browserTarget": "dnbhub:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "dnbhub-cli:build"
+            "browserTarget": "dnbhub:build"
           }
         },
         "test": {
@@ -122,7 +122,7 @@
         }
       }
     },
-    "dnbhub-cli-e2e": {
+    "dnbhub-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "prefix": "",
@@ -131,11 +131,11 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "dnbhub-cli:serve"
+            "devServerTarget": "dnbhub:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "dnbhub-cli:serve:production"
+              "devServerTarget": "dnbhub:serve:production"
             }
           }
         },
@@ -152,5 +152,5 @@
       }
     }
   },
-  "defaultProject": "dnbhub-cli"
+  "defaultProject": "dnbhub"
 }

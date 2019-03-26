@@ -7,6 +7,13 @@
 ##
 source shell/colors.sh
 
+##
+# Usage:
+# > bash build.sh - build app in development mode
+# > bash build.sh prod - build app in production mode
+# > bash build.sh prod firebase - build app for firebase production
+##
+
 devModeNgBuild () {
   printf "\n ${LIGHT_BLUE}<< BUILDING APPLICATION DEFINED IN angular.json DEV MODE >>${DEFAULT}\n\n"
   npm run ng-build
@@ -17,6 +24,11 @@ prodModeNgBuild () {
   npm run ng-build-prod
 }
 
+prodModeNgBuildFirebase () {
+  printf "\n ${LIGHT_BLUE}<< BUILDING APPLICATION DEFINED IN angular.json PROD MODE FIREBASE >>${DEFAULT}\n\n"
+  npm run ng-build-prod-firebase
+}
+
 ##
 # Builds application:
 # - sets client app environment variables;
@@ -25,8 +37,10 @@ prodModeNgBuild () {
 ##
 buildApplication () {
   npm run set-client-app-env
-  if [ $# -ne 1 ] || [ "$1" != "prod" ]; then
+  if [ $# -lt 1 ] || [ "$1" != "prod" ]; then
     devModeNgBuild
+  elif [ $2 = 'firebase' ]; then
+    prodModeNgBuildFirebase
   else
     prodModeNgBuild
   fi
@@ -37,4 +51,4 @@ buildApplication () {
 # Builds applications defined in angular.json using Angular CLI.
 ##
 
-buildApplication $1
+buildApplication $1 $2
