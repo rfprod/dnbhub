@@ -65,7 +65,7 @@ export class FirebaseService {
    * @param collection firebase collection name
    * @param refOnly indicates if db reference only should be returned
    */
-  public getDB(collection: 'about'|'blog'|'blogEntriesIDs'|'brands'|'emails'|'freedownloads'|'users'|string, refOnly: boolean): Promise<DataSnapshot>|DatabaseReference {
+  public getDB(collection: 'about'|'blog'|'blogEntriesIDs'|'brands'|'emails'|'freedownloads'|'users'|string, refOnly?: boolean): Promise<DataSnapshot>|DatabaseReference {
     const db: Promise<DataSnapshot>|DatabaseReference = (!refOnly) ? this.fireDB.database.ref('/' + collection).once('value') : this.fireDB.database.ref('/' + collection);
     // console.log('firebaseService, getDB', db);
     return db;

@@ -22,7 +22,11 @@ export class AnonymousGuard implements CanActivate {
    * Protects paths from anonimous users.
    */
   public canActivate(): boolean {
-    return !this.firebaseService.anonUser() ? true : false;
+    const can: boolean = !this.firebaseService.anonUser() ? true : false;
+    if (!can) {
+      this.router.navigate(['index']);
+    }
+    return can;
   }
 
 }

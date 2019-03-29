@@ -7,3 +7,5 @@ export * from 'src/app/interfaces/app-environment/app-environment.interface';
 
 export * from 'src/app/interfaces/forms/login-form.interface';
 export * from 'src/app/interfaces/forms/email-form.interface';
+
+export * from 'src/app/interfaces/brand/brand.interface';

@@ -55,6 +55,7 @@ import { GoogleApiService } from 'src/app/services/google-api/google-api.service
 import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.service';
 import { FacebookService } from 'src/app/services/facebook/facebook.service';
 import { TwitterService } from 'src/app/services/twitter/twitter.service';
+import { RegularExpressionsService } from 'src/app/services/regular-expressions/regular-expressions.service';
 
 import { IframeContentLoadedDirective } from 'src/app/directives/iframe-content-loaded/iframe-content-loaded.directive';
 import { ImageLoadedDirective } from 'src/app/directives/image-loaded/image-loaded.directive';
@@ -86,7 +87,7 @@ import { ENV } from './app.environment';
     { provide: 'Window', useValue: window },
     CustomServiceWorkerService, CustomDeferredService, CustomHttpHandlersService,
     EventEmitterService, UserInterfaceUtilsService,
-    FirebaseService, SendEmailService, GoogleApiService, SoundcloudService, FacebookService, TwitterService,
+    FirebaseService, SendEmailService, GoogleApiService, SoundcloudService, FacebookService, TwitterService, RegularExpressionsService,
     AnonymousGuard
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
