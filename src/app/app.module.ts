@@ -48,7 +48,6 @@ import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-d
 import { CustomHttpHandlersService } from 'src/app/services/custom-http-handlers/custom-http-handlers.service';
 import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
 import { UserInterfaceUtilsService } from 'src/app/services/user-interface-utils/user-interface-utils.service';
-
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { SendEmailService } from 'src/app/services/send-email/send-email.service';
 import { GoogleApiService } from 'src/app/services/google-api/google-api.service';
@@ -56,11 +55,15 @@ import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.servic
 import { FacebookService } from 'src/app/services/facebook/facebook.service';
 import { TwitterService } from 'src/app/services/twitter/twitter.service';
 import { RegularExpressionsService } from 'src/app/services/regular-expressions/regular-expressions.service';
+import { EmailSubmissionService } from 'src/app/services/email-submission/email-submission.service';
+import { EmailSubscriptionService } from 'src/app/services/email-subscription/email-subscription.service';
 
 import { IframeContentLoadedDirective } from 'src/app/directives/iframe-content-loaded/iframe-content-loaded.directive';
 import { ImageLoadedDirective } from 'src/app/directives/image-loaded/image-loaded.directive';
 
-import { ENV } from './app.environment';
+import { MapToIterablePipe } from 'src/app/pipes/map-to-iterable/map-to-iterable.pipe';
+
+import { ENV } from 'src/app/app.environment';
 
 /**
  * Main application module.
@@ -70,7 +73,8 @@ import { ENV } from './app.environment';
     AppComponent, AppNavComponent, AppIndexComponent, AppSinglesComponent, AppFreedownloadsComponent,
     AppRepostsComponent, AppBlogComponent, AppAboutComponent, AppUserComponent, AppAdminComponent,
     SoundcloudPlayerComponent, AppContactDialog, AppLoginDialog,
-    IframeContentLoadedDirective, ImageLoadedDirective
+    IframeContentLoadedDirective, ImageLoadedDirective,
+    MapToIterablePipe
   ],
   entryComponents: [
     AppContactDialog, AppLoginDialog
@@ -87,7 +91,9 @@ import { ENV } from './app.environment';
     { provide: 'Window', useValue: window },
     CustomServiceWorkerService, CustomDeferredService, CustomHttpHandlersService,
     EventEmitterService, UserInterfaceUtilsService,
-    FirebaseService, SendEmailService, GoogleApiService, SoundcloudService, FacebookService, TwitterService, RegularExpressionsService,
+    SendEmailService, EmailSubmissionService, EmailSubscriptionService,
+    FirebaseService, GoogleApiService, SoundcloudService, FacebookService, TwitterService,
+    RegularExpressionsService,
     AnonymousGuard
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],

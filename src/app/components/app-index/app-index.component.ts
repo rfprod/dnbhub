@@ -3,7 +3,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 
 import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
-import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
+
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { FacebookService } from 'src/app/services/facebook/facebook.service';
 import { TwitterService } from 'src/app/services/twitter/twitter.service';
@@ -71,7 +71,7 @@ export class AppIndexComponent implements OnInit, AfterViewInit, OnDestroy {
       const listEndDivider: ElementRef = new ElementRef(this.window.document.getElementById('list-end'));
       // console.log('listEndDivider', listEndDivider);
       const offsetTop: string = 'offsetTop';
-      const listEndOffsetTop: number = listEndDivider.nativeElement[offsetTop];
+      const listEndOffsetTop: number = (listEndDivider.nativeElement) ? listEndDivider.nativeElement[offsetTop] : this.previousScrollTopValue;
       // console.log('listEndOffsetTop', listEndOffsetTop, 'currentScrollTopValue', currentScrollTopValue);
       if (this.previousScrollTopValue < currentScrollTopValue && currentScrollTopValue >= listEndOffsetTop - (this.window.innerHeight + 1)) {
         console.log('end reached, load more');

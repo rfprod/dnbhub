@@ -16,7 +16,7 @@ import { AppEnvironmentConfig } from 'src/app/app.environment';
 
 import { timeout, take, map, catchError } from 'rxjs/operators';
 
-declare let SC;
+declare let SC: any;
 
 /**
  * Soundcloud service.
@@ -33,7 +33,7 @@ export class SoundcloudService {
   constructor(
     private http: HttpClient,
     private handlers: CustomHttpHandlersService,
-    private sanitizer: DomSanitizer
+    public sanitizer: DomSanitizer
   ) {
     console.log('SoundcloudService constructor');
     this.init();
@@ -58,6 +58,13 @@ export class SoundcloudService {
   private init(): void {
     return SC.initialize(this.options);
   }
+
+  /**
+   * Returns original Soundcloud js api.
+   */
+  public get SC(): any {
+    return SC;
+  };
 
   /**
    * Returns link with id.
@@ -217,10 +224,11 @@ export class SoundcloudService {
    * Converts:
    * - \n to <br/>
    * - links to anchors
+   * @param raw unprovessed blog post description
    */
-  private processDescription(unprocessed: string): string {
-    if (!unprocessed) { return unprocessed; }
-    const processed = unprocessed
+  public processDescription(raw: string): string {
+    if (!raw) { return raw; }
+    const processed = raw
       // parse line breaks
       .replace(/\n/g, '<br/>')
       // parse all urls, full and partial
@@ -256,18 +264,18 @@ export class SoundcloudService {
     trackFirst: () => string,
     trackLast: () => string
   } = {
-    playlistFirst: () => 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/',
-    playlistLast: () => '&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false',
-    trackFirst: () => 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/',
-    trackLast: () => '&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false'
+    playlistFirst: (): string => 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/',
+    playlistLast: (): string => '&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false',
+    trackFirst: (): string => 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/',
+    trackLast: (): string => '&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false'
   };
 
   public widgetLink: {
     playlist: (scPlaylistID: number) => SafeResourceUrl,
     track: (scTrackID: number) => SafeResourceUrl
   } = {
-    playlist: (scPlaylistID: number) => this.sanitizer.bypassSecurityTrustResourceUrl(this.widgetLinkConstructor.playlistFirst() + scPlaylistID + this.widgetLinkConstructor.playlistLast()),
-    track: (scTrackID: number) => this.sanitizer.bypassSecurityTrustResourceUrl(this.widgetLinkConstructor.trackFirst() + scTrackID + this.widgetLinkConstructor.trackLast()),
+    playlist: (scPlaylistID: number): SafeResourceUrl => this.sanitizer.bypassSecurityTrustResourceUrl(this.widgetLinkConstructor.playlistFirst() + scPlaylistID + this.widgetLinkConstructor.playlistLast()),
+    track: (scTrackID: number): SafeResourceUrl => this.sanitizer.bypassSecurityTrustResourceUrl(this.widgetLinkConstructor.trackFirst() + scTrackID + this.widgetLinkConstructor.trackLast()),
   };
 
 }

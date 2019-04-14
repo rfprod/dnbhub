@@ -3,6 +3,7 @@ export * from 'src/app/services/custom-deferred/custom-deferred.service';
 export * from 'src/app/services/custom-http-handlers/custom-http-handlers.service';
 export * from 'src/app/services/custom-service-worker/custom-service-worker.service';
 export * from 'src/app/services/email-subscription/email-subscription.service';
+export * from 'src/app/services/email-submission/email-submission.service';
 export * from 'src/app/services/event-emitter/event-emitter.service';
 export * from 'src/app/services/facebook/facebook.service';
 export * from 'src/app/services/firebase/firebase.service';

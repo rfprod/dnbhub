@@ -16,4 +16,5 @@ export class IBlogPost {
   public links: IBlogPostLinks = new IBlogPostLinks();
   public playlistId: any|null = null;
   public soundcloudUserId: string|null = null;
+  public description: string|null = null;
 }

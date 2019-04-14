@@ -1,4 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { SafeResourceUrl } from '@angular/platform-browser';
+import { FormControl } from '@angular/forms';
+
+import { MatAutocompleteSelectedEvent } from '@angular/material';
 
 import { DataSnapshot, DatabaseReference } from '@angular/fire/database/interfaces';
 
@@ -6,7 +10,8 @@ import { EventEmitterService } from 'src/app/services/event-emitter/event-emitte
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { RegularExpressionsService } from 'src/app/services/regular-expressions/regular-expressions.service';
 import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
-import { IBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
+import { SoundcloudService } from 'src/app/services';
+
 import { IBrand } from 'src/app/interfaces/brand/brand.interface';
 
 /**
@@ -24,11 +29,13 @@ export class AppAdminComponent implements OnInit, OnDestroy {
   /**
    * @param emitter Event emitter service
    * @param firebase Firebase service
+   * @param soundcloud Soundcloud service
    * @param regx Regular expressions service
    */
   constructor(
     private emitter: EventEmitterService,
-    private firebase: FirebaseService,
+    public firebase: FirebaseService,
+    private soundcloud: SoundcloudService,
     private regExp: RegularExpressionsService
   ) {}
 
@@ -48,8 +55,8 @@ export class AppAdminComponent implements OnInit, OnDestroy {
     usersKeys: string[];
     selected: {
       brand: {
-        id: number|null;
         key: string|null;
+        object: any|null;
       }
     };
     edit: {
@@ -79,8 +86,8 @@ export class AppAdminComponent implements OnInit, OnDestroy {
     usersKeys: [],
     selected: {
       brand: {
-        id: null,
-        key: null
+        key: null,
+        object: null
       }
     },
     edit: {
@@ -110,6 +117,7 @@ export class AppAdminComponent implements OnInit, OnDestroy {
         this.details.emails.messages = response;
         this.details.emails.messagesKeys = (response) ? Object.keys(response) : [];
         console.log('this.details.emails.messages', this.details.emails.messages);
+        console.log('this.details.emails.messagesKeys', this.details.emails.messagesKeys);
         def.resolve();
       }).catch((error: string) => {
         console.log('getEmailMessages, error', error);
@@ -129,12 +137,20 @@ export class AppAdminComponent implements OnInit, OnDestroy {
         this.details.emails.blogSubmissions = response;
         this.details.emails.blogSubmissionsKeys = (response) ? Object.keys(response) : [];
         console.log('this.details.emails.blogSubmissions', this.details.emails.blogSubmissions);
+        console.log('this.details.emails.blogSubmissionsKeys', this.details.emails.blogSubmissionsKeys);
         def.resolve();
       }).catch((error: string) => {
         console.log('getEmailBlogSubmissions, error', error);
         def.reject();
       });
     return def.promise;
+  }
+
+  /**
+   * Resolves if there're no blog submissions.
+   */
+  public noEmailBlogSubmissions(): boolean {
+    return !this.details.emails.blogSubmissionsKeys.length ? true : false;
   }
 
   /**
@@ -210,13 +226,13 @@ export class AppAdminComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Deletes blog email submission.
+   * Deletes email blog submission.
    * @param index blog post email submission key index
    */
-  public deleteBlogSubmission(index: number): Promise<any> {
+  public deleteEmailBlogSubmission(index: number): Promise<any> {
     const def = new CustomDeferredService();
     const dbKey: string = this.details.emails.messagesKeys[index];
-    (this.firebase.getDB(`email/blogSubmissions/${dbKey}`, true) as DatabaseReference).remove()
+    (this.firebase.getDB(`emails/blogSubmissions/${dbKey}`, true) as DatabaseReference).remove()
       .then(() => {
         console.log(`blog submission id ${dbKey} was successfully deleted`);
         this.details.emails.blogSubmissionsKeys.splice(index, 1);
@@ -249,45 +265,55 @@ export class AppAdminComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Default blog post object.
-   */
-  private defaultBlogPost: IBlogPost = new IBlogPost();
-
-  private defaultBrandModel: IBrand = new IBrand();
-
-  /**
    * Selects brand.
-   * @param index brand index
    * @param key brand key from firebase
    */
-  public selectBrand(index: number, key: string): void {
-    this.details.selected.brand.id = index;
+  public selectBrand(key: string): void {
     this.details.selected.brand.key = key;
-    if (index === null) {
+    this.details.selected.brand.object = this.getSelectedBrand();
+    if (key === null) {
       this.details.selected.brand.key = null;
+      this.details.selected.brand.object = null;
     }
   }
 
   /**
-   * Returns selected brand.
+   * Selects brand from list.
    */
-  public selectedBrand(): any {
-    return this.details.selected.brand.key ? this.details.brands.data[this.details.selected.brand.key] : {};
+  public selectBrandFromList(event: MatAutocompleteSelectedEvent): void {
+    console.log('selectBrandFromList, event', event);
+    this.details.selected.brand.key = event.option.value;
+    this.details.selected.brand.object = this.details.brands[this.details.selected.brand.key];
+    console.log('this.details.selected.brand', this.details.selected.brand);
   }
+
+  /**
+   * Returns selected brand object.
+   */
+  public getSelectedBrand(): IBrand {
+    return this.details.selected.brand.object;
+  }
+
+  /**
+   * Brand autocomplete form control.
+   */
+  public brandAutocompleteControl: FormControl = new FormControl();
 
   /**
    * Returns matched brands for autocomplete.
    */
-  public getMatchedBrands(): any {
-    const def = new CustomDeferredService();
-    // TODO: implement this method
-    return def.promise;
+  public getMatchedBrands(): string[] {
+    console.log('getMatchedBrands, this.brandAutocompleteControl.value', this.brandAutocompleteControl.value);
+    const matchedKeys = this.details.brandsKeys.filter((item: string) => new RegExp(this.brandAutocompleteControl.value, 'i').test(item));
+    console.log('matchedKeys', matchedKeys);
+    return matchedKeys;
   }
 
   /**
    * Approves blog submission sent over email.
+   * @param index blog post email submission key index
    */
-  public approveEmailSubmission(): Promise<any> {
+  public approveEmailSubmission(index: number): Promise<any> {
     const def = new CustomDeferredService();
     // TODO: implement this method
     return def.promise;
@@ -303,34 +329,37 @@ export class AppAdminComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Processes blog post description.
-   * @param raw unprovessed blog post description
-   */
-  public processDescription(raw: string): string {
-    if (!raw) { return raw; }
-    /*
-    *	convert:
-    *	\n to <br/>
-    *	links to anchors
-    */
-    const processed = raw.replace(/\n/g, '<br/>')
-      .replace(/((http(s)?)?(:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._+~#=]{0,255}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*))/g, '<a href="$1" target=_blank><i class="fa fa-external-link"></i> <span class="md-caption">$1</span></a>') // parse all urls, full and partial
-      .replace(/href="((www\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._+~#=]{0,255}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*))"/g, 'href="http://$1"') // add to partial hrefs protocol prefix
-      .replace(/(@)([^@,\s<)\]]+)/g, '<a href="https://soundcloud.com/$2" target=_blank><i class="fa fa-external-link"></i> <span class="md-caption">$1$2</span></a>');
-    // console.log('processed', processed);
-    return processed;
-  };
-
-  /**
    * Shows blog post submission preview.
    * @param index blog post index
    */
   public showSubmissionPreview(index: number): Promise<any> {
     const def = new CustomDeferredService();
-    // TODO: implement this method
-    // this.details.preview.submission = {}; // get data and use it
+    const dbKey = this.details.emails.blogSubmissionsKeys[index];
+    const selectedSubmission = this.details.emails.blogSubmissions[dbKey];
+    this.soundcloud.SC.get(`/resolve?url=${selectedSubmission.link}`).then((data) => {
+      console.log('data', data);
+      this.details.preview.submission = data;
+      this.details.preview.submission.description = this.soundcloud.processDescription(this.details.preview.submission.description);
+      def.resolve();
+    });
     return def.promise;
   }
+
+  /**
+   * Returns soundcloud widget link.
+   * @param soundcloudPlaylistID soundcloud playlist id
+   */
+  public soundcloudWidgetLink(soundcloudPlaylistID: number): SafeResourceUrl {
+    return this.soundcloud.widgetLink.playlist(soundcloudPlaylistID);
+  };
+
+  /**
+   * Resolves if soundcloud link should be shown.
+   * @param soundcloudPlaylistID soundcloud playlist id
+   */
+  public showSoundcloudWidgetLink(soundcloudPlaylistID: number): SafeResourceUrl {
+    return (this.soundcloud.widgetLink.playlist(soundcloudPlaylistID) !== '#') ? true : false;
+  };
 
   /**
    * Resets blog post submission preview.
@@ -341,10 +370,37 @@ export class AppAdminComponent implements OnInit, OnDestroy {
 
   /**
    * Resolves if submission is already added.
+   * @param index in array
    */
-  public submissionAlreadyAdded(): Promise<any> {
+  public submissionAlreadyAdded(index: string): Promise<any> {
     const def = new CustomDeferredService();
-    // TODO: implement this method
+    let added = false;
+    if (!this.details.blog.existingIDs) {
+      console.log('Unable to add blog posts, existingBlogEntriesIDs is not initialized yet');
+      added = true;
+      def.resolve(added);
+    } else {
+      const dbKey = this.details.emails.blogSubmissionsKeys[index];
+      const selectedSubmission = this.details.emails.blogSubmissions[dbKey];
+      if (selectedSubmission) {
+        if (!selectedSubmission.id) {
+          /*
+          *	resolve submission and save result temporarily
+          */
+          this.soundcloud.SC.get(`/resolve?url=${selectedSubmission.link}`).then((data) => {
+            this.details.emails.blogSubmissions[dbKey].id = data.id;
+            this.details.emails.blogSubmissions[dbKey].scData = data;
+            added = (this.details.blog.existingIDs.includes(data.id)) ? true : added;
+            def.resolve(added);
+          });
+        } else {
+          added = (this.details.blog.existingIDs.includes(selectedSubmission.id)) ? true : added;
+          def.resolve(added);
+        }
+      } else {
+        def.reject(new Error('Error: selectedSubmission is falsy'));
+      }
+    }
     return def.promise;
   }
 
