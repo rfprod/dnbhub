@@ -1,15 +1,19 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import {
   // form controls
-  MatAutocompleteModule, MatCheckboxModule, MatDatepickerModule, MatNativeDateModule, MatInputModule, MatSelectModule, MatSliderModule, MatSlideToggleModule, MatRadioModule,
+  MatAutocompleteModule, MatCheckboxModule, MatDatepickerModule, MatNativeDateModule,
+  MatInputModule, MatSelectModule, MatSliderModule, MatSlideToggleModule, MatRadioModule,
   // navigation
   MatMenuModule, MatSidenavModule, MatToolbarModule,
   // layout
-  MatListModule, MatGridListModule, MatCardModule, MatStepperModule, MatTabsModule, MatExpansionModule,
+  MatListModule, MatGridListModule, MatCardModule, MatStepperModule, MatTabsModule,
+  MatExpansionModule,
   // buttons and indicators
-  MatButtonModule, MatButtonToggleModule, MatChipsModule, MatIconModule, MatProgressSpinnerModule, MatProgressBarModule,
+  MatButtonModule, MatButtonToggleModule, MatChipsModule, MatIconModule,
+  MatProgressSpinnerModule, MatProgressBarModule,
   // popups and modals
-  MatDialogModule, MatSnackBarModule, MatTooltipModule, MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipDefaultOptions,
+  MatDialogModule, MatSnackBarModule, MatTooltipModule, MAT_TOOLTIP_DEFAULT_OPTIONS,
+  MatTooltipDefaultOptions,
   // data table
   MatTableModule, MatSortModule, MatPaginatorModule,
   // misc
@@ -21,7 +25,10 @@ import {
   // tree
   MatTreeModule,
   // badge
-  MatBadgeModule
+  MatBadgeModule,
+  // bottom sheet
+  MatBottomSheetModule,
+  MatBottomSheetConfig
 } from '@angular/material';
 
 import { OverlayModule } from '@angular/cdk/overlay';
@@ -35,13 +42,17 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
 @NgModule({
   imports: [
     // form controls
-    MatAutocompleteModule, MatCheckboxModule, MatDatepickerModule, MatNativeDateModule, MatMomentDateModule, MatInputModule, MatSelectModule, MatSliderModule, MatSlideToggleModule, MatRadioModule,
+    MatAutocompleteModule, MatCheckboxModule, MatDatepickerModule, MatNativeDateModule,
+    MatMomentDateModule, MatInputModule, MatSelectModule, MatSliderModule,
+    MatSlideToggleModule, MatRadioModule,
     // navigation
     MatMenuModule, MatSidenavModule, MatToolbarModule,
     // layout
-    MatListModule, MatGridListModule, MatCardModule, MatStepperModule, MatTabsModule, MatExpansionModule,
+    MatListModule, MatGridListModule, MatCardModule, MatStepperModule, MatTabsModule,
+    MatExpansionModule,
     // buttons and indicators
-    MatButtonModule, MatButtonToggleModule, MatChipsModule, MatIconModule, MatProgressSpinnerModule, MatProgressBarModule,
+    MatButtonModule, MatButtonToggleModule, MatChipsModule, MatIconModule,
+    MatProgressSpinnerModule, MatProgressBarModule,
     // popups and modals
     MatDialogModule, MatSnackBarModule, MatTooltipModule,
     // data table
@@ -54,18 +65,24 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
     MatTreeModule,
     // badge
     MatBadgeModule,
+    // bottom sheet
+    MatBottomSheetModule,
     // cdk
     OverlayModule
   ],
   exports: [
     // form controls
-    MatAutocompleteModule, MatCheckboxModule, MatDatepickerModule, MatNativeDateModule, MatMomentDateModule, MatInputModule, MatSelectModule, MatSliderModule, MatSlideToggleModule, MatRadioModule,
+    MatAutocompleteModule, MatCheckboxModule, MatDatepickerModule, MatNativeDateModule,
+    MatMomentDateModule, MatInputModule, MatSelectModule, MatSliderModule,
+    MatSlideToggleModule, MatRadioModule,
     // navigation
     MatMenuModule, MatSidenavModule, MatToolbarModule,
     // layout
-    MatListModule, MatGridListModule, MatCardModule, MatStepperModule, MatTabsModule, MatExpansionModule,
+    MatListModule, MatGridListModule, MatCardModule, MatStepperModule, MatTabsModule,
+    MatExpansionModule,
     // buttons and indicators
-    MatButtonModule, MatButtonToggleModule, MatChipsModule, MatIconModule, MatProgressSpinnerModule, MatProgressBarModule,
+    MatButtonModule, MatButtonToggleModule, MatChipsModule, MatIconModule, MatProgressSpinnerModule,
+    MatProgressBarModule,
     // popups and modals
     MatDialogModule, MatSnackBarModule, MatTooltipModule,
     // data table
@@ -78,6 +95,8 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
     MatTreeModule,
     // badge
     MatBadgeModule,
+    // bottom sheet
+    MatBottomSheetModule,
     // cdk
     OverlayModule
   ]
@@ -92,6 +111,14 @@ export const CustomMaterialModuleWithProviders: ModuleWithProviders = {
   ngModule: CustomMaterialModule,
   providers: [
     MatIconRegistry,
-    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: { showDelay: 1000, hideDelay: 1000, touchendHideDelay: 1000 } as MatTooltipDefaultOptions }
+    MatBottomSheetConfig,
+    {
+      provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
+      useValue: {
+        showDelay: 1000,
+        hideDelay: 1000,
+        touchendHideDelay: 1000
+      } as MatTooltipDefaultOptions
+    }
   ]
 };

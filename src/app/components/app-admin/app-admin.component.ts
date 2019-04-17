@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { FormControl } from '@angular/forms';
 
-import { MatAutocompleteSelectedEvent } from '@angular/material';
+import { MatAutocompleteSelectedEvent, MatBottomSheet, MatBottomSheetRef, MatBottomSheetConfig } from '@angular/material';
 
 import { DataSnapshot, DatabaseReference } from '@angular/fire/database/interfaces';
 
@@ -13,6 +13,8 @@ import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-d
 import { SoundcloudService } from 'src/app/services';
 
 import { IBrand } from 'src/app/interfaces/brand/brand.interface';
+import { BottomSheetTextDetailsComponent } from '../bottom-sheet-text-details/bottom-sheet-text-details.component';
+import { take } from 'rxjs/operators';
 
 /**
  * Application admin component.
@@ -27,6 +29,7 @@ import { IBrand } from 'src/app/interfaces/brand/brand.interface';
 export class AppAdminComponent implements OnInit, OnDestroy {
 
   /**
+   * AppAdminComponent constructor.
    * @param emitter Event emitter service
    * @param firebase Firebase service
    * @param soundcloud Soundcloud service
@@ -36,8 +39,14 @@ export class AppAdminComponent implements OnInit, OnDestroy {
     private emitter: EventEmitterService,
     public firebase: FirebaseService,
     private soundcloud: SoundcloudService,
-    private regExp: RegularExpressionsService
+    private regExp: RegularExpressionsService,
+    private bottomSheet: MatBottomSheet
   ) {}
+
+  /**
+   * Bottom sheet text details component reference.
+   */
+  private bottomSheetRef: MatBottomSheetRef<BottomSheetTextDetailsComponent>;
 
   /**
    * Company details object.
@@ -151,6 +160,20 @@ export class AppAdminComponent implements OnInit, OnDestroy {
    */
   public noEmailBlogSubmissions(): boolean {
     return !this.details.emails.blogSubmissionsKeys.length ? true : false;
+  }
+
+  /**
+   * Resolves if there're no email messages.
+   */
+  public noEmailMessages(): boolean {
+    return !this.details.emails.messagesKeys.length ? true : false;
+  }
+
+  /**
+   * Resolves if there're no brands.
+   */
+  public noBrands(): boolean {
+    return !this.details.brandsKeys.length ? true : false;
   }
 
   /**
@@ -321,11 +344,20 @@ export class AppAdminComponent implements OnInit, OnDestroy {
 
   /**
    * Shows email message text.
+   * @param emailMessage email message
    */
-  public showMessageText(): Promise<any> {
-    const def = new CustomDeferredService();
-    // TODO: implement this method
-    return def.promise;
+  public showMessageText(emailMessage: any): void {
+    this.bottomSheetRef = this.bottomSheet.open(BottomSheetTextDetailsComponent, {
+      data: {
+        text: emailMessage.message
+      }
+    } as MatBottomSheetConfig);
+
+    this.bottomSheetRef.afterDismissed().pipe(take(1)).subscribe(
+      (result: any) => {
+        console.log('bottomSheetRef dismissed, result', result);
+      }
+    );
   }
 
   /**

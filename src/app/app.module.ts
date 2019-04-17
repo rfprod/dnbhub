@@ -15,7 +15,7 @@ import { HttpClientModule } from '@angular/common/http';
 *	CustomMaterialModule loads exact material modules
 */
 import 'node_modules/hammerjs/hammer.js';
-import { CustomMaterialModule } from 'src/app/modules/material/custom-material.module';
+import { CustomMaterialModuleWithProviders } from 'src/app/modules/material/custom-material.module';
 
 import { AppRoutingModule } from 'src/app/app.routing.module';
 
@@ -64,6 +64,7 @@ import { ImageLoadedDirective } from 'src/app/directives/image-loaded/image-load
 import { MapToIterablePipe } from 'src/app/pipes/map-to-iterable/map-to-iterable.pipe';
 
 import { ENV } from 'src/app/app.environment';
+import { BottomSheetTextDetailsComponent } from './components/bottom-sheet-text-details/bottom-sheet-text-details.component';
 
 /**
  * Main application module.
@@ -74,13 +75,15 @@ import { ENV } from 'src/app/app.environment';
     AppRepostsComponent, AppBlogComponent, AppAboutComponent, AppUserComponent, AppAdminComponent,
     SoundcloudPlayerComponent, AppContactDialog, AppLoginDialog,
     IframeContentLoadedDirective, ImageLoadedDirective,
-    MapToIterablePipe
+    MapToIterablePipe,
+    BottomSheetTextDetailsComponent
   ],
   entryComponents: [
-    AppContactDialog, AppLoginDialog
+    AppContactDialog, AppLoginDialog,
+    BottomSheetTextDetailsComponent
   ],
   imports: [
-    BrowserModule, BrowserAnimationsModule, FlexLayoutModule, CustomMaterialModule,
+    BrowserModule, BrowserAnimationsModule, FlexLayoutModule, CustomMaterialModuleWithProviders,
     FormsModule, ReactiveFormsModule, HttpClientModule, TranslateModule.forRoot(),
     AngularFireModule.initializeApp(ENV.firebase, 'dnbhub-a5d9c'), AngularFireDatabaseModule, AngularFireAuthModule,
     AppRoutingModule
