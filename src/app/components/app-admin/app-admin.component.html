@@ -62,8 +62,9 @@
                 <button mat-icon-button class="md-icon-button" *ngIf="true" (click)="showSubmissionPreview(i)" aria-label="preview submission" title="preview submission">
                   <mat-icon fontSet="fas" fontIcon="fa-th-large" class="material-icons-fas"></mat-icon>
                 </button>
-                <button mat-icon-button class="md-icon-button green-text" [disabled]="submissionAlreadyAdded(i)" *ngIf="getSelectedBrand()" (click)="approveEmailSubmission(i)" aria-label="approve email submission" title="approve email submission">
-                  <mat-icon fontSet="fas" fontIcon="fa-check" class="material-icons-fas"></mat-icon>
+                <button mat-icon-button class="md-icon-button green-text" [disabled]="submissionAlreadyAdded(i)" *ngIf="getSelectedBrand()" (click)="approveEmailSubmission(i)" [attr.aria-label]="submissionAlreadyAdded(i) ? 'this playlist was already added' : 'approve email submission'" [attr.title]="submissionAlreadyAdded(i) ? 'this playlist was already added' : 'approve email submission'">
+                  <mat-icon fontSet="fas" fontIcon="fa-check" class="material-icons-fas" *ngIf="!submissionAlreadyAdded(i)"></mat-icon>
+                  <mat-icon fontSet="fas" fontIcon="fa-ban" class="material-icons-fas" *ngIf="submissionAlreadyAdded(i)"></mat-icon>
                 </button>
               </span>
               <span class="list-end" *ngIf="details.emails.blogSubmissionsKeys.length === i">
@@ -403,7 +404,7 @@
   <div fxFlex="100" fxLayout="row" fxLayoutFill *ngIf="details.preview.submission">
 
       <div fxFlex="100" fxLayoutFill fxLayout="column" fxLayoutAlign="start stretch">
-        <mat-button (click)="hideSubmissionPreview()">close preview</mat-button>
+        <button mat-button (click)="hideSubmissionPreview()">close preview</button>
         <div fxFlex="15" fxFlex-xs="30" class="heading" fxLayout="row wrap" fxLayoutAlign="start center">
           <h4 fxFlex fxFlex.xs="100" fxFlex.sm="100" fxFlex.md="100" fxLayout="row" fxLayoutAlign="center center">
             <button mat-button color="accent" fxFlex="20" disabled="true" aria-label="previous blog post" title="previous blog post">
