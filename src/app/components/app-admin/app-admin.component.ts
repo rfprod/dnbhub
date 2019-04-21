@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SafeResourceUrl } from '@angular/platform-browser';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormBuilder, Validators } from '@angular/forms';
 
 import { MatAutocompleteSelectedEvent, MatBottomSheet, MatBottomSheetRef, MatBottomSheetConfig } from '@angular/material';
 
@@ -15,6 +15,7 @@ import { SoundcloudService } from 'src/app/services';
 import { IBrand } from 'src/app/interfaces/brand/brand.interface';
 import { BottomSheetTextDetailsComponent } from '../bottom-sheet-text-details/bottom-sheet-text-details.component';
 import { take } from 'rxjs/operators';
+import { IBrandForm } from 'src/app/interfaces/brand/brand-form.interface';
 
 /**
  * Application admin component.
@@ -34,13 +35,15 @@ export class AppAdminComponent implements OnInit, OnDestroy {
    * @param firebase Firebase service
    * @param soundcloud Soundcloud service
    * @param regx Regular expressions service
+   * @param fb Form builder
    */
   constructor(
     private emitter: EventEmitterService,
     public firebase: FirebaseService,
     private soundcloud: SoundcloudService,
-    private regExp: RegularExpressionsService,
-    private bottomSheet: MatBottomSheet
+    private regx: RegularExpressionsService,
+    private bottomSheet: MatBottomSheet,
+    private fb: FormBuilder
   ) {}
 
   /**
@@ -64,6 +67,7 @@ export class AppAdminComponent implements OnInit, OnDestroy {
     usersKeys: string[];
     selected: {
       brand: {
+        index: number|null;
         key: string|null;
         object: any|null;
       }
@@ -95,6 +99,7 @@ export class AppAdminComponent implements OnInit, OnDestroy {
     usersKeys: [],
     selected: {
       brand: {
+        index: null,
         key: null,
         object: null
       }
@@ -289,13 +294,16 @@ export class AppAdminComponent implements OnInit, OnDestroy {
 
   /**
    * Selects brand.
+   * Resets selection when null is passed as a parameter.
    * @param key brand key from firebase
    */
   public selectBrand(key: string): void {
     this.details.selected.brand.key = key;
+    this.details.selected.brand.index = this.details.brandsKeys.indexOf(key);
     this.details.selected.brand.object = this.getSelectedBrand();
     if (key === null) {
       this.details.selected.brand.key = null;
+      this.details.selected.brand.index = null;
       this.details.selected.brand.object = null;
     }
   }
@@ -306,6 +314,7 @@ export class AppAdminComponent implements OnInit, OnDestroy {
   public selectBrandFromList(event: MatAutocompleteSelectedEvent): void {
     console.log('selectBrandFromList, event', event);
     this.details.selected.brand.key = event.option.value;
+    this.details.selected.brand.index = this.details.brandsKeys.indexOf(event.option.value);
     this.details.selected.brand.object = this.details.brands[this.details.selected.brand.key];
     console.log('this.details.selected.brand', this.details.selected.brand);
   }
@@ -437,31 +446,91 @@ export class AppAdminComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Resolves if brand is editable.
+   * Resolves if brand is currently editable.
    * @param dbKey firebase brand key
    */
-  public isBrandEditable(dbKey: string): boolean {
+  public isBrandCurrentlyEditable(dbKey: string): boolean {
     return dbKey === this.details.edit.brand.key;
   }
 
   /**
-   * Resolves if submission is already added.
+   * Switches Edit Brand mode.
+   * Toggles Edit Brand mode off if the same item is selected as an editable.
    */
   public editBrand(index: number): void {
     console.log(`edit brand, keyIndex: ${index}`);
-    /*
-    *	toggles mode off if the same item is selected as an editable
-    */
-    const dbKey = this.details.brandsKeys[index];
-    this.details.edit.brand.key = (dbKey !== this.details.edit.brand.key) ? dbKey : null;
+    if (index !== null) {
+      const dbKey = this.details.brandsKeys[index];
+      this.details.edit.brand.key = (dbKey !== this.details.edit.brand.key) ? dbKey : null;
+      console.log('this.details.edit.brand.key', this.details.edit.brand.key);
+      if (this.details.edit.brand.key) {
+        const brand = this.details.brands[dbKey];
+        this.initializeBrandForm(brand);
+      }
+    } else {
+      this.details.edit.brand.key = null;
+    }
+  }
+
+  /**
+   * Edit brand form.
+   */
+  public editBrandForm: IBrandForm;
+
+  /**
+   * Initializes brand form.
+   * @param brand selected brand object
+   */
+  private initializeBrandForm(brand?: IBrand): void {
+    console.log('initializeBrandForm, brand', brand);
+    this.editBrandForm = this.fb.group({
+      name: [brand ? brand.name || '' : '', Validators.compose([Validators.required, Validators.minLength(5)])],
+      bandcamp: [brand ? brand.bandcamp || '' : '', Validators.compose([Validators.required, Validators.pattern(this.regx.patterns.links.bandcamp)])],
+      facebook: [brand ? brand.facebook || '' : '', Validators.compose([Validators.required, Validators.pattern(this.regx.patterns.links.facebook)])],
+      instagram: [brand ? brand.instagram || '' : '', Validators.compose([Validators.required, Validators.pattern(this.regx.patterns.links.instagram)])],
+      soundcloud: [brand ? brand.soundcloud || '' : '', Validators.compose([Validators.required, Validators.pattern(this.regx.patterns.links.soundcloud)])],
+      twitter: [brand ? brand.twitter || '' : '', Validators.compose([Validators.required, Validators.pattern(this.regx.patterns.links.twitter)])],
+      website: [brand ? brand.website || '' : '', Validators.compose([Validators.required, Validators.pattern(this.regx.patterns.links.website)])],
+      youtube: [brand ? brand.youtube || '' : '', Validators.compose([Validators.required, Validators.pattern(this.regx.patterns.links.youtube)])]
+    }) as IBrandForm;
+  }
+
+  /**
+   * Submits brand form.
+   */
+  public submitBrandForm(): void {
+    if (this.editBrandForm.valid) {
+      this.updateBrand();
+    } else {
+      console.log('submitBrandForm, invalid intput', this.editBrandForm);
+    }
+  }
+
+  /**
+   * Updates local brand model.
+   * @param dbKey Database key
+   * @param newValues New brand values
+   */
+  private updateLocalBrandModel(dbKey: string, newValues): void {
+    const index: number = this.details.brandsKeys.indexOf(dbKey);
+    this.details.brands[index] = newValues;
   }
 
   /**
    * Updates brand.
    */
-  public updateBrand(): Promise<any> {
+  private updateBrand(): Promise<any> {
     const def = new CustomDeferredService();
-    // TODO: implement this method
+    const dbKey: string = this.details.selected.brand.key;
+    const newBrandValues: IBrand = this.editBrandForm.value;
+    (this.firebase.getDB(`brands/${dbKey}`, true) as DatabaseReference).update(newBrandValues)
+      .then(() => {
+        console.log(`brand id ${dbKey} was successfully deleted`);
+        this.updateLocalBrandModel(dbKey, newBrandValues);
+        this.selectBrand(null);
+      }).catch((error: string) => {
+        console.log('updateBrand, error', error);
+      });
     return def.promise;
   }
 

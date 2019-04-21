@@ -9,3 +9,4 @@ export * from 'src/app/interfaces/forms/login-form.interface';
 export * from 'src/app/interfaces/forms/email-form.interface';
 
 export * from 'src/app/interfaces/brand/brand.interface';
+export * from 'src/app/interfaces/brand/brand-form.interface';

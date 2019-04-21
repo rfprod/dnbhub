@@ -1,5 +1,25 @@
 import { Injectable } from "@angular/core";
 
+interface IRegExpPatterns {
+  email: RegExp;
+  soundcloudPlaylistLink: RegExp;
+  brandName: RegExp;
+  links: {
+    bandcamp: RegExp;
+    facebook: RegExp;
+    instagram: RegExp;
+    soundcloud: RegExp;
+    twitter: RegExp;
+    website: RegExp;
+    youtube: RegExp;
+  };
+  text: RegExp;
+  name: RegExp;
+  header: RegExp;
+  message: RegExp;
+  password: RegExp;
+}
+
 /**
  * Application regular expressions service.
  */
@@ -13,7 +33,7 @@ export class RegularExpressionsService {
   /**
    * Regular expression patterns shared service.
    */
-  private regExpPatterns: any = {
+  private regExpPatterns: IRegExpPatterns = {
     email: /\w{2}@\w{2,}(\.)?\w{2,}/,
     soundcloudPlaylistLink: /^https:\/\/soundcloud\.com\/\w+[^/]*\/sets\/\w+[^/]*$/,
     brandName: /^[a-zA-Z0-9]{2,}$/,
@@ -33,7 +53,7 @@ export class RegularExpressionsService {
     password: /\w{8,}/
   };
 
-  public patterns(): any {
+  public get patterns(): IRegExpPatterns {
     return this.regExpPatterns;
   }
 
