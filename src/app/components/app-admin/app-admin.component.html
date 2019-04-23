@@ -220,223 +220,63 @@
           </div>
         </mat-tab-body>
       </mat-tab>
+
+      <mat-tab label="users">
+        <mat-tab-body fxLayout="row wrap">
+          <div fxFlex fxLayout="row wrap" fxLayoutAlign="start stretch">
+            <div *ngFor="let userKey of details.usersKeys; let i = index" fxFlex.xs="100" fxFlex.sm="50" fxFlex="33" fxLayout="column" fxLayoutAlign="center stretch">
+              <span fxFlex="100" class="mat-body-2">
+                {{i}}. {{ userKey }}
+              </span>
+              <span fxFlex="100" class="mat-body-1" fxLayout="row wrap">
+                <span fxFlex="100" *ngIf="details.users[userKey].created">
+                  Created {{ details.users[userKey].created | date }}
+                </span>
+                <span fxFlex="100" *ngIf="details.users[userKey].sc_id">
+                  Soundcloud ID {{ details.users[userKey].sc_id }}
+                </span>
+                <span fxFlex="100" *ngIf="details.users[userKey].submittedPlaylists">
+                  Submitted Playlists
+                  <div fxFlex="50" fxFlex.xs="100" fxFlex.sm="100" fxFlex.md="100" *ngFor="let submittedPlaylist of details.users[userKey].submittedPlaylists">
+                    <span fxLayout="row wrap">
+                      <p>
+                        id: <strong>{{submittedPlaylist.playlistId}}</strong>
+                      </p>
+                      <button mat-button type="button" [disabled]="submissionAlreadyAdded(i)" *ngIf="!submittedPlaylist.submitted && details.selected.brand.index >= 0" (click)="approveUserSubmission(submittedPlaylist.playlistId)" aria-label="approve post" title="approve post">
+                        <i class="fa fa-2x fa-check"></i>
+                      </button>
+                      <button mat-button type="button" [disabled]="submissionAlreadyAdded(i)" *ngIf="!details.selected.brand.index && details.selected.brand.index !== 0" (click)="selectBrand(0)" aria-label="select a brand to approve an email submission" title="select a brand to approve an email submission">
+                        <i class="fa fa-2x fa-address-book"></i>
+                      </button>
+                      <button mat-button type="button" *ngIf="!submittedPlaylist.submitted" (click)="rejectUserSubmission(submittedPlaylist.playlistId)" aria-label="reject post" title="reject post">
+                        <i class="fa fa-2x fa-trash"></i>
+                      </button>
+                      <!--
+                      <mat-autocomplete fxFlex="100" md-no-cache="true" md-selected-item="selectedBrandKey" md-items="brand in getMatchedBrands(searchBrands)" md-search-text="searchBrands" md-item-text="brand" md-clear-button="true" md-selected-item-change="selectBrandFromList(brand)" placeholder="select brand" *ngIf="details.selected.brand.index >= 0">
+                        <span>{{brand}}</span>
+                      </mat-autocomplete>
+                      -->
+                    </span>
+                    <span fxFlex class="mat-body-1" *ngIf="details.selected.brand.index >= 0">
+                      <p>Selected label links:</p>
+                      <span *ngFor="let key of getSelectedBrand()">
+                        {{key}}:
+                        <a *ngIf="getSelectedBrand()[key].value !== ''" href="{{getSelectedBrand()[key].value}}" target=_blank>
+                          <i class="fa fa-1x fa-external-link"></i>
+                        </a>
+                        <i *ngIf="getSelectedBrand()[key].value === ''" class="fa fa-1x fa-external-link" title="empty link field"></i>,
+                      </span>
+                    </span>
+                    <iframe width="97%" height="350" scrolling="no" frameborder="no" src="{{soundcloudWidgetLink(submittedPlaylist.playlistId)}}" *ngIf="showSoundcloudWidgetLink(submittedPlaylist.playlistId)"></iframe>
+                  </div>
+                </span>
+              </span>
+            </div>
+          </div>
+        </mat-tab-body>
+      </mat-tab>
     </mat-tab-group>
-    <!--
-      <mat-tabs fxFlex="90" md-border-bottom md-swipe-content fxLayout="column">
 
-        <mat-tab fxFlex fxLayout="column">
-          <mat-tab-label>brands</mat-tab-label>
-          <mat-tab-body fxFlex fxLayout="column" class="md-padding">
-            <div fxFlex fxLayout="row wrap" fxLayoutAlign="start stretch">
-              <div *ngIf="!newBrandCreateMode" fxFlex-xs="100" fxFlex-sm="50" fxFlex="33" fxLayout="column" fxLayoutAlign="center center">
-                <mat-button class="md-icon-button" type="button" (click)="createBrand()" aria-label="add a new brand" title="add a new brand">
-                  <i class="fa fa-2x fa-plus green-text"></i>
-                </mat-button>
-              </div>
-              <div class="mat-body-1" *ngIf="newBrandCreateMode" fxFlex-xs="100" fxFlex-sm="50" fxFlex="33" fxLayout="column" fxLayoutAlign="center stretch">
-                <form fxFlex name="newBrandForm" accept-charset="UTF-8" fxLayout="column" align-items="start stretch" *ngIf="isBrandCurrentlyEditable(key)" ng-cloak>
-                  <mat-form-field>
-                    <input type="text" name="name" ng-model="newBrand.name" ng-pattern="patterns.name" placeholder="Brand name without spaces in CamelCase" required>
-                    <div ng-messages="newBrandForm.name.$error">
-                      <div ng-message="required">This field is required</div>
-                      <div ng-message="pattern">Invalid value: 2+ English letters, digits</div>
-                    </div>
-                  </mat-form-field>
-                  <mat-form-field>
-                    <input type="text" name="bandcamp" ng-model="newBrand.bandcamp" ng-pattern="patterns.links.bandcamp" placeholder="Bandcamp profile link, e.g.: https://some-name.bandcamp.com" required>
-                    <div ng-messages="newBrandForm.bandcamp.$error">
-                      <div ng-message="required">This field is required</div>
-                      <div ng-message="pattern">Invalid value, example link: https://some-name.bandcamp.com</div>
-                    </div>
-                  </mat-form-field>
-                  <mat-form-field>
-                    <input type="text" name="facebook" ng-model="newBrand.facebook" ng-pattern="patterns.links.facebook" placeholder="Facebook profile link, e.g.: https://www.facebook.com/some-name" required>
-                    <div ng-messages="newBrandForm.facebook.$error">
-                      <div ng-message="required">This field is required</div>
-                      <div ng-message="pattern">Invalid value, example link: https://www.facebook.com/some-name</div>
-                    </div>
-                  </mat-form-field>
-                  <mat-form-field>
-                    <input type="text" name="instagram" ng-model="newBrand.instagram" ng-pattern="patterns.links.instagram" placeholder="Instagram profile link, e.g.: https://www.instagram.com/some-name" required>
-                    <div ng-messages="newBrandForm.instagram.$error">
-                      <div ng-message="required">This field is required</div>
-                      <div ng-message="pattern">Invalid value, example link: https://www.instagram.com/some-name</div>
-                    </div>
-                  </mat-form-field>
-                  <mat-form-field>
-                    <input type="text" name="soundcloud" ng-model="newBrand.soundcloud" ng-pattern="patterns.links.soundcloud" placeholder="Soundcloud profile link, e.g.: https://www.soundcloud.com/some-name" required>
-                    <div ng-messages="newBrandForm.soundcloud.$error">
-                      <div ng-message="required">This field is required</div>
-                      <div ng-message="pattern">Invalid value, example link: https://www.soundcloud.com/some-name</div>
-                    </div>
-                  </mat-form-field>
-                  <mat-form-field>
-                    <input type="text" name="twitter" ng-model="newBrand.twitter" ng-pattern="patterns.links.twitter" placeholder="Twitter profile link, e.g.: https://twitter.com/some-name" required>
-                    <div ng-messages="newBrandForm.twitter.$error">
-                      <div ng-message="required">This field is required</div>
-                      <div ng-message="pattern">Invalid value, example link: https://twitter.com/some-name</div>
-                    </div>
-                  </mat-form-field>
-                  <mat-form-field>
-                    <input type="text" name="website" ng-model="newBrand.website" ng-pattern="patterns.links.website" placeholder="Brand's website link, e.g.: https://domain-name.top-level-domain" required>
-                    <div ng-messages="newBrandForm.website.$error">
-                      <div ng-message="required">This field is required</div>
-                      <div ng-message="pattern">Invalid value, example link: https://domain-name.top-level-domain</div>
-                    </div>
-                  </mat-form-field>
-                  <mat-form-field>
-                    <input type="text" name="youtube" ng-model="newBrand.youtube" ng-pattern="patterns.links.youtube" placeholder="Youtube channel or user link, e.g.: https://www.youtube.com/c_or_users/channelName" required>
-                    <div ng-messages="newBrandForm.youtube.$error">
-                      <div ng-message="required">This field is required</div>
-                      <div ng-message="pattern">Invalid value, example link: https://www.youtube.com/c_or_users/channelName</div>
-                    </div>
-                  </mat-form-field>
-                  <span fxFlex *ngIf="newBrandCreateMode" fxLayout="row wrap" fxLayoutAlign="start center">
-                    <mat-button class="md-icon-button" type="button" (click)="createBrand()" aria-label="cancel brand creation" title="cancel brand creation">
-                      <i class="fa fa-2x fa-times"></i>
-                    </mat-button>
-                    <mat-button class="md-icon-button green-text" (click)="submitNewBrand()" aria-label="submit a new brand" title="submit a new brand">
-                      <i class="fa fa-2x fa-check"></i>
-                    </mat-button>
-                  </span>
-                </form>
-              </div>
-
-              <div ng-repeat="key in brandsKeys" fxFlex-xs="100" fxFlex-sm="50" fxFlex="33" fxLayout="column" fxLayoutAlign="center stretch">
-                <span fxFlex="1" class="mat-body-2" fxLayout="row" fxLayoutAlign="center center">
-                  {{$index}}. {{ key }}
-                </span>
-                <span fxFlex="2" class="mat-body-1">
-                  <div fxFlex *ngIf="!isBrandCurrentlyEditable(key)">
-                    <p fxFlex="100">Bandcamp <a href="{{ brands[key].bandcamp }}" target=_blank *ngIf="brands[key].bandcamp">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
-                    <p fxFlex="100">Facebook <a href="{{ brands[key].facebook }}" target=_blank *ngIf="brands[key].facebook">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
-                    <p fxFlex="100">Instagram <a href="{{ brands[key].instagram }}" target=_blank *ngIf="brands[key].instagram">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
-                    <p fxFlex="100">Soundcloud <a href="{{ brands[key].soundcloud }}" target=_blank *ngIf="brands[key].soundcloud">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
-                    <p fxFlex="100">Twitter <a href="{{ brands[key].twitter }}" target=_blank *ngIf="brands[key].twitter">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
-                    <p fxFlex="100">Website <a href="{{ brands[key].website }}" target=_blank *ngIf="brands[key].website">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
-                    <p fxFlex="100">Youtube <a href="{{ brands[key].youtube }}" target=_blank *ngIf="brands[key].youtube">&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></a></p>
-                  </div>
-                  <form fxFlex name="editBrandForm" accept-charset="UTF-8" fxLayout="column" align-items="start stretch" *ngIf="isBrandCurrentlyEditable(key)" ng-cloak>
-                    <mat-form-field>
-                      <input type="text" name="bandcamp" ng-model="brands[key].bandcamp" ng-pattern="patterns.links.bandcamp" placeholder="Bandcamp profile link, e.g.: https://some-name.bandcamp.com" required>
-                      <div ng-messages="editBrandForm.bandcamp.$error">
-                        <div ng-message="required">This field is required</div>
-                        <div ng-message="pattern">Invalid value, example link: https://some-name.bandcamp.com</div>
-                      </div>
-                    </mat-form-field>
-                    <mat-form-field>
-                      <input type="text" name="facebook" ng-model="brands[key].facebook" ng-pattern="patterns.links.facebook" placeholder="Facebook profile link, e.g.: https://www.facebook.com/some-name" required>
-                      <div ng-messages="editBrandForm.facebook.$error">
-                        <div ng-message="required">This field is required</div>
-                        <div ng-message="pattern">Invalid value, example link: https://www.facebook.com/some-name</div>
-                      </div>
-                    </mat-form-field>
-                    <mat-form-field>
-                      <input type="text" name="instagram" ng-model="brands[key].instagram" ng-pattern="patterns.links.instagram" placeholder="Instagram profile link, e.g.: https://www.instagram.com/some-name" required>
-                      <div ng-messages="editBrandForm.instagram.$error">
-                        <div ng-message="required">This field is required</div>
-                        <div ng-message="pattern">Invalid value, example link: https://www.instagram.com/some-name</div>
-                      </div>
-                    </mat-form-field>
-                    <mat-form-field>
-                      <input type="text" name="soundcloud" ng-model="brands[key].soundcloud" ng-pattern="patterns.links.soundcloud" placeholder="Soundcloud profile link, e.g.: https://www.soundcloud.com/some-name" required>
-                      <div ng-messages="editBrandForm.soundcloud.$error">
-                        <div ng-message="required">This field is required</div>
-                        <div ng-message="pattern">Invalid value, example link: https://www.soundcloud.com/some-name</div>
-                      </div>
-                    </mat-form-field>
-                    <mat-form-field>
-                      <input type="text" name="twitter" ng-model="brands[key].twitter" ng-pattern="patterns.links.twitter" placeholder="Twitter profile link, e.g.: https://twitter.com/some-name" required>
-                      <div ng-messages="editBrandForm.twitter.$error">
-                        <div ng-message="required">This field is required</div>
-                        <div ng-message="pattern">Invalid value, example link: https://twitter.com/some-name</div>
-                      </div>
-                    </mat-form-field>
-                    <mat-form-field>
-                      <input type="text" name="website" ng-model="brands[key].website" ng-pattern="patterns.links.website" placeholder="Brand's website link, e.g.: https://domain-name.top-level-domain" required>
-                      <div ng-messages="editBrandForm.website.$error">
-                        <div ng-message="required">This field is required</div>
-                        <div ng-message="pattern">Invalid value, example link: https://domain-name.top-level-domain</div>
-                      </div>
-                    </mat-form-field>
-                    <mat-form-field>
-                      <input type="text" name="youtube" ng-model="brands[key].youtube" ng-pattern="patterns.links.youtube" placeholder="Youtube channel or user link, e.g.: https://www.youtube.com/c_or_users/channelName" required>
-                      <div ng-messages="editBrandForm.youtube.$error">
-                        <div ng-message="required">This field is required</div>
-                        <div ng-message="pattern">Invalid value, example link: https://www.youtube.com/c_or_users/channelName</div>
-                      </div>
-                    </mat-form-field>
-                  </form>
-                  <span fxFlex fxLayout="row wrap" fxLayoutAlign="start center">
-                    <mat-button class="md-icon-button" type="button" *ngIf="!isBrandCurrentlyEditable(key)" (click)="editBrand($index)" aria-label="edit brand links" title="edit brand links">
-                      <i class="fa fa-2x fa-pencil"></i>
-                    </mat-button>
-                    <mat-button class="md-icon-button" type="button" *ngIf="isBrandCurrentlyEditable(key)" (click)="editBrand($index)" aria-label="cancel editing" title="cancel editing">
-                      <i class="fa fa-2x fa-times"></i>
-                    </mat-button>
-                    <mat-button class="md-icon-button green-text" *ngIf="isBrandCurrentlyEditable(key)" (click)="updateBrand()" aria-label="update brand" title="update brand">
-                      <i class="fa fa-2x fa-check"></i>
-                    </mat-button>
-                    <mat-button class="md-icon-button amber-text" type="button" *ngIf="isBrandCurrentlyEditable(key)" (click)="deleteBrand($index)" aria-label="delete brand" title="delete brand">
-                      <i class="fa fa-2x fa-trash"></i>
-                    </mat-button>
-                  </span>
-                </span>
-              </div>
-            </div>
-          </mat-tab-body>
-        </mat-tab>
-
-        <mat-tab fxFlex fxLayout="column">
-          <mat-tab-label>users</mat-tab-label>
-          <mat-tab-body fxFlex fxLayout="column" class="md-padding">
-            <div fxFlex fxLayout="row wrap" fxLayoutAlign="start stretch">
-              <div ng-repeat="userKey in usersKeys" fxFlex-xs="100" fxFlex-sm="50" fxFlex="33" fxLayout="column" fxLayoutAlign="center stretch">
-                <span fxFlex="1" class="mat-body-2" fxLayout="row" fxLayoutAlign="center center">
-                  {{$index}}. {{ userKey }}
-                </span>
-                <span fxFlex="2" class="mat-body-1">
-                  <div fxFlex>
-                    <p fxFlex="100" *ngIf="users[userKey].created">Created {{ users[userKey].created | date }}</p>
-                    <p fxFlex="100" *ngIf="users[userKey].sc_id">Soundcloud ID {{ users[userKey].sc_id }}</p>
-                    <p fxFlex="100" *ngIf="users[userKey].submittedPlaylists">Submitted Playlists
-                      <div fxLayout="row wrap">
-                        <div fxFlex="50" fxFlex.xs="100" fxFlex-sm="100" fxFlex-md="100" ng-repeat="(playlistId, submitted) in users[userKey].submittedPlaylists">
-                          <span fxLayout="row wrap">
-                            <p>id: <strong>{{playlistId}}</strong></p>
-                            <mat-button class="md-icon-button green-text" [disabled]="submissionAlreadyAdded($index) || loading" *ngIf="!submitted && selectedBrandId >= 0" (click)="approvePost(playlistId)" aria-label="approve post" title="approve post">
-                              <i class="fa fa-2x fa-check"></i>
-                            </mat-button>
-                            <mat-button class="md-icon-button green-text" [disabled]="submissionAlreadyAdded($index) || loading" *ngIf="!selectedBrandId && selectedBrandId !== 0" (click)="selectBrand(0)" aria-label="select a brand to approve an email submission" title="select a brand to approve an email submission">
-                              <i class="fa fa-2x fa-address-book"></i>
-                            </mat-button>
-                            <mat-button class="md-icon-button amber-text" type="button" *ngIf="!submitted" (click)="rejectPost(playlistId)" aria-label="reject post" title="reject post">
-                              <i class="fa fa-2x fa-trash"></i>
-                            </mat-button>
-                            <mat-autocomplete fxFlex="100" md-no-cache="true" md-selected-item="selectedBrandKey" md-items="brand in getMatchedBrands(searchBrands)" md-search-text="searchBrands" md-item-text="brand" md-clear-button="true" md-selected-item-change="selectBrandFromList(brand)" placeholder="select brand" *ngIf="selectedBrandId >= 0">
-                              <span>{{brand}}</span>
-                            </mat-autocomplete>
-                          </span>
-                          <span fxFlex class="mat-body-1" *ngIf="selectedBrandId >= 0">
-                            <p>Selected label links:</p>
-                            <span ng-repeat="(key, value) in getSelectedBrand()">
-                              {{key}}: <a *ngIf="value !== ''" href="{{value}}" target=_blank><i class="fa fa-1x fa-external-link"></i></a>
-                              <i *ngIf="value === ''" class="fa fa-1x fa-external-link" title="empty link field"></i>,
-                            </span>
-                          </span>
-                          <iframe width="97%" height="350" scrolling="no" frameborder="no" ng-src="{{widgetLink(playlistId)}}" *ngIf="widgetLink(playlistId) !== '#'"></iframe>
-                        </div>
-                      </div>
-                    </p>
-                  </div>
-                </span>
-              </div>
-            </div>
-          </mat-tab-body>
-        </mat-tab>
-
-      </mat-tabs>
-    -->
   </div>
 
   <div fxFlex="100" fxLayout="row" fxLayoutFill *ngIf="details.preview.submission">
