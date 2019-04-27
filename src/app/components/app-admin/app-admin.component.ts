@@ -121,6 +121,14 @@ export class AppAdminComponent implements OnInit, OnDestroy {
   };
 
   /**
+   * Returns object values.
+   * @param object input object
+   */
+  public getObjectValues(object: object): Iterable<any> {
+    return Object.values(object);
+  }
+
+  /**
    * Gets email messages from firebase.
    */
   private getEmailMessages(): Promise<any> {
@@ -210,7 +218,7 @@ export class AppAdminComponent implements OnInit, OnDestroy {
         const response = snapshot.val();
         this.details.users = (response) ? response : {};
         this.details.usersKeys = (response) ? Object.keys(response) : [];
-        console.log('this.details.users', this.details.brands);
+        console.log('this.details.users', this.details.users);
         def.resolve();
       }).catch((error: string) => {
         console.log('getUsers, error', error);
@@ -335,9 +343,9 @@ export class AppAdminComponent implements OnInit, OnDestroy {
    * Returns matched brands for autocomplete.
    */
   public getMatchedBrands(): string[] {
-    console.log('getMatchedBrands, this.brandAutocompleteControl.value', this.brandAutocompleteControl.value);
+    // console.log('getMatchedBrands, this.brandAutocompleteControl.value', this.brandAutocompleteControl.value);
     const matchedKeys = this.details.brandsKeys.filter((item: string) => new RegExp(this.brandAutocompleteControl.value, 'i').test(item));
-    console.log('matchedKeys', matchedKeys);
+    // console.log('matchedKeys', matchedKeys);
     return matchedKeys;
   }
 
@@ -500,7 +508,11 @@ export class AppAdminComponent implements OnInit, OnDestroy {
    */
   public submitBrandForm(): void {
     if (this.editBrandForm.valid) {
-      this.updateBrand();
+      if (this.details.create.brand) {
+        this.submitNewBrand();
+      } else {
+        this.updateBrand();
+      }
     } else {
       console.log('submitBrandForm, invalid intput', this.editBrandForm);
     }
@@ -535,20 +547,33 @@ export class AppAdminComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Creates brand.
+   * Switches create brand mode.
    */
-  public createBrand(): Promise<any> {
-    const def = new CustomDeferredService();
-    // TODO: implement this method
-    return def.promise;
+  public createBrand(): IBrandForm {
+    if (!this.details.create.brand) {
+      this.initializeBrandForm();
+    } else {
+      this.editBrandForm = null;
+    }
+    this.details.create.brand = !this.details.create.brand;
+    return this.editBrandForm;
   }
 
   /**
-   * Submit new brand.
+   * Submits new brand.
    */
   public submitNewBrand(): Promise<any> {
     const def = new CustomDeferredService();
-    // TODO: implement this method
+    const formData: any = this.editBrandForm.value;
+    (this.firebase.getDB('brands', true) as DatabaseReference)
+      .child(this.editBrandForm.controls.name.value)
+      .set(formData)
+      .then(() => {
+        console.log('brand values set');
+        this.createBrand();
+        this.getBrands()
+          .then(() => def.resolve());
+      }).catch((error) => def.reject(error));
     return def.promise;
   }
 
