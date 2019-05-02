@@ -4,11 +4,19 @@ import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-d
 
 import { AngularFireDatabase } from '@angular/fire/database';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { DataSnapshot, DatabaseReference } from '@angular/fire/database/interfaces';
-import { FirebaseDatabase, FirebaseAuth } from '@angular/fire';
+import {
+  DataSnapshot,
+  DatabaseReference,
+  DatabaseSnapshotExists
+} from '@angular/fire/database/interfaces';
+import {
+  FirebaseDatabase,
+  FirebaseAuth
+} from '@angular/fire/firebase-node';
 
 import { AppEnvironmentConfig } from 'src/app/app.environment';
 import { IFirebaseENVInterface } from 'src/app/interfaces';
+import { IBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 
 /**
  * Firebase service, uses Angular Fire.
@@ -168,6 +176,133 @@ export class FirebaseService {
           });
       })
       .catch((error) => {
+        def.reject(error);
+      });
+    return def.promise;
+  }
+
+  /**
+   * Checks authentication for errors.
+   */
+  public authErrorCheck(): void {
+    const typeError = new TypeError('firebaseService, user DB record action error: there seems to be no authenticated users');
+    if (!this.fireAuth.user) {
+      throw typeError;
+    } else if (this.fireAuth.user && !this.fire.authUser.uid) {
+      throw typeError;
+    }
+  }
+
+  /**
+   * Checks database user id.
+   */
+  public checkDBuserUID() {
+    const def = new CustomDeferredService<any>();
+    this.authErrorCheck();
+    (this.getDB('users/' + this.fire.authUser.uid) as Promise<DataSnapshot>)
+      .then((snapshot: DataSnapshot) => {
+        console.log('checking user db profile');
+        if (!snapshot.val()) {
+          console.log('creating user db profile');
+          (this.getDB('users/' + this.fire.authUser.uid, true) as DatabaseReference)
+            .set({
+              created: new Date().getTime()
+            })
+            .then(() => {
+              console.log('created user db profile');
+              def.resolve({ exists: false, created: true });
+            })
+            .catch((error) => {
+              console.log('error creating user db profile', error);
+              def.reject({ exists: false, created: false });
+            });
+        } else {
+          def.resolve({ exists: true, created: false });
+        }
+      })
+      .catch((error) => {
+        console.log('checkDBuserUID, user db profile check:', error);
+        def.reject(error);
+      });
+    return def.promise;
+  }
+
+  /**
+   * Resolves if blog entry exists by value
+   * @param dbKey blog entry database key
+   */
+  public blogEntryExistsByValue(dbKey: string): Promise<any> {
+    const def = new CustomDeferredService();
+    (this.getDB('blogEntriesIDs', true) as DatabaseReference)
+      .orderByValue()
+      .equalTo(dbKey)
+      .on('value', (snapshot: DatabaseSnapshotExists<any>) => {
+        const response = snapshot.val();
+        // console.log('blogEntryExists, blogEntriesIDs response', response);
+        // null - not found
+        def.resolve(response);
+      });
+    return def.promise;
+  }
+
+  /**
+   * Resolves if blog entry exists by child value
+   * @param childKey child key
+   * @param value child key value
+   */
+  public blogEntryExistsByChildValue(childKey: string, value: any): Promise<any> {
+    const def = new CustomDeferredService();
+    (this.getDB('blog', true) as DatabaseReference)
+      .orderByChild(childKey)
+      .equalTo(value)
+      .on('value', (snapshot) => {
+        const response = snapshot.val();
+        // console.log('blogEntryExists, blogEntriesIDs response', response);
+        // null - not found
+        def.resolve(response);
+      });
+    return def.promise;
+  }
+
+  /**
+   * Adds blog post to database.
+   * @param valuesObj blog post model
+   */
+  public addBlogPost(valuesObj: IBlogPost): Promise<any> {
+    /*
+    *	create new records, delete submission record
+    */
+    const def = new CustomDeferredService();
+    this.authErrorCheck();
+    this.checkDBuserUID()
+      .then((data: any) => {
+        console.log('checkDBuserUID', JSON.stringify(data));
+        (this.getDB('blogEntriesIDs', true) as DatabaseReference)
+          .orderByValue()
+          .once('value', (snapshot: DataSnapshot) => {
+            const idsArray = snapshot.val();
+            console.log('idsArray', idsArray);
+            idsArray[0].push(valuesObj.playlistId);
+            (this.getDB('blogEntriesIDs', true) as DatabaseReference).set(idsArray) // update blog entries ids
+              .then(() => {
+                const newRecord = (this.getDB('blog', true) as DatabaseReference).push(); // update blog
+                newRecord.set(valuesObj)
+                  .then(() => {
+                    console.log('blog post added');
+                    def.resolve({ valuesSet: true });
+                  })
+                  .catch((error: any) => {
+                    console.log('error adding blog post entry', error);
+                    def.reject({ valuesSet: false });
+                  });
+              })
+              .catch((error: any) => {
+                console.log('error adding blog post entry ref to blogEntriesIDs collection', error);
+                def.reject({ valuesSet: false });
+              });
+          });
+      }).catch((error) => {
+        console.log('addBlogPost, user db profile check error', error);
         def.reject(error);
       });
     return def.promise;

@@ -32,15 +32,18 @@
                 </p>
                 <p>Sent from domain: {{ details.emails.blogSubmissions[key].domain }}</p>
               </span>
-              <span fxFlex="100" class="mat-body-1" *ngIf="details.selected.brand.key">
-                <p>Selected label links:</p>
-                <span *ngFor="let key of details.selected.brand.object | mapToIterable" fxLayout="row wrap" fxLayoutGap="10px">
-                  <span fxFlex>
-                    {{key}}:
-                    <a *ngIf="getSelectedBrand()[key]" href="{{getSelectedBrand()[key]}}" target=_blank>
-                      <mat-icon fontSet="fas" fontIcon="fa-external-link-alt" class="material-icons-fas"></mat-icon>
-                    </a>
-                    <mat-icon *ngIf="details.selected.brand.object[key] === ''" fontSet="fas" fontIcon="fa-external-link-alt" class="material-icons-fas" title="empty link field"></mat-icon>
+              <span fxFlex="100" class="mat-body-1" *ngIf="details.selected.brand.key" fxLayout="row wrap">
+                <p fxFlex="100">
+                  Selected label links:
+                </p>
+                <span *ngFor="let key of details.selected.brand.object | mapToIterable" fxFlex="100" fxLayout="row wrap">
+                  <a *ngIf="details.selected.brand.object[key]" href="{{details.selected.brand.object[key]}}" target=_blank>
+                    {{key}}
+                    <mat-icon fontSet="fas" fontIcon="fa-external-link-alt" class="material-icons-fas"></mat-icon>
+                  </a>
+                  <span *ngIf="details.selected.brand.object[key] === ''">
+                    {{key}}
+                    <mat-icon fontSet="fas" fontIcon="fa-external-link-alt" class="material-icons-fas" title="empty link field"></mat-icon>
                   </span>
                 </span>
               </span>
@@ -58,10 +61,10 @@
                 <button mat-icon-button *ngIf="true" (click)="deleteEmailBlogSubmission(i)" aria-label="delete submission" title="delete submission">
                   <mat-icon fontSet="fas" fontIcon="fa-trash" class="material-icons-fas"></mat-icon>
                 </button>
-                <button mat-icon-button class="md-icon-button" *ngIf="true" (click)="showSubmissionPreview(i)" aria-label="preview submission" title="preview submission">
+                <button mat-icon-button *ngIf="brandIsSelected('', true)" (click)="showSubmissionPreview(i)" aria-label="preview submission" title="preview submission">
                   <mat-icon fontSet="fas" fontIcon="fa-th-large" class="material-icons-fas"></mat-icon>
                 </button>
-                <button mat-icon-button class="md-icon-button green-text" [disabled]="submissionAlreadyAdded(i)" *ngIf="getSelectedBrand()" (click)="approveEmailSubmission(i)" [attr.aria-label]="submissionAlreadyAdded(i) ? 'this playlist was already added' : 'approve email submission'" [attr.title]="submissionAlreadyAdded(i) ? 'this playlist was already added' : 'approve email submission'">
+                <button mat-icon-button [disabled]="submissionAlreadyAdded(i)" *ngIf="brandIsSelected('', true)" (click)="approveEmailSubmission(i)" [attr.aria-label]="submissionAlreadyAdded(i) ? 'this playlist was already added' : 'approve email submission'" [attr.title]="submissionAlreadyAdded(i) ? 'this playlist was already added' : 'approve email submission'">
                   <mat-icon fontSet="fas" fontIcon="fa-check" class="material-icons-fas" *ngIf="!submissionAlreadyAdded(i)"></mat-icon>
                   <mat-icon fontSet="fas" fontIcon="fa-ban" class="material-icons-fas" *ngIf="submissionAlreadyAdded(i)"></mat-icon>
                 </button>
@@ -225,51 +228,65 @@
 
       <mat-tab label="users">
         <mat-tab-body fxLayout="row wrap">
-          <div fxFlex fxLayout="row wrap" fxLayoutAlign="start stretch">
-            <div *ngFor="let userKey of details.usersKeys; let i = index" fxFlex.xs="100" fxFlex.sm="50" fxFlex="33" fxLayout="column" fxLayoutAlign="center stretch">
+          <div fxFlex fxLayout="row wrap" fxLayoutAlign="center stretch">
+            <div *ngFor="let userKey of details.usersKeys; let i = index" fxFlex.lt-lg="100" fxFlex="48" fxLayout="row wrap" fxLayoutAlign="center start" [ngStyle]="{border: '1px #000000 dotted', 'border-radius': '3px', margin: '5px'}">
               <span fxFlex="100" class="mat-body-2">
                 {{i}}. {{ userKey }}
               </span>
-              <span fxFlex="100" class="mat-body-1" fxLayout="row wrap">
+              <span fxFlex="100" class="mat-body-1" fxLayout="row wrap" fxLayoutAlign="start start">
                 <span fxFlex="100" *ngIf="details.users[userKey].created">
                   Created {{ details.users[userKey].created | date }}
                 </span>
                 <span fxFlex="100" *ngIf="details.users[userKey].sc_id">
                   Soundcloud ID {{ details.users[userKey].sc_id }}
                 </span>
-                <span fxFlex="100" *ngIf="details.users[userKey].submittedPlaylists">
-                  Submitted Playlists
-                  <div fxFlex="50" fxFlex.xs="100" fxFlex.sm="100" fxFlex.md="100" *ngFor="let submittedPlaylist of getObjectValues(details.users[userKey].submittedPlaylists)">
-                    <span fxLayout="row wrap">
-                      <p>
-                        id: <strong>{{submittedPlaylist.playlistId}}</strong>
+                <span fxFlex="100" fxLayout="row wrap" *ngIf="details.users[userKey].submittedPlaylists">
+                  <p fxFlex="100">
+                    Submitted Playlists
+                  </p>
+                  <div fxFlex="50" fxFlex.lt-lg="100" *ngFor="let submittedPlaylistId of getObjectKeys(details.users[userKey].submittedPlaylists)">
+                    <span fxLayout="row wrap" fxLayoutAlign="start start">
+                      <p fxFlex="100">
+                        id: <strong>{{submittedPlaylistId}}</strong>
                       </p>
-                      <button mat-button type="button" [disabled]="submissionAlreadyAdded(i)" *ngIf="!submittedPlaylist.submitted && details.selected.brand.index >= 0" (click)="approveUserSubmission(submittedPlaylist.playlistId)" aria-label="approve post" title="approve post">
-                        <i class="fa fa-2x fa-check"></i>
-                      </button>
-                      <button mat-button type="button" [disabled]="submissionAlreadyAdded(i)" *ngIf="!details.selected.brand.index && details.selected.brand.index !== 0" (click)="selectBrand(0)" aria-label="select a brand to approve an email submission" title="select a brand to approve an email submission">
-                        <i class="fa fa-2x fa-address-book"></i>
-                      </button>
-                      <button mat-button type="button" *ngIf="!submittedPlaylist.submitted" (click)="rejectUserSubmission(submittedPlaylist.playlistId)" aria-label="reject post" title="reject post">
-                        <i class="fa fa-2x fa-trash"></i>
-                      </button>
-                      <!--
-                      <mat-autocomplete fxFlex="100" md-no-cache="true" md-selected-item="selectedBrandKey" md-items="brand in getMatchedBrands(searchBrands)" md-search-text="searchBrands" md-item-text="brand" md-clear-button="true" md-selected-item-change="selectBrandFromList(brand)" placeholder="select brand" *ngIf="details.selected.brand.index >= 0">
-                        <span>{{brand}}</span>
-                      </mat-autocomplete>
-                      -->
-                    </span>
-                    <span fxFlex class="mat-body-1" *ngIf="details.selected.brand.index >= 0">
-                      <p>Selected label links:</p>
-                      <span *ngFor="let key of getSelectedBrand()">
-                        {{key}}:
-                        <a *ngIf="getSelectedBrand()[key].value !== ''" href="{{getSelectedBrand()[key].value}}" target=_blank>
-                          <i class="fa fa-1x fa-external-link"></i>
-                        </a>
-                        <i *ngIf="getSelectedBrand()[key].value === ''" class="fa fa-1x fa-external-link" title="empty link field"></i>,
+
+                      <mat-form-field fxFlex="100">
+                        <input matInput type="text" placeholder="Select brand" aria-label="Select brand" [formControl]="brandAutocompleteControl" [matAutocomplete]="brandAuto">
+                        <mat-autocomplete #brandAuto="matAutocomplete" (optionSelected)="selectBrandFromList($event)">
+                          <mat-option *ngFor="let option of getMatchedBrands()" [value]="option">
+                            {{option}}
+                          </mat-option>
+                        </mat-autocomplete>
+                      </mat-form-field>
+
+                      <span fxFlex="100">
+                        <button mat-button type="button" [disabled]="submissionAlreadyAdded(i)" *ngIf="!brandIsSelected(brandAutocompleteControl.value) && details.users[userKey].submittedPlaylists[submittedPlaylistId]" (click)="selectBrand(brandAutocompleteControl.value)" aria-label="select a brand to approve an email submission" title="select a brand to approve an email submission">
+                          <i class="fa fa-2x fa-address-book"></i>
+                        </button>
+                        <button mat-button type="button" [disabled]="submissionAlreadyAdded(i)" *ngIf="brandIsSelected(brandAutocompleteControl.value) && details.users[userKey].submittedPlaylists[submittedPlaylistId]" (click)="approveUserSubmission(submittedPlaylistId)" aria-label="approve post" title="approve post">
+                          <i class="fa fa-2x fa-check"></i>
+                        </button>
+                        <button mat-button type="button" *ngIf="!details.users[userKey].submittedPlaylists[submittedPlaylistId]" (click)="rejectUserSubmission(submittedPlaylistId)" aria-label="reject post" title="reject post">
+                          <i class="fa fa-2x fa-trash"></i>
+                        </button>
                       </span>
                     </span>
-                    <iframe width="97%" height="350" scrolling="no" frameborder="no" src="{{soundcloudWidgetLink(submittedPlaylist.playlistId)}}" *ngIf="showSoundcloudWidgetLink(submittedPlaylist.playlistId)"></iframe>
+
+                    <span fxFlex="100" class="mat-body-1" *ngIf="details.selected.brand.key" fxLayout="row wrap">
+                      <p fxFlex="100">
+                        Selected label links:
+                      </p>
+                      <span *ngFor="let key of details.selected.brand.object | mapToIterable" fxFlex="100" fxLayout="row wrap">
+                        <a *ngIf="details.selected.brand.object[key]" href="{{details.selected.brand.object[key]}}" target=_blank>
+                          {{key}}
+                          <mat-icon fontSet="fas" fontIcon="fa-external-link-alt" class="material-icons-fas"></mat-icon>
+                        </a>
+                        <span *ngIf="details.selected.brand.object[key] === ''">
+                          {{key}}
+                          <mat-icon fontSet="fas" fontIcon="fa-external-link-alt" class="material-icons-fas" title="empty link field"></mat-icon>
+                        </span>
+                      </span>
+                    </span>
                   </div>
                 </span>
               </span>
