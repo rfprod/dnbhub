@@ -12,6 +12,7 @@ import { FacebookService } from 'src/app/services/facebook/facebook.service';
 import { AppContactDialog } from 'src/app/components/app-contact/app-contact.component';
 
 import { untilDestroyed } from 'ngx-take-until-destroy';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 /**
  * Application root component.
@@ -52,18 +53,19 @@ export class AppComponent implements OnInit, OnDestroy {
   /**
    * Indicates if progress spinner should be shown.
    */
-  public showSpinner: boolean = true;
+  private showSpinner: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  public showSpinner$: Observable<boolean> = this.showSpinner;
   /**
    * Shows spinner.
    */
   private startSpinner(): void {
-    this.showSpinner = true;
+    this.showSpinner.next(true);
   }
   /**
    * Hides spinner.
    */
   private stopSpinner(): void {
-    this.showSpinner = false;
+    this.showSpinner.next(false);
   }
 
   public sidenavOpened: boolean = false;

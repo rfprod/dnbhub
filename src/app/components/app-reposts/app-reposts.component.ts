@@ -3,6 +3,10 @@ import { Component, OnInit, OnDestroy, ElementRef, Inject, ViewChild, Renderer2,
 import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
 import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.service';
 
+import { Store } from '@ngxs/store';
+import { DnbhubStoreStateModel } from 'src/app/state/dnbhub-store.state';
+import { DnbhubStoreAction } from 'src/app/state/dnbhub-store.actions';
+
 /**
  * Application free downloads component.
  */
@@ -19,12 +23,14 @@ export class AppRepostsComponent implements OnInit, OnDestroy {
    * @param emitter Event emitter service
    * @param renderer Application renderer
    * @param soundcloudService Soundcloud API wrapper
+   * @param ngXsStore NgXsStore
    * @param window Window reference
    */
   constructor(
     private emitter: EventEmitterService,
     private renderer: Renderer2,
     private soundcloudService: SoundcloudService,
+    private ngXsStore: Store,
     @Inject('Window') private window: Window
   ) {}
 
@@ -42,10 +48,6 @@ export class AppRepostsComponent implements OnInit, OnDestroy {
    */
   private rendererListener: any;
   /**
-   * Scroll top value.
-   */
-  private previousScrollTopValue: number = 0;
-  /**
    * Binds to mat-sidenav-content scroll event.
    */
   private bindToContentScrollEvent(): void {
@@ -53,6 +55,7 @@ export class AppRepostsComponent implements OnInit, OnDestroy {
     this.rendererListener = this.renderer.listen(this.content.nativeElement.parentNode.parentNode, 'scroll', (event) => {
       // console.log('mat-sidenav-content scroll, event', event);
       const currentScrollTopValue: number = event.target.scrollTop;
+      const previousScrollTopValue: number = (this.ngXsStore.snapshot().dnbhubStore as DnbhubStoreStateModel).previousScrollTopValue;
 
       // check if should request more data from soundcloud
       const listEndDivider: ElementRef = new ElementRef(this.window.document.getElementById('list-end'));
@@ -60,7 +63,7 @@ export class AppRepostsComponent implements OnInit, OnDestroy {
       const offsetTop: string = 'offsetTop';
       const listEndOffsetTop: number = listEndDivider.nativeElement[offsetTop];
       // console.log('listEndOffsetTop', listEndOffsetTop, 'currentScrollTopValue', currentScrollTopValue);
-      if (this.previousScrollTopValue < currentScrollTopValue && currentScrollTopValue >= listEndOffsetTop - (this.window.innerHeight + 1)) {
+      if (previousScrollTopValue < currentScrollTopValue && currentScrollTopValue >= listEndOffsetTop - (this.window.innerHeight + 1)) {
         console.log('end reached, load more');
         this.emitter.emitEvent({ soundcloud: 'renderMoreTracks' });
         const sidenavContent: ElementRef = new ElementRef(this.window.document.getElementsByClassName('mat-sidenav-content')[0]);
@@ -69,7 +72,10 @@ export class AppRepostsComponent implements OnInit, OnDestroy {
         sidenavContent.nativeElement[scrollTop] = currentScrollTopValue;
       }
 
-      this.previousScrollTopValue = currentScrollTopValue;
+      // update scroll top value
+      this.ngXsStore.dispatch(new DnbhubStoreAction({
+        scrollTopValue: currentScrollTopValue
+      }));
     });
   }
 
@@ -80,7 +86,6 @@ export class AppRepostsComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     console.log('ngOnDestroy: AppRepostsComponent destroyed');
-    // reset Soundcloud shared data
     this.soundcloudService.resetServiceData();
   }
 }

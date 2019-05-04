@@ -66,6 +66,11 @@ import { MapToIterablePipe } from 'src/app/pipes/map-to-iterable/map-to-iterable
 import { ENV } from 'src/app/app.environment';
 import { BottomSheetTextDetailsComponent } from './components/bottom-sheet-text-details/bottom-sheet-text-details.component';
 
+import { NgxsModule } from '@ngxs/store';
+import { DnbhubStoreState } from './state/dnbhub-store.state';
+import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
+
 /**
  * Main application module.
  */
@@ -83,9 +88,19 @@ import { BottomSheetTextDetailsComponent } from './components/bottom-sheet-text-
     BottomSheetTextDetailsComponent
   ],
   imports: [
-    BrowserModule, BrowserAnimationsModule, FlexLayoutModule, CustomMaterialModuleWithProviders,
-    FormsModule, ReactiveFormsModule, HttpClientModule, TranslateModule.forRoot(),
+    BrowserModule,
+    BrowserAnimationsModule,
+    FlexLayoutModule,
+    CustomMaterialModuleWithProviders,
+    FormsModule, ReactiveFormsModule,
+    HttpClientModule,
+    TranslateModule.forRoot(),
     AngularFireModule.initializeApp(ENV.firebase, 'dnbhub-a5d9c'), AngularFireDatabaseModule, AngularFireAuthModule,
+    NgxsModule.forRoot([
+      DnbhubStoreState
+    ]),
+    NgxsReduxDevtoolsPluginModule.forRoot(),
+    NgxsLoggerPluginModule.forRoot(),
     AppRoutingModule
   ],
   providers: [
