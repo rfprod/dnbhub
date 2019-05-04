@@ -8,6 +8,7 @@ import { TranslateService } from 'src/app/modules/translate/index';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 
 import { AppLoginDialog } from 'src/app/components/app-login/app-login.component';
+import { untilDestroyed } from 'ngx-take-until-destroy';
 
 /**
  * Application navigation component.
@@ -35,11 +36,6 @@ export class AppNavComponent implements OnInit, OnDestroy {
     private translateService: TranslateService,
     private firebaseService: FirebaseService
   ) {}
-
-  /**
-   * Component subscriptions.
-   */
-  private subscriptions: any[] = [];
 
   /**
    * Navigation buttons state.
@@ -125,7 +121,7 @@ export class AppNavComponent implements OnInit, OnDestroy {
    * Subscribes to Event Emitter events.
    */
   private emitterSubscribe(): void {
-    const sub: any = this.emitter.getEmitter().subscribe((event: any) => {
+    this.emitter.getEmitter().pipe(untilDestroyed(this)).subscribe((event: any) => {
       console.log('AppNavComponent consuming event:', event);
       if (event.serviceWorker === 'registered') {
         this.serviceWorkerRegistered = true;
@@ -133,21 +129,19 @@ export class AppNavComponent implements OnInit, OnDestroy {
         this.serviceWorkerRegistered = false;
       }
     });
-    this.subscriptions.push(sub);
   }
 
   /**
    * Subscribes to router events.
    */
   private routerSubscribe(): void {
-    const sub: any = this.router.events.subscribe((event: any) => {
+    this.router.events.pipe(untilDestroyed(this)).subscribe((event: any) => {
       // console.log(' > ROUTER EVENT:', event);
       if (event instanceof NavigationEnd) {
         console.log(' > ROUTER > NAVIGATION END, event', event);
         this.switchNavButtons(event);
       }
     });
-    this.subscriptions.push(sub);
   }
 
   /**
@@ -199,11 +193,6 @@ export class AppNavComponent implements OnInit, OnDestroy {
    */
   public ngOnDestroy(): void {
     console.log('ngOnDestroy: AppNavComponent destroyed');
-    if (this.subscriptions.length) {
-      for (const sub of this.subscriptions) {
-        sub.unsubscribe();
-      }
-    }
   }
 
 }

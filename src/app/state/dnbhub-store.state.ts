@@ -2,6 +2,7 @@ import { State, Selector, Action, StateContext } from '@ngxs/store';
 import { DnbhubStoreAction } from './dnbhub-store.actions';
 
 import { IBlogPost } from '../interfaces/blog/blog-post.interface';
+import { IAboutDetails } from '../interfaces';
 
 /**
  * Dnbhub store state model.
@@ -9,6 +10,7 @@ import { IBlogPost } from '../interfaces/blog/blog-post.interface';
 export class DnbhubStoreStateModel {
   public blogPosts: IBlogPost[];
   public previousScrollTopValue: number;
+  public details: IAboutDetails;
 }
 
 /**
@@ -18,7 +20,8 @@ export class DnbhubStoreStateModel {
   name: 'dnbhubStore',
   defaults: {
     blogPosts: [],
-    previousScrollTopValue: 0
+    previousScrollTopValue: 0,
+    details: new IAboutDetails()
   }
 })
 export class DnbhubStoreState {
@@ -32,8 +35,9 @@ export class DnbhubStoreState {
   public add(ctx: StateContext<DnbhubStoreStateModel>, action: DnbhubStoreAction) {
     const state = ctx.getState();
     ctx.setState({
-      blogPosts: (action.payload.blogPost) ? [ ...state.blogPosts, action.payload.blogPost ] : [ ...state.blogPosts ],
-      previousScrollTopValue: action.payload.scrollTopValue
+      blogPosts: (action.payload.blogPosts) ? [ ...state.blogPosts, ...action.payload.blogPosts ] : [ ...state.blogPosts ],
+      previousScrollTopValue: action.payload.scrollTopValue || state.previousScrollTopValue,
+      details: action.payload.details || state.details
     });
   }
 

@@ -1,3 +1,7 @@
+/**
+ * Application interfaces barrel.
+ */
+
 export * from 'src/app/interfaces/soundcloud/soundcloud-tracks-linked-partitioning.interface';
 export * from 'src/app/interfaces/soundcloud/soundcloud-playlist.interface';
 
@@ -10,3 +14,5 @@ export * from 'src/app/interfaces/forms/email-form.interface';
 
 export * from 'src/app/interfaces/brand/brand.interface';
 export * from 'src/app/interfaces/brand/brand-form.interface';
+
+export * from 'src/app/interfaces/about/about-details.interface';

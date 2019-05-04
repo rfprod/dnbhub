@@ -7,6 +7,7 @@ import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.servic
 import { UserInterfaceUtilsService } from 'src/app/services/user-interface-utils/user-interface-utils.service';
 
 import { ISoundcloudPlaylist } from 'src/app/interfaces/index';
+import { untilDestroyed } from 'ngx-take-until-destroy';
 
 /**
  * Soundcloud player component.
@@ -39,11 +40,6 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
   ) {
     console.log('SoundcloudPlayerComponent constructor, el', this.el.nativeElement);
   }
-
-  /**
-   * Component subscriptions.
-   */
-  private subscriptions: any[] = [];
 
   /**
    * Soundcloud player mode.
@@ -336,7 +332,7 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
 
     this.loadMoreTracks();
 
-    const sub: any = this.emitter.getEmitter().subscribe((event: any) => {
+    this.emitter.getEmitter().pipe(untilDestroyed(this)).subscribe((event: any) => {
       console.log('SoundcloudPlayerComponent consuming event:', event);
       if (event.soundcloud === 'loadMoreTracks') {
         if (!this.noMoreTracks) {
@@ -346,7 +342,6 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
         this.loadMoreTracks();
       }
     });
-    this.subscriptions.push(sub);
   }
   /**
    * Lifecycle hook called on input changes.
@@ -386,11 +381,6 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
   public ngOnDestroy(): void {
     console.log('ngOnDestroy: SoundcloudPlayerComponent destroyed');
     this.resetPlayer(true);
-    if (this.subscriptions.length) {
-      for (const sub of this.subscriptions) {
-        sub.unsubscribe();
-      }
-    }
   }
 
 }

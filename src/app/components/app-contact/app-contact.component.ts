@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 
 import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
 import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
@@ -135,14 +135,10 @@ export class AppContactDialog implements OnInit, OnDestroy {
 
   /**
    * Closes dialog.
+   * Reports result, arent component should listen to this event.
    * @param [result] result returned to parent component
    */
   private closeDialog(result?: any) {
-    /*
-    *	report result if it was commonly closed, or modified and closed, deleted,
-    *	or optional use result is provided
-    *	parent controller should listen to this event
-    */
     result = (result) ? result : 'closed';
     this.dialogRef.close(result);
   }

@@ -1,13 +1,12 @@
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
 import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 
-import { TranslateService } from 'src/app/modules/translate/translate.service';
 import { ILoginForm } from 'src/app/interfaces';
 
 /**
@@ -28,7 +27,6 @@ export class AppLoginDialog implements OnInit, OnDestroy {
    * @param fb Form builder - user input procession
    * @param emitter Event emitter service
    * @param router Allication router
-   * @param translateService Translate service - UI translation to predefined languages
    * @param firebaseService Firebase service
    * @param window Window reference
    */
@@ -38,7 +36,6 @@ export class AppLoginDialog implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private emitter: EventEmitterService,
     private router: Router,
-    private translateService: TranslateService,
     private firebaseService: FirebaseService,
     @Inject('Window') private window: Window
   ) {

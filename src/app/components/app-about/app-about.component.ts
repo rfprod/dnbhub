@@ -9,6 +9,10 @@ import { AppContactDialog } from 'src/app/components/app-contact/app-contact.com
 
 import { TranslateService } from 'src/app/modules/translate/translate.service';
 import { DataSnapshot, DatabaseReference } from '@angular/fire/database/interfaces';
+import { IAboutDetails } from 'src/app/interfaces';
+import { Store } from '@ngxs/store';
+import { DnbhubStoreStateModel } from 'src/app/state/dnbhub-store.state';
+import { DnbhubStoreAction } from 'src/app/state/dnbhub-store.actions';
 
 @Component({
   selector: 'app-about',
@@ -24,6 +28,7 @@ export class AppAboutComponent implements OnInit, OnDestroy {
    * @param emitter Event emitter service
    * @param translateService Translate service - UI translation to predefined languages
    * @param firebaseService Firebase service
+   * @param ngXsStore NgXsStore
    * @param window Window reference
    */
   constructor(
@@ -31,29 +36,14 @@ export class AppAboutComponent implements OnInit, OnDestroy {
     private emitter: EventEmitterService,
     private translateService: TranslateService,
     private firebaseService: FirebaseService,
+    private ngXsStore: Store,
     @Inject('Window') private window: Window
   ) {}
 
   /**
    * Company details object.
    */
-  public details: {
-    links?: {
-      soundcloud: string;
-      rss: string;
-      mixcloud: string;
-      twitter: string;
-      facebook: string;
-      youtube: string;
-      instagram: string;
-      bandcamp: string;
-    },
-    soundcloudUserId?: number,
-    text?: string,
-    title?: string,
-    widgetLink?: string,
-    poweredBy?: {name: string, logo: string}[]
-  } = {};
+  public details: IAboutDetails = new IAboutDetails();
 
   /**
    * Gets company details from firebase.
@@ -64,12 +54,8 @@ export class AppAboutComponent implements OnInit, OnDestroy {
     (this.firebaseService.getDB('about', false) as Promise<DataSnapshot>)
       .then((snapshot) => {
         console.log('getDetails, about', snapshot.val());
-        const response = snapshot.val();
-        this.details = {};
-        const keys = Object.keys(response);
-        keys.forEach((key) => {
-          this.details[key] = response[key];
-        });
+        const details: IAboutDetails = snapshot.val();
+        this.ngXsStore.dispatch(new DnbhubStoreAction({ details }));
         this.emitter.emitSpinnerStopEvent();
         def.resolve();
       })
@@ -79,6 +65,16 @@ export class AppAboutComponent implements OnInit, OnDestroy {
         def.reject();
       });
     return def.promise;
+  }
+
+  /**
+   * Subscribes to state change and takes action.
+   */
+  private stateSubscription(): void {
+    this.ngXsStore.subscribe((state: { dnbhubStore : DnbhubStoreStateModel }) => {
+      console.log('stateSubscription, state', state);
+      this.details = state.dnbhubStore.details;
+    });
   }
 
   /**
@@ -110,6 +106,7 @@ export class AppAboutComponent implements OnInit, OnDestroy {
    */
   public ngOnInit(): void {
     console.log('ngOnInit: AppAboutComponent initialized');
+    this.stateSubscription();
     this.getDetails();
   }
   /**

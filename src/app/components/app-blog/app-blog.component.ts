@@ -10,6 +10,11 @@ import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.service';
 import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
 
+import { Store } from '@ngxs/store';
+import { DnbhubStoreAction } from 'src/app/state/dnbhub-store.actions';
+import { IBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
+import { DnbhubStoreStateModel } from 'src/app/state/dnbhub-store.state';
+
 @Component({
   selector: 'app-blog',
   templateUrl: './app-blog.component.html',
@@ -25,13 +30,15 @@ export class AppBlogComponent implements OnInit, OnDestroy {
    * @param soundcloudService Soundcloud service
    * @param route Application router
    * @param route Application router activated route
+   * @param ngXsStore NgXsStore
    */
   constructor(
     private emitter: EventEmitterService,
     private firebaseService: FirebaseService,
     private soundcloudService: SoundcloudService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private ngXsStore: Store
   ) {}
 
   /**
@@ -95,14 +102,15 @@ export class AppBlogComponent implements OnInit, OnDestroy {
     (this.firebaseService.getDB('blog', true) as DatabaseReference).limitToLast(50).once('value').then((snapshot) => {
       console.log('blog', snapshot.val());
       const response = snapshot.val();
-      this.blogPosts = [];
+      const blogPosts: IBlogPost[] = [];
       for (const key in response) {
         if (response[key]) {
           const item = response[key];
-          this.blogPosts.unshift(item);
+          blogPosts.unshift(item);
         }
       }
-      console.log('blogPosts', this.blogPosts);
+      console.log('blogPosts', blogPosts);
+      this.ngXsStore.dispatch(new DnbhubStoreAction({ blogPosts }));
       def.resolve();
     }).catch((error: any) => {
       console.log('error', error);
@@ -112,6 +120,16 @@ export class AppBlogComponent implements OnInit, OnDestroy {
       def.reject();
     });
     return def.promise;
+  }
+
+  /**
+   * Subscribes to state change and takes action.
+   */
+  private stateSubscription(): void {
+    this.ngXsStore.subscribe((state: { dnbhubStore : DnbhubStoreStateModel }) => {
+      console.log('stateSubscription, state', state);
+      this.blogPosts = state.dnbhubStore.blogPosts;
+    });
   }
 
   /**
@@ -151,6 +169,7 @@ export class AppBlogComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     console.log('ngOnInit: AppBlogComponent initialized');
     this.inputReleaseCode = this.setSearchParam();
+    this.stateSubscription();
     this.updateBlogPosts()
       .then(() => this.selectBlogPost());
   }
