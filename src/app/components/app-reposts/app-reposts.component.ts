@@ -41,7 +41,7 @@ export class AppRepostsComponent implements OnInit, OnDestroy {
   /**
    * Content view child reference.
    */
-  @ViewChild('content') private content: ElementRef;
+  @ViewChild('content', { static: true }) private content: ElementRef;
 
   /**
    * Renderer2 listener instance.

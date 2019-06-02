@@ -2,7 +2,7 @@ import { State, Selector, Action, StateContext } from '@ngxs/store';
 import { DnbhubStoreAction } from './dnbhub-store.actions';
 
 import { IBlogPost } from '../interfaces/blog/blog-post.interface';
-import { IAboutDetails } from '../interfaces';
+import { IAboutDetails, ISoundcloudPlaylist } from '../interfaces';
 
 /**
  * Dnbhub store state model.
@@ -11,6 +11,8 @@ export class DnbhubStoreStateModel {
   public blogPosts: IBlogPost[];
   public previousScrollTopValue: number;
   public details: IAboutDetails;
+  public tracks: any[]; // TODO soundcloud track interface
+  public playlist: ISoundcloudPlaylist;
 }
 
 /**
@@ -21,7 +23,9 @@ export class DnbhubStoreStateModel {
   defaults: {
     blogPosts: [],
     previousScrollTopValue: 0,
-    details: new IAboutDetails()
+    details: new IAboutDetails(),
+    tracks: [],
+    playlist: new ISoundcloudPlaylist()
   }
 })
 export class DnbhubStoreState {
@@ -37,7 +41,9 @@ export class DnbhubStoreState {
     ctx.setState({
       blogPosts: (action.payload.blogPosts) ? [ ...state.blogPosts, ...action.payload.blogPosts ] : [ ...state.blogPosts ],
       previousScrollTopValue: action.payload.scrollTopValue || state.previousScrollTopValue,
-      details: action.payload.details || state.details
+      details: action.payload.details || state.details,
+      tracks: (action.payload.tracks) ? [ ...state.tracks, ...action.payload.tracks ] : [ ...state.tracks ],
+      playlist: action.payload.playlist || state.playlist
     });
   }
 

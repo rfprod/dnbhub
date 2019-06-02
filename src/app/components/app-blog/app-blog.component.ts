@@ -123,6 +123,11 @@ export class AppBlogComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * NgXsStore subscription.
+   */
+  private ngXsStoreSubscription: any;
+
+  /**
    * Subscribes to state change and takes action.
    */
   private stateSubscription(): void {
@@ -166,6 +171,9 @@ export class AppBlogComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Lifecycle hook called after component is initialized.
+   */
   public ngOnInit(): void {
     console.log('ngOnInit: AppBlogComponent initialized');
     this.inputReleaseCode = this.setSearchParam();
@@ -174,8 +182,14 @@ export class AppBlogComponent implements OnInit, OnDestroy {
       .then(() => this.selectBlogPost());
   }
 
+  /**
+   * Lifecycle hook called after component is destroyed.
+   */
   public ngOnDestroy(): void {
     console.log('ngOnDestroy: AppBlogComponent destroyed');
+    const blogPosts: IBlogPost[] = [];
+    this.ngXsStore.dispatch(new DnbhubStoreAction({ blogPosts }));
+    this.ngXsStoreSubscription.unsubscribe();
   }
 
 }

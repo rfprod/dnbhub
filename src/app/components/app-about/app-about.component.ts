@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, AfterContentInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
 import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
@@ -21,7 +21,7 @@ import { DnbhubStoreAction } from 'src/app/state/dnbhub-store.actions';
     class: 'mat-body-1'
   }
 })
-export class AppAboutComponent implements OnInit, OnDestroy {
+export class AppAboutComponent implements OnInit, AfterContentInit, OnDestroy {
 
   /**
    * @param dialog Reusable dialog
@@ -68,10 +68,15 @@ export class AppAboutComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * NgXsStore subscription.
+   */
+  private ngXsStoreSubscription: any;
+
+  /**
    * Subscribes to state change and takes action.
    */
   private stateSubscription(): void {
-    this.ngXsStore.subscribe((state: { dnbhubStore : DnbhubStoreStateModel }) => {
+    this.ngXsStoreSubscription = this.ngXsStore.subscribe((state: { dnbhubStore : DnbhubStoreStateModel }) => {
       console.log('stateSubscription, state', state);
       this.details = state.dnbhubStore.details;
     });
@@ -110,10 +115,19 @@ export class AppAboutComponent implements OnInit, OnDestroy {
     this.getDetails();
   }
   /**
+   * Lifecycle hook called after component content is initialized .
+   */
+  public ngAfterContentInit(): void {
+    console.log('ngOnInit: AppAboutComponent initialized');
+    this.stateSubscription();
+    this.getDetails();
+  }
+  /**
    * Lifecycle hook called after component is destroyed.
    */
   public ngOnDestroy(): void {
     console.log('ngOnDestroy: AppAboutComponent destroyed');
     (this.firebaseService.getDB('about', true) as DatabaseReference).off();
+    this.ngXsStoreSubscription.unsubscribe();
   }
 }

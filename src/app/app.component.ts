@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { MatIconRegistry, DateAdapter, MatDialog } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { MediaChange, MediaObserver } from '@angular/flex-layout';
+import { MediaChange, MediaService } from '@angular/flex-layout';
 
 import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
 import { TranslateService } from 'src/app/modules/translate/index';
@@ -32,7 +32,7 @@ export class AppComponent implements OnInit, OnDestroy {
    * @param translateService Translate service - UI translation to predefined languages.
    * @param facebookService Facebook service - Facebook JavaScrip SDK wrapper.
    * @param serviceWorker Service worker service.
-   * @param media Media observer
+   * @param media Media service
    * @param window Browser window reference
    */
   constructor(
@@ -44,7 +44,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private facebookService: FacebookService,
     private serviceWorker: CustomServiceWorkerService,
-    private media: MediaObserver,
+    private media: MediaService,
     @Inject('Window') private window: Window
   ) {
     this.toggleConsoleOutput();
@@ -203,7 +203,7 @@ export class AppComponent implements OnInit, OnDestroy {
    * Subscribes to media change events.
    */
   private mediaChangeSubscribe(): void {
-    this.media.media$.pipe(untilDestroyed(this)).subscribe((event: MediaChange) => {
+    this.media.asObservable().pipe(untilDestroyed(this)).subscribe((event: MediaChange) => {
       // console.log('flex-layout media change event', event);
       if (/(lg|xl)/.test(event.mqAlias)) {
         this.setGridConfig('4', '2:1');

@@ -161,7 +161,7 @@ export class FirebaseService {
    */
   public async delete(email: string, password: string): Promise<any> {
     const def = new CustomDeferredService<any>();
-    const credential: any = await this.fireAuth.auth.signInAndRetrieveDataWithEmailAndPassword(email, password);
+    const credential: any = await this.fireAuth.auth.signInWithEmailAndPassword(email, password);
 
     this.fire.authUser.reauthenticateAndRetrieveDataWithCredential(credential)
       .then(() => {

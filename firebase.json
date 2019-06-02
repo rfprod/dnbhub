@@ -37,7 +37,7 @@
         ]
       },
       {
-        "source": "/dnbhub",
+        "source": "/",
         "headers": [
           {
             "key": "Cache-Control",
@@ -81,12 +81,8 @@
         "function": "submitBlogPostOverEmail"
       },
       {
-        "source": "/dnbhub",
-        "destination": "/dnbhub/index.html"
-      },
-      {
         "source": "**/!(sendEmail|submitBlogPostOverEmail)",
-        "destination": "/dnbhub/index.html"
+        "destination": "/index.html"
       }
     ]
   }

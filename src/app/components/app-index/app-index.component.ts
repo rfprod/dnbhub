@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef, Inject, ViewChild, Renderer2 } from '@angular/core';
 
-import { MediaChange, MediaObserver } from '@angular/flex-layout';
+import { MediaChange, MediaService } from '@angular/flex-layout';
 
 import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
 
@@ -24,7 +24,7 @@ import { DnbhubStoreStateModel } from 'src/app/state/dnbhub-store.state';
 export class AppIndexComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /**
-   * @param media Media observer
+   * @param media Media service
    * @param emitter Event emitter service - components interaction
    * @param renderer Application renderer
    * @param facebookService Facebook API wrapper
@@ -34,7 +34,7 @@ export class AppIndexComponent implements OnInit, AfterViewInit, OnDestroy {
    * @param window Window reference
    */
   constructor(
-    private media: MediaObserver,
+    private media: MediaService,
     private emitter: EventEmitterService,
     private renderer: Renderer2,
     private facebookService: FacebookService,
@@ -49,7 +49,7 @@ export class AppIndexComponent implements OnInit, AfterViewInit, OnDestroy {
   /**
    * Content view child reference.
    */
-  @ViewChild('content') private content: ElementRef;
+  @ViewChild('content', { static: true }) private content: ElementRef;
 
   /**
    * Renderer2 listener instance.
@@ -100,7 +100,7 @@ export class AppIndexComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     let previousMqAlias: string = '';
-    this.media.media$.pipe(untilDestroyed(this)).subscribe((event: MediaChange) => {
+    this.media.asObservable().pipe(untilDestroyed(this)).subscribe((event: MediaChange) => {
       console.log('flex-layout media change event', event);
 
       if (/(xs|sm)/.test(previousMqAlias) && /!(xs|sm)/.test(event.mqAlias)) {

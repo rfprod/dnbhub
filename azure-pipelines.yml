@@ -8,7 +8,7 @@ steps:
 - task: NodeTool@0
   displayName: 'Use specific node version'
   inputs:
-    versionSpec: '8.15.1'
+    versionSpec: '10.16.0'
 
 # all envitonment variables should be defined in vsts UI
 - script: |
@@ -20,7 +20,7 @@ steps:
     npm install -g firebase-tools
     npm install -g @compodoc/ngd-cli
     bash shell/set-env.sh $SOUNDCLOUD_CLIENT_ID $FIREBASE_API_KEY $FIREBASE_AUTH_DOMAIN $FIREBASE_DATABASE_URL $FIREBASE_PROJECT_ID $FIREBASE_STORAGE_BUCKET $FIREBASE_MESSAGING_SENDER_ID $FIREBASE_DEPLOY_TOKEN $PRIVILEGED_ACCESS_FIREBASE_UID $GOOGLE_APIS_BROWSER_KEY $GOOGLE_APIS_CLIENT_ID $MAILER_HOST $MAILER_PORT $MAILER_EMAIL $MAILER_CLIENT_ID $MAILER_CLIENT_SECRET $MAILER_REFRESH_TOKEN $MAILER_ACCESS_TOKEN $MAILER_RECIPIENT_EMAIL
-    npm run build-prod-firebase
+    npm run build-prod
     firebase deploy --token $FIREBASE_DEPLOY_TOKEN
     rm ./.env ./functions/.env || true
   env:

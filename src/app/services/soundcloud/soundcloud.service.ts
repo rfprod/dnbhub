@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -15,6 +15,9 @@ import {
 import { AppEnvironmentConfig } from 'src/app/app.environment';
 
 import { timeout, take, map, catchError } from 'rxjs/operators';
+import { Store } from '@ngxs/store';
+import { DnbhubStoreAction } from 'src/app/state/dnbhub-store.actions';
+import { DnbhubStoreStateModel } from 'src/app/state/dnbhub-store.state';
 
 declare let SC: any;
 
@@ -23,17 +26,19 @@ declare let SC: any;
  * Controls Soundcloud JavaScript SDK.
  */
 @Injectable()
-export class SoundcloudService {
+export class SoundcloudService implements OnDestroy {
 
   /**
    * @param http HttpClient
    * @param handlers Custom Http Handlers
    * @param sanitizer DOM sanitizer
+   * @param ngXsStore NgXsStore
    */
   constructor(
     private http: HttpClient,
     private handlers: CustomHttpHandlersService,
-    public sanitizer: DomSanitizer
+    public sanitizer: DomSanitizer,
+    private ngXsStore: Store
   ) {
     console.log('SoundcloudService constructor');
     this.init();
@@ -56,7 +61,24 @@ export class SoundcloudService {
    * Soundcloud initialization.
    */
   private init(): void {
+    this.stateSubscription();
     return SC.initialize(this.options);
+  }
+
+  /**
+   * NgXsStore subscription.
+   */
+  private ngXsStoreSubscription: any;
+
+  /**
+   * Subscribes to state change and takes action.
+   */
+  private stateSubscription(): void {
+    this.ngXsStoreSubscription = this.ngXsStore.subscribe((state: { dnbhubStore : DnbhubStoreStateModel }) => {
+      console.log('stateSubscription, state', state);
+      this.data.tracks.collection = state.dnbhubStore.tracks || this.data.tracks.collection;
+      this.data.playlist = state.dnbhubStore.playlist || this.data.playlist;
+    });
   }
 
   /**
@@ -177,8 +199,10 @@ export class SoundcloudService {
       SC.get(`/users/${userId}/tracks`, { linked_partitioning: 1 })
         .then((data: ISoundcloudTracksLinkedPartitioning) => {
           console.log('getUserTracks, data', data);
-          const processedTracks = this.processTracksCollection(data);
-          def.resolve(processedTracks);
+          this.data.tracks.next_href = data.next_href;
+          const tracks = this.processTracksCollection(data);
+          this.ngXsStore.dispatch(new DnbhubStoreAction({ tracks }));
+          def.resolve(tracks);
         })
         .catch((error: any) => def.reject(error));
     } else {
@@ -212,7 +236,8 @@ export class SoundcloudService {
           track.description = this.processDescription(track.description);
           return track;
         });
-        this.data.playlist = playlist;
+        this.ngXsStore.dispatch(new DnbhubStoreAction({ playlist }));
+        // this.data.playlist = playlist;
         def.resolve(playlist);
       })
       .catch((error: any) => def.reject(error));
@@ -270,6 +295,9 @@ export class SoundcloudService {
     trackLast: (): string => '&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false'
   };
 
+  /**
+   * Public widget link getter.
+   */
   public widgetLink: {
     playlist: (scPlaylistID: number) => SafeResourceUrl,
     track: (scTrackID: number) => SafeResourceUrl
@@ -277,5 +305,16 @@ export class SoundcloudService {
     playlist: (scPlaylistID: number): SafeResourceUrl => this.sanitizer.bypassSecurityTrustResourceUrl(this.widgetLinkConstructor.playlistFirst() + scPlaylistID + this.widgetLinkConstructor.playlistLast()),
     track: (scTrackID: number): SafeResourceUrl => this.sanitizer.bypassSecurityTrustResourceUrl(this.widgetLinkConstructor.trackFirst() + scTrackID + this.widgetLinkConstructor.trackLast()),
   };
+
+  /**
+   * Lifecycle hook called after service is destroyed.
+   */
+  public ngOnDestroy(): void {
+    console.log('ngOnDestroy: AppBlogComponent destroyed');
+    const tracks = [];
+    const playlist = new ISoundcloudPlaylist();
+    this.ngXsStore.dispatch(new DnbhubStoreAction({ tracks, playlist }));
+    this.ngXsStoreSubscription.unsubscribe();
+  }
 
 }
