@@ -70,15 +70,25 @@ import { NgxsModule } from '@ngxs/store';
 import { DnbhubStoreState } from './state/dnbhub-store.state';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
+import { AppSpinnerService } from './services';
 
 /**
  * Main application module.
  */
 @NgModule({
   declarations: [
-    AppComponent, AppNavComponent, AppIndexComponent, AppSinglesComponent, AppFreedownloadsComponent,
-    AppRepostsComponent, AppBlogComponent, AppAboutComponent, AppUserComponent, AppAdminComponent,
-    SoundcloudPlayerComponent, AppContactDialog, AppLoginDialog,
+    AppComponent,
+    AppNavComponent,
+    AppIndexComponent,
+    AppSinglesComponent,
+    AppFreedownloadsComponent,
+    AppRepostsComponent,
+    AppBlogComponent,
+    AppAboutComponent,
+    AppUserComponent,
+    AppAdminComponent,
+    SoundcloudPlayerComponent,
+    AppContactDialog, AppLoginDialog,
     IframeContentLoadedDirective, ImageLoadedDirective,
     MapToIterablePipe,
     BottomSheetTextDetailsComponent
@@ -112,6 +122,7 @@ import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
     SendEmailService, EmailSubmissionService, EmailSubscriptionService,
     FirebaseService, GoogleApiService, SoundcloudService, FacebookService, TwitterService,
     RegularExpressionsService,
+    AppSpinnerService,
     AnonymousGuard
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],

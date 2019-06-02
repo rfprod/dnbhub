@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, Inject, AfterContentInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
-import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
 import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 
@@ -13,6 +12,9 @@ import { IAboutDetails } from 'src/app/interfaces';
 import { Store } from '@ngxs/store';
 import { DnbhubStoreStateModel } from 'src/app/state/dnbhub-store.state';
 import { DnbhubStoreAction } from 'src/app/state/dnbhub-store.actions';
+import { AppSpinnerService } from 'src/app/services';
+
+import { pipe, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-about',
@@ -25,7 +27,7 @@ export class AppAboutComponent implements OnInit, AfterContentInit, OnDestroy {
 
   /**
    * @param dialog Reusable dialog
-   * @param emitter Event emitter service
+   * @param spinner Application spinner service
    * @param translateService Translate service - UI translation to predefined languages
    * @param firebaseService Firebase service
    * @param ngXsStore NgXsStore
@@ -33,7 +35,7 @@ export class AppAboutComponent implements OnInit, AfterContentInit, OnDestroy {
    */
   constructor(
     private dialog: MatDialog,
-    private emitter: EventEmitterService,
+    private spinner: AppSpinnerService,
     private translateService: TranslateService,
     private firebaseService: FirebaseService,
     private ngXsStore: Store,
@@ -50,18 +52,18 @@ export class AppAboutComponent implements OnInit, AfterContentInit, OnDestroy {
    */
   private getDetails(): Promise<any> {
     const def = new CustomDeferredService<any>();
-    this.emitter.emitSpinnerStartEvent();
+    this.spinner.startSpinner();
     (this.firebaseService.getDB('about', false) as Promise<DataSnapshot>)
       .then((snapshot) => {
         console.log('getDetails, about', snapshot.val());
         const details: IAboutDetails = snapshot.val();
         this.ngXsStore.dispatch(new DnbhubStoreAction({ details }));
-        this.emitter.emitSpinnerStopEvent();
+        this.spinner.stopSpinner();
         def.resolve();
       })
       .catch((error) => {
         console.log('getDetails, error', error);
-        this.emitter.emitSpinnerStopEvent();
+        this.spinner.stopSpinner();
         def.reject();
       });
     return def.promise;
@@ -70,7 +72,7 @@ export class AppAboutComponent implements OnInit, AfterContentInit, OnDestroy {
   /**
    * NgXsStore subscription.
    */
-  private ngXsStoreSubscription: any;
+  private ngXsStoreSubscription: Subscription;
 
   /**
    * Subscribes to state change and takes action.
@@ -128,6 +130,8 @@ export class AppAboutComponent implements OnInit, AfterContentInit, OnDestroy {
   public ngOnDestroy(): void {
     console.log('ngOnDestroy: AppAboutComponent destroyed');
     (this.firebaseService.getDB('about', true) as DatabaseReference).off();
-    this.ngXsStoreSubscription.unsubscribe();
+    if (this.ngXsStoreSubscription) {
+      this.ngXsStoreSubscription.unsubscribe();
+    }
   }
 }

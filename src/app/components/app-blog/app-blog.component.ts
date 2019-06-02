@@ -5,7 +5,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { DatabaseReference } from '@angular/fire/database/interfaces';
 
-import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.service';
 import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
@@ -14,6 +13,8 @@ import { Store } from '@ngxs/store';
 import { DnbhubStoreAction } from 'src/app/state/dnbhub-store.actions';
 import { IBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 import { DnbhubStoreStateModel } from 'src/app/state/dnbhub-store.state';
+import { AppSpinnerService } from 'src/app/services';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-blog',
@@ -25,7 +26,7 @@ import { DnbhubStoreStateModel } from 'src/app/state/dnbhub-store.state';
 export class AppBlogComponent implements OnInit, OnDestroy {
 
   /**
-   * @param emitter Event emitter service
+   * @param spinner Application spinner service
    * @param firebaseService Firebase service
    * @param soundcloudService Soundcloud service
    * @param route Application router
@@ -33,7 +34,7 @@ export class AppBlogComponent implements OnInit, OnDestroy {
    * @param ngXsStore NgXsStore
    */
   constructor(
-    private emitter: EventEmitterService,
+    private spinner: AppSpinnerService,
     private firebaseService: FirebaseService,
     private soundcloudService: SoundcloudService,
     private router: Router,
@@ -125,7 +126,7 @@ export class AppBlogComponent implements OnInit, OnDestroy {
   /**
    * NgXsStore subscription.
    */
-  private ngXsStoreSubscription: any;
+  private ngXsStoreSubscription: Subscription;
 
   /**
    * Subscribes to state change and takes action.
@@ -189,7 +190,9 @@ export class AppBlogComponent implements OnInit, OnDestroy {
     console.log('ngOnDestroy: AppBlogComponent destroyed');
     const blogPosts: IBlogPost[] = [];
     this.ngXsStore.dispatch(new DnbhubStoreAction({ blogPosts }));
-    this.ngXsStoreSubscription.unsubscribe();
+    if (this.ngXsStoreSubscription) {
+      this.ngXsStoreSubscription.unsubscribe();
+    }
   }
 
 }

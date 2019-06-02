@@ -13,3 +13,4 @@ export * from 'src/app/services/soundcloud/soundcloud.service';
 export * from 'src/app/services/twitter/twitter.service';
 export * from 'src/app/services/user-interface-utils/user-interface-utils.service';
 export * from 'src/app/services/regular-expressions/regular-expressions.service';
+export * from 'src/app/services/spinner/spinner.service';

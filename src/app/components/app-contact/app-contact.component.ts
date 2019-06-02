@@ -8,6 +8,8 @@ import { SendEmailService } from 'src/app/services/send-email/send-email.service
 
 import { TranslateService } from 'src/app/modules/translate/translate.service';
 import { IEmailForm } from 'src/app/interfaces/forms/email-form.interface';
+import { untilDestroyed } from 'ngx-take-until-destroy';
+import { AppSpinnerService } from 'src/app/services';
 
 /**
  * Contact dialog.
@@ -26,6 +28,7 @@ export class AppContactDialog implements OnInit, OnDestroy {
    * @param dialogRef Dialog reference
    * @param fb Form builder - user input procession
    * @param emitter Event emitter service
+   * @param spinner Application spinner service
    * @param translateService Translate service - UI translation to predefined languages
    * @param sendEmailService Send email service - sends user email to specified email address by calling cloud functions
    * @param window Window reference
@@ -35,14 +38,13 @@ export class AppContactDialog implements OnInit, OnDestroy {
     private dialogRef: MatDialogRef<AppContactDialog>,
     private fb: FormBuilder,
     private emitter: EventEmitterService,
+    private spinner: AppSpinnerService,
     private translateService: TranslateService,
     private sendEmailService: SendEmailService,
     @Inject('Window') private window: Window
   ) {
     console.log('AppContactDialog constructor', this.data);
   }
-
-  private subscriptions: any[] = [];
 
   /**
    * Email form.
@@ -108,12 +110,12 @@ export class AppContactDialog implements OnInit, OnDestroy {
    */
   public sendEmail(): Promise<boolean> {
     const def = new CustomDeferredService<boolean>();
-    this.emitter.emitProgressStartEvent();
+    this.spinner.startSpinner();
     const formData: any = this.emailForm.value;
     this.sendEmailService.sendEmail(formData).subscribe(
       (data: any) => {
         console.log('sendEmail, data:', data);
-        this.emitter.emitProgressStopEvent();
+        this.spinner.stopSpinner();
         def.resolve(true);
         this.feedback = this.translateService.instant('contact.result.success');
         setTimeout(() => {
@@ -123,7 +125,7 @@ export class AppContactDialog implements OnInit, OnDestroy {
       (error: any) => {
         console.log('sendEmail, error', error);
         this.feedback = this.translateService.instant('contact.result.fail');
-        this.emitter.emitProgressStopEvent();
+        this.spinner.stopSpinner();
         def.reject(false);
       },
       () => {
@@ -150,7 +152,7 @@ export class AppContactDialog implements OnInit, OnDestroy {
     console.log('ngOnInit: AppContactDialog initialized');
     this.resetEmailForm();
 
-    const sub: any = this.emitter.getEmitter().subscribe((event: any) => {
+    this.emitter.getEmitter().pipe(untilDestroyed(this)).subscribe((event: any) => {
       console.log('AppContactDialog consuming event:', event);
       if (event.progress) {
         if (event.progress === 'start') {
@@ -162,17 +164,11 @@ export class AppContactDialog implements OnInit, OnDestroy {
         }
       }
     });
-    this.subscriptions.push(sub);
   }
   /**
    * Lifecycle hook called after component is destroyed.
    */
   public ngOnDestroy(): void {
     console.log('ngOnDestroy: AppContactDialog destroyed');
-    if (this.subscriptions.length) {
-      for (const sub of this.subscriptions) {
-        sub.unsubscribe();
-      }
-    }
   }
 }

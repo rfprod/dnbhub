@@ -311,7 +311,7 @@ body {
   }
 
 /*
-* layout
+*	layout
 */
 
   #spinner {
@@ -320,15 +320,9 @@ body {
     align-items: center;
     justify-content: center;
     width: 100vw;
-    height: 100vh;
     text-align: center;
     z-index: 100000;
     background: rgba(0, 0, 0, 0.15);
-
-    mat-spinner {
-      width: 20vh;
-      height: auto!important;
-    }
   }
 
 /*

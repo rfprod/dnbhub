@@ -1,12 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
-import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { FormBuilder, Validators } from '@angular/forms';
 
 import { IUserProfileForm, ISoundcloudPlaylist } from 'src/app/interfaces/index';
 import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.service';
 import { DatabaseReference, DataSnapshot } from '@angular/fire/database/interfaces';
+import { AppSpinnerService } from 'src/app/services';
 
 /**
  * Application user component.
@@ -21,13 +21,13 @@ import { DatabaseReference, DataSnapshot } from '@angular/fire/database/interfac
 export class AppUserComponent implements OnInit, OnDestroy {
 
   /**
-   * @param emitter Event emitter service
+   * @param spinner Application spinner service
    * @param firebaseService Firebase service
    * @param soundcloudService Soundcloud service
    * @param fb Form builder
    */
   constructor(
-    private emitter: EventEmitterService,
+    private spinner: AppSpinnerService,
     private firebaseService: FirebaseService,
     private soundcloudService: SoundcloudService,
     private fb: FormBuilder

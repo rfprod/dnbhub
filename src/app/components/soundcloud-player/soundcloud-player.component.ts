@@ -8,6 +8,7 @@ import { UserInterfaceUtilsService } from 'src/app/services/user-interface-utils
 
 import { ISoundcloudPlaylist } from 'src/app/interfaces/index';
 import { untilDestroyed } from 'ngx-take-until-destroy';
+import { AppSpinnerService } from 'src/app/services';
 
 /**
  * Soundcloud player component.
@@ -25,6 +26,7 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
   /**
    * @param el Element reference
    * @param emitter Event emitter service - components interaction
+   * @param spinenr Application spinner service
    * @param firebaseService Service for making firebase requests
    * @param soundcloudService Soundcloud API wrapper
    * @param uiUtils User Interface Utilities Service
@@ -33,6 +35,7 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
   constructor(
     private el: ElementRef,
     private emitter: EventEmitterService,
+    private spinner: AppSpinnerService,
     private firebaseService: FirebaseService,
     private soundcloudService: SoundcloudService,
     public uiUtils: UserInterfaceUtilsService,
@@ -143,7 +146,7 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
   private loadMoreTracks(): void {
     if (!this.noMoreTracks && !this.loading) {
       this.loading = true;
-      this.emitter.emitSpinnerStartEvent();
+      this.spinner.startSpinner();
       if (/(dnbhub|user)/.test(this.mode)) {
         console.log('this.tracks.length', this.tracks.length);
         this.soundcloudService.getUserTracks(this.userId).then(
@@ -155,12 +158,12 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
             }
             this.tracks = this.soundcloudService.data.tracks.collection.slice();
             this.loading = false;
-            this.emitter.emitSpinnerStopEvent();
+            this.spinner.stopSpinner();
           },
           (error: any) => {
             console.log('soundcloudService.getUserTracks, error', error);
             this.loading = false;
-            this.emitter.emitSpinnerStopEvent();
+            this.spinner.stopSpinner();
           }
         );
       } else if (/(pl\-everything|pl\-reposts1|pl\-reposts2|pl\-freedownloads|pl\-samplepacks|playlist)/.test(this.mode)) {
@@ -173,12 +176,12 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
             this.playlist = this.soundcloudService.data.playlist;
             this.renderedPlaylist = this.soundcloudService.data.playlist.tracks.slice(0, this.renderPlaylistTracks) || [];
             this.loading = false;
-            this.emitter.emitSpinnerStopEvent();
+            this.spinner.stopSpinner();
           },
           (error: any) => {
             console.log('soundcloudService.getUserTracks, error', error);
             this.loading = false;
-            this.emitter.emitSpinnerStopEvent();
+            this.spinner.stopSpinner();
           }
         );
       }
@@ -221,7 +224,7 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
       // kill player if exists
       this.playerKill();
       this.selectTrack(trackIndex);
-      this.emitter.emitSpinnerStartEvent();
+      this.spinner.startSpinner();
       this.soundcloudService.streamTrack(track.id).then(
         (player: any) => {
           console.log('soundcloudService.streamTrack, player: ', player);
@@ -255,11 +258,11 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
           setTimeout(() => {
             this.player.play();
             this.reportWaveformProgress();
-            this.emitter.emitSpinnerStopEvent();
+            this.spinner.stopSpinner();
           }, 1000);
         },
         (error: any) => {
-          this.emitter.emitSpinnerStopEvent();
+          this.spinner.stopSpinner();
         }
       );
     } else {

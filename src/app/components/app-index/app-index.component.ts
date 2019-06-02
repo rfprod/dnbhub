@@ -95,10 +95,6 @@ export class AppIndexComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.bindToContentScrollEvent();
 
-    this.emitter.getEmitter().pipe(untilDestroyed(this)).subscribe((event: any) => {
-      console.log('AppIndexComponent consuming event:', event);
-    });
-
     let previousMqAlias: string = '';
     this.media.asObservable().pipe(untilDestroyed(this)).subscribe((event: MediaChange) => {
       console.log('flex-layout media change event', event);

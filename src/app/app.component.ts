@@ -7,12 +7,12 @@ import { MediaChange, MediaService } from '@angular/flex-layout';
 import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
 import { TranslateService } from 'src/app/modules/translate/index';
 import { CustomServiceWorkerService } from 'src/app/services/custom-service-worker/custom-service-worker.service';
-import { FacebookService } from 'src/app/services/facebook/facebook.service';
 
 import { AppContactDialog } from 'src/app/components/app-contact/app-contact.component';
 
 import { untilDestroyed } from 'ngx-take-until-destroy';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
+import { AppSpinnerService } from './services';
 
 /**
  * Application root component.
@@ -24,15 +24,16 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class AppComponent implements OnInit, OnDestroy {
 
   /**
+   * AppComponent constructor.
    * @param matIconRegistry Material icons registry.
    * @param dateAdapter Material moment date adapter.
    * @param dialog Reusable dialog.
    * @param domSanitizer DOM sanitizer.
    * @param emitter Event emitter service - components interaction.
    * @param translateService Translate service - UI translation to predefined languages.
-   * @param facebookService Facebook service - Facebook JavaScrip SDK wrapper.
    * @param serviceWorker Service worker service.
    * @param media Media service
+   * @param spinner Application spinner service
    * @param window Browser window reference
    */
   constructor(
@@ -42,8 +43,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private domSanitizer: DomSanitizer,
     private emitter: EventEmitterService,
     private translate: TranslateService,
-    private facebookService: FacebookService,
     private serviceWorker: CustomServiceWorkerService,
+    private spinner: AppSpinnerService,
     private media: MediaService,
     @Inject('Window') private window: Window
   ) {
@@ -51,22 +52,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Indicates if progress spinner should be shown.
+   * Show spinner observable.
    */
-  private showSpinner: BehaviorSubject<boolean> = new BehaviorSubject(true);
-  public showSpinner$: Observable<boolean> = this.showSpinner;
-  /**
-   * Shows spinner.
-   */
-  private startSpinner(): void {
-    this.showSpinner.next(true);
-  }
-  /**
-   * Hides spinner.
-   */
-  private stopSpinner(): void {
-    this.showSpinner.next(false);
-  }
+  public showSpinner$: Observable<boolean> = this.spinner.showSpinner$.pipe(untilDestroyed(this));
 
   public sidenavOpened: boolean = false;
 
@@ -223,15 +211,6 @@ export class AppComponent implements OnInit, OnDestroy {
   public eventEmitterSubscribe(): void {
     this.emitter.getEmitter().pipe(untilDestroyed(this)).subscribe((event: any) => {
       console.log('AppComponent, event:', event);
-      if (event.spinner) {
-        if (event.spinner === 'start') {
-          console.log('AppComponent, starting spinner');
-          this.startSpinner();
-        } else if (event.spinner === 'stop') {
-          console.log('AppComponent, stopping spinner');
-          this.stopSpinner();
-        }
-      }
       if (event.lang) {
         console.log('AppComponent, switch language', event.lang);
         if (this.supportedLanguages.filter((item: any) => item.key === event.lang).length) {

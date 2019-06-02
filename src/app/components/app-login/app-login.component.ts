@@ -8,6 +8,8 @@ import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-d
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 
 import { ILoginForm } from 'src/app/interfaces';
+import { untilDestroyed } from 'ngx-take-until-destroy';
+import { AppSpinnerService } from 'src/app/services';
 
 /**
  * Application login dialog.
@@ -26,6 +28,7 @@ export class AppLoginDialog implements OnInit, OnDestroy {
    * @param dialogRef Dialog reference
    * @param fb Form builder - user input procession
    * @param emitter Event emitter service
+   * @param spinner Application spinner service
    * @param router Allication router
    * @param firebaseService Firebase service
    * @param window Window reference
@@ -35,17 +38,13 @@ export class AppLoginDialog implements OnInit, OnDestroy {
     private dialogRef: MatDialogRef<AppLoginDialog>,
     private fb: FormBuilder,
     private emitter: EventEmitterService,
+    private spinner: AppSpinnerService,
     private router: Router,
     private firebaseService: FirebaseService,
     @Inject('Window') private window: Window
   ) {
     console.log('AppLoginDialog constructor', this.data);
   }
-
-  /**
-   * Component subscriptions.
-   */
-  private subscriptions: any[] = [];
 
   /**
    * Login form.
@@ -101,7 +100,7 @@ export class AppLoginDialog implements OnInit, OnDestroy {
    */
   public login(): Promise<boolean> {
     const def = new CustomDeferredService<boolean>();
-    this.emitter.emitProgressStartEvent();
+    this.spinner.startSpinner();
     const formData: any = this.loginForm.value;
     if (!this.signupMode) {
       this.firebaseService.authenticate('email', { email: formData.email, password: formData.password }).then(
@@ -113,7 +112,7 @@ export class AppLoginDialog implements OnInit, OnDestroy {
           } else {
             this.router.navigate(['/user']);
           }
-          this.emitter.emitProgressStopEvent();
+          this.spinner.stopSpinner();
           def.resolve();
         },
         (error: any) => {
@@ -131,7 +130,7 @@ export class AppLoginDialog implements OnInit, OnDestroy {
           }
           setTimeout(() => {
             this.loading = false;
-            this.emitter.emitProgressStopEvent();
+            this.spinner.stopSpinner();
             def.reject();
           }, 1000);
         }
@@ -142,7 +141,7 @@ export class AppLoginDialog implements OnInit, OnDestroy {
           console.log('signup success', user);
           this.closeDialog({ success: true });
           this.router.navigate(['/user']);
-          this.emitter.emitProgressStopEvent();
+          this.spinner.stopSpinner();
           def.resolve();
         },
         (error: any) => {
@@ -150,7 +149,7 @@ export class AppLoginDialog implements OnInit, OnDestroy {
           this.feedback = 'An error occurred: ' + error.code;
           setTimeout(() => {
             this.loading = false;
-            this.emitter.emitProgressStopEvent();
+            this.spinner.stopSpinner();
             def.reject();
           }, 1000);
         }
@@ -233,7 +232,7 @@ export class AppLoginDialog implements OnInit, OnDestroy {
     console.log('ngOnInit: AppLoginDialog initialized');
     this.resetForm();
 
-    const sub: any = this.emitter.getEmitter().subscribe((event: any) => {
+    this.emitter.getEmitter().pipe(untilDestroyed(this)).subscribe((event: any) => {
       console.log('AppLoginDialog consuming event:', event);
       if (event.progress) {
         if (event.progress === 'start') {
@@ -245,7 +244,6 @@ export class AppLoginDialog implements OnInit, OnDestroy {
         }
       }
     });
-    this.subscriptions.push(sub);
   }
 
   /**
@@ -253,11 +251,6 @@ export class AppLoginDialog implements OnInit, OnDestroy {
    */
   public ngOnDestroy(): void {
     console.log('ngOnDestroy: AppLoginDialog destroyed');
-    if (this.subscriptions.length) {
-      for (const sub of this.subscriptions) {
-        sub.unsubscribe();
-      }
-    }
   }
 
 }
