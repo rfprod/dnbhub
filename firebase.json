@@ -19,7 +19,7 @@
         "headers": [
           {
             "key": "Access-Control-Allow-Origin",
-            "value": "https://dnbhub-a5d9c.firebaseapp.com https://dnbhub.com"
+            "value": "https://dnbhub-a5d9c.firebaseapp.com https://dnbhub-a5d9c.web.app https://dnbhub.com"
           },
           {
             "key": "Access-Control-Allow-Methods",

@@ -43,7 +43,7 @@ export class FirebaseService {
   /**
    * Angular fire public shortcuts.
    */
-  public fire: { db: FirebaseDatabase, auth: FirebaseAuth, authUser: any } = {
+  public fire: { db: FirebaseDatabase, auth: FirebaseAuth, authUser: firebase.User } = {
     db: this.fireDB.database,
     auth: this.fireAuth.auth,
     authUser: null
@@ -196,7 +196,7 @@ export class FirebaseService {
   /**
    * Checks database user id.
    */
-  public checkDBuserUID() {
+  public checkDBuserUID(): Promise<{exists: boolean, created: boolean}|any> {
     const def = new CustomDeferredService<any>();
     this.authErrorCheck();
     (this.getDB('users/' + this.fire.authUser.uid) as Promise<DataSnapshot>)
@@ -222,6 +222,31 @@ export class FirebaseService {
       })
       .catch((error) => {
         console.log('checkDBuserUID, user db profile check:', error);
+        def.reject(error);
+      });
+    return def.promise;
+  }
+
+  /**
+   * Sets new values for database user.
+   * @param valuesObj new values object
+   */
+  public setDBuserNewValues(valuesObj: { submittedPlaylists?: any[], sc_code?: string, sc_oauth_token?: string, sc_id?: string }): Promise<{valuesSet: boolean}|any> {
+    const def = new CustomDeferredService<any>();
+    this.authErrorCheck();
+    this.checkDBuserUID()
+      .then((data) => {
+        console.log('checkDBuserUID', JSON.stringify(data));
+        (this.getDB('users/' + this.fire.authUser.uid, true) as DatabaseReference).update(valuesObj)
+          .then(() => {
+            console.log('user db profile values set');
+            def.resolve({ valuesSet: true });
+          }).catch((error) => {
+            console.log('error setting user db profile values', error);
+            def.reject({ valuesSet: false });
+          });
+      }).catch((error) => {
+        console.log('setDBuserValues, user db profile check error', error);
         def.reject(error);
       });
     return def.promise;

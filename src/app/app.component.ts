@@ -176,7 +176,7 @@ export class AppComponent implements OnInit, OnDestroy {
    * icons reference: https://fontawesome.com/icons/
    */
   private addIconsToRegistry(): void {
-    this.matIconRegistry.registerFontClassAlias('fontawesome-all');
+    this.matIconRegistry.registerFontClassAlias('all');
 
     this.matIconRegistry.addSvgIcon('angular-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/Angular_logo.svg'));
     this.matIconRegistry.addSvgIcon('mailchimp-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/MailChimp_logo.svg'));

@@ -1,10 +1,29 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy
+} from '@angular/core';
+
+import {
+  FormControl,
+  FormBuilder,
+  Validators
+} from '@angular/forms';
+
 import { SafeResourceUrl } from '@angular/platform-browser';
-import { FormControl, FormBuilder, Validators } from '@angular/forms';
 
-import { MatAutocompleteSelectedEvent, MatBottomSheet, MatBottomSheetRef, MatBottomSheetConfig } from '@angular/material';
+import {
+  MatAutocompleteSelectedEvent,
+  MatBottomSheet,
+  MatBottomSheetRef,
+  MatBottomSheetConfig
+} from '@angular/material';
 
-import { DataSnapshot, DatabaseReference, DatabaseSnapshotExists } from '@angular/fire/database/interfaces';
+import {
+  DataSnapshot,
+  DatabaseReference,
+  DatabaseSnapshotExists
+} from '@angular/fire/database/interfaces';
 
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { RegularExpressionsService } from 'src/app/services/regular-expressions/regular-expressions.service';
