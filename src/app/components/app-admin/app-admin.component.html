@@ -1,65 +1,210 @@
-<div *ngIf="firebase.anonUser()" class="mat-body-2" fxFlex="100" fxLayoutFill fxLayout="row" fxLayoutAlign="center center">
+<div
+  *ngIf="firebase.anonUser()"
+  class="mat-body-2"
+  fxFlex="100"
+  fxLayoutFill
+  fxLayout="row"
+  fxLayoutAlign="center center">
+
   You must me authenticated to access admin controls
 </div>
-<div *ngIf="!firebase.privilegedAccess()" class="mat-body-2" fxFlex="100" fxLayoutFill fxLayout="row" fxLayoutAlign="center center">
+
+<div
+  *ngIf="!firebase.privilegedAccess()"
+  class="mat-body-2"
+  fxFlex="100"
+  fxLayoutFill
+  fxLayout="row"
+  fxLayoutAlign="center center">
+
   You must have privileged access rights to access admin controls
 </div>
 
-<div *ngIf="!firebase.anonUser() && firebase.privilegedAccess()" fxFlex="100" fxLayoutFill fxLayout="row" [ngStyle]="{ padding: '0 10px 0 10px' }">
+<div
+  *ngIf="!firebase.anonUser() && firebase.privilegedAccess()"
+  fxFlex="100"
+  fxLayoutFill
+  fxLayout="row"
+  [ngStyle]="{ padding: '0 10px 0 10px' }">
 
-  <div fxLayout="row wrap" fxFlex="100" fxLayoutFill fxLayoutAlign="start start" *ngIf="!details.preview.submission">
-    <span fxFlex="100" fxLayout="row" fxLayoutAlign="start stretch" fxLayoutAlign.xs="center center" class="md-padding">
-      <div class="mat-body-2">some general data here</div>
+  <div
+    fxLayout="row wrap"
+    fxFlex="100"
+    fxLayoutFill
+    fxLayoutAlign="start start"
+    *ngIf="!details.preview.submission">
+
+    <span
+      fxFlex="100"
+      fxLayout="row"
+      fxLayoutAlign="start stretch"
+      fxLayoutAlign.xs="center center"
+      class="md-padding">
+
+      <div
+        class="mat-body-2">
+
+        some general data here
+      </div>
+
     </span>
 
     <mat-tab-group fxFlex="100">
-      <mat-tab label="email submissions">
-        <mat-tab-body fxLayout="row">
-          <div fxFlex fxLayoutFill fxLayout="row wrap" fxLayoutAlign="start stretch" *ngIf="!noEmailBlogSubmissions()">
 
-            <div *ngFor="let key of details.emails.blogSubmissionsKeys; let i = index" fxFlex.xs="100" fxFlex="49" fxLayout="row wrap" fxLayoutAlign="start stretch" [ngStyle]="{ padding: '0 10px 0 10px' }">
-              <span fxFlex class="mat-body-2">
+      <mat-tab label="email submissions">
+
+        <mat-tab-body fxLayout="row">
+
+          <div
+            fxFlex
+            fxLayoutFill
+            fxLayout="row wrap"
+            fxLayoutAlign="start stretch"
+            *ngIf="!noEmailBlogSubmissions()">
+
+            <div
+              *ngFor="let key of details.emails.blogSubmissionsKeys; let i = index"
+              fxFlex.xs="100"
+              fxFlex="49"
+              fxLayout="row wrap"
+              fxLayoutAlign="start stretch"
+              [ngStyle]="{ padding: '0 10px 0 10px' }">
+
+              <span
+                fxFlex
+                class="mat-body-2">
+
                 {{i}}. From: {{ details.emails.blogSubmissions[key].email }}
               </span>
-              <span fxFlex="100" class="mat-body-1">
-                <p>Link:
-                  <a fxHide fxShow.xs fxShow.sm href="{{ details.emails.blogSubmissions[key].link }}" target=_blank>
-                    <mat-icon fontSet="fas" fontIcon="fa-external-link-alt" class="material-icons-fas"></mat-icon>
+
+              <span
+                fxFlex="100"
+                class="mat-body-1">
+
+                <p>
+                  Link:
+                  <a
+                    fxHide
+                    fxShow.xs
+                    fxShow.sm
+                    href="{{ details.emails.blogSubmissions[key].link }}"
+                    target=_blank>
+
+                    <mat-icon
+                      fontSet="fas"
+                      fontIcon="fa-external-link-alt"
+                      class="material-icons-fas">
+                    </mat-icon>
+
                   </a>
-                  <a fxHide fxShow.gt-sm href="{{ details.emails.blogSubmissions[key].link }}" target=_blank>
+
+                  <a
+                    fxHide
+                    fxShow.gt-sm
+                    href="{{ details.emails.blogSubmissions[key].link }}"
+                    target=_blank>
+
                     {{ details.emails.blogSubmissions[key].link }}
                   </a>
+
                 </p>
-                <p>Sent from domain: {{ details.emails.blogSubmissions[key].domain }}</p>
+                <p>
+                  Sent from domain: {{ details.emails.blogSubmissions[key].domain }}
+                </p>
               </span>
-              <span fxFlex="100" class="mat-body-1" *ngIf="details.selected.brand.key" fxLayout="row wrap">
-                <p fxFlex="100">
+
+              <span
+                fxFlex="100"
+                class="mat-body-1"
+                *ngIf="details.selected.brand.key"
+                fxLayout="row wrap">
+
+                <p
+                  fxFlex="100">
+
                   Selected label links:
                 </p>
-                <span *ngFor="let key of details.selected.brand.object | mapToIterable" fxFlex="100" fxLayout="row wrap">
-                  <a *ngIf="details.selected.brand.object[key]" href="{{details.selected.brand.object[key]}}" target=_blank>
+
+                <span
+                  *ngFor="let key of details.selected.brand.object | mapToIterable"
+                  fxFlex="100"
+                  fxLayout="row wrap">
+
+                  <a
+                    *ngIf="details.selected.brand.object[key]"
+                    href="{{details.selected.brand.object[key]}}"
+                    target=_blank>
+
                     {{key}}
-                    <mat-icon fontSet="fas" fontIcon="fa-external-link-alt" class="material-icons-fas"></mat-icon>
+                    <mat-icon
+                      fontSet="fas"
+                      fontIcon="fa-external-link-alt"
+                      class="material-icons-fas">
+                    </mat-icon>
+
                   </a>
-                  <span *ngIf="details.selected.brand.object[key] === ''">
+
+                  <span
+                    *ngIf="details.selected.brand.object[key] === ''">
                     {{key}}
-                    <mat-icon fontSet="fas" fontIcon="fa-external-link-alt" class="material-icons-fas" title="empty link field"></mat-icon>
+                    <mat-icon
+                      fontSet="fas"
+                      fontIcon="fa-external-link-alt"
+                      class="material-icons-fas"
+                      title="empty link field">
+                    </mat-icon>
                   </span>
+
                 </span>
+
               </span>
-              <span fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start center">
-                <form fxFlex="100">
-                  <mat-form-field fxFlex [ngStyle]="{ width: '100%' }">
-                    <input type="text" placeholder="Pick one" aria-label="Number" matInput [formControl]="brandAutocompleteControl" [matAutocomplete]="brandAuto">
-                    <mat-autocomplete #brandAuto="matAutocomplete" (optionSelected)="selectBrandFromList($event)">
-                      <mat-option *ngFor="let option of getMatchedBrands()" [value]="option">
+
+              <span
+                fxFlex="100"
+                fxLayout="row wrap"
+                fxLayoutAlign="start center">
+
+                <form
+                  fxFlex="100">
+
+                  <mat-form-field
+                    fxFlex
+                    [ngStyle]="{ width: '100%' }">
+
+                    <input
+                      matInput
+                      type="text"
+                      placeholder="Pick one"
+                      aria-label="Number"
+                      [formControl]="brandAutocompleteControl"
+                      [matAutocomplete]="brandAuto">
+
+                    <mat-autocomplete
+                      #brandAuto="matAutocomplete"
+                      (optionSelected)="selectBrandFromList($event)">
+
+                      <mat-option
+                        *ngFor="let option of getMatchedBrands()"
+                        [value]="option">
+
                         {{option}}
                       </mat-option>
+
                     </mat-autocomplete>
+
                   </mat-form-field>
+
                 </form>
-                <button mat-icon-button *ngIf="true" (click)="deleteEmailBlogSubmission(i)" aria-label="delete submission" title="delete submission">
-                  <mat-icon fontSet="fas" fontIcon="fa-trash" class="material-icons-fas"></mat-icon>
+
+                <button mat-icon-button
+                  *ngIf="true"
+                  (click)="deleteEmailBlogSubmission(i)"
+                  aria-label="delete submission"
+                  title="delete submission">
+
+                  <mat-icon
+                    fontSet="fas" fontIcon="fa-trash" class="material-icons-fas"></mat-icon>
+
                 </button>
                 <button mat-icon-button *ngIf="brandIsSelected('', true)" (click)="showSubmissionPreview(i)" aria-label="preview submission" title="preview submission">
                   <mat-icon fontSet="fas" fontIcon="fa-th-large" class="material-icons-fas"></mat-icon>
@@ -330,7 +475,11 @@
 
   </div>
 
-  <div fxFlex="100" fxLayout="row" fxLayoutFill *ngIf="details.preview.submission">
+  <div
+    fxFlex="100"
+    fxLayout="row"
+    fxLayoutFill
+    *ngIf="details.preview.submission">
 
       <div
         fxFlex="100"
@@ -338,7 +487,11 @@
         fxLayout="column"
         fxLayoutAlign="start stretch">
 
-        <button mat-button (click)="hideSubmissionPreview()">close preview</button>
+        <button mat-button
+          (click)="hideSubmissionPreview()">
+
+          close preview
+        </button>
 
         <div
           fxFlex="15"
@@ -353,8 +506,7 @@
             fxLayout="row"
             fxLayoutAlign="center center">
 
-            <button
-              mat-button
+            <button mat-button
               color="accent"
               fxFlex="20"
               disabled="true"
@@ -374,14 +526,15 @@
               fxLayout="row wrap"
               fxLayoutAlign="center center">
 
-              <span fxFlex="100">
+              <span
+                fxFlex="100">
+
                 {{details.preview.submission.title}}
               </span>
 
             </span>
 
-            <button
-              mat-button
+            <button mat-button
               color="accent"
               fxFlex="20"
               disabled="true"
@@ -397,6 +550,7 @@
             </button>
 
           </h4>
+
         </div>
 
         <div
@@ -430,12 +584,16 @@
 
             <div ng-bind-html="details.preview.submission.description"></div>
 
-            <p *ngIf="details.preview.submission.release_year && details.preview.submission.release_month && details.preview.submission.release_day">
+            <p
+              *ngIf="details.preview.submission.release_year && details.preview.submission.release_month && details.preview.submission.release_day">
+
               Release date: {{details.preview.submission.release_year}}.{{details.preview.submission.release_month}}.{{details.preview.submission.release_day}}
             </p>
 
           </div>
+
         </div>
+
       </div>
 
   </div>

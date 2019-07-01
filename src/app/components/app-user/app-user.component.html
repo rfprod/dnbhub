@@ -220,15 +220,6 @@
         fxLayoutAlign="start stretch"
         *ngFor="let playlistId of details.submittedPlaylistsIDs; let i = index">
 
-        <!--
-        <iframe
-          width="100%"
-          height="350px"
-          scrolling="no"
-          frameborder="no"
-          [src]="soundcloudWidgetLink(playlistId)">
-        </iframe>
-        -->
         <span
           fxFlex="100"
           [ngStyle]="{ 'height': '200px', 'overflow-x': 'hidden', 'overflow-y': 'auto', 'border': '1px dotted' }">
@@ -258,6 +249,7 @@
               class="material-icons-fas"
               title="Submit to blog">
             </mat-icon>
+
             <mat-icon
               *ngIf="alreadyAdded(i) && unsubmittable(i)"
               fontSet="fas"
@@ -318,12 +310,17 @@
             </mat-icon>
 
           </button>
+
         </span>
+
       </div>
 
     </div>
+
   </div>
+
 </div>
+
 <div
   fxFlex="100"
   fxLayoutFill
@@ -432,12 +429,16 @@
           [innerHtml]="details.preview.submission.description">
         </div>
 
-        <p *ngIf="details.preview.submission.release_year && details.preview.submission.release_month && details.preview.submission.release_day">
+        <p
+          *ngIf="details.preview.submission.release_year && details.preview.submission.release_month && details.preview.submission.release_day">
+
           Release date: {{details.preview.submission.release_year}}.{{details.preview.submission.release_month}}.{{details.preview.submission.release_day}}
         </p>
 
       </div>
+
     </div>
+
   </div>
 
 </div>
