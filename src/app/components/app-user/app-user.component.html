@@ -18,7 +18,7 @@
 
   <div
     fxFlex="100"
-    fxLayout="row"
+    fxLayout="row wrap"
     fxLayoutAlign="center center">
 
     <form
@@ -173,16 +173,8 @@
 
     </form>
 
-  </div>
-
-  <div
-    fxFlex="100"
-    fxLayout="row"
-    fxLayout.lt-sm="row wrap"
-    fxLayoutAlign="space-around center">
-
     <div
-      fxFlex="30"
+      fxFlex="100"
       fxLayout="row wrap">
 
       <span
@@ -209,6 +201,14 @@
 
     </div>
 
+  </div>
+
+  <div
+    fxFlex="100"
+    fxLayout="row"
+    fxLayout.lt-sm="row wrap"
+    fxLayoutAlign="space-around center">
+
     <div
       fxFlex="70"
       fxLayout="row wrap"
@@ -218,7 +218,7 @@
         fxFlex
         fxLayout="row wrap"
         fxLayoutAlign="start stretch"
-        *ngFor="let playlistId of details.submittedPlaylistsIDs; let i = index">
+        *ngFor="let playlistObj of details.userPlayLists; let i = index">
 
         <span
           fxFlex="100"
@@ -227,7 +227,7 @@
           <soundcloud-player
             fxFlex
             [mode]="'playlist'"
-            [playlistId]="playlistId">
+            [playlistId]="playlistObj.id">
           </soundcloud-player>
 
         </span>

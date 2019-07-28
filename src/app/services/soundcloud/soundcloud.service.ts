@@ -189,7 +189,7 @@ export class SoundcloudService implements OnDestroy {
    * Calls getTracksNextHref if data.tracks.next_href is truthy.
    * @param userId Soundcloud user id
    */
-  public getUserTracks(userId: string): Promise<any> {
+  public getUserTracks(userId: string|number): Promise<any> {
     const def: CustomDeferredService<any> = new CustomDeferredService<any>();
     if (this.noMoreTracks) {
       // don't waste bandwidth, there's no more tracks
@@ -227,7 +227,7 @@ export class SoundcloudService implements OnDestroy {
    * Gets soundcloud playlist.
    * @param playlistId Soundcloud playlist id
    */
-  public getPlaylist(playlistId: string): Promise<any> {
+  public getPlaylist(playlistId: string|number): Promise<any> {
     const def: CustomDeferredService<any> = new CustomDeferredService<any>();
     SC.get(`/playlists/${playlistId}`)
       .then((playlist: ISoundcloudPlaylist) => {
@@ -237,7 +237,6 @@ export class SoundcloudService implements OnDestroy {
           return track;
         });
         this.ngXsStore.dispatch(new DnbhubStoreAction({ playlist }));
-        // this.data.playlist = playlist;
         def.resolve(playlist);
       })
       .catch((error: any) => def.reject(error));

@@ -14,9 +14,13 @@ describe('DnbhubStore actions', () => {
   }));
 
   it('should create an action and add an item', () => {
-    store.dispatch(new DnbhubStoreAction('item-1'));
+    store.dispatch(new DnbhubStoreAction({
+      scrollTopValue: 1
+    }));
     store.select(state => state.dnbhubStore.items).subscribe((items: string[]) => {
-      expect(items).toEqual(jasmine.objectContaining([ 'item-1' ]));
+      expect(items).toEqual(jasmine.objectContaining({
+        scrollTopValue: 1
+      }));
     });
   });
 

@@ -1,7 +1,6 @@
 import { Component, Input, Inject, OnInit, OnDestroy, OnChanges, SimpleChanges, ElementRef } from '@angular/core';
 
 import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
-import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.service';
 
 import { UserInterfaceUtilsService } from 'src/app/services/user-interface-utils/user-interface-utils.service';
@@ -24,25 +23,19 @@ import { AppSpinnerService } from 'src/app/services';
 export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
 
   /**
-   * @param el Element reference
    * @param emitter Event emitter service - components interaction
    * @param spinenr Application spinner service
-   * @param firebaseService Service for making firebase requests
    * @param soundcloudService Soundcloud API wrapper
    * @param uiUtils User Interface Utilities Service
    * @param window Window reference
    */
   constructor(
-    private el: ElementRef,
     private emitter: EventEmitterService,
     private spinner: AppSpinnerService,
-    private firebaseService: FirebaseService,
     private soundcloudService: SoundcloudService,
     public uiUtils: UserInterfaceUtilsService,
     @Inject('Window') private window: Window
-  ) {
-    console.log('SoundcloudPlayerComponent constructor, el', this.el.nativeElement);
-  }
+  ) {}
 
   /**
    * Soundcloud player mode.
@@ -76,12 +69,12 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
   /**
    * Soundcloud user id.
    */
-  @Input('userId') private userId: string = '1275637';
+  @Input('userId') private userId: string|number = '1275637';
 
   /**
    * Soundcloud playlist id.
    */
-  @Input('playlistId') private playlistId: string = '21086473';
+  @Input('playlistId') private playlistId: string|number = '21086473';
 
   /**
    * Soundcloud user tracks from shared service.

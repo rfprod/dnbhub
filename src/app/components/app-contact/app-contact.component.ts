@@ -42,9 +42,7 @@ export class AppContactDialog implements OnInit, OnDestroy {
     private translateService: TranslateService,
     private sendEmailService: SendEmailService,
     @Inject('Window') private window: Window
-  ) {
-    console.log('AppContactDialog constructor', this.data);
-  }
+  ) {}
 
   /**
    * Email form.

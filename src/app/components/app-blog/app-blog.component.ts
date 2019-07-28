@@ -13,7 +13,6 @@ import { Store } from '@ngxs/store';
 import { DnbhubStoreAction } from 'src/app/state/dnbhub-store.actions';
 import { IBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 import { DnbhubStoreStateModel } from 'src/app/state/dnbhub-store.state';
-import { AppSpinnerService } from 'src/app/services';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -26,7 +25,6 @@ import { Subscription } from 'rxjs';
 export class AppBlogComponent implements OnInit, OnDestroy {
 
   /**
-   * @param spinner Application spinner service
    * @param firebaseService Firebase service
    * @param soundcloudService Soundcloud service
    * @param route Application router
@@ -34,7 +32,6 @@ export class AppBlogComponent implements OnInit, OnDestroy {
    * @param ngXsStore NgXsStore
    */
   constructor(
-    private spinner: AppSpinnerService,
     private firebaseService: FirebaseService,
     private soundcloudService: SoundcloudService,
     private router: Router,

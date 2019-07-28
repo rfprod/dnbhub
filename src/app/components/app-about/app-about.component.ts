@@ -6,7 +6,6 @@ import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 
 import { AppContactDialog } from 'src/app/components/app-contact/app-contact.component';
 
-import { TranslateService } from 'src/app/modules/translate/translate.service';
 import { DataSnapshot, DatabaseReference } from '@angular/fire/database/interfaces';
 import { IAboutDetails } from 'src/app/interfaces';
 import { Store } from '@ngxs/store';
@@ -14,7 +13,7 @@ import { DnbhubStoreStateModel } from 'src/app/state/dnbhub-store.state';
 import { DnbhubStoreAction } from 'src/app/state/dnbhub-store.actions';
 import { AppSpinnerService } from 'src/app/services';
 
-import { pipe, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-about',
@@ -28,18 +27,14 @@ export class AppAboutComponent implements OnInit, AfterContentInit, OnDestroy {
   /**
    * @param dialog Reusable dialog
    * @param spinner Application spinner service
-   * @param translateService Translate service - UI translation to predefined languages
    * @param firebaseService Firebase service
    * @param ngXsStore NgXsStore
-   * @param window Window reference
    */
   constructor(
     private dialog: MatDialog,
     private spinner: AppSpinnerService,
-    private translateService: TranslateService,
     private firebaseService: FirebaseService,
-    private ngXsStore: Store,
-    @Inject('Window') private window: Window
+    private ngXsStore: Store
   ) {}
 
   /**

@@ -31,7 +31,6 @@ export class AppLoginDialog implements OnInit, OnDestroy {
    * @param spinner Application spinner service
    * @param router Allication router
    * @param firebaseService Firebase service
-   * @param window Window reference
    */
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -40,11 +39,8 @@ export class AppLoginDialog implements OnInit, OnDestroy {
     private emitter: EventEmitterService,
     private spinner: AppSpinnerService,
     private router: Router,
-    private firebaseService: FirebaseService,
-    @Inject('Window') private window: Window
-  ) {
-    console.log('AppLoginDialog constructor', this.data);
-  }
+    private firebaseService: FirebaseService
+  ) {}
 
   /**
    * Login form.

@@ -1,4 +1,7 @@
-class IBlogPostLinks {
+/**
+ * Application blog post links interface.
+ */
+export class IBlogPostLinks {
   bandcamp: string = '';
   facebook: string = '';
   instagram: string = '';

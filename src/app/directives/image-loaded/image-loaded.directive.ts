@@ -32,7 +32,7 @@ export class ImageLoadedDirective implements OnInit {
   private errorEventListener(event: any): void {
     // console.log('imageload, errorEventListener, event', event);
     const el: ElementRef = new ElementRef(event.path[0]);
-    el.nativeElement.src = window.location.origin + '/img/svg/no_image_placeholder.svg';
+    el.nativeElement.src = window.location.origin + '/assets/svg/no_image_placeholder.svg';
     el.nativeElement.removeEventListener('load', this.loadEventListener);
   }
 

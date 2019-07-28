@@ -178,13 +178,13 @@ export class AppComponent implements OnInit, OnDestroy {
   private addIconsToRegistry(): void {
     this.matIconRegistry.registerFontClassAlias('all');
 
-    this.matIconRegistry.addSvgIcon('angular-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/Angular_logo.svg'));
-    this.matIconRegistry.addSvgIcon('mailchimp-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/MailChimp_logo.svg'));
-    this.matIconRegistry.addSvgIcon('soundcloud-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/SoundCloud_logo.svg'));
-    this.matIconRegistry.addSvgIcon('twitter-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/TwitterBird_logo.svg'));
-    this.matIconRegistry.addSvgIcon('dnbhub-logo-nobg-greyscale', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/DH_logo-no_bg_greyscale.svg'));
-    this.matIconRegistry.addSvgIcon('dnbhub-logo-roundbg', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/DH_logo-round_bg.svg'));
-    this.matIconRegistry.addSvgIcon('dnbhub-logo-roundbg-greyscale', this.domSanitizer.bypassSecurityTrustResourceUrl('/img/svg/DH_logo-round_bg_greyscale.svg'));
+    this.matIconRegistry.addSvgIcon('angular-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/Angular_logo.svg'));
+    this.matIconRegistry.addSvgIcon('mailchimp-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/MailChimp_logo.svg'));
+    this.matIconRegistry.addSvgIcon('soundcloud-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/SoundCloud_logo.svg'));
+    this.matIconRegistry.addSvgIcon('twitter-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/TwitterBird_logo.svg'));
+    this.matIconRegistry.addSvgIcon('dnbhub-logo-nobg-greyscale', this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/DH_logo-no_bg_greyscale.svg'));
+    this.matIconRegistry.addSvgIcon('dnbhub-logo-roundbg', this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/DH_logo-round_bg.svg'));
+    this.matIconRegistry.addSvgIcon('dnbhub-logo-roundbg-greyscale', this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/DH_logo-round_bg_greyscale.svg'));
   }
 
   /**

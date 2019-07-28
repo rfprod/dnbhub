@@ -6,7 +6,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { IUserProfileForm, ISoundcloudPlaylist, UserProfile } from 'src/app/interfaces/index';
 import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.service';
 import { DatabaseReference, DataSnapshot } from '@angular/fire/database/interfaces';
-import { AppSpinnerService } from 'src/app/services';
+
 import { Router } from '@angular/router';
 import { take, tap } from 'rxjs/operators';
 import { SafeResourceUrl } from '@angular/platform-browser';
@@ -25,14 +25,12 @@ import { UserDbRecord } from 'src/app/interfaces/user/user-db-record.interface';
 export class AppUserComponent implements OnInit, OnDestroy {
 
   /**
-   * @param spinner Application spinner service
    * @param firebase Firebase service
    * @param soundcloud Soundcloud service
    * @param fb Form builder
    * @param router Application router
    */
   constructor(
-    private spinner: AppSpinnerService,
     public firebase: FirebaseService,
     public soundcloud: SoundcloudService,
     private fb: FormBuilder,
@@ -46,6 +44,7 @@ export class AppUserComponent implements OnInit, OnDestroy {
     currentUser: any,
     userDBrecord: UserDbRecord,
     submittedPlaylistsIDs: string[],
+    userPlayLists: ISoundcloudPlaylist[],
     existingBlogEntriesIDs: any[],
     preview: {
       submission: ISoundcloudPlaylist
@@ -54,6 +53,7 @@ export class AppUserComponent implements OnInit, OnDestroy {
     currentUser: this.firebase.fire.auth.currentUser,
     userDBrecord: <UserDbRecord>{},
     submittedPlaylistsIDs: [],
+    userPlayLists: [],
     existingBlogEntriesIDs: [],
     preview: {
       submission: undefined
@@ -236,6 +236,7 @@ export class AppUserComponent implements OnInit, OnDestroy {
   private getMe(): void {
     this.soundcloud.getMe(this.details.userDBrecord.sc_id.toString())
       .then((user: {me: any, playlists: ISoundcloudPlaylist[]}) => {
+        this.details.userPlayLists = user.playlists;
         console.log('getMe, user', user);
       });
   }
@@ -278,8 +279,9 @@ export class AppUserComponent implements OnInit, OnDestroy {
         });
       return this.soundcloud.SC.get('users/' + me.id + '/playlists');
     }).then((playlists: ISoundcloudPlaylist[]) => {
-      console.log('SC.playlists.then, playlists', playlists);
+      // console.log('SC.playlists.then, playlists', playlists);
       this.soundcloud.data.user.playlists = playlists;
+      this.details.userPlayLists = playlists;
       return playlists;
     });
   }
@@ -310,7 +312,7 @@ export class AppUserComponent implements OnInit, OnDestroy {
       const response = snapshot.val();
       console.log('getExistingBlogEntriesIDs, response', response);
       this.details.existingBlogEntriesIDs = [...response[0]];
-      console.log('$scope.existingBlogEntriesIDs', this.details.existingBlogEntriesIDs);
+      console.log('existingBlogEntriesIDs', this.details.existingBlogEntriesIDs);
     }).catch((error) => {
       console.log('error', error);
       console.log('TODO:snackbar - There was an error while getting user db record: ' + error);

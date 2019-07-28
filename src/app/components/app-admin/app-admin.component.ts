@@ -28,7 +28,7 @@ import {
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { RegularExpressionsService } from 'src/app/services/regular-expressions/regular-expressions.service';
 import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
-import { SoundcloudService, AppSpinnerService } from 'src/app/services';
+import { SoundcloudService } from 'src/app/services';
 
 import { IBrand } from 'src/app/interfaces/brand/brand.interface';
 import { BottomSheetTextDetailsComponent } from '../bottom-sheet-text-details/bottom-sheet-text-details.component';
@@ -50,14 +50,12 @@ export class AppAdminComponent implements OnInit, OnDestroy {
 
   /**
    * AppAdminComponent constructor.
-   * @param spinner Application spinner service
    * @param firebase Firebase service
    * @param soundcloud Soundcloud service
    * @param regx Regular expressions service
    * @param fb Form builder
    */
   constructor(
-    private spinner: AppSpinnerService,
     public firebase: FirebaseService,
     private soundcloud: SoundcloudService,
     private regx: RegularExpressionsService,

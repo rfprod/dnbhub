@@ -1,7 +1,7 @@
 /**
  * Application about links interface with initialization.
  */
-class IAboutLinks {
+export class IAboutLinks {
   bandcamp: string = '';
   facebook: string = '';
   instagram: string = '';
@@ -12,7 +12,7 @@ class IAboutLinks {
   youtube: string = '';
 }
 
-class IPoweredBy {
+export class IPoweredBy {
   name: string = '';
   logo: string = '';
 }

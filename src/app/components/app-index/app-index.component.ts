@@ -42,9 +42,7 @@ export class AppIndexComponent implements OnInit, AfterViewInit, OnDestroy {
     private soundcloudService: SoundcloudService,
     private ngXsStore: Store,
     @Inject('Window') private window: Window
-  ) {
-    // console.log('this.el.nativeElement:', this.el.nativeElement);
-  }
+  ) {}
 
   /**
    * Content view child reference.

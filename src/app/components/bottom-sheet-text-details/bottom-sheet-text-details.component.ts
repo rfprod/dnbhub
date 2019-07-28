@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA } from '@angular/material';
+import { BottomSheetTextDetailsData } from 'src/app/interfaces';
 
 /**
  * Bottom sheet text details component.
@@ -17,10 +18,8 @@ export class BottomSheetTextDetailsComponent {
    */
   constructor(
     private bottomSheetRef: MatBottomSheetRef<BottomSheetTextDetailsComponent>,
-    @Inject(MAT_BOTTOM_SHEET_DATA) public data: { text: string }
-  ) {
-    console.log('BottomSheetTextDetailsComponent constructor, config', this.data);
-  }
+    @Inject(MAT_BOTTOM_SHEET_DATA) public data: BottomSheetTextDetailsData
+  ) {}
 
   /**
    * Closes sheet.
