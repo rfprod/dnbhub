@@ -56,6 +56,7 @@ export class AppRepostsComponent implements OnInit, OnDestroy {
       // console.log('mat-sidenav-content scroll, event', event);
       const currentScrollTopValue: number = event.target.scrollTop;
       const previousScrollTopValue: number = (this.ngXsStore.snapshot().dnbhubStore as DnbhubStoreStateModel).previousScrollTopValue;
+      console.log('previousScrollTopValue', previousScrollTopValue);
 
       // check if should request more data from soundcloud
       const listEndDivider: ElementRef = new ElementRef(this.window.document.getElementById('list-end'));

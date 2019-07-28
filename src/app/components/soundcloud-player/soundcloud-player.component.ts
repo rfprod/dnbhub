@@ -144,8 +144,8 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
         console.log('this.tracks.length', this.tracks.length);
         this.soundcloudService.getUserTracks(this.userId).then(
           (collection: any[]) => {
-            console.log('current tracks, this tracks', this.tracks);
-            console.log('got more user tracks, collection', collection);
+            // console.log('current tracks, this tracks', this.tracks);
+            // console.log('got more user tracks, collection', collection);
             if (!collection.length) {
               this.noMoreTracks = true;
             }
@@ -160,11 +160,11 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
           }
         );
       } else if (/(pl\-everything|pl\-reposts1|pl\-reposts2|pl\-freedownloads|pl\-samplepacks|playlist)/.test(this.mode)) {
-        console.log('this.playlist', this.playlist);
+        // console.log('this.playlist', this.playlist);
         this.soundcloudService.getPlaylist(this.playlistId).then(
           (playlist: ISoundcloudPlaylist) => {
-            console.log('current playlist', this.playlist);
-            console.log('new playlist value', playlist);
+            // console.log('current playlist', this.playlist);
+            // console.log('new playlist value', playlist);
             this.noMoreTracks = true;
             this.playlist = this.soundcloudService.data.playlist;
             this.renderedPlaylist = this.soundcloudService.data.playlist.tracks.slice(0, this.renderPlaylistTracks) || [];
