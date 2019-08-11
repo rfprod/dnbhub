@@ -17,9 +17,9 @@ describe('DnbhubStore actions', () => {
     store.dispatch(new DnbhubStoreAction({
       scrollTopValue: 1
     }));
-    store.select(state => state.dnbhubStore.items).subscribe((items: string[]) => {
+    store.select(state => state.dnbhubStore).subscribe((items: string[]) => {
       expect(items).toEqual(jasmine.objectContaining({
-        scrollTopValue: 1
+        previousScrollTopValue: 1
       }));
     });
   });
