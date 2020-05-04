@@ -2,22 +2,22 @@
  * Application blog post links interface.
  */
 export class IBlogPostLinks {
-  bandcamp: string = '';
-  facebook: string = '';
-  instagram: string = '';
-  soundcloud: string = '';
-  twitter: string = '';
-  website: string = '';
-  youtube: string = '';
+  public bandcamp = '';
+  public facebook = '';
+  public instagram = '';
+  public soundcloud = '';
+  public twitter = '';
+  public website = '';
+  public youtube = '';
 }
 
 /**
  * Application blog post interface with initialization.
  */
 export class IBlogPost {
-  public code: string|null = null;
+  public code: string | null = null;
   public links: IBlogPostLinks = new IBlogPostLinks();
-  public playlistId: any|null = null;
-  public soundcloudUserId: string|null = null;
-  public description: string|null = null;
+  public playlistId: any | null = null;
+  public soundcloudUserId: string | null = null;
+  public description: string | null = null;
 }

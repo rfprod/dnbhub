@@ -1,16 +1,13 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-
-import { FirebaseService } from 'src/app/services/firebase/firebase.service';
-import { FormBuilder, Validators } from '@angular/forms';
-
-import { IUserProfileForm, ISoundcloudPlaylist, UserProfile } from 'src/app/interfaces/index';
-import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DatabaseReference, DataSnapshot } from '@angular/fire/database/interfaces';
-
+import { FormBuilder, Validators } from '@angular/forms';
+import { SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { take, tap } from 'rxjs/operators';
-import { SafeResourceUrl } from '@angular/platform-browser';
+import { ISoundcloudPlaylist, IUserProfileForm, UserProfile } from 'src/app/interfaces/index';
 import { UserDbRecord } from 'src/app/interfaces/user/user-db-record.interface';
+import { FirebaseService } from 'src/app/services/firebase/firebase.service';
+import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.service';
 
 /**
  * Application user component.
@@ -19,11 +16,10 @@ import { UserDbRecord } from 'src/app/interfaces/user/user-db-record.interface';
   selector: 'app-user',
   templateUrl: './app-user.component.html',
   host: {
-    class: 'mat-body-1'
-  }
+    class: 'mat-body-1',
+  },
 })
 export class AppUserComponent implements OnInit, OnDestroy {
-
   /**
    * @param firebase Firebase service
    * @param soundcloud Soundcloud service
@@ -33,22 +29,22 @@ export class AppUserComponent implements OnInit, OnDestroy {
   constructor(
     public firebase: FirebaseService,
     public soundcloud: SoundcloudService,
-    private fb: FormBuilder,
-    private router: Router
+    private readonly fb: FormBuilder,
+    private readonly router: Router,
   ) {}
 
   /**
    * Component data.
    */
   public details: {
-    currentUser: any,
-    userDBrecord: UserDbRecord,
-    submittedPlaylistsIDs: string[],
-    userPlayLists: ISoundcloudPlaylist[],
-    existingBlogEntriesIDs: any[],
+    currentUser: any;
+    userDBrecord: UserDbRecord;
+    submittedPlaylistsIDs: string[];
+    userPlayLists: ISoundcloudPlaylist[];
+    existingBlogEntriesIDs: any[];
     preview: {
-      submission: ISoundcloudPlaylist
-    }
+      submission: ISoundcloudPlaylist;
+    };
   } = {
     currentUser: this.firebase.fire.auth.currentUser,
     userDBrecord: <UserDbRecord>{},
@@ -56,8 +52,8 @@ export class AppUserComponent implements OnInit, OnDestroy {
     userPlayLists: [],
     existingBlogEntriesIDs: [],
     preview: {
-      submission: undefined
-    }
+      submission: undefined,
+    },
   };
 
   /**
@@ -66,22 +62,22 @@ export class AppUserComponent implements OnInit, OnDestroy {
    * - update email
    */
   public mode: {
-    edit: boolean,
-    updateEmail: boolean
+    edit: boolean;
+    updateEmail: boolean;
   } = {
     edit: false,
-    updateEmail: false
+    updateEmail: false,
   };
 
   public toggleEditMode(): void {
-    this.mode.edit = (this.mode.edit) ? false : true;
+    this.mode.edit = this.mode.edit ? false : true;
     if (this.mode.edit) {
       const user: {
-        email: string,
-        name: string
+        email: string;
+        name: string;
       } = {
         email: this.details.currentUser.email,
-        name: this.details.currentUser.displayName
+        name: this.details.currentUser.displayName,
       };
       this.resetForm(user);
     }
@@ -97,7 +93,7 @@ export class AppUserComponent implements OnInit, OnDestroy {
    */
   public togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
-  };
+  }
 
   /**
    * User profile form.
@@ -108,17 +104,22 @@ export class AppUserComponent implements OnInit, OnDestroy {
    * Resets user profile form.
    * @param user user data: email, name
    */
-  private resetForm(user?: { email: string, name: string }): void {
+  private resetForm(user?: { email: string; name: string }): void {
     this.profileForm = this.fb.group({
-      email: [{
-        value: (user) ? user.email : '',
-        disabled: !this.mode.edit || !this.mode.updateEmail ? true : false
-      }, Validators.compose([Validators.required, Validators.email])],
-      name: [{
-        value: (user) ? user.name : '',
-        disabled: !this.mode.edit ? true : false
-      }],
-      password: ['']
+      email: [
+        {
+          value: user ? user.email : '',
+          disabled: !this.mode.edit || !this.mode.updateEmail ? true : false,
+        },
+        Validators.compose([Validators.required, Validators.email]),
+      ],
+      name: [
+        {
+          value: user ? user.name : '',
+          disabled: !this.mode.edit ? true : false,
+        },
+      ],
+      password: [''],
     }) as IUserProfileForm;
 
     this.formValueChangesSubscription();
@@ -129,26 +130,28 @@ export class AppUserComponent implements OnInit, OnDestroy {
    * Sets validators dynamically depending on new form value.
    */
   private formValueChangesSubscription(): void {
-    this.profileForm.valueChanges.pipe(
-      take(1),
-      tap((changes: UserProfile) => {
-        this.profileForm.patchValue({
-          email: {
-            value: changes.email,
-            disabled: !this.mode.edit || !this.mode.updateEmail
-          }
-        });
-        this.profileForm.controls.email.updateValueAndValidity();
-        this.profileForm.patchValue({
-          name: {
-            value: changes.name,
-            disabled: !this.mode.edit
-          }
-        });
-        this.profileForm.controls.email.updateValueAndValidity();
-        this.formValueChangesSubscription();
-      })
-    ).subscribe();
+    this.profileForm.valueChanges
+      .pipe(
+        take(1),
+        tap((changes: UserProfile) => {
+          this.profileForm.patchValue({
+            email: {
+              value: changes.email,
+              disabled: !this.mode.edit || !this.mode.updateEmail,
+            },
+          });
+          this.profileForm.controls.email.updateValueAndValidity();
+          this.profileForm.patchValue({
+            name: {
+              value: changes.name,
+              disabled: !this.mode.edit,
+            },
+          });
+          this.profileForm.controls.email.updateValueAndValidity();
+          this.formValueChangesSubscription();
+        }),
+      )
+      .subscribe();
   }
 
   /**
@@ -156,13 +159,18 @@ export class AppUserComponent implements OnInit, OnDestroy {
    */
   public resetPassword(): void {
     console.log('send email with password reset link');
-    this.firebase.fire.auth.sendPasswordResetEmail(this.details.currentUser.email)
+    this.firebase.fire.auth
+      .sendPasswordResetEmail(this.details.currentUser.email)
       .then(() => {
-        console.log('TODO:snackbar - Password reset email was sent to ' + this.details.currentUser.email);
+        console.log(
+          'TODO:snackbar - Password reset email was sent to ' + this.details.currentUser.email,
+        );
       })
-      .catch((error) => {
+      .catch(error => {
         console.log('reset user password, error:', error);
-        console.log('TODO:snackbar - There was an error while resetting your password, try again later');
+        console.log(
+          'TODO:snackbar - There was an error while resetting your password, try again later',
+        );
       });
   }
 
@@ -171,11 +179,12 @@ export class AppUserComponent implements OnInit, OnDestroy {
    */
   public resendVerificationEmail(): void {
     if (!this.details.currentUser.emailVerified) {
-      this.firebase.fire.authUser.sendEmailVerification()
+      this.firebase.fire.authUser
+        .sendEmailVerification()
         .then(() => {
           console.log('TODO: toaster: check your email for an email with a verification link');
         })
-        .catch((error) => {
+        .catch(error => {
           console.log('send email verification, error:', error);
           console.log('TODO: toaster: there was an error sending email verification');
         });
@@ -189,12 +198,13 @@ export class AppUserComponent implements OnInit, OnDestroy {
    */
   public updateProfile(): void {
     console.log('update profile');
-    this.details.currentUser.updateProfile({ displayName: this.profileForm.controls.name.value })
+    this.details.currentUser
+      .updateProfile({ displayName: this.profileForm.controls.name.value })
       .then(() => {
         console.log('update profile, success');
         this.toggleEditMode();
       })
-      .catch((error) => {
+      .catch(error => {
         console.log('update profile, error', error);
         console.log('TODO:snackbar - There was an error while updating user profile.');
       });
@@ -209,15 +219,20 @@ export class AppUserComponent implements OnInit, OnDestroy {
       console.log('TODO: toaster: You must provide a password in order to delete your account');
     } else {
       console.log('confirm deletion', confirm);
-      this.firebase.delete(this.profileForm.controls.email.value, this.profileForm.controls.password.value).then(
-        (success: any) => {
-          console.log('account successfully deleted', success);
-          this.router.navigate(['']);
-        }, (error: any) => {
-          console.log('reauthenticate, error', error);
-          console.log('There was an error while reauthenticating, it is required for an account deletion.');
-        }
-      );
+      this.firebase
+        .delete(this.profileForm.controls.email.value, this.profileForm.controls.password.value)
+        .then(
+          (success: any) => {
+            console.log('account successfully deleted', success);
+            this.router.navigate(['']);
+          },
+          (error: any) => {
+            console.log('reauthenticate, error', error);
+            console.log(
+              'There was an error while reauthenticating, it is required for an account deletion.',
+            );
+          },
+        );
     }
   }
 
@@ -228,14 +243,15 @@ export class AppUserComponent implements OnInit, OnDestroy {
   public soundcloudWidgetLink(soundcloudPlaylistID: number): SafeResourceUrl {
     const link: SafeResourceUrl = this.soundcloud.widgetLink.playlist(soundcloudPlaylistID);
     return link;
-  };
+  }
 
   /**
    * Gets user details from Sourndcloud.
    */
   private getMe(): void {
-    this.soundcloud.getMe(this.details.userDBrecord.sc_id.toString())
-      .then((user: {me: any, playlists: ISoundcloudPlaylist[]}) => {
+    this.soundcloud
+      .getMe(this.details.userDBrecord.sc_id.toString())
+      .then((user: { me: any; playlists: ISoundcloudPlaylist[] }) => {
         this.details.userPlayLists = user.playlists;
         console.log('getMe, user', user);
       });
@@ -245,45 +261,50 @@ export class AppUserComponent implements OnInit, OnDestroy {
    * Connect user account with soundcloud account.
    */
   public scConnect(): void {
-    this.soundcloud.SC.connect().then((/*data*/) => {
-      // console.log('SC.connect.then, data:', data);
-      // console.log('scConnect local storage', localStorage.getItem('callback'));
-      const urlParams = localStorage.getItem('callback').replace(/^.*\?/, '').split('&');
-      const code = urlParams[0].split('=')[1];
-      const oauthToken = urlParams[1].split('#')[1].split('=')[1];
-      localStorage.removeItem('callback');
-      // console.log('scConnect local storage removed callback', localStorage.getItem('callback'));
-      /*
-      *	store user auth params for further oauth2/token requests
-      */
-      this.firebase.setDBuserNewValues({ sc_code: code, sc_oauth_token: oauthToken })
-        .then((data) => {
-          console.log('setDBuserValues', JSON.stringify(data));
-        })
-        .catch((error) => {
-          console.log('setDBuserValues, error', JSON.stringify(error));
-        });
-      return this.soundcloud.SC.get('/me');
-    }).then((me: any) => {
-      console.log('SC.me.then, me', me);
-      this.soundcloud.data.user.me = me;
-      /*
-      *	store user id to be able to retrieve user data without authentication
-      */
-      this.firebase.setDBuserNewValues({ sc_id: me.id })
-        .then((/*data*/) => {
-          // console.log('setDBuserValues', JSON.stringify(data));
-        })
-        .catch((/*error*/) => {
-          // console.log('setDBuserValues, error', JSON.stringify(error));
-        });
-      return this.soundcloud.SC.get('users/' + me.id + '/playlists');
-    }).then((playlists: ISoundcloudPlaylist[]) => {
-      // console.log('SC.playlists.then, playlists', playlists);
-      this.soundcloud.data.user.playlists = playlists;
-      this.details.userPlayLists = playlists;
-      return playlists;
-    });
+    this.soundcloud.SC.connect()
+      .then((/*data*/) => {
+        // console.log('SC.connect.then, data:', data);
+        // console.log('scConnect local storage', localStorage.getItem('callback'));
+        const urlParams = localStorage.getItem('callback').replace(/^.*\?/, '').split('&');
+        const code = urlParams[0].split('=')[1];
+        const oauthToken = urlParams[1].split('#')[1].split('=')[1];
+        localStorage.removeItem('callback');
+        // console.log('scConnect local storage removed callback', localStorage.getItem('callback'));
+        /*
+         *	store user auth params for further oauth2/token requests
+         */
+        this.firebase
+          .setDBuserNewValues({ sc_code: code, sc_oauth_token: oauthToken })
+          .then(data => {
+            console.log('setDBuserValues', JSON.stringify(data));
+          })
+          .catch(error => {
+            console.log('setDBuserValues, error', JSON.stringify(error));
+          });
+        return this.soundcloud.SC.get('/me');
+      })
+      .then((me: any) => {
+        console.log('SC.me.then, me', me);
+        this.soundcloud.data.user.me = me;
+        /*
+         *	store user id to be able to retrieve user data without authentication
+         */
+        this.firebase
+          .setDBuserNewValues({ sc_id: me.id })
+          .then((/*data*/) => {
+            // console.log('setDBuserValues', JSON.stringify(data));
+          })
+          .catch((/*error*/) => {
+            // console.log('setDBuserValues, error', JSON.stringify(error));
+          });
+        return this.soundcloud.SC.get('users/' + me.id + '/playlists');
+      })
+      .then((playlists: ISoundcloudPlaylist[]) => {
+        // console.log('SC.playlists.then, playlists', playlists);
+        this.soundcloud.data.user.playlists = playlists;
+        this.details.userPlayLists = playlists;
+        return playlists;
+      });
   }
 
   /**
@@ -291,33 +312,39 @@ export class AppUserComponent implements OnInit, OnDestroy {
    * @param [passGetMeMethodCall] indicates if soundcloud 'get me' api call should be passed
    */
   private getDBuser(passGetMeMethodCall?: boolean): void {
-    (this.firebase.getDB('users/' + this.details.currentUser.uid, false) as Promise<DataSnapshot>).then((snapshot) => {
-      this.details.userDBrecord = snapshot.val();
-      this.details.submittedPlaylistsIDs = Object.keys(this.details.userDBrecord.submittedPlaylists);
-      if (this.details.userDBrecord.sc_id && !passGetMeMethodCall) {
-        this.getMe();
-      }
-      console.log('this.details.userDBrecord', this.details.userDBrecord);
-    }).catch((error) => {
-      console.log('get user db record, error:', error);
-      console.log('TODO:snackbar - There was an error while getting user db record: ' + error);
-    });
+    (this.firebase.getDB('users/' + this.details.currentUser.uid, false) as Promise<DataSnapshot>)
+      .then(snapshot => {
+        this.details.userDBrecord = snapshot.val();
+        this.details.submittedPlaylistsIDs = Object.keys(
+          this.details.userDBrecord.submittedPlaylists,
+        );
+        if (this.details.userDBrecord.sc_id && !passGetMeMethodCall) {
+          this.getMe();
+        }
+        console.log('this.details.userDBrecord', this.details.userDBrecord);
+      })
+      .catch(error => {
+        console.log('get user db record, error:', error);
+        console.log('TODO:snackbar - There was an error while getting user db record: ' + error);
+      });
   }
 
   /**
    * Gets existing blog entries ids.
    */
   public getExistingBlogEntriesIDs(): void {
-    (this.firebase.getDB('blogEntriesIDs') as Promise<DataSnapshot>).then((snapshot) => {
-      const response = snapshot.val();
-      console.log('getExistingBlogEntriesIDs, response', response);
-      this.details.existingBlogEntriesIDs = [...response[0]];
-      console.log('existingBlogEntriesIDs', this.details.existingBlogEntriesIDs);
-    }).catch((error) => {
-      console.log('error', error);
-      console.log('TODO:snackbar - There was an error while getting user db record: ' + error);
-    });
-  };
+    (this.firebase.getDB('blogEntriesIDs') as Promise<DataSnapshot>)
+      .then(snapshot => {
+        const response = snapshot.val();
+        console.log('getExistingBlogEntriesIDs, response', response);
+        this.details.existingBlogEntriesIDs = [...response[0]];
+        console.log('existingBlogEntriesIDs', this.details.existingBlogEntriesIDs);
+      })
+      .catch(error => {
+        console.log('error', error);
+        console.log('TODO:snackbar - There was an error while getting user db record: ' + error);
+      });
+  }
 
   /**
    * Tobbles blog post preview.
@@ -328,7 +355,11 @@ export class AppUserComponent implements OnInit, OnDestroy {
     if (post) {
       post.description = this.soundcloud.processDescription(post.description);
     }
-    this.details.preview.submission = (this.details.preview.submission) ? undefined : (post) ? post : undefined;
+    this.details.preview.submission = this.details.preview.submission
+      ? undefined
+      : post
+      ? post
+      : undefined;
   }
 
   /**
@@ -343,7 +374,7 @@ export class AppUserComponent implements OnInit, OnDestroy {
     } else {
       const post = this.soundcloud.data.user.playlists[index];
       if (post) {
-        added = (this.details.existingBlogEntriesIDs.includes(post.id)) ? true : added;
+        added = this.details.existingBlogEntriesIDs.includes(post.id) ? true : added;
       }
     }
     return added || this.alreadySubmitted(index);
@@ -358,7 +389,9 @@ export class AppUserComponent implements OnInit, OnDestroy {
     const post = this.soundcloud.data.user.playlists[index];
     if (post) {
       if (this.details.userDBrecord.submittedPlaylists) {
-        alreadySubmitted = (this.details.userDBrecord.submittedPlaylists.hasOwnProperty(post.id)) ? true : alreadySubmitted;
+        alreadySubmitted = this.details.userDBrecord.submittedPlaylists.hasOwnProperty(post.id)
+          ? true
+          : alreadySubmitted;
       }
     }
     return alreadySubmitted;
@@ -373,7 +406,9 @@ export class AppUserComponent implements OnInit, OnDestroy {
     const post = this.soundcloud.data.user.playlists[index];
     if (post) {
       if (this.details.userDBrecord.submittedPlaylists) {
-        unsubmittable = (!this.details.userDBrecord.submittedPlaylists[post.id]) ? true : unsubmittable;
+        unsubmittable = !this.details.userDBrecord.submittedPlaylists[post.id]
+          ? true
+          : unsubmittable;
       }
     }
     return unsubmittable;
@@ -393,12 +428,13 @@ export class AppUserComponent implements OnInit, OnDestroy {
       if (post) {
         if (playlists.hasOwnProperty(post.id) && playlists[post.id] === false) {
           delete playlists[post.id];
-          this.firebase.setDBuserNewValues({ submittedPlaylists: playlists })
-            .then((data) => {
+          this.firebase
+            .setDBuserNewValues({ submittedPlaylists: playlists })
+            .then(data => {
               console.log('submitBlogPost setDBuserValues', JSON.stringify(data));
               this.getDBuser(true);
             })
-            .catch((error) => {
+            .catch(error => {
               console.log('submitBlogPost setDBuserValues, error', JSON.stringify(error));
             });
         }
@@ -423,12 +459,13 @@ export class AppUserComponent implements OnInit, OnDestroy {
          * true - submitted and approved by a moderator;
          */
         playlists[post.id] = false;
-        this.firebase.setDBuserNewValues({ submittedPlaylists: playlists })
-          .then((data) => {
+        this.firebase
+          .setDBuserNewValues({ submittedPlaylists: playlists })
+          .then(data => {
             console.log('submitBlogPost setDBuserValues', JSON.stringify(data));
             this.getDBuser(true);
           })
-          .catch((error) => {
+          .catch(error => {
             console.log('submitBlogPost setDBuserValues, error', JSON.stringify(error));
           });
       }
@@ -452,7 +489,7 @@ export class AppUserComponent implements OnInit, OnDestroy {
     console.log('this.details.currentUser', this.details.currentUser);
     const user = {
       email: this.details.currentUser.email,
-      name: this.details.currentUser.displayName
+      name: this.details.currentUser.displayName,
     };
     this.resetForm(user);
     this.getDBuser();

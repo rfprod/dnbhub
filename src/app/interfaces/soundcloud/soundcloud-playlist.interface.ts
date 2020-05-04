@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/camelcase */
 /**
  * Soundcloud playlist interface.
  * API Documentation https://developers.soundcloud.com/docs/api/reference#playlists
  */
 export class ISoundcloudPlaylist {
-
   constructor(input?: ISoundcloudPlaylist) {
     if (input) {
       this.kind = input.kind;
@@ -41,44 +41,44 @@ export class ISoundcloudPlaylist {
     }
   }
 
-  public kind: string = '';
-  public id: number = 0;
-  public created_at: string  = '';
-  public user_id: number  = 0;
-  public duration: number  = 0;
-  public sharing: string = '';
-  public tag_list: string = '';
-  public permalink: string = '';
-  public track_count: number = 0;
-  public streamable: boolean = false;
-  public downloadable: boolean = false;
-  public embeddable_by: string  = '';
-  public purchase_url: string|null = null;
-  public label_id: string|null = null;
-  public type: string  = '';
-  public playlist_type: string = '';
-  public ean: string = '';
-  public description: string = '';
-  public genre: string = '';
-  public release: string = '';
-  public purchase_title: string|null = null;
-  public label_name: string = '';
-  public title: string = '';
-  public release_year: string|number|null = null;
-  public release_month: string|number|null = null;
-  public release_day: string|number|null = null;
-  public license: string = '';
-  public uri: string = '';
-  public permalink_url: string = '';
-  public artwork_url: string = '';
+  public kind = '';
+  public id = 0;
+  public created_at = '';
+  public user_id = 0;
+  public duration = 0;
+  public sharing = '';
+  public tag_list = '';
+  public permalink = '';
+  public track_count = 0;
+  public streamable = false;
+  public downloadable = false;
+  public embeddable_by = '';
+  public purchase_url: string | null = null;
+  public label_id: string | null = null;
+  public type = '';
+  public playlist_type = '';
+  public ean = '';
+  public description = '';
+  public genre = '';
+  public release = '';
+  public purchase_title: string | null = null;
+  public label_name = '';
+  public title = '';
+  public release_year: string | number | null = null;
+  public release_month: string | number | null = null;
+  public release_day: string | number | null = null;
+  public license = '';
+  public uri = '';
+  public permalink_url = '';
+  public artwork_url = '';
   public user: {
-    id: number,
-    kind: string,
-    permalink: string,
-    username: string,
-    uri: string,
-    permalink_url: string,
-    avatar_url: string
+    id: number;
+    kind: string;
+    permalink: string;
+    username: string;
+    uri: string;
+    permalink_url: string;
+    avatar_url: string;
   } = {
     id: 0,
     kind: '',
@@ -86,7 +86,7 @@ export class ISoundcloudPlaylist {
     username: '',
     uri: '',
     permalink_url: '',
-    avatar_url: ''
+    avatar_url: '',
   };
   public tracks: any[] = [];
 }

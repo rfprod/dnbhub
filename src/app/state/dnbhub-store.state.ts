@@ -1,8 +1,8 @@
-import { State, Selector, Action, StateContext } from '@ngxs/store';
-import { DnbhubStoreAction } from './dnbhub-store.actions';
+import { Action, Selector, State, StateContext } from '@ngxs/store';
 
-import { IBlogPost } from '../interfaces/blog/blog-post.interface';
 import { IAboutDetails, ISoundcloudPlaylist } from '../interfaces';
+import { IBlogPost } from '../interfaces/blog/blog-post.interface';
+import { DnbhubStoreAction } from './dnbhub-store.actions';
 
 /**
  * Dnbhub store state model.
@@ -25,11 +25,10 @@ export class DnbhubStoreStateModel {
     previousScrollTopValue: 0,
     details: new IAboutDetails(),
     tracks: [],
-    playlist: new ISoundcloudPlaylist()
-  }
+    playlist: new ISoundcloudPlaylist(),
+  },
 })
 export class DnbhubStoreState {
-
   /**
    * Adds state.
    * @param ctx context
@@ -39,11 +38,15 @@ export class DnbhubStoreState {
   public add(ctx: StateContext<DnbhubStoreStateModel>, action: DnbhubStoreAction) {
     const state = ctx.getState();
     ctx.setState({
-      blogPosts: (action.payload.blogPosts) ? [ ...state.blogPosts, ...action.payload.blogPosts ] : [ ...state.blogPosts ],
+      blogPosts: action.payload.blogPosts
+        ? [...state.blogPosts, ...action.payload.blogPosts]
+        : [...state.blogPosts],
       previousScrollTopValue: action.payload.scrollTopValue || state.previousScrollTopValue,
       details: action.payload.details || state.details,
-      tracks: (action.payload.tracks) ? [ ...state.tracks, ...action.payload.tracks ] : [ ...state.tracks ],
-      playlist: action.payload.playlist || state.playlist
+      tracks: action.payload.tracks
+        ? [...state.tracks, ...action.payload.tracks]
+        : [...state.tracks],
+      playlist: action.payload.playlist || state.playlist,
     });
   }
 
@@ -64,5 +67,4 @@ export class DnbhubStoreState {
   static getScrollTopValue(state: DnbhubStoreStateModel) {
     return state.previousScrollTopValue;
   }
-
 }

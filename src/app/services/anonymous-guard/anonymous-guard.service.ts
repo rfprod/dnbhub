@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Router, CanActivate } from '@angular/router';
-
+import { CanActivate, Router } from '@angular/router';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 
 /**
@@ -8,15 +7,11 @@ import { FirebaseService } from 'src/app/services/firebase/firebase.service';
  */
 @Injectable()
 export class AnonymousGuard implements CanActivate {
-
   /**
    * @param firebaseService Firebase service
    * @param router Router - application router
    */
-  constructor(
-    private firebaseService: FirebaseService,
-    private router: Router
-  ) {}
+  constructor(private readonly firebaseService: FirebaseService, private readonly router: Router) {}
 
   /**
    * Protects paths from anonimous users.
@@ -28,5 +23,4 @@ export class AnonymousGuard implements CanActivate {
     }
     return can;
   }
-
 }

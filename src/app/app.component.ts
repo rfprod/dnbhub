@@ -1,28 +1,25 @@
-import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
-import { MatIconRegistry, DateAdapter, MatDialog } from '@angular/material';
-import { DomSanitizer } from '@angular/platform-browser';
-
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MediaChange, MediaService } from '@angular/flex-layout';
-
-import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
+import { DateAdapter, MatDialog, MatIconRegistry } from '@angular/material';
+import { DomSanitizer } from '@angular/platform-browser';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Observable } from 'rxjs';
+import { AppContactDialog } from 'src/app/components/app-contact/app-contact.component';
 import { TranslateService } from 'src/app/modules/translate/index';
 import { CustomServiceWorkerService } from 'src/app/services/custom-service-worker/custom-service-worker.service';
+import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
 
-import { AppContactDialog } from 'src/app/components/app-contact/app-contact.component';
-
-import { untilDestroyed } from 'ngx-take-until-destroy';
-import { Observable } from 'rxjs';
 import { AppSpinnerService } from './services';
 
 /**
  * Application root component.
  */
+@UntilDestroy()
 @Component({
-  selector: 'app',
-  templateUrl: './app.component.html'
+  selector: 'app-root',
+  templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit, OnDestroy {
-
   /**
    * AppComponent constructor.
    * @param matIconRegistry Material icons registry.
@@ -37,16 +34,16 @@ export class AppComponent implements OnInit, OnDestroy {
    * @param window Browser window reference
    */
   constructor(
-    private matIconRegistry: MatIconRegistry,
-    private dateAdapter: DateAdapter<any>,
-    private dialog: MatDialog,
-    private domSanitizer: DomSanitizer,
-    private emitter: EventEmitterService,
-    private translate: TranslateService,
-    private serviceWorker: CustomServiceWorkerService,
-    private spinner: AppSpinnerService,
-    private media: MediaService,
-    @Inject('Window') private window: Window
+    private readonly matIconRegistry: MatIconRegistry,
+    private readonly dateAdapter: DateAdapter<any>,
+    private readonly dialog: MatDialog,
+    private readonly domSanitizer: DomSanitizer,
+    private readonly emitter: EventEmitterService,
+    private readonly translate: TranslateService,
+    private readonly serviceWorker: CustomServiceWorkerService,
+    private readonly spinner: AppSpinnerService,
+    private readonly media: MediaService,
+    @Inject('Window') private readonly window: Window,
   ) {
     this.toggleConsoleOutput();
   }
@@ -56,11 +53,11 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   public showSpinner$: Observable<boolean> = this.spinner.showSpinner$.pipe(untilDestroyed(this));
 
-  public sidenavOpened: boolean = false;
+  public sidenavOpened = false;
 
-  private supportedLanguages: any[] = [
+  private readonly supportedLanguages: any[] = [
     { key: 'en', name: 'English' },
-    { key: 'ru', name: 'Russian' }
+    { key: 'ru', name: 'Russian' },
   ];
   /**
    * Checks if selected one is a current language.
@@ -86,7 +83,8 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   private setPreferredLanguage(): void {
     const nav: any = this.window.navigator;
-    const userPreference: string = (nav.language === 'ru-RU' || nav.language === 'ru' || nav.languages[0] === 'ru') ? 'ru' : 'en';
+    const userPreference: string =
+      nav.language === 'ru-RU' || nav.language === 'ru' || nav.languages[0] === 'ru' ? 'ru' : 'en';
     this.selectLanguage(userPreference); // set default language
   }
   /**
@@ -118,7 +116,7 @@ export class AppComponent implements OnInit, OnDestroy {
       maxHeight: '1024',
       autoFocus: true,
       disableClose: false,
-      data: {}
+      data: {},
     });
     this.dialogInstance.afterClosed().subscribe((result: any) => {
       console.log('contact dialog closed with result', result);
@@ -129,14 +127,15 @@ export class AppComponent implements OnInit, OnDestroy {
   /**
    * Holds a backup of console.log function.
    */
-  private consoleLoggerBackup: any = console.log;
+  private readonly consoleLoggerBackup: any = console.log;
   /**
    * Disables/Enables logging to user's browser console.
    * Logging is automatically disabled when the app is deployed in a domain which name includes a substring 'dnbhub'.
    */
   private toggleConsoleOutput(): void {
     if (new RegExp(/.*dnbhub.*/, 'i').test(this.window.location.origin)) {
-      console.log = (console.log === this.consoleLoggerBackup) ? () => true : this.consoleLoggerBackup;
+      console.log =
+        console.log === this.consoleLoggerBackup ? () => true : this.consoleLoggerBackup;
     }
   }
 
@@ -154,14 +153,14 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   public gridConfig: any = {
     cols: '3',
-    rowHeight: '1:1'
+    rowHeight: '1:1',
   };
   /**
    * Sets sidenav config object values.
    */
   private setGridConfig(cols: string, rowHeight?: string): void {
     this.gridConfig.cols = cols;
-    this.gridConfig.rowHeight = (rowHeight) ? rowHeight : this.gridConfig.rowHeight;
+    this.gridConfig.rowHeight = rowHeight ? rowHeight : this.gridConfig.rowHeight;
   }
 
   /**
@@ -178,48 +177,77 @@ export class AppComponent implements OnInit, OnDestroy {
   private addIconsToRegistry(): void {
     this.matIconRegistry.registerFontClassAlias('all');
 
-    this.matIconRegistry.addSvgIcon('angular-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/Angular_logo.svg'));
-    this.matIconRegistry.addSvgIcon('mailchimp-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/MailChimp_logo.svg'));
-    this.matIconRegistry.addSvgIcon('soundcloud-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/SoundCloud_logo.svg'));
-    this.matIconRegistry.addSvgIcon('twitter-logo', this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/TwitterBird_logo.svg'));
-    this.matIconRegistry.addSvgIcon('dnbhub-logo-nobg-greyscale', this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/DH_logo-no_bg_greyscale.svg'));
-    this.matIconRegistry.addSvgIcon('dnbhub-logo-roundbg', this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/DH_logo-round_bg.svg'));
-    this.matIconRegistry.addSvgIcon('dnbhub-logo-roundbg-greyscale', this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/DH_logo-round_bg_greyscale.svg'));
+    this.matIconRegistry.addSvgIcon(
+      'angular-logo',
+      this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/Angular_logo.svg'),
+    );
+    this.matIconRegistry.addSvgIcon(
+      'mailchimp-logo',
+      this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/MailChimp_logo.svg'),
+    );
+    this.matIconRegistry.addSvgIcon(
+      'soundcloud-logo',
+      this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/SoundCloud_logo.svg'),
+    );
+    this.matIconRegistry.addSvgIcon(
+      'twitter-logo',
+      this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/TwitterBird_logo.svg'),
+    );
+    this.matIconRegistry.addSvgIcon(
+      'dnbhub-logo-nobg-greyscale',
+      this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/DH_logo-no_bg_greyscale.svg'),
+    );
+    this.matIconRegistry.addSvgIcon(
+      'dnbhub-logo-roundbg',
+      this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/DH_logo-round_bg.svg'),
+    );
+    this.matIconRegistry.addSvgIcon(
+      'dnbhub-logo-roundbg-greyscale',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '/assets/svg/DH_logo-round_bg_greyscale.svg',
+      ),
+    );
   }
 
   /**
    * Subscribes to media change events.
    */
   private mediaChangeSubscribe(): void {
-    this.media.asObservable().pipe(untilDestroyed(this)).subscribe((event: MediaChange) => {
-      // console.log('flex-layout media change event', event);
-      if (/(lg|xl)/.test(event.mqAlias)) {
-        this.setGridConfig('4', '2:1');
-      } else if (/(md)/.test(event.mqAlias)) {
-        this.setGridConfig('3', '1:1');
-      } else if (/(sm)/.test(event.mqAlias)) {
-        this.setGridConfig('2', '2:1');
-      } else {
-        this.setGridConfig('1', '2.5:1');
-      }
-    });
+    this.media
+      .asObservable()
+      .pipe(untilDestroyed(this))
+      .subscribe((event: MediaChange) => {
+        // console.log('flex-layout media change event', event);
+        if (/(lg|xl)/.test(event.mqAlias)) {
+          this.setGridConfig('4', '2:1');
+        } else if (/(md)/.test(event.mqAlias)) {
+          this.setGridConfig('3', '1:1');
+        } else if (/(sm)/.test(event.mqAlias)) {
+          this.setGridConfig('2', '2:1');
+        } else {
+          this.setGridConfig('1', '2.5:1');
+        }
+      });
   }
 
   /**
    * Subscribes to event emitter events.
    */
   public eventEmitterSubscribe(): void {
-    this.emitter.getEmitter().pipe(untilDestroyed(this)).subscribe((event: any) => {
-      console.log('AppComponent, event:', event);
-      if (event.lang) {
-        console.log('AppComponent, switch language', event.lang);
-        if (this.supportedLanguages.filter((item: any) => item.key === event.lang).length) {
-          this.selectLanguage(event.lang); // switch language only if it is present in supportedLanguages array
-        } else {
-          console.log('AppComponent, selected language is not supported');
+    this.emitter
+      .getEmitter()
+      .pipe(untilDestroyed(this))
+      .subscribe((event: any) => {
+        console.log('AppComponent, event:', event);
+        if (event.lang) {
+          console.log('AppComponent, switch language', event.lang);
+          if (this.supportedLanguages.filter((item: any) => item.key === event.lang).length) {
+            this.selectLanguage(event.lang); // switch language only if it is present in supportedLanguages array
+          } else {
+            console.log('AppComponent, selected language is not supported');
+          }
         }
-      }
-    });
+      });
   }
 
   /**
@@ -249,7 +277,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     console.log('ngOnDestroy: AppComponent destroyed');
-    this.emitter.emitEvent({serviceWorker: 'deinitialize'});
+    this.emitter.emitEvent({ serviceWorker: 'deinitialize' });
   }
-
 }

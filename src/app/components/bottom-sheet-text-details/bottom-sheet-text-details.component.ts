@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA } from '@angular/material';
+import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material';
 import { BottomSheetTextDetailsData } from 'src/app/interfaces';
 
 /**
@@ -10,15 +10,14 @@ import { BottomSheetTextDetailsData } from 'src/app/interfaces';
   templateUrl: 'bottom-sheet-text-details.component.html',
 })
 export class BottomSheetTextDetailsComponent {
-
   /**
    * BottomSheetTextDetailsComponent constructor.
    * @param bottomSheetRef bottom sheet reference
    * @param data bottom sheet data
    */
   constructor(
-    private bottomSheetRef: MatBottomSheetRef<BottomSheetTextDetailsComponent>,
-    @Inject(MAT_BOTTOM_SHEET_DATA) public data: BottomSheetTextDetailsData
+    private readonly bottomSheetRef: MatBottomSheetRef<BottomSheetTextDetailsComponent>,
+    @Inject(MAT_BOTTOM_SHEET_DATA) public data: BottomSheetTextDetailsData,
   ) {}
 
   /**

@@ -2,12 +2,12 @@
  * Brand interface.
  */
 export class IBrand {
-  public name: string = '';
-  public bandcamp: string = '';
-  public facebook: string = '';
-  public instagram: string = '';
-  public soundcloud: string = '';
-  public twitter: string = '';
-  public website: string = '';
-  public youtube: string = '';
+  public name = '';
+  public bandcamp = '';
+  public facebook = '';
+  public instagram = '';
+  public soundcloud = '';
+  public twitter = '';
+  public website = '';
+  public youtube = '';
 }

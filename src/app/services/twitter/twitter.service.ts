@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 
 /**
  * Twitter service.
@@ -6,11 +6,8 @@ import { Injectable, Inject } from '@angular/core';
  */
 @Injectable()
 export class TwitterService {
-
-  constructor(
-    @Inject('Window') private window: Window
-  ) {
-    console.log('TwitterService constructor');
+  constructor(@Inject('Window') private window: Window) {
+    console.warn('TwitterService constructor');
     this.initTwitterJsSDK();
   }
 
@@ -39,10 +36,10 @@ export class TwitterService {
    * - https://developer.twitter.com/en/docs/twitter-for-websites/javascript-api/guides/javascript-api
    */
   private initTwitterJsSDK(): void {
-    const id: string = 'twitter-wjs';
+    const id = 'twitter-wjs';
     const doc: Document = this.window.document;
     const ref: any = this.createTwitterRoot();
-    console.log('ref', ref);
+    console.warn('ref', ref);
     // return if script is already included
     if (doc.getElementById(id)) {
       return;
@@ -57,7 +54,7 @@ export class TwitterService {
     const twitterWinKey = 'twttr';
     const t = this.window[twitterWinKey] || {};
     t._e = [];
-    t.ready = (f) => t._e.push(f);
+    t.ready = f => t._e.push(f);
 
     this.window[twitterWinKey] = t;
   }
@@ -66,8 +63,8 @@ export class TwitterService {
    * TODO:client removeTwitterJsSDK method is not used by the moment, it should be either public, or controlled by event emitter.
    * Removes twitter sdk (not used for now, see ngOnDestroy hook).
    */
-  private removeTwitterJsSDK(): void {
-    const id: string = 'twitter-wjs';
+  public removeTwitterJsSDK(): void {
+    const id = 'twitter-wjs';
     const doc: Document = this.window.document;
     const ref: any = doc.getElementById('twttr-root');
     const js: any = doc.getElementById('twitter-wjs');
@@ -84,9 +81,8 @@ export class TwitterService {
   public renderTwitterWidget(): void {
     const twitterWinKey = 'twttr';
     if (this.window[twitterWinKey]) {
-      console.log('this.window[twttr]', this.window[twitterWinKey]);
+      console.warn('this.window[twttr]', this.window[twitterWinKey]);
       // TODO:client this should be differrent from fb probably this.window[twitterWinKey].XFBML.parse();
     }
   }
-
 }

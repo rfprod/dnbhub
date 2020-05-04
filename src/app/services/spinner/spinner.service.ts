@@ -6,11 +6,10 @@ import { BehaviorSubject, Observable } from 'rxjs';
  */
 @Injectable()
 export class AppSpinnerService {
-
   /**
    * Indicates if application spinner should be shown.
    */
-  private showSpinner: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  private readonly showSpinner: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   /**
    * Show application spinner observable.
@@ -30,5 +29,4 @@ export class AppSpinnerService {
   public stopSpinner(): void {
     this.showSpinner.next(false);
   }
-
 }

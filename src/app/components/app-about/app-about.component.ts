@@ -1,29 +1,24 @@
-import { Component, OnInit, OnDestroy, Inject, AfterContentInit } from '@angular/core';
+import { AfterContentInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { DatabaseReference, DataSnapshot } from '@angular/fire/database/interfaces';
 import { MatDialog } from '@angular/material';
-
+import { Store } from '@ngxs/store';
+import { Subscription } from 'rxjs';
+import { AppContactDialog } from 'src/app/components/app-contact/app-contact.component';
+import { IAboutDetails } from 'src/app/interfaces';
+import { AppSpinnerService } from 'src/app/services';
 import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
-
-import { AppContactDialog } from 'src/app/components/app-contact/app-contact.component';
-
-import { DataSnapshot, DatabaseReference } from '@angular/fire/database/interfaces';
-import { IAboutDetails } from 'src/app/interfaces';
-import { Store } from '@ngxs/store';
-import { DnbhubStoreStateModel } from 'src/app/state/dnbhub-store.state';
 import { DnbhubStoreAction } from 'src/app/state/dnbhub-store.actions';
-import { AppSpinnerService } from 'src/app/services';
-
-import { Subscription } from 'rxjs';
+import { DnbhubStoreStateModel } from 'src/app/state/dnbhub-store.state';
 
 @Component({
   selector: 'app-about',
   templateUrl: './app-about.component.html',
   host: {
-    class: 'mat-body-1'
-  }
+    class: 'mat-body-1',
+  },
 })
 export class AppAboutComponent implements OnInit, AfterContentInit, OnDestroy {
-
   /**
    * @param dialog Reusable dialog
    * @param spinner Application spinner service
@@ -31,10 +26,10 @@ export class AppAboutComponent implements OnInit, AfterContentInit, OnDestroy {
    * @param ngXsStore NgXsStore
    */
   constructor(
-    private dialog: MatDialog,
-    private spinner: AppSpinnerService,
-    private firebaseService: FirebaseService,
-    private ngXsStore: Store
+    private readonly dialog: MatDialog,
+    private readonly spinner: AppSpinnerService,
+    private readonly firebaseService: FirebaseService,
+    private readonly ngXsStore: Store,
   ) {}
 
   /**
@@ -49,14 +44,14 @@ export class AppAboutComponent implements OnInit, AfterContentInit, OnDestroy {
     const def = new CustomDeferredService<any>();
     this.spinner.startSpinner();
     (this.firebaseService.getDB('about', false) as Promise<DataSnapshot>)
-      .then((snapshot) => {
+      .then(snapshot => {
         console.log('getDetails, about', snapshot.val());
         const details: IAboutDetails = snapshot.val();
         this.ngXsStore.dispatch(new DnbhubStoreAction({ details }));
         this.spinner.stopSpinner();
         def.resolve();
       })
-      .catch((error) => {
+      .catch(error => {
         console.log('getDetails, error', error);
         this.spinner.stopSpinner();
         def.reject();
@@ -73,10 +68,12 @@ export class AppAboutComponent implements OnInit, AfterContentInit, OnDestroy {
    * Subscribes to state change and takes action.
    */
   private stateSubscription(): void {
-    this.ngXsStoreSubscription = this.ngXsStore.subscribe((state: { dnbhubStore : DnbhubStoreStateModel }) => {
-      console.log('stateSubscription, state', state);
-      this.details = state.dnbhubStore.details;
-    });
+    this.ngXsStoreSubscription = this.ngXsStore.subscribe(
+      (state: { dnbhubStore: DnbhubStoreStateModel }) => {
+        console.log('stateSubscription, state', state);
+        this.details = state.dnbhubStore.details;
+      },
+    );
   }
 
   /**
@@ -95,7 +92,7 @@ export class AppAboutComponent implements OnInit, AfterContentInit, OnDestroy {
       maxHeight: '1024',
       autoFocus: true,
       disableClose: false,
-      data: {}
+      data: {},
     });
     this.dialogInstance.afterClosed().subscribe((result: any) => {
       console.log('contact doalog closed with result', result);

@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 
 /**
  * Facebook service.
@@ -6,11 +6,8 @@ import { Injectable, Inject } from '@angular/core';
  */
 @Injectable()
 export class FacebookService {
-
-  constructor(
-    @Inject('Window') private window: Window
-  ) {
-    console.log('FacebookService constructor');
+  constructor(@Inject('Window') private readonly window: Window) {
+    console.warn('FacebookService constructor');
     this.initFacebookJsSDK();
   }
 
@@ -39,10 +36,10 @@ export class FacebookService {
    * - https://blog.brunoscopelliti.com/facebook-authentication-in-your-angularjs-web-app/
    */
   private initFacebookJsSDK(): void {
-    const id: string = 'facebook-jssdk';
+    const id = 'facebook-jssdk';
     const doc: Document = this.window.document;
     const ref: any = this.createFbRoot();
-    console.log('ref', ref);
+    console.warn('ref', ref);
     // return if script is already included
     if (doc.getElementById(id)) {
       return;
@@ -50,7 +47,8 @@ export class FacebookService {
     const js: any = doc.createElement('script');
     js.id = id;
     js.async = true;
-    js.src = 'https://connect.facebook.net/en_US/sdk.js#status=1&xfbml=1&version=v3.0&appId=477209839373369&channelUrl=channel.html';
+    js.src =
+      'https://connect.facebook.net/en_US/sdk.js#status=1&xfbml=1&version=v3.0&appId=477209839373369&channelUrl=channel.html';
 
     ref.parentNode.insertBefore(js, ref);
   }
@@ -60,7 +58,7 @@ export class FacebookService {
    * Removes facebook sdk, and optionally fb-root (not used for now, see ngOnDestroy hook).
    */
   private removeFbJsSDK(): void {
-    const id: string = 'facebook-jssdk';
+    const id = 'facebook-jssdk';
     const doc: Document = this.window.document;
     const ref: any = doc.getElementById('fb-root');
     const js: any = doc.getElementById('facebook-jssdk');
@@ -80,5 +78,4 @@ export class FacebookService {
       this.window[facebookWinKey].XFBML.parse();
     }
   }
-
 }

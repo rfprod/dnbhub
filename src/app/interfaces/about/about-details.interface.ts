@@ -2,19 +2,19 @@
  * Application about links interface with initialization.
  */
 export class IAboutLinks {
-  bandcamp: string = '';
-  facebook: string = '';
-  instagram: string = '';
-  mixcloud: string = '';
-  soundcloud: string = '';
-  twitter: string = '';
-  rss: string = '';
-  youtube: string = '';
+  public bandcamp = '';
+  public facebook = '';
+  public instagram = '';
+  public mixcloud = '';
+  public soundcloud = '';
+  public twitter = '';
+  public rss = '';
+  public youtube = '';
 }
 
 export class IPoweredBy {
-  name: string = '';
-  logo: string = '';
+  public name = '';
+  public logo = '';
 }
 
 /**

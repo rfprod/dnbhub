@@ -1,59 +1,59 @@
 #!/bin/bash
 
 ##
-# Colors:
-# DEFAULT, BLACK, DARK_GRAY, RED, LIGHT_RED, GREEN, LIGHT_GREEN, BROWN, YELLOW,
-# BLUE, LIGHT_BLUE, PURPLE, LIGHT_PURPLE, CYAN, LIGHT_CYAN, LIGHT_GRAY, WHITE.
+# Color definitions.
 ##
-source shell/colors.sh
+source shell/colors.sh ''
 
 ##
-# Usage:
-# - bash shell/install.sh - installs project, and firebase functions dependencies
-# - bash shell/install.sh project - installs project dependencies only
-# - bash shell/install.sh firebase - installs firebase functions dependencies only
-# - bash shell/install.sh global - - installs global dependencies only
+# Exits with error.
 ##
+exitWithError() {
+  exit 1
+}
 
 ##
-# Install firebase functions npm dependencies.
+# Reports usage error and exits.
 ##
-installFirebaseDependencies () {
-  printf "\n ${LIGHT_BLUE}<< INSTALLING FIREBASE FUNCTIONS DEPENDENCIES >>${DEFAULT}\n\n"
-  cd functions
+reportUsage() {
+  local TITLE="<< USAGE >>"
+  printf "
+    ${LIGHT_BLUE}%s\n
+    ${DEFAULT} - ${YELLOW} bash shell/install.sh${DEFAULT} (print install.sh usage)
+    ${DEFAULT} - ${YELLOW} bash shell/install.sh ?${DEFAULT} (print install.sh usage)
+    ${DEFAULT} - ${YELLOW} bash shell/install.sh project${DEFAULT} (install all project dependencies: in project root, and in functions folder)
+    ${DEFAULT} - ${YELLOW} bash shell/install.sh global${DEFAULT} (install global dependencies only)
+    ${DEFAULT}\n\n" "$TITLE"
+}
+
+if [ $# -ne 1 ] || [ "$1" = "?" ]; then
+  reportUsage
+elif [ "$1" = "project" ]; then
+  TITLE="<< INSTALLING FIREBASE FUNCTIONS DEPENDENCIES >>"
+  printf "
+    ${LIGHT_BLUE}%s
+    ${DEFAULT}\n\n" "$TITLE"
+  cd ./functions || exit
   npm install
-}
 
-##
-# Installs project npm dependencies.
-##
-installProjectDependencies () {
-  printf "\n ${LIGHT_BLUE}<< INSTALLING PROJECT DEPENDENCIES >>${DEFAULT}\n\n"
-  npm install
-}
-
-##
-# Install global dependencies.
-##
-installGlobalDependencies () {
-  printf "\n ${LIGHT_BLUE}<< INSTALLING GLOBAL DEPENDENCIES >>${DEFAULT}\n\n"
-  sudo npm install -g @angular/cli@latest typescript@latest firebase-tools@latest @compodoc/ngd-cli@latest @datorama/akita
-}
-
-##
-# Installs dependencies in project root folder as well as in /functions if no arguments are provided.
-# Installs global dependencies with sudo if first argument equals 'global'.
-##
-
-if [ $# -ne 1 ]; then
-  installProjectDependencies
-  installFirebaseDependencies
-elif [ $1 = 'project' ]; then
-  installProjectDependencies
-elif [ $1 = 'firebase' ]; then
-  installFirebaseDependencies
-elif [ $1 = 'global' ]; then
-  installGlobalDependencies
+  TITLE="<< INSTALLING PROJECT DEPENDENCIES >>"
+  printf "
+    ${LIGHT_BLUE}%s
+    ${DEFAULT}\n\n" "$TITLE"
+  cd ..
+  yarn install
+elif [ "$1" = "global" ]; then
+  TITLE="<< INSTALLING GLOBAL DEPENDENCIES >>"
+  printf "
+    ${LIGHT_BLUE}%s
+    ${DEFAULT}\n\n" "$TITLE"
+  sudo npm install -g @angular/cli@latest typescript@latest firebase-tools@latest @compodoc/compodoc@latest @ngxs/cli@latest commitizen@latest cz-conventional-changelog@latest yarn || exitWithError
 else
-  printf "\n ${LIGHT_RED}<< ERROR: wrong argument: ${1} >>${DEFAULT}\n\n"
+  TITLE="<< ERROR >>"
+  printf "
+    ${RED}%s
+    ${LIGHT_RED}- wrong argument: ${1}
+    ${DEFAULT}\n\n" "$TITLE"
+  reportUsage
+  exitWithError
 fi

@@ -1,27 +1,24 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
-
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
-
-import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
-import { TranslateService } from 'src/app/modules/translate/index';
-import { FirebaseService } from 'src/app/services/firebase/firebase.service';
-
+import { NavigationEnd, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AppLoginDialog } from 'src/app/components/app-login/app-login.component';
-import { untilDestroyed } from 'ngx-take-until-destroy';
+import { TranslateService } from 'src/app/modules/translate/index';
+import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
+import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 
 /**
  * Application navigation component.
  */
+@UntilDestroy()
 @Component({
   selector: 'app-nav',
   templateUrl: './app-nav.component.html',
   host: {
-    class: 'mat-body-1'
-  }
+    class: 'mat-body-1',
+  },
 })
 export class AppNavComponent implements OnInit, OnDestroy {
-
   /**
    * @param emitter Event emitter service - components interaction.
    * @param router Application router.
@@ -30,11 +27,11 @@ export class AppNavComponent implements OnInit, OnDestroy {
    * @param firebaseService Firebase service
    */
   constructor(
-    private emitter: EventEmitterService,
-    private router: Router,
-    private dialog: MatDialog,
-    private translateService: TranslateService,
-    private firebaseService: FirebaseService
+    private readonly emitter: EventEmitterService,
+    private readonly router: Router,
+    private readonly dialog: MatDialog,
+    private readonly translateService: TranslateService,
+    private readonly firebaseService: FirebaseService,
   ) {}
 
   /**
@@ -47,7 +44,7 @@ export class AppNavComponent implements OnInit, OnDestroy {
    */
   public supportedLanguages: any[] = [
     { key: 'en', name: 'English' },
-    { key: 'ru', name: 'Russian' }
+    { key: 'ru', name: 'Russian' },
   ];
 
   /**
@@ -60,9 +57,15 @@ export class AppNavComponent implements OnInit, OnDestroy {
      */
     let index: string;
     console.log('switchNavButtons:', event);
-    const route: string = (event.route) ? event.route : (typeof event.urlAfterRedirects === 'string') ? event.urlAfterRedirects : event.url;
+    const route: string = event.route
+      ? event.route
+      : typeof event.urlAfterRedirects === 'string'
+      ? event.urlAfterRedirects
+      : event.url;
     // remove args from route if present
-    path = (!path) ? route.replace(/\?.*$/, '').substring(route.lastIndexOf('/') + 1, route.length) : path;
+    path = !path
+      ? route.replace(/\?.*$/, '').substring(route.lastIndexOf('/') + 1, route.length)
+      : path;
     console.log(' >> PATH', path);
     if (path === 'index') {
       index = '0';
@@ -83,7 +86,7 @@ export class AppNavComponent implements OnInit, OnDestroy {
     }
     for (const b in this.navButtonsState) {
       if (typeof this.navButtonsState[b] === 'boolean') {
-        this.navButtonsState[b] = (b === index) ? true : false;
+        this.navButtonsState[b] = b === index ? true : false;
       }
     }
     console.log('navButtonsState:', this.navButtonsState);
@@ -93,7 +96,7 @@ export class AppNavComponent implements OnInit, OnDestroy {
    * Selects language by key.
    */
   public selectLanguage(key: string): void {
-    this.emitter.emitEvent({lang: key});
+    this.emitter.emitEvent({ lang: key });
   }
   /**
    * Returns if current language is selected.
@@ -105,15 +108,15 @@ export class AppNavComponent implements OnInit, OnDestroy {
   /**
    * Service worker registration state.
    */
-  public serviceWorkerRegistered: boolean = true; // registered by default
+  public serviceWorkerRegistered = true; // registered by default
   /**
    * Toggles service worker.
    */
   public toggleServiceWorker(): void {
     if (this.serviceWorkerRegistered) {
-      this.emitter.emitEvent({serviceWorker: 'deinitialize'});
+      this.emitter.emitEvent({ serviceWorker: 'deinitialize' });
     } else {
-      this.emitter.emitEvent({serviceWorker: 'initialize'});
+      this.emitter.emitEvent({ serviceWorker: 'initialize' });
     }
   }
 
@@ -121,14 +124,17 @@ export class AppNavComponent implements OnInit, OnDestroy {
    * Subscribes to Event Emitter events.
    */
   private emitterSubscribe(): void {
-    this.emitter.getEmitter().pipe(untilDestroyed(this)).subscribe((event: any) => {
-      console.log('AppNavComponent consuming event:', event);
-      if (event.serviceWorker === 'registered') {
-        this.serviceWorkerRegistered = true;
-      } else if (event.serviceWorker === 'unregistered') {
-        this.serviceWorkerRegistered = false;
-      }
-    });
+    this.emitter
+      .getEmitter()
+      .pipe(untilDestroyed(this))
+      .subscribe((event: any) => {
+        console.log('AppNavComponent consuming event:', event);
+        if (event.serviceWorker === 'registered') {
+          this.serviceWorkerRegistered = true;
+        } else if (event.serviceWorker === 'unregistered') {
+          this.serviceWorkerRegistered = false;
+        }
+      });
   }
 
   /**
@@ -150,7 +156,7 @@ export class AppNavComponent implements OnInit, OnDestroy {
   public showAuthDialog(): void {
     console.log('TODO:client show auth dialog');
     const dialogRef: MatDialogRef<AppLoginDialog> = this.dialog.open(AppLoginDialog, {
-      data: {}
+      data: {},
     });
     dialogRef.afterClosed().subscribe((result: any) => {
       console.log('AppLoginDialog closed with result', result);
@@ -194,5 +200,4 @@ export class AppNavComponent implements OnInit, OnDestroy {
   public ngOnDestroy(): void {
     console.log('ngOnDestroy: AppNavComponent destroyed');
   }
-
 }

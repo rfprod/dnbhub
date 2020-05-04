@@ -1,48 +1,49 @@
-import { Injectable, Inject } from '@angular/core';
-import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
+import { Inject, Injectable } from '@angular/core';
 import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
+import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
 
 /**
  * Custom service worker service.
  */
 @Injectable()
 export class CustomServiceWorkerService {
-
   constructor(
-    private emitter: EventEmitterService,
-    @Inject('Window') private window: Window
+    private readonly emitter: EventEmitterService,
+    @Inject('Window') private readonly window: Window,
   ) {
-    console.log('CustomServiceWorkerService init');
+    console.warn('CustomServiceWorkerService init');
     this.initializeServiceWorker();
   }
 
-  private serviceWorker: any = this.window.navigator.serviceWorker;
+  private readonly serviceWorker: any = this.window.navigator.serviceWorker;
 
   private serviceWorkerRegistration: any;
 
   private registerServiceWorker(): Promise<boolean> {
     const def = new CustomDeferredService<boolean>();
     if (this.serviceWorker) {
-      console.log('serviceWorker exists in navigator, checking registrations');
+      console.warn('serviceWorker exists in navigator, checking registrations');
       this.serviceWorker.getRegistrations().then((registrations: any) => {
-        console.log('serviceWorker registrations', registrations);
+        console.warn('serviceWorker registrations', registrations);
         if (registrations.length) {
-          console.log('service worker update');
+          console.warn('service worker update');
           registrations[0].update();
           this.serviceWorkerRegistration = registrations[0];
           def.resolve();
         } else {
-          this.serviceWorker.register('/service-worker.js', {
-            scope: '/'
-          }).then((registration: any) => {
-            console.log('serviceWorker registration completed, registration:', registration);
-            this.serviceWorkerRegistration = registration;
-            def.resolve();
-          });
+          this.serviceWorker
+            .register('/service-worker.js', {
+              scope: '/',
+            })
+            .then((registration: any) => {
+              console.warn('serviceWorker registration completed, registration:', registration);
+              this.serviceWorkerRegistration = registration;
+              def.resolve();
+            });
         }
       });
     } else {
-      console.log('serviceWorker does not exist in navigator');
+      console.warn('serviceWorker does not exist in navigator');
       def.reject();
     }
     return def.promise;
@@ -52,15 +53,15 @@ export class CustomServiceWorkerService {
     const def = new CustomDeferredService<boolean>();
     if (this.serviceWorker) {
       this.serviceWorker.getRegistrations().then((registrations: any) => {
-        console.log('removing registrations', registrations);
+        console.warn('removing registrations', registrations);
         return Promise.all(registrations.map((item: any) => item.unregister())).then(() => {
-          console.log('serviceWorker unregistered');
+          console.warn('serviceWorker unregistered');
           def.resolve();
         });
       });
       this.serviceWorkerRegistration = undefined;
     } else {
-      console.log('serviceWorker does not exist in navigator');
+      console.warn('serviceWorker does not exist in navigator');
       def.resolve();
     }
     return def.promise;
@@ -70,7 +71,7 @@ export class CustomServiceWorkerService {
 
   private emitterSubscribe(): void {
     this.emitterSubscription = this.emitter.getEmitter().subscribe((event: any) => {
-      console.log('CustomServiceWorkerService consuming event:', JSON.stringify(event));
+      console.warn('CustomServiceWorkerService consuming event:', JSON.stringify(event));
       if (event.serviceWorker === 'initialize') {
         this.initializeServiceWorker();
       } else if (event.serviceWorker === 'deinitialize') {
@@ -84,29 +85,30 @@ export class CustomServiceWorkerService {
   }
 
   public initializeServiceWorker(): void {
-    this.registerServiceWorker().then(() => {
-      this.emitterSubscribe();
-      this.emitter.emitEvent({serviceWorker: 'registered'});
-    }).catch(() => {
-      this.emitter.emitEvent({serviceWorker: 'unregistered'});
-    });
+    this.registerServiceWorker()
+      .then(() => {
+        this.emitterSubscribe();
+        this.emitter.emitEvent({ serviceWorker: 'registered' });
+      })
+      .catch(() => {
+        this.emitter.emitEvent({ serviceWorker: 'unregistered' });
+      });
   }
 
   private deinitializeServiceWorker(): void {
     this.unregisterServiceWorker().then(() => {
-      this.emitter.emitEvent({serviceWorker: 'unregistered'});
+      this.emitter.emitEvent({ serviceWorker: 'unregistered' });
     });
   }
 
   public disableServiceWorker(): void {
     this.unregisterServiceWorker().then(() => {
       this.emitterUnsubscribe();
-      this.emitter.emitEvent({serviceWorker: 'unregistered'});
+      this.emitter.emitEvent({ serviceWorker: 'unregistered' });
     });
   }
 
   public isServiceWorkerRegistered(): boolean {
     return this.serviceWorker && typeof this.serviceWorkerRegistration !== 'undefined';
   }
-
 }

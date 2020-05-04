@@ -11,6 +11,9 @@
 /node_modules
 /functions/node_modules
 
+# cypress artifacts
+/cypress/videos
+
 # environment variables
 .env
 /functions/.env

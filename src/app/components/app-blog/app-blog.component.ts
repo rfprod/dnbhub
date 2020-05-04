@@ -1,29 +1,24 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-
-import { Router, ActivatedRoute } from '@angular/router';
-
-import { SafeResourceUrl } from '@angular/platform-browser';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DatabaseReference } from '@angular/fire/database/interfaces';
-
+import { SafeResourceUrl } from '@angular/platform-browser';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Store } from '@ngxs/store';
+import { Subscription } from 'rxjs';
+import { IBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
+import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.service';
-import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
-
-import { Store } from '@ngxs/store';
 import { DnbhubStoreAction } from 'src/app/state/dnbhub-store.actions';
-import { IBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 import { DnbhubStoreStateModel } from 'src/app/state/dnbhub-store.state';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-blog',
   templateUrl: './app-blog.component.html',
   host: {
-    class: 'mat-body-1'
-  }
+    class: 'mat-body-1',
+  },
 })
 export class AppBlogComponent implements OnInit, OnDestroy {
-
   /**
    * @param firebaseService Firebase service
    * @param soundcloudService Soundcloud service
@@ -32,11 +27,11 @@ export class AppBlogComponent implements OnInit, OnDestroy {
    * @param ngXsStore NgXsStore
    */
   constructor(
-    private firebaseService: FirebaseService,
-    private soundcloudService: SoundcloudService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private ngXsStore: Store
+    private readonly firebaseService: FirebaseService,
+    private readonly soundcloudService: SoundcloudService,
+    private readonly router: Router,
+    private readonly route: ActivatedRoute,
+    private readonly ngXsStore: Store,
   ) {}
 
   /**
@@ -52,7 +47,7 @@ export class AppBlogComponent implements OnInit, OnDestroy {
   /**
    * Selected blog post id.
    */
-  public selectedBlogPostId: number = 0;
+  public selectedBlogPostId = 0;
 
   /**
    * Selected blog post object.
@@ -63,11 +58,11 @@ export class AppBlogComponent implements OnInit, OnDestroy {
    * Resolves if blog post selector should be disabled.
    * @param direction navigation direction
    */
-  public disableBlogPostSelector(direction: 'previous'|'next'): boolean {
+  public disableBlogPostSelector(direction: 'previous' | 'next'): boolean {
     if (direction === 'previous') {
-      return (this.selectedBlogPostId === this.blogPosts.length - 1) ? true : false;
+      return this.selectedBlogPostId === this.blogPosts.length - 1 ? true : false;
     } else if (direction === 'next') {
-      return (this.selectedBlogPostId === 0) ? true : false;
+      return this.selectedBlogPostId === 0 ? true : false;
     }
   }
 
@@ -76,7 +71,7 @@ export class AppBlogComponent implements OnInit, OnDestroy {
    * @param playlistID playlist id
    */
   public widgetLink(playlistID: number): SafeResourceUrl {
-    return (playlistID) ? this.soundcloudService.widgetLink.playlist(playlistID) : '#';
+    return playlistID ? this.soundcloudService.widgetLink.playlist(playlistID) : '#';
   }
 
   /**
@@ -84,7 +79,11 @@ export class AppBlogComponent implements OnInit, OnDestroy {
    * @param [blogPostCode] selected blog post code
    */
   private setSearchParam(blogPostCode?: string): string {
-    const code: string = (blogPostCode) ? blogPostCode : (Object.keys(this.selectedBlogPost).length) ? this.selectedBlogPost.code : this.route.snapshot.queryParams.code;
+    const code: string = blogPostCode
+      ? blogPostCode
+      : Object.keys(this.selectedBlogPost).length
+      ? this.selectedBlogPost.code
+      : this.route.snapshot.queryParams.code;
     if (code !== this.route.snapshot.queryParams.code) {
       this.router.navigate(['/blog'], { queryParams: { code } });
     }
@@ -97,39 +96,43 @@ export class AppBlogComponent implements OnInit, OnDestroy {
   private updateBlogPosts(): Promise<any> {
     const def = new CustomDeferredService<any>();
     // limit to last 50 records and show in reverse order by playlist number
-    (this.firebaseService.getDB('blog', true) as DatabaseReference).limitToLast(50).once('value').then((snapshot) => {
-      console.log('blog', snapshot.val());
-      const response = snapshot.val();
-      const blogPosts: IBlogPost[] = [];
-      for (const key in response) {
-        if (response[key]) {
-          const item = response[key];
-          blogPosts.unshift(item);
+    (this.firebaseService.getDB('blog', true) as DatabaseReference)
+      .limitToLast(50)
+      .once('value')
+      .then(snapshot => {
+        console.log('blog', snapshot.val());
+        const response = snapshot.val();
+        const blogPosts: IBlogPost[] = [];
+        for (const key in response) {
+          if (response[key]) {
+            const item = response[key];
+            blogPosts.unshift(item);
+          }
         }
-      }
-      console.log('blogPosts', blogPosts);
-      this.ngXsStore.dispatch(new DnbhubStoreAction({ blogPosts }));
-      def.resolve();
-    }).catch((error: any) => {
-      console.log('error', error);
-      /*
-      *	TODO show error
-      */
-      def.reject();
-    });
+        console.log('blogPosts', blogPosts);
+        this.ngXsStore.dispatch(new DnbhubStoreAction({ blogPosts }));
+        def.resolve();
+      })
+      .catch((error: any) => {
+        console.log('error', error);
+        /*
+         *	TODO show error
+         */
+        def.reject();
+      });
     return def.promise;
   }
 
   /**
    * NgXsStore subscription.
    */
-  private ngXsStoreSubscription: Subscription;
+  private readonly ngXsStoreSubscription: Subscription;
 
   /**
    * Subscribes to state change and takes action.
    */
   private stateSubscription(): void {
-    this.ngXsStore.subscribe((state: { dnbhubStore : DnbhubStoreStateModel }) => {
+    this.ngXsStore.subscribe((state: { dnbhubStore: DnbhubStoreStateModel }) => {
       console.log('stateSubscription, state', state);
       this.blogPosts = state.dnbhubStore.blogPosts;
     });
@@ -176,8 +179,7 @@ export class AppBlogComponent implements OnInit, OnDestroy {
     console.log('ngOnInit: AppBlogComponent initialized');
     this.inputReleaseCode = this.setSearchParam();
     this.stateSubscription();
-    this.updateBlogPosts()
-      .then(() => this.selectBlogPost());
+    this.updateBlogPosts().then(() => this.selectBlogPost());
   }
 
   /**
@@ -191,5 +193,4 @@ export class AppBlogComponent implements OnInit, OnDestroy {
       this.ngXsStoreSubscription.unsubscribe();
     }
   }
-
 }

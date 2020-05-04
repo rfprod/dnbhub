@@ -1,4 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
+
 import { TRANSLATIONS } from './translations';
 
 /**
@@ -6,10 +7,7 @@ import { TRANSLATIONS } from './translations';
  */
 @Injectable()
 export class TranslateService {
-
-  constructor(
-    @Inject(TRANSLATIONS) private translations: any
-  ) {}
+  constructor(@Inject(TRANSLATIONS) private readonly translations: any) {}
 
   /**
    * Current language.
@@ -21,9 +19,9 @@ export class TranslateService {
    */
   public get currentLanguage(): string {
     /*
-    *	public method for
-    *	current language retrieval
-    */
+     *	public method for
+     *	current language retrieval
+     */
     return this.CURRENT_LANGUAGE;
   }
 
@@ -48,25 +46,22 @@ export class TranslateService {
   private translate(key: string): string {
     if (this.translations[this.currentLanguage]) {
       let translation = undefined as any;
-      const keys = key.split('.') as string[];
-      searchString:
-      for (const k of keys) {
+      const keys = key.split('.');
+      searchString: for (const k of keys) {
         if (!translation) {
           if (this.translations[this.currentLanguage][k]) {
             translation = this.translations[this.currentLanguage][k];
           } else {
             break searchString;
           }
+        } else if (translation[k]) {
+          translation = translation[k];
         } else {
-          if (translation[k]) {
-            translation = translation[k];
-          } else {
-            translation = undefined;
-            break searchString;
-          }
+          translation = undefined;
+          break searchString;
         }
       }
-      translation = (!translation || typeof translation !== 'string') ? key as string : translation;
+      translation = !translation || typeof translation !== 'string' ? key : translation;
       return translation;
     }
     return key;
@@ -78,5 +73,4 @@ export class TranslateService {
   public instant(key: string) {
     return this.translate(key);
   }
-
 }

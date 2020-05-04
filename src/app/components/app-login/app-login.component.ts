@@ -1,28 +1,26 @@
-import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { Router } from '@angular/router';
-
-import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
-import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
-import { FirebaseService } from 'src/app/services/firebase/firebase.service';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ILoginForm } from 'src/app/interfaces';
-import { untilDestroyed } from 'ngx-take-until-destroy';
 import { AppSpinnerService } from 'src/app/services';
+import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
+import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
+import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 
 /**
  * Application login dialog.
  */
+@UntilDestroy()
 @Component({
   selector: 'app-login',
   templateUrl: './app-login.component.html',
   host: {
-    class: 'mat-body-1'
-  }
+    class: 'mat-body-1',
+  },
 })
 export class AppLoginDialog implements OnInit, OnDestroy {
-
   /**
    * @param data Dialog data provided by parent controller
    * @param dialogRef Dialog reference
@@ -34,12 +32,12 @@ export class AppLoginDialog implements OnInit, OnDestroy {
    */
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<AppLoginDialog>,
-    private fb: FormBuilder,
-    private emitter: EventEmitterService,
-    private spinner: AppSpinnerService,
-    private router: Router,
-    private firebaseService: FirebaseService
+    private readonly dialogRef: MatDialogRef<AppLoginDialog>,
+    private readonly fb: FormBuilder,
+    private readonly emitter: EventEmitterService,
+    private readonly spinner: AppSpinnerService,
+    private readonly router: Router,
+    private readonly firebaseService: FirebaseService,
   ) {}
 
   /**
@@ -53,41 +51,40 @@ export class AppLoginDialog implements OnInit, OnDestroy {
   private resetForm(): void {
     this.loginForm = this.fb.group({
       email: ['', Validators.compose([Validators.required, Validators.email])],
-      password: ['', Validators.compose([Validators.required, Validators.pattern(/\w{8,}/)])]
+      password: ['', Validators.compose([Validators.required, Validators.pattern(/\w{8,}/)])],
     }) as ILoginForm;
   }
 
   /**
    * Indicates if password should be readable in UI,
    */
-  public showPassword: boolean = false;
+  public showPassword = false;
 
   /**
    * Toggles password readability via UI,
    */
   public togglePasswordVisibility(): void {
-    this.showPassword = (this.showPassword) ? false : true;
+    this.showPassword = this.showPassword ? false : true;
   }
 
   /**
    * Indicates if signup mode should be used then signing user in.
    */
-  public signupMode: boolean = false;
+  public signupMode = false;
 
   /**
    * Indicates if user provided a wrong password.
    */
-  public wrongPassword: boolean = false;
+  public wrongPassword = false;
 
   /**
    * Submits form.
    */
   public submitForm(): void {
     if (this.loginForm.valid && !this.loginForm.pristine) {
-      this.login()
-        .catch((error: any) => {
-          console.log('login, error', error);
-        });
+      this.login().catch((error: any) => {
+        console.log('login, error', error);
+      });
     }
   }
 
@@ -99,38 +96,41 @@ export class AppLoginDialog implements OnInit, OnDestroy {
     this.spinner.startSpinner();
     const formData: any = this.loginForm.value;
     if (!this.signupMode) {
-      this.firebaseService.authenticate('email', { email: formData.email, password: formData.password }).then(
-        (user: any) => {
-          console.log('auth success, user', user);
-          this.closeDialog({ success: true });
-          if (this.firebaseService.privilegedAccess()) {
-            this.router.navigate(['/admin']);
-          } else {
-            this.router.navigate(['/user']);
-          }
-          this.spinner.stopSpinner();
-          def.resolve();
-        },
-        (error: any) => {
-          // console.log('auth error', error);
-          console.log('auth error');
-          if (error.code === 'auth/user-not-found') {
-            this.feedback = 'We did not find an account registered with this email address. To create a new account hit a CREATE ACCOUNT button.';
-            this.signupMode = true;
-            this.wrongPassword = false;
-          } else if (error.code === 'auth/wrong-password') {
-            this.feedback = 'Password does not match an email address.';
-            this.wrongPassword = true;
-          } else {
-            this.feedback = 'Unknown error occurred. Try again later.';
-          }
-          setTimeout(() => {
-            this.loading = false;
+      this.firebaseService
+        .authenticate('email', { email: formData.email, password: formData.password })
+        .then(
+          (user: any) => {
+            console.log('auth success, user', user);
+            this.closeDialog({ success: true });
+            if (this.firebaseService.privilegedAccess()) {
+              this.router.navigate(['/admin']);
+            } else {
+              this.router.navigate(['/user']);
+            }
             this.spinner.stopSpinner();
-            def.reject();
-          }, 1000);
-        }
-      );
+            def.resolve();
+          },
+          (error: any) => {
+            // console.log('auth error', error);
+            console.log('auth error');
+            if (error.code === 'auth/user-not-found') {
+              this.feedback =
+                'We did not find an account registered with this email address. To create a new account hit a CREATE ACCOUNT button.';
+              this.signupMode = true;
+              this.wrongPassword = false;
+            } else if (error.code === 'auth/wrong-password') {
+              this.feedback = 'Password does not match an email address.';
+              this.wrongPassword = true;
+            } else {
+              this.feedback = 'Unknown error occurred. Try again later.';
+            }
+            setTimeout(() => {
+              this.loading = false;
+              this.spinner.stopSpinner();
+              def.reject();
+            }, 1000);
+          },
+        );
     } else {
       this.firebaseService.create({ email: formData.email, password: formData.password }).then(
         (user: any) => {
@@ -148,7 +148,7 @@ export class AppLoginDialog implements OnInit, OnDestroy {
             this.spinner.stopSpinner();
             def.reject();
           }, 1000);
-        }
+        },
       );
     }
     return def.promise;
@@ -160,15 +160,19 @@ export class AppLoginDialog implements OnInit, OnDestroy {
   public resetPassword(): void {
     console.log('send email with password reset link');
     this.loading = true;
-    this.firebaseService.resetUserPassword(this.loginForm.controls.email.value)
+    this.firebaseService
+      .resetUserPassword(this.loginForm.controls.email.value)
       .then(() => {
-        this.feedback = 'Password reset email was sent to ' + this.loginForm.controls.email.value + '. It may take some time for the email to be delivered. Request it again if you do not receive it in about 15 minutes.';
+        this.feedback =
+          'Password reset email was sent to ' +
+          this.loginForm.controls.email.value +
+          '. It may take some time for the email to be delivered. Request it again if you do not receive it in about 15 minutes.';
         // console.log('this.instructions:', this.instructions);
         setTimeout(() => {
           this.loading = false;
         }, 1000);
       })
-      .catch((error) => {
+      .catch(error => {
         console.log('reset user password, error:', error);
         this.feedback = error.message;
         // console.log('this.instructions:', this.instructions);
@@ -184,11 +188,11 @@ export class AppLoginDialog implements OnInit, OnDestroy {
    */
   private closeDialog(result?: any) {
     /*
-    *	report result if it was commonly closed, or modified and closed, deleted,
-    *	or optional use result is provided
-    *	parent controller should listen to this event
-    */
-    result = (result) ? result : 'closed';
+     *	report result if it was commonly closed, or modified and closed, deleted,
+     *	or optional use result is provided
+     *	parent controller should listen to this event
+     */
+    result = result ? result : 'closed';
     this.dialogRef.close(result);
   }
 
@@ -200,7 +204,7 @@ export class AppLoginDialog implements OnInit, OnDestroy {
   /**
    * Dialog loading state.
    */
-  private loading: boolean = false;
+  private loading = false;
   /**
    * Use in templates to get loaded state.
    */
@@ -228,18 +232,21 @@ export class AppLoginDialog implements OnInit, OnDestroy {
     console.log('ngOnInit: AppLoginDialog initialized');
     this.resetForm();
 
-    this.emitter.getEmitter().pipe(untilDestroyed(this)).subscribe((event: any) => {
-      console.log('AppLoginDialog consuming event:', event);
-      if (event.progress) {
-        if (event.progress === 'start') {
-          console.log('AppLoginDialog, starting progress');
-          this.startProgress();
-        } else if (event.progress === 'stop') {
-          console.log('AppLoginDialog, stopping progress');
-          this.stopProgress();
+    this.emitter
+      .getEmitter()
+      .pipe(untilDestroyed(this))
+      .subscribe((event: any) => {
+        console.log('AppLoginDialog consuming event:', event);
+        if (event.progress) {
+          if (event.progress === 'start') {
+            console.log('AppLoginDialog, starting progress');
+            this.startProgress();
+          } else if (event.progress === 'stop') {
+            console.log('AppLoginDialog, stopping progress');
+            this.stopProgress();
+          }
         }
-      }
-    });
+      });
   }
 
   /**
@@ -248,5 +255,4 @@ export class AppLoginDialog implements OnInit, OnDestroy {
   public ngOnDestroy(): void {
     console.log('ngOnDestroy: AppLoginDialog destroyed');
   }
-
 }
