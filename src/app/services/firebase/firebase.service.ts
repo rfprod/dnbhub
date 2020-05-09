@@ -18,12 +18,8 @@ import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-d
  */
 @Injectable()
 export class FirebaseService {
-  /**
-   * @param fireDB Firebase database
-   * @param fireAuth Firebase auth
-   */
   constructor(
-    private readonly fireDB: AngularFireDatabase,
+    private readonly fireDb: AngularFireDatabase,
     private readonly fireAuth: AngularFireAuth,
   ) {
     this.fireAuthUserSubscription();
@@ -42,7 +38,7 @@ export class FirebaseService {
     auth: AngularFireAuth;
     authUser: firebase.User;
   } = {
-    db: this.fireDB.database,
+    db: this.fireDb.database,
     auth: this.fireAuth,
     authUser: null,
   };
@@ -83,8 +79,8 @@ export class FirebaseService {
     refOnly?: boolean,
   ): Promise<DataSnapshot> | DatabaseReference {
     const db: Promise<DataSnapshot> | DatabaseReference = !refOnly
-      ? this.fireDB.database.ref('/' + collection).once('value')
-      : this.fireDB.database.ref('/' + collection);
+      ? this.fireDb.database.ref('/' + collection).once('value')
+      : this.fireDb.database.ref('/' + collection);
     // console.warn('firebaseService, getDB', db);
     return db;
   }

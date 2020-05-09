@@ -1,39 +1,106 @@
 <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start start">
   <h4 fxFlex="100" fxLayout="row" fxLayoutAlign="center center">
-    <button mat-button color="primary" [disabled]="disableBlogPostSelector('previous')" (click)="previousBlogPost()" aria-label="previous blog post" title="previous blog post">
+    <button
+      mat-button
+      color="primary"
+      [disabled]="disableBlogPostSelector('previous')"
+      (click)="previousBlogPost()"
+      aria-label="previous blog post"
+      title="previous blog post"
+    >
       <mat-icon fontSet="fas" fontIcon="fa-chevron-left" class="material-icons-fas"></mat-icon>
     </button>
     <span fxFlex="1 1 auto" fxLayout="row wrap" fxLayoutAlign="center center">
-      {{selectedBlogPost.code}}
+      {{ selectedBlogPost.code }}
     </span>
-    <button mat-button color="primary" [disabled]="disableBlogPostSelector('next')" (click)="nextBlogPost()" aria-label="next blog post" title="next blog post">
+    <button
+      mat-button
+      color="primary"
+      [disabled]="disableBlogPostSelector('next')"
+      (click)="nextBlogPost()"
+      aria-label="next blog post"
+      title="next blog post"
+    >
       <mat-icon fontSet="fas" fontIcon="fa-chevron-right" class="material-icons-fas"></mat-icon>
     </button>
   </h4>
   <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="space-around center">
-    <a mat-icon-button href="{{selectedBlogPost.links.website}}" [fxHide]="!selectedBlogPost.links.website" target=_blank aria-label="website link" title="website link">
+    <a
+      mat-icon-button
+      href="{{ selectedBlogPost.links.website }}"
+      [fxHide]="!selectedBlogPost.links.website"
+      target="_blank"
+      aria-label="website link"
+      title="website link"
+    >
       <mat-icon fontSet="fas" fontIcon="fa-globe" class="material-icons-fas"></mat-icon>
     </a>
-    <a mat-icon-button href="{{selectedBlogPost.links.soundcloud}}" [fxHide]="!selectedBlogPost.links.soundcloud" target=_blank aria-label="soundcloud link" title="soundcloud link">
+    <a
+      mat-icon-button
+      href="{{ selectedBlogPost.links.soundcloud }}"
+      [fxHide]="!selectedBlogPost.links.soundcloud"
+      target="_blank"
+      aria-label="soundcloud link"
+      title="soundcloud link"
+    >
       <mat-icon fontSet="fab" fontIcon="fa-soundcloud" class="material-icons-fab"></mat-icon>
     </a>
-    <a mat-icon-button href="{{selectedBlogPost.links.twitter}}" [fxHide]="!selectedBlogPost.links.twitter" target=_blank aria-label="twitter link" title="twitter link">
+    <a
+      mat-icon-button
+      href="{{ selectedBlogPost.links.twitter }}"
+      [fxHide]="!selectedBlogPost.links.twitter"
+      target="_blank"
+      aria-label="twitter link"
+      title="twitter link"
+    >
       <mat-icon fontSet="fas" fontIcon="fa-rss" class="material-icons-fas"></mat-icon>
     </a>
-    <a mat-icon-button href="{{selectedBlogPost.links.facebook}}" [fxHide]="!selectedBlogPost.links.facebook" target=_blank aria-label="facebook link" title="facebook link">
+    <a
+      mat-icon-button
+      href="{{ selectedBlogPost.links.facebook }}"
+      [fxHide]="!selectedBlogPost.links.facebook"
+      target="_blank"
+      aria-label="facebook link"
+      title="facebook link"
+    >
       <mat-icon fontSet="fab" fontIcon="fa-facebook" class="material-icons-fab"></mat-icon>
     </a>
-    <a mat-icon-button href="{{selectedBlogPost.links.youtube}}" [fxHide]="!selectedBlogPost.links.youtube" target=_blank aria-label="youtube link" title="youtube link">
+    <a
+      mat-icon-button
+      href="{{ selectedBlogPost.links.youtube }}"
+      [fxHide]="!selectedBlogPost.links.youtube"
+      target="_blank"
+      aria-label="youtube link"
+      title="youtube link"
+    >
       <mat-icon fontSet="fab" fontIcon="fa-youtube" class="material-icons-fab"></mat-icon>
     </a>
-    <a mat-icon-button href="{{selectedBlogPost.links.instagram}}" [fxHide]="!selectedBlogPost.links.instagram" target=_blank aria-label="instagram link" title="instagram link">
+    <a
+      mat-icon-button
+      href="{{ selectedBlogPost.links.instagram }}"
+      [fxHide]="!selectedBlogPost.links.instagram"
+      target="_blank"
+      aria-label="instagram link"
+      title="instagram link"
+    >
       <mat-icon fontSet="fab" fontIcon="fa-instagram" class="material-icons-fab"></mat-icon>
     </a>
-    <a mat-icon-button href="{{selectedBlogPost.links.bandcamp}}" [fxHide]="!selectedBlogPost.links.bandcamp" target=_blank aria-label="bandcamp link" title="bandcamp link">
+    <a
+      mat-icon-button
+      href="{{ selectedBlogPost.links.bandcamp }}"
+      [fxHide]="!selectedBlogPost.links.bandcamp"
+      target="_blank"
+      aria-label="bandcamp link"
+      title="bandcamp link"
+    >
       <mat-icon fontSet="fab" fontIcon="fa-bandcamp" class="material-icons-fab"></mat-icon>
     </a>
   </div>
   <div fxFlex="100" fxLayout="row wrap" *ngIf="selectedBlogPost.playlistId">
-    <app-soundcloud-player [mode]="'playlist'" [playlistId]="selectedBlogPost.playlistId" [displayDescription]="true"></app-soundcloud-player>
+    <app-soundcloud-player
+      [mode]="'playlist'"
+      [playlistId]="selectedBlogPost.playlistId"
+      [displayDescription]="true"
+    ></app-soundcloud-player>
   </div>
 </div>

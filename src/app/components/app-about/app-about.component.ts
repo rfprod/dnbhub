@@ -1,15 +1,14 @@
-import { AfterContentInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DatabaseReference, DataSnapshot } from '@angular/fire/database/interfaces';
-import { MatDialog } from '@angular/material/dialog';
-import { Store } from '@ngxs/store';
-import { Subscription } from 'rxjs';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Select, Store } from '@ngxs/store';
+import { from, Observable } from 'rxjs';
 import { AppContactDialog } from 'src/app/components/app-contact/app-contact.component';
 import { IAboutDetails } from 'src/app/interfaces';
 import { AppSpinnerService } from 'src/app/services';
-import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { DnbhubStoreAction } from 'src/app/state/dnbhub-store.actions';
-import { DnbhubStoreStateModel } from 'src/app/state/dnbhub-store.state';
+import { DnbhubStoreState } from 'src/app/state/dnbhub-store.state';
 
 @Component({
   selector: 'app-about',
@@ -18,74 +17,43 @@ import { DnbhubStoreStateModel } from 'src/app/state/dnbhub-store.state';
     class: 'mat-body-1',
   },
 })
-export class AppAboutComponent implements OnInit, AfterContentInit, OnDestroy {
-  /**
-   * @param dialog Reusable dialog
-   * @param spinner Application spinner service
-   * @param firebaseService Firebase service
-   * @param ngXsStore NgXsStore
-   */
+export class AppAboutComponent implements OnInit, OnDestroy {
+  @Select(DnbhubStoreState.getAbout)
+  public readonly details$: Observable<IAboutDetails>;
+
+  private dialogRef: MatDialogRef<AppContactDialog>;
+
   constructor(
     private readonly dialog: MatDialog,
     private readonly spinner: AppSpinnerService,
     private readonly firebaseService: FirebaseService,
-    private readonly ngXsStore: Store,
+    private readonly store: Store,
   ) {}
 
   /**
-   * Company details object.
-   */
-  public details: IAboutDetails = new IAboutDetails();
-
-  /**
    * Gets company details from firebase.
+   * TODO: move from the component.
    */
-  private getDetails(): Promise<any> {
-    const def = new CustomDeferredService<any>();
+  private getDetails(): Observable<void | IAboutDetails> {
     this.spinner.startSpinner();
-    (this.firebaseService.getDB('about', false) as Promise<DataSnapshot>)
+    const promise = (this.firebaseService.getDB('about', false) as Promise<DataSnapshot>)
       .then(snapshot => {
-        console.log('getDetails, about', snapshot.val());
         const details: IAboutDetails = snapshot.val();
-        this.ngXsStore.dispatch(new DnbhubStoreAction({ details }));
+        this.store.dispatch(new DnbhubStoreAction({ details }));
         this.spinner.stopSpinner();
-        def.resolve();
+        return details;
       })
       .catch(error => {
-        console.log('getDetails, error', error);
         this.spinner.stopSpinner();
-        def.reject();
       });
-    return def.promise;
+    return from(promise);
   }
-
-  /**
-   * NgXsStore subscription.
-   */
-  private ngXsStoreSubscription: Subscription;
-
-  /**
-   * Subscribes to state change and takes action.
-   */
-  private stateSubscription(): void {
-    this.ngXsStoreSubscription = this.ngXsStore.subscribe(
-      (state: { dnbhubStore: DnbhubStoreStateModel }) => {
-        console.log('stateSubscription, state', state);
-        this.details = state.dnbhubStore.details;
-      },
-    );
-  }
-
-  /**
-   * Reusable modal dialog instance.
-   */
-  private dialogInstance: any;
 
   /**
    * Shows contact dialog.
    */
   public showContactDialog(): void {
-    this.dialogInstance = this.dialog.open(AppContactDialog, {
+    this.dialogRef = this.dialog.open(AppContactDialog, {
       height: '85vh',
       width: '95vw',
       maxWidth: '1680',
@@ -94,36 +62,16 @@ export class AppAboutComponent implements OnInit, AfterContentInit, OnDestroy {
       disableClose: false,
       data: {},
     });
-    this.dialogInstance.afterClosed().subscribe((result: any) => {
-      console.log('contact doalog closed with result', result);
-      this.dialogInstance = undefined;
+    this.dialogRef.afterClosed().subscribe(_ => {
+      this.dialogRef = null;
     });
   }
 
-  /**
-   * Lifecycle hook called after component is initialized.
-   */
   public ngOnInit(): void {
-    console.log('ngOnInit: AppAboutComponent initialized');
-    this.stateSubscription();
-    this.getDetails();
+    this.getDetails().subscribe();
   }
-  /**
-   * Lifecycle hook called after component content is initialized .
-   */
-  public ngAfterContentInit(): void {
-    console.log('ngOnInit: AppAboutComponent initialized');
-    this.stateSubscription();
-    this.getDetails();
-  }
-  /**
-   * Lifecycle hook called after component is destroyed.
-   */
+
   public ngOnDestroy(): void {
-    console.log('ngOnDestroy: AppAboutComponent destroyed');
     (this.firebaseService.getDB('about', true) as DatabaseReference).off();
-    if (this.ngXsStoreSubscription) {
-      this.ngXsStoreSubscription.unsubscribe();
-    }
   }
 }

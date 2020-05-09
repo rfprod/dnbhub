@@ -1,6 +1,6 @@
 import { APP_BASE_HREF, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule, Type } from '@angular/core';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
@@ -9,7 +9,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { NgxsFormPluginModule } from '@ngxs/form-plugin';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
+import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { AppComponent } from 'src/app/app.component';
 import { ENV } from 'src/app/app.environment';
@@ -44,10 +46,19 @@ import { RegularExpressionsService } from 'src/app/services/regular-expressions/
 import { SendEmailService } from 'src/app/services/send-email/send-email.service';
 import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.service';
 import { TwitterService } from 'src/app/services/twitter/twitter.service';
+import { environment } from 'src/environments/environment';
 
 import { BottomSheetTextDetailsComponent } from './components/bottom-sheet-text-details/bottom-sheet-text-details.component';
 import { AppSpinnerService } from './services';
 import { DnbhubStoreState } from './state/dnbhub-store.state';
+import { UiStoreModule } from './state/ui/ui.module';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const entryComponenets: (any[] | Type<any>)[] = [
+  AppContactDialog,
+  AppLoginDialog,
+  BottomSheetTextDetailsComponent,
+];
 
 /**
  * Main application module.
@@ -72,22 +83,25 @@ import { DnbhubStoreState } from './state/dnbhub-store.state';
     MapToIterablePipe,
     BottomSheetTextDetailsComponent,
   ],
-  entryComponents: [AppContactDialog, AppLoginDialog, BottomSheetTextDetailsComponent],
+  entryComponents: [...entryComponenets],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    FlexLayoutModule,
-    CustomMaterialModule.forRoot(),
+    HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule,
+    FlexLayoutModule,
+    CustomMaterialModule.forRoot(),
     TranslateModule.forRoot(),
     AngularFireModule.initializeApp(ENV.firebase, 'dnbhub-a5d9c'),
     AngularFireDatabaseModule,
     AngularFireAuthModule,
-    NgxsModule.forRoot([DnbhubStoreState]),
-    NgxsReduxDevtoolsPluginModule.forRoot(),
-    NgxsLoggerPluginModule.forRoot(),
+    NgxsModule.forRoot([DnbhubStoreState], { developmentMode: !environment.production }),
+    NgxsRouterPluginModule.forRoot(),
+    NgxsFormPluginModule.forRoot(),
+    environment.production ? null : NgxsReduxDevtoolsPluginModule.forRoot(),
+    environment.production ? null : NgxsLoggerPluginModule.forRoot(),
+    UiStoreModule.forRoot(),
     AppRoutingModule,
   ],
   providers: [

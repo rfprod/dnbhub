@@ -34,15 +34,8 @@ import { BottomSheetTextDetailsComponent } from '../bottom-sheet-text-details/bo
   },
 })
 export class AppAdminComponent implements OnInit, OnDestroy {
-  /**
-   * AppAdminComponent constructor.
-   * @param firebase Firebase service
-   * @param soundcloud Soundcloud service
-   * @param regx Regular expressions service
-   * @param fb Form builder
-   */
   constructor(
-    public firebase: FirebaseService,
+    public readonly firebase: FirebaseService,
     private readonly soundcloud: SoundcloudService,
     private readonly regx: RegularExpressionsService,
     private readonly bottomSheet: MatBottomSheet,
@@ -182,21 +175,21 @@ export class AppAdminComponent implements OnInit, OnDestroy {
    * Resolves if there're no blog submissions.
    */
   public noEmailBlogSubmissions(): boolean {
-    return !this.details.emails.blogSubmissionsKeys.length ? true : false;
+    return !Boolean(this.details.emails.blogSubmissionsKeys.length);
   }
 
   /**
    * Resolves if there're no email messages.
    */
   public noEmailMessages(): boolean {
-    return !this.details.emails.messagesKeys.length ? true : false;
+    return !Boolean(this.details.emails.messagesKeys.length);
   }
 
   /**
    * Resolves if there're no brands.
    */
   public noBrands(): boolean {
-    return !this.details.brandsKeys.length ? true : false;
+    return !Boolean(this.details.brandsKeys.length);
   }
 
   /**

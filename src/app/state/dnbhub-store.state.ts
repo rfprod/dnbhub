@@ -1,3 +1,4 @@
+import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 
 import { IAboutDetails, ISoundcloudPlaylist } from '../interfaces';
@@ -28,30 +29,28 @@ export class DnbhubStoreStateModel {
     playlist: new ISoundcloudPlaylist(),
   },
 })
+@Injectable()
 export class DnbhubStoreState {
-  /**
-   * Returns blog posts.
-   * @param state state
-   */
+  @Selector()
+  public static getState(state: DnbhubStoreStateModel) {
+    return state;
+  }
+
   @Selector()
   public static getBlog(state: DnbhubStoreStateModel) {
     return state.blogPosts;
   }
 
-  /**
-   * Returns previous scroll top value.
-   * @param state state
-   */
+  @Selector()
+  public static getAbout(state: DnbhubStoreStateModel) {
+    return state.details;
+  }
+
   @Selector()
   public static getScrollTopValue(state: DnbhubStoreStateModel) {
     return state.previousScrollTopValue;
   }
 
-  /**
-   * Adds state.
-   * @param ctx context
-   * @param action action
-   */
   @Action(DnbhubStoreAction)
   public add(ctx: StateContext<DnbhubStoreStateModel>, action: DnbhubStoreAction) {
     const state = ctx.getState();

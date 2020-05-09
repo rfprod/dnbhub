@@ -5,12 +5,19 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { AppContactDialog } from 'src/app/components/app-contact/app-contact.component';
-import { ISupportedLanguage, TranslateService } from 'src/app/modules/translate/index';
+import {
+  ISupportedLanguage,
+  supportedLanguages,
+  TranslateService,
+} from 'src/app/modules/translate/index';
 import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
 
 import { AppSpinnerService } from './services';
+import { UiService } from './state/ui/ui.service';
+import { UiState } from './state/ui/ui.store';
 
 /**
  * Application root component.
@@ -25,16 +32,10 @@ export class AppComponent implements OnInit {
   /**
    * Show spinner observable.
    */
-  public readonly showSpinner$: Observable<boolean> = this.spinner.showSpinner$.pipe(
-    untilDestroyed(this),
-  );
+  public readonly showSpinner$: Observable<boolean> = this.spinner.showSpinner$;
 
-  public sidenavOpened = false;
-
-  private readonly supportedLanguages: ISupportedLanguage[] = [
-    { key: 'en', name: 'English' },
-    { key: 'ru', name: 'Russian' },
-  ];
+  @Select(UiState.getSidenavOpened)
+  public readonly sidenavOpened$: Observable<boolean>;
 
   /**
    * Sidenav grid configuration object.
@@ -58,8 +59,16 @@ export class AppComponent implements OnInit {
     private readonly translate: TranslateService,
     private readonly spinner: AppSpinnerService,
     private readonly media: MediaObserver,
+    private readonly uiService: UiService,
     @Inject('Window') private readonly window: Window,
   ) {}
+
+  /**
+   * Updates store when sidebar is closed.
+   */
+  public sidebarCloseHandler(): void {
+    void this.uiService.toggleSidenav();
+  }
 
   /**
    * Checks if selected one is a current language.
@@ -67,6 +76,7 @@ export class AppComponent implements OnInit {
   private isCurrentLanguage(key: string): boolean {
     return key === this.translate.currentLanguage;
   }
+
   /**
    * Selects language.
    */
@@ -76,6 +86,7 @@ export class AppComponent implements OnInit {
       this.setDatepickersLocale(key); // set datepickers locale
     }
   }
+
   /**
    * Sets preferred UI language.
    *
@@ -89,12 +100,12 @@ export class AppComponent implements OnInit {
       nav.language === 'ru-RU' || nav.language === 'ru' || nav.languages[0] === 'ru' ? 'ru' : 'en';
     this.selectLanguage(userPreference); // set default language
   }
+
   /**
    * Sets datepickers locale.
    * Supported languages: en, ru.
    */
   private setDatepickersLocale(key: string): void {
-    console.log('language change, key', key, 'this.dateAdapter', this.dateAdapter);
     if (key === 'ru') {
       this.dateAdapter.setLocale('ru');
     } else {
@@ -125,7 +136,6 @@ export class AppComponent implements OnInit {
    */
   private removeUIinit(): void {
     const initUIobj: HTMLElement = this.window.document.getElementById('init');
-    console.log('initUIobj', initUIobj);
     initUIobj.parentNode.removeChild(initUIobj);
   }
 
@@ -134,23 +144,13 @@ export class AppComponent implements OnInit {
    */
   private setGridConfig(cols: string, rowHeight?: string): void {
     this.gridConfig.cols = cols;
-    this.gridConfig.rowHeight = rowHeight ? rowHeight : this.gridConfig.rowHeight;
+    this.gridConfig.rowHeight = Boolean(rowHeight) ? rowHeight : this.gridConfig.rowHeight;
   }
 
   /**
-   * Adds icons to mate icons registry.
-   *
-   * register fontawesome for usage in mat-icon by adding directives
-   * fontSet="fab" fontIcon="fa-icon"
-   * fontSet="fas" fontIcon="fa-icon"
-   *
-   * note: free plan includes only fab (font-awesome-brands) and fas (font-awesome-solid) groups
-   *
-   * icons reference: https://fontawesome.com/icons/
+   * Adds icons to material icons registry.
    */
   private addIconsToRegistry(): void {
-    this.matIconRegistry.registerFontClassAlias('all');
-
     this.matIconRegistry.addSvgIcon(
       'angular-logo',
       this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/Angular_logo.svg'),
@@ -191,7 +191,7 @@ export class AppComponent implements OnInit {
       .asObservable()
       .pipe(untilDestroyed(this))
       .subscribe((event: MediaChange[]) => {
-        // console.log('flex-layout media change event', event);
+        console.warn('flex-layout media change event', event);
         if (/(lg|xl)/.test(event[0].mqAlias)) {
           this.setGridConfig('4', '2:1');
         } else if (/(md)/.test(event[0].mqAlias)) {
@@ -211,34 +211,24 @@ export class AppComponent implements OnInit {
     this.emitter
       .getEmitter()
       .pipe(untilDestroyed(this))
-      .subscribe((event: any) => {
-        console.log('AppComponent, event:', event);
-        if (event.lang) {
-          console.log('AppComponent, switch language', event.lang);
-          if (this.supportedLanguages.filter((item: any) => item.key === event.lang).length) {
-            this.selectLanguage(event.lang); // switch language only if it is present in supportedLanguages array
+      .subscribe((event: { lang: string }) => {
+        if (Boolean(event.lang)) {
+          const supportedLanguage = Boolean(
+            supportedLanguages.filter((item: ISupportedLanguage) => item.key === event.lang).length,
+          );
+          if (supportedLanguage) {
+            this.selectLanguage(event.lang);
           } else {
-            console.log('AppComponent, selected language is not supported');
+            console.error('AppComponent, selected language is not supported');
           }
         }
       });
-  }
-
-  /**
-   * Subscribes to date adapter locale chage events.
-   */
-  private dateAdapterLocaleChangeSubscribe(): void {
-    this.dateAdapter.localeChanges.pipe(untilDestroyed(this)).subscribe(() => {
-      console.log('dateAdapter.localeChanges, changed according to the language');
-    });
   }
 
   public ngOnInit(): void {
     this.removeUIinit();
 
     this.eventEmitterSubscribe();
-
-    this.dateAdapterLocaleChangeSubscribe();
 
     this.setPreferredLanguage();
 

@@ -9,6 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Store } from '@ngxs/store';
+import { IEventTargetWithPosition } from 'src/app/interfaces';
 import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
 import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.service';
 import { DnbhubStoreAction } from 'src/app/state/dnbhub-store.actions';
@@ -25,18 +26,11 @@ import { DnbhubStoreStateModel } from 'src/app/state/dnbhub-store.state';
   },
 })
 export class AppRepostsComponent implements OnInit, OnDestroy {
-  /**
-   * @param emitter Event emitter service
-   * @param renderer Application renderer
-   * @param soundcloudService Soundcloud API wrapper
-   * @param ngXsStore NgXsStore
-   * @param window Window reference
-   */
   constructor(
     private readonly emitter: EventEmitterService,
     private readonly renderer: Renderer2,
     private readonly soundcloudService: SoundcloudService,
-    private readonly ngXsStore: Store,
+    private readonly store: Store,
     @Inject('Window') private readonly window: Window,
   ) {}
 
@@ -49,47 +43,47 @@ export class AppRepostsComponent implements OnInit, OnDestroy {
    */
   @ViewChild('content', { static: true }) private readonly content: ElementRef;
 
+  private rendererScrollTopCallback(event: Event): void {
+    const target = event.target as IEventTargetWithPosition;
+    const currentScrollTopValue: number = target.scrollTop;
+    const previousScrollTopValue: number = (this.store.snapshot()
+      .dnbhubStore as DnbhubStoreStateModel).previousScrollTopValue;
+
+    // check if should request more data from soundcloud
+    const listEndDivider: ElementRef = new ElementRef(
+      this.window.document.getElementById('list-end'),
+    );
+
+    const offsetTop = 'offsetTop';
+    const listEndOffsetTop: number = (listEndDivider.nativeElement as HTMLElement)[offsetTop];
+    if (
+      previousScrollTopValue < currentScrollTopValue &&
+      currentScrollTopValue >= listEndOffsetTop - (this.window.innerHeight + 1)
+    ) {
+      this.emitter.emitEvent({ soundcloud: 'renderMoreTracks' });
+      const sidenavContent: ElementRef = new ElementRef(
+        this.window.document.getElementsByClassName('mat-sidenav-content')[0],
+      );
+      const scrollTop = 'scrollTop';
+      // set scrollTop for sidenav content so that it remains the same after tracks loading
+      (sidenavContent.nativeElement as HTMLElement)[scrollTop] = currentScrollTopValue;
+    }
+
+    // update scroll top value
+    this.store.dispatch(
+      new DnbhubStoreAction({
+        scrollTopValue: currentScrollTopValue,
+      }),
+    );
+  }
+
   /**
    * Binds to mat-sidenav-content scroll event.
    */
   private bindToContentScrollEvent(): void {
-    // let previousScrollTopValue: number = 0;
-    this.renderer.listen(this.content.nativeElement.parentNode.parentNode, 'scroll', event => {
-      // console.log('mat-sidenav-content scroll, event', event);
-      const currentScrollTopValue: number = event.target.scrollTop;
-      const previousScrollTopValue: number = (this.ngXsStore.snapshot()
-        .dnbhubStore as DnbhubStoreStateModel).previousScrollTopValue;
-      console.log('previousScrollTopValue', previousScrollTopValue);
-
-      // check if should request more data from soundcloud
-      const listEndDivider: ElementRef = new ElementRef(
-        this.window.document.getElementById('list-end'),
-      );
-      // console.log('listEndDivider', listEndDivider);
-      const offsetTop = 'offsetTop';
-      const listEndOffsetTop: number = listEndDivider.nativeElement[offsetTop];
-      // console.log('listEndOffsetTop', listEndOffsetTop, 'currentScrollTopValue', currentScrollTopValue);
-      if (
-        previousScrollTopValue < currentScrollTopValue &&
-        currentScrollTopValue >= listEndOffsetTop - (this.window.innerHeight + 1)
-      ) {
-        console.log('end reached, load more');
-        this.emitter.emitEvent({ soundcloud: 'renderMoreTracks' });
-        const sidenavContent: ElementRef = new ElementRef(
-          this.window.document.getElementsByClassName('mat-sidenav-content')[0],
-        );
-        const scrollTop = 'scrollTop';
-        // set scrollTop for sidenav content so that it remains the same after tracks loading
-        sidenavContent.nativeElement[scrollTop] = currentScrollTopValue;
-      }
-
-      // update scroll top value
-      this.ngXsStore.dispatch(
-        new DnbhubStoreAction({
-          scrollTopValue: currentScrollTopValue,
-        }),
-      );
-    });
+    const element: HTMLElement = this.content.nativeElement;
+    const host = element.parentNode.parentNode;
+    this.renderer.listen(host, 'scroll', this.rendererScrollTopCallback.bind(this));
   }
 
   public ngOnInit(): void {

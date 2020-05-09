@@ -1,14 +1,19 @@
-<div class="container" fxLayout="column" fxLayoutAlign="start stretch">
-  <mat-progress-bar
-    class="progress-bar"
-    *ngIf="showSpinner$ | async"
-    mode="indeterminate"
-  ></mat-progress-bar>
+<mat-progress-bar
+  class="progress-bar"
+  *ngIf="showSpinner$ | async"
+  mode="indeterminate"
+></mat-progress-bar>
 
+<div class="container" fxLayout="column" fxLayoutAlign="start stretch">
   <app-nav fxFlex="0 1 auto"></app-nav>
 
   <mat-sidenav-container fxFlex="1 1 auto" fxLayout="row" fxLayoutAlign="start stretch">
-    <mat-sidenav #appSidenav mode="over" [(opened)]="sidenavOpened">
+    <mat-sidenav
+      #appSidenav
+      mode="over"
+      [opened]="sidenavOpened$ | async"
+      (closedStart)="sidebarCloseHandler()"
+    >
       <mat-grid-list [cols]="gridConfig.cols" [rowHeight]="gridConfig.rowHeight">
         <mat-grid-tile fxLayout="row" fxLayoutAlign="start stretch">
           <a
@@ -20,13 +25,7 @@
             fxLayout="row wrap"
             fxLayoutAlign="center center"
           >
-            <mat-icon
-              fxFlex="0 1 auto"
-              fontSet="fab"
-              fontIcon="fa-twitter"
-              class="material-icons-fab"
-            ></mat-icon>
-            <span fxFlex="100" [ngStyle]="{ 'text-align': 'center' }">@dnbhub_com</span>
+            <span fxFlex="100" [ngStyle]="{ 'text-align': 'center' }">Tweet @dnbhub_com</span>
           </a>
         </mat-grid-tile>
         <mat-grid-tile fxLayout="row" fxLayoutAlign="start stretch">
@@ -39,13 +38,7 @@
             fxLayout="row wrap"
             fxLayoutAlign="center center"
           >
-            <mat-icon
-              fxFlex="0 1 auto"
-              fontSet="fab"
-              fontIcon="fa-facebook-f"
-              class="material-icons-fab"
-            ></mat-icon>
-            <span fxFlex="100" [ngStyle]="{ 'text-align': 'center' }">Share</span>
+            <span fxFlex="100" [ngStyle]="{ 'text-align': 'center' }">Fb Share</span>
           </a>
         </mat-grid-tile>
         <mat-grid-tile fxLayout="row" fxLayoutAlign="start stretch">
@@ -57,13 +50,7 @@
             fxLayout="row wrap"
             fxLayoutAlign="center center"
           >
-            <mat-icon
-              fxFlex="0 1 auto"
-              fontSet="fab"
-              fontIcon="fa-vk"
-              class="material-icons-fab"
-            ></mat-icon>
-            <span fxFlex="100" [ngStyle]="{ 'text-align': 'center' }">Share</span>
+            <span fxFlex="100" [ngStyle]="{ 'text-align': 'center' }">Vk Share</span>
           </a>
         </mat-grid-tile>
         <mat-grid-tile fxLayout="row" fxLayoutAlign="start stretch">
@@ -76,13 +63,7 @@
             fxLayout="row wrap"
             fxLayoutAlign="center center"
           >
-            <mat-icon
-              fxFlex="0 1 auto"
-              fontSet="fab"
-              fontIcon="fa-tumblr"
-              class="material-icons-fab"
-            ></mat-icon>
-            <span fxFlex="100" [ngStyle]="{ 'text-align': 'center' }">Share</span>
+            <span fxFlex="100" [ngStyle]="{ 'text-align': 'center' }">Tumblr Share</span>
           </a>
         </mat-grid-tile>
       </mat-grid-list>
@@ -95,16 +76,12 @@
   <span fxFlex="0 1 auto">
     <mat-toolbar color="primary">
       <button mat-icon-button (click)="appSidenav.toggle()">
-        <mat-icon class="material-icons" title="open sidenav" *ngIf="!sidenavOpened"
-          >flip_to_front</mat-icon
-        >
-        <mat-icon class="material-icons" title="open sidenav" *ngIf="sidenavOpened"
-          >flip_to_back</mat-icon
-        >
+        <mat-icon title="open sidenav" *ngIf="!(sidenavOpened$ | async)">flip_to_front</mat-icon>
+        <mat-icon title="open sidenav" *ngIf="sidenavOpened$ | async">flip_to_back</mat-icon>
       </button>
       <span fxFlex="1 1 auto"></span>
       <button mat-button (click)="showContactDialog()" [fxHide.xs]="true" [fxHide.sm]="true">
-        <mat-icon class="material-icons">email</mat-icon> {{ 'contact.open' | translate }}
+        <mat-icon>email</mat-icon> {{ 'contact.open' | translate }}
       </button>
 
       <button
@@ -114,7 +91,7 @@
         [fxHide.lg]="true"
         [fxHide.xl]="true"
       >
-        <mat-icon class="material-icons">reorder</mat-icon>
+        <mat-icon>reorder</mat-icon>
       </button>
       <mat-menu
         #mobileMenuBottom="matMenu"
@@ -123,9 +100,11 @@
         [fxHide.xl]="true"
       >
         <a mat-menu-item (click)="showContactDialog()">
-          <mat-icon class="material-icons">email</mat-icon> {{ 'contact.open' | translate }}
+          <mat-icon>email</mat-icon> {{ 'contact.open' | translate }}
         </a>
       </mat-menu>
     </mat-toolbar>
   </span>
 </div>
+
+<ng-container *ngIf="sidenavOpened$ | async"></ng-container>

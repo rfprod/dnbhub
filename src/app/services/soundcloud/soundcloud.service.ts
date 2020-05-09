@@ -330,14 +330,11 @@ export class SoundcloudService implements OnDestroy {
       ),
   };
 
-  /**
-   * Lifecycle hook called after service is destroyed.
-   */
   public ngOnDestroy(): void {
-    console.warn('ngOnDestroy: AppBlogComponent destroyed');
     const tracks = [];
     const playlist = new ISoundcloudPlaylist();
     this.ngXsStore.dispatch(new DnbhubStoreAction({ tracks, playlist }));
     this.ngXsStoreSubscription.unsubscribe();
   }
+
 }

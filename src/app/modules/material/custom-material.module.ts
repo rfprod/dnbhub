@@ -1,6 +1,6 @@
 import '../../../../node_modules/hammerjs/hammer.js';
 
-import { OverlayModule } from '@angular/cdk/overlay';
+import { OverlayConfig, OverlayModule } from '@angular/cdk/overlay';
 import { PortalModule } from '@angular/cdk/portal';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { ModuleWithProviders, NgModule, Provider } from '@angular/core';
@@ -104,6 +104,13 @@ export const customMaterialModuleProviders: Provider[] = [
     useFactory: matMomentDateAdapterOptionsFactory,
   },
   { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS },
+  {
+    provide: OverlayConfig,
+    useFactory: () =>
+      new OverlayConfig({
+        direction: 'ltr',
+      }),
+  },
 ];
 
 /**

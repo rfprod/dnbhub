@@ -51,6 +51,7 @@
     "@angular/platform-browser": "9.1.6",
     "@angular/platform-browser-dynamic": "9.1.6",
     "@angular/router": "9.1.6",
+    "@ngxs/form-plugin": "^3.6.2",
     "@ngxs/router-plugin": "^3.6.2",
     "@ngxs/store": "3.6.2",
     "core-js": "3.6.5",

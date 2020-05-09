@@ -7,142 +7,117 @@
       title="{{ 'title' | translate }}"
     ></mat-icon>
   </span>
+
   <span fxFlex="1 1 auto"></span>
-  <span fxFlex="0 1 auto" fxLayout="row" fxLayoutAlign="center center" class="nohover">
-    <span fxFlex="0 1 auto" *ngIf="navButtonsState[0]">
-      <mat-icon fontSet="fas" fontIcon="fa-fire" class="material-icons-fas"></mat-icon>
-      {{ 'index' | translate }}
-    </span>
-    <span fxFlex="0 1 auto" *ngIf="navButtonsState[1]">
-      <mat-icon fontSet="fab" fontIcon="fa-soundcloud" class="material-icons-fab"></mat-icon>
-      {{ 'singles' | translate }}
-    </span>
-    <span fxFlex="0 1 auto" *ngIf="navButtonsState[2]">
-      <mat-icon fontSet="fab" fontIcon="fa-soundcloud" class="material-icons-fab"></mat-icon>
-      {{ 'freedownloads' | translate }}
-    </span>
-    <span fxFlex="0 1 auto" *ngIf="navButtonsState[3]">
-      <mat-icon fontSet="fab" fontIcon="fa-soundcloud" class="material-icons-fab"></mat-icon>
-      {{ 'reposts' | translate }}
-    </span>
-    <span fxFlex="0 1 auto" *ngIf="navButtonsState[4]">
-      <mat-icon fontSet="fas" fontIcon="fa-th-large" class="material-icons-fas"></mat-icon>
-      {{ 'blog' | translate }}
-    </span>
-    <span fxFlex="0 1 auto" *ngIf="navButtonsState[5]">
-      <mat-icon fontSet="fas" fontIcon="fa-info" class="material-icons-fas"></mat-icon>
-      {{ 'about' | translate }}
-    </span>
-    <span fxFlex="0 1 auto" *ngIf="navButtonsState[6] && !(anonUser$ | async)">
-      <mat-icon fontSet="fas" fontIcon="fa-user" class="material-icons-fas"></mat-icon>
-      {{ 'user' | translate }}
-    </span>
-    <span fxFlex="0 1 auto" *ngIf="navButtonsState[7] && !(anonUser$ | async) && isAdmin()">
-      <mat-icon fontSet="fas" fontIcon="fa-user-secret" class="material-icons-fas"></mat-icon>
-      {{ 'admin' | translate }}
-    </span>
-  </span>
-  <span fxFlex="1 1 auto"></span>
-  <span class="mat-toolbar-tools">
+
+  <span fxFlex="0 1 auto">
     <button mat-icon-button [matMenuTriggerFor]="mobileMenu">
-      <mat-icon fontSet="fas" fontIcon="fa-ellipsis-v" class="material-icons-fas"></mat-icon>
+      <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #mobileMenu="matMenu" [fxHide.md]="true" [fxHide.lg]="true">
-      <span
+      <button
         mat-menu-item
         [routerLink]="['index']"
-        (click)="switchNavButtons($event, 'index')"
-        [disabled]="navButtonsState[0]"
+        routerLinkActive
+        #rlaIndex="routerLinkActive"
+        [disabled]="rlaIndex.isActive"
       >
-        <mat-icon fontSet="fas" fontIcon="fa-fire" class="material-icons-fas"></mat-icon>
-        {{ 'index' | translate }}
-      </span>
+        <mat-icon>explore</mat-icon>
+        <span>{{ 'index' | translate }}</span>
+      </button>
       <mat-divider></mat-divider>
-      <span
+      <button
         mat-menu-item
         [routerLink]="['singles']"
-        (click)="switchNavButtons($event, 'singles')"
-        [disabled]="navButtonsState[1]"
+        routerLinkActive
+        #rlaSingles="routerLinkActive"
+        [disabled]="rlaSingles.isActive"
       >
-        <mat-icon fontSet="fab" fontIcon="fa-soundcloud" class="material-icons-fab"></mat-icon>
-        {{ 'singles' | translate }}
-      </span>
+        <mat-icon>library_music</mat-icon>
+        <span>{{ 'singles' | translate }}</span>
+      </button>
       <mat-divider></mat-divider>
-      <span
+      <button
         mat-menu-item
         [routerLink]="['freedownloads']"
-        (click)="switchNavButtons($event, 'freedownloads')"
-        [disabled]="navButtonsState[2]"
+        routerLinkActive
+        #rlaFreedownloads="routerLinkActive"
+        [disabled]="rlaFreedownloads.isActive"
       >
-        <mat-icon fontSet="fab" fontIcon="fa-soundcloud" class="material-icons-fab"></mat-icon>
-        {{ 'freedownloads' | translate }}
-      </span>
+        <mat-icon>library_music</mat-icon>
+        <span>{{ 'freedownloads' | translate }}</span>
+      </button>
       <mat-divider></mat-divider>
-      <span
+      <button
         mat-menu-item
         [routerLink]="['reposts']"
-        (click)="switchNavButtons($event, 'reposts')"
-        [disabled]="navButtonsState[3]"
+        routerLinkActive
+        #rlaReports="routerLinkActive"
+        [disabled]="rlaReports.isActive"
       >
-        <mat-icon fontSet="fab" fontIcon="fa-soundcloud" class="material-icons-fab"></mat-icon>
-        {{ 'reposts' | translate }}
-      </span>
+        <mat-icon>library_music</mat-icon>
+        <span>{{ 'reposts' | translate }}</span>
+      </button>
       <mat-divider></mat-divider>
-      <span
+      <button
         mat-menu-item
         [routerLink]="['blog']"
-        (click)="switchNavButtons($event, 'blog')"
-        [disabled]="navButtonsState[4]"
+        routerLinkActive
+        #rlaBlog="routerLinkActive"
+        [disabled]="rlaBlog.isActive"
       >
-        <mat-icon fontSet="fas" fontIcon="fa-th-large" class="material-icons-fas"></mat-icon>
-        {{ 'blog' | translate }}
-      </span>
+        <mat-icon>featured_play_list</mat-icon>
+        <span>{{ 'blog' | translate }}</span>
+      </button>
       <mat-divider></mat-divider>
-      <span
+      <button
         mat-menu-item
         [routerLink]="['about']"
-        (click)="switchNavButtons($event, 'about')"
-        [disabled]="navButtonsState[5]"
+        routerLinkActive
+        #rlaAbout="routerLinkActive"
+        [disabled]="rlaAbout.isActive"
       >
-        <mat-icon fontSet="fas" fontIcon="fa-info" class="material-icons-fas"></mat-icon>
-        {{ 'about' | translate }}
-      </span>
+        <mat-icon>info</mat-icon>
+        <span>{{ 'about' | translate }}</span>
+      </button>
       <mat-divider></mat-divider>
-      <span mat-menu-item (click)="showAuthDialog()" *ngIf="anonUser$ | async">
-        <mat-icon fontSet="fas" fontIcon="fa-sign-in-alt" class="material-icons-fas"></mat-icon>
-        {{ 'login' | translate }}
-      </span>
-      <span mat-menu-item (click)="logout()" *ngIf="!(anonUser$ | async)">
-        <mat-icon fontSet="fas" fontIcon="fa-sign-out-alt" class="material-icons-fas"></mat-icon>
+      <button mat-menu-item (click)="showAuthDialog()" *ngIf="anonUser$ | async">
+        <mat-icon>lock_open</mat-icon>
+        <span>{{ 'login' | translate }}</span>
+      </button>
+      <button mat-menu-item (click)="logout()" *ngIf="!(anonUser$ | async)">
+        <mat-icon>lock</mat-icon>
         {{ 'logout' | translate }}
-      </span>
+      </button>
       <mat-divider></mat-divider>
-      <span
+      <button
         mat-menu-item
         [routerLink]="['user']"
-        (click)="switchNavButtons($event, 'user')"
-        [disabled]="navButtonsState[6]"
+        routerLinkActive
+        #rlaUser="routerLinkActive"
+        [disabled]="rlaUser.isActive"
         *ngIf="!(anonUser$ | async)"
       >
-        <mat-icon fontSet="fas" fontIcon="fa-user" class="material-icons-fas"></mat-icon>
-        {{ 'user' | translate }}
-      </span>
+        <mat-icon>person</mat-icon>
+        <span>{{ 'user' | translate }}</span>
+      </button>
       <mat-divider></mat-divider>
-      <span
+      <button
         mat-menu-item
         [routerLink]="['admin']"
-        (click)="switchNavButtons($event, 'admin')"
-        [disabled]="navButtonsState[7]"
+        routerLinkActive
+        #rlaAdmin="routerLinkActive"
+        [disabled]="rlaAdmin.isActive"
         *ngIf="!(anonUser$ | async) && isAdmin()"
       >
-        <mat-icon fontSet="fas" fontIcon="fa-user-secret" class="material-icons-fas"></mat-icon>
-        {{ 'admin' | translate }}
-      </span>
+        <mat-icon>verified_user</mat-icon>
+        <span>{{ 'admin' | translate }}</span>
+      </button>
       <mat-divider></mat-divider>
-      <span mat-menu-item [disabled]="true">
-        <mat-icon fontSet="fas" fontIcon="fa-globe" class="material-icons-fas"></mat-icon>
-        {{ 'language.title' | translate }}
-      </span>
+      <button mat-menu-item [disabled]="true">
+        <mat-icon>language</mat-icon>
+        <span>{{ 'language.title' | translate }}</span>
+      </button>
       <span fxFlex fxLayout="row" fxLayoutAlign="center center">
         <button
           mat-button
@@ -150,7 +125,7 @@
           [disabled]="isLanguageSelected(lang.key)"
           (click)="selectLanguage(lang.key)"
         >
-          {{ 'language.' + lang.key | translate }}
+          <span>{{ 'language.' + lang.key | translate }}</span>
         </button>
       </span>
     </mat-menu>
