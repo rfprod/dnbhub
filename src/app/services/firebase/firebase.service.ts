@@ -6,7 +6,8 @@ import {
   DatabaseSnapshotExists,
   DataSnapshot,
 } from '@angular/fire/database/interfaces';
-import { FirebaseAuth, FirebaseDatabase } from '@angular/fire/firebase-node';
+import { from, Observable, of } from 'rxjs';
+import { concatMap } from 'rxjs/operators';
 import { AppEnvironmentConfig } from 'src/app/app.environment';
 import { IFirebaseENVInterface } from 'src/app/interfaces';
 import { IBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
@@ -36,18 +37,21 @@ export class FirebaseService {
   /**
    * Angular fire public shortcuts.
    */
-  public fire: { db: FirebaseDatabase; auth: FirebaseAuth; authUser: firebase.User } = {
+  public fire: {
+    db: firebase.database.Database;
+    auth: AngularFireAuth;
+    authUser: firebase.User;
+  } = {
     db: this.fireDB.database,
-    auth: this.fireAuth.auth,
+    auth: this.fireAuth,
     authUser: null,
   };
 
   /**
    * Indicates if user is anonymous.
    */
-  public anonUser(): boolean {
-    // console.warn('this.fireAuth.auth.currentUser', this.fireAuth.auth.currentUser);
-    return !this.fireAuth.auth.currentUser ? true : false;
+  public anonUser(): Observable<firebase.User> {
+    return from(this.fireAuth.currentUser);
   }
 
   private fireAuthUserSubscription(): void {
@@ -110,7 +114,7 @@ export class FirebaseService {
     console.warn('payload:', payload);
 
     if (mode === 'email') {
-      this.fireAuth.auth
+      this.fireAuth
         .signInWithEmailAndPassword(payload.email, payload.password)
         .then((success: any) => {
           // console.warn('auth success', success);
@@ -138,11 +142,16 @@ export class FirebaseService {
   /**
    * Signs user out.
    */
-  public signout(): void {
+  public signout(): Observable<void> {
     console.warn('signout', this.fireAuth);
-    if (this.fireAuth.auth.currentUser) {
-      this.fireAuth.auth.signOut();
-    }
+    return from(this.fireAuth.currentUser).pipe(
+      concatMap(user => {
+        if (Boolean(user)) {
+          return from(this.fireAuth.signOut());
+        }
+        return of<void>();
+      }),
+    );
   }
 
   /**
@@ -151,7 +160,7 @@ export class FirebaseService {
    */
   public create(payload: { email: string; password: string }): Promise<any> {
     const def = new CustomDeferredService<any>();
-    this.fireAuth.auth
+    this.fireAuth
       .createUserWithEmailAndPassword(payload.email, payload.password)
       .then(success => {
         // console.warn('auth success', success);
@@ -169,7 +178,7 @@ export class FirebaseService {
    * @param email user email
    */
   public resetUserPassword(email: string): Promise<any> {
-    return this.fireAuth.auth.sendPasswordResetEmail(email);
+    return this.fireAuth.sendPasswordResetEmail(email);
   }
 
   /**
@@ -179,21 +188,19 @@ export class FirebaseService {
    */
   public async delete(email: string, password: string): Promise<any> {
     const def = new CustomDeferredService<any>();
-    const credential: any = await this.fireAuth.auth.signInWithEmailAndPassword(email, password);
+    const credential: any = await this.fireAuth.signInWithEmailAndPassword(email, password);
 
     this.fire.authUser
       .reauthenticateAndRetrieveDataWithCredential(credential)
       .then(() => {
         // console.warn('successfully reauthenticated');
-        (this.getDB('users/' + this.fire.authUser.uid, true) as DatabaseReference).remove(); // delete user db profile also
-        this.fire.authUser
-          .delete()
-          .then(() => {
-            def.resolve(true);
-          })
-          .catch(error => {
-            def.reject(error);
-          });
+        return (this.getDB('users/' + this.fire.authUser.uid, true) as DatabaseReference).remove(); // delete user db profile also
+      })
+      .then(() => {
+        return this.fire.authUser.delete();
+      })
+      .then(() => {
+        def.resolve(true);
       })
       .catch(error => {
         def.reject(error);
@@ -210,7 +217,7 @@ export class FirebaseService {
     );
     if (!this.fireAuth.user) {
       throw typeError;
-    } else if (this.fireAuth.user && !this.fire.authUser.uid) {
+    } else if (this.fireAuth.user && !Boolean(this.fire.authUser.uid)) {
       throw typeError;
     }
   }
@@ -224,7 +231,7 @@ export class FirebaseService {
     (this.getDB('users/' + this.fire.authUser.uid) as Promise<DataSnapshot>)
       .then((snapshot: DataSnapshot) => {
         console.warn('checking user db profile');
-        if (!snapshot.val()) {
+        if (!Boolean(snapshot.val())) {
           console.warn('creating user db profile');
           (this.getDB('users/' + this.fire.authUser.uid, true) as DatabaseReference)
             .set({

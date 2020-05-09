@@ -1,9 +1,11 @@
+import { IDictionaryObject } from './translations.interface';
+
 export const LANG_EN_NAME = 'en';
 
 /**
  * English substrings for UI.
  */
-export const LANG_EN_TRANSLATIONS = {
+export const LANG_EN_TRANSLATIONS: IDictionaryObject = {
   title: 'DNBHUB',
   index: 'Index',
   singles: 'Singles',

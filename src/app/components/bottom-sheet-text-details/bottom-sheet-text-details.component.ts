@@ -1,12 +1,12 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material';
+import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { BottomSheetTextDetailsData } from 'src/app/interfaces';
 
 /**
  * Bottom sheet text details component.
  */
 @Component({
-  selector: 'bottom-sheet-text-details',
+  selector: 'app-bottom-sheet-text-details',
   templateUrl: 'bottom-sheet-text-details.component.html',
 })
 export class BottomSheetTextDetailsComponent {

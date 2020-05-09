@@ -1,6 +1,6 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { IEmailForm } from 'src/app/interfaces/forms/email-form.interface';
 import { TranslateService } from 'src/app/modules/translate/translate.service';
@@ -138,9 +138,9 @@ export class AppContactDialog implements OnInit, OnDestroy {
    * Reports result, arent component should listen to this event.
    * @param [result] result returned to parent component
    */
-  private closeDialog(result?: any) {
-    result = result ? result : 'closed';
-    this.dialogRef.close(result);
+  public closeDialog(result?: unknown) {
+    const res = Boolean(result) ? result : 'closed';
+    this.dialogRef.close(res);
   }
 
   /**

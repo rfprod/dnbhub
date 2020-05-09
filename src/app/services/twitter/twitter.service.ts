@@ -1,5 +1,9 @@
 import { Inject, Injectable } from '@angular/core';
 
+const rootId = 'twttr-root';
+const jssdkId = 'twitter-wjs';
+const windowSdkKey = 'twttr';
+
 /**
  * Twitter service.
  * Controls Twitter JavaScript SDK.
@@ -15,14 +19,14 @@ export class TwitterService {
    * Creates Twitter root div.
    * @return Twitter root div reference <div id="fb-root"></div>
    */
-  private createTwitterRoot(): any {
+  private createTwitterRoot(): HTMLElement {
     const doc: Document = this.window.document;
-    let ref: any = doc.getElementById('twttr-root'); // try getting it first
+    let ref: HTMLElement = doc.getElementById(rootId); // try getting it first
     if (!ref) {
       // create 'fb-root' if it does not exist
       ref = doc.createElement('div');
-      ref.id = 'twttr-root';
-      const firstScriptTag: any = doc.getElementsByTagName('script')[0];
+      ref.id = rootId;
+      const firstScriptTag: HTMLScriptElement = doc.getElementsByTagName('script')[0];
       firstScriptTag.parentNode.insertBefore(ref, firstScriptTag);
     }
     return ref;
@@ -36,27 +40,28 @@ export class TwitterService {
    * - https://developer.twitter.com/en/docs/twitter-for-websites/javascript-api/guides/javascript-api
    */
   private initTwitterJsSDK(): void {
-    const id = 'twitter-wjs';
     const doc: Document = this.window.document;
-    const ref: any = this.createTwitterRoot();
+    const ref = this.createTwitterRoot();
     console.warn('ref', ref);
     // return if script is already included
-    if (doc.getElementById(id)) {
+    if (doc.getElementById(jssdkId)) {
       return;
     }
-    const js: any = doc.createElement('script');
-    js.id = id;
+    const js: HTMLScriptElement = doc.createElement('script');
+    js.id = jssdkId;
     js.async = true;
     js.src = 'https://platform.twitter.com/widgets.js';
 
     ref.parentNode.insertBefore(js, ref);
 
-    const twitterWinKey = 'twttr';
-    const t = this.window[twitterWinKey] || {};
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    const t: { _e: unknown[]; ready: Function } = Boolean(this.window[windowSdkKey])
+      ? this.window[windowSdkKey]
+      : {};
     t._e = [];
     t.ready = f => t._e.push(f);
 
-    this.window[twitterWinKey] = t;
+    this.window[windowSdkKey] = t;
   }
 
   /**
@@ -64,10 +69,9 @@ export class TwitterService {
    * Removes twitter sdk (not used for now, see ngOnDestroy hook).
    */
   public removeTwitterJsSDK(): void {
-    const id = 'twitter-wjs';
     const doc: Document = this.window.document;
-    const ref: any = doc.getElementById('twttr-root');
-    const js: any = doc.getElementById('twitter-wjs');
+    const ref: HTMLElement = doc.getElementById(rootId);
+    const js: HTMLElement = doc.getElementById(jssdkId);
     // removed both script and twttr-root
     if (js) {
       ref.parentNode.removeChild(js); // sdk script
@@ -79,10 +83,9 @@ export class TwitterService {
    * Renders twitter widget, without this widget won't initialize after user navigates to another view and then back to a view the widget is placed
    */
   public renderTwitterWidget(): void {
-    const twitterWinKey = 'twttr';
-    if (this.window[twitterWinKey]) {
-      console.warn('this.window[twttr]', this.window[twitterWinKey]);
-      // TODO:client this should be differrent from fb probably this.window[twitterWinKey].XFBML.parse();
+    if (Boolean(this.window[windowSdkKey])) {
+      console.warn('this.window[twttr]', this.window[windowSdkKey]);
+      // TODO:client this should be differrent from fb probably this.window[windowSdkKey].XFBML.parse();
     }
   }
 }

@@ -34,6 +34,6 @@
     </a>
   </div>
   <div fxFlex="100" fxLayout="row wrap" *ngIf="selectedBlogPost.playlistId">
-    <soundcloud-player [mode]="'playlist'" [playlistId]="selectedBlogPost.playlistId" [displayDescription]="true"></soundcloud-player>
+    <app-soundcloud-player [mode]="'playlist'" [playlistId]="selectedBlogPost.playlistId" [displayDescription]="true"></app-soundcloud-player>
   </div>
 </div>

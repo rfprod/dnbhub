@@ -13,7 +13,7 @@ export class MapToIterablePipe implements PipeTransform {
    * @param value object
    * @param args arguments array
    */
-  public transform(value: object, args: string[]): any {
+  public transform(value: object): string[] {
     if (!value) {
       return;
     }

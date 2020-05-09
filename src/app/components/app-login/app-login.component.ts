@@ -1,6 +1,6 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ILoginForm } from 'src/app/interfaces';
@@ -186,14 +186,9 @@ export class AppLoginDialog implements OnInit, OnDestroy {
    * Closes dialog.
    * @param [result] result returned to parent component
    */
-  private closeDialog(result?: any) {
-    /*
-     *	report result if it was commonly closed, or modified and closed, deleted,
-     *	or optional use result is provided
-     *	parent controller should listen to this event
-     */
-    result = result ? result : 'closed';
-    this.dialogRef.close(result);
+  public closeDialog(result?: unknown) {
+    const res = Boolean(result) ? result : 'closed';
+    this.dialogRef.close(res);
   }
 
   /**

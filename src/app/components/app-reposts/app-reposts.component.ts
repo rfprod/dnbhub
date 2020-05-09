@@ -50,63 +50,53 @@ export class AppRepostsComponent implements OnInit, OnDestroy {
   @ViewChild('content', { static: true }) private readonly content: ElementRef;
 
   /**
-   * Renderer2 listener instance.
-   */
-  private rendererListener: any;
-  /**
    * Binds to mat-sidenav-content scroll event.
    */
   private bindToContentScrollEvent(): void {
     // let previousScrollTopValue: number = 0;
-    this.rendererListener = this.renderer.listen(
-      this.content.nativeElement.parentNode.parentNode,
-      'scroll',
-      event => {
-        // console.log('mat-sidenav-content scroll, event', event);
-        const currentScrollTopValue: number = event.target.scrollTop;
-        const previousScrollTopValue: number = (this.ngXsStore.snapshot()
-          .dnbhubStore as DnbhubStoreStateModel).previousScrollTopValue;
-        console.log('previousScrollTopValue', previousScrollTopValue);
+    this.renderer.listen(this.content.nativeElement.parentNode.parentNode, 'scroll', event => {
+      // console.log('mat-sidenav-content scroll, event', event);
+      const currentScrollTopValue: number = event.target.scrollTop;
+      const previousScrollTopValue: number = (this.ngXsStore.snapshot()
+        .dnbhubStore as DnbhubStoreStateModel).previousScrollTopValue;
+      console.log('previousScrollTopValue', previousScrollTopValue);
 
-        // check if should request more data from soundcloud
-        const listEndDivider: ElementRef = new ElementRef(
-          this.window.document.getElementById('list-end'),
+      // check if should request more data from soundcloud
+      const listEndDivider: ElementRef = new ElementRef(
+        this.window.document.getElementById('list-end'),
+      );
+      // console.log('listEndDivider', listEndDivider);
+      const offsetTop = 'offsetTop';
+      const listEndOffsetTop: number = listEndDivider.nativeElement[offsetTop];
+      // console.log('listEndOffsetTop', listEndOffsetTop, 'currentScrollTopValue', currentScrollTopValue);
+      if (
+        previousScrollTopValue < currentScrollTopValue &&
+        currentScrollTopValue >= listEndOffsetTop - (this.window.innerHeight + 1)
+      ) {
+        console.log('end reached, load more');
+        this.emitter.emitEvent({ soundcloud: 'renderMoreTracks' });
+        const sidenavContent: ElementRef = new ElementRef(
+          this.window.document.getElementsByClassName('mat-sidenav-content')[0],
         );
-        // console.log('listEndDivider', listEndDivider);
-        const offsetTop = 'offsetTop';
-        const listEndOffsetTop: number = listEndDivider.nativeElement[offsetTop];
-        // console.log('listEndOffsetTop', listEndOffsetTop, 'currentScrollTopValue', currentScrollTopValue);
-        if (
-          previousScrollTopValue < currentScrollTopValue &&
-          currentScrollTopValue >= listEndOffsetTop - (this.window.innerHeight + 1)
-        ) {
-          console.log('end reached, load more');
-          this.emitter.emitEvent({ soundcloud: 'renderMoreTracks' });
-          const sidenavContent: ElementRef = new ElementRef(
-            this.window.document.getElementsByClassName('mat-sidenav-content')[0],
-          );
-          const scrollTop = 'scrollTop';
-          // set scrollTop for sidenav content so that it remains the same after tracks loading
-          sidenavContent.nativeElement[scrollTop] = currentScrollTopValue;
-        }
+        const scrollTop = 'scrollTop';
+        // set scrollTop for sidenav content so that it remains the same after tracks loading
+        sidenavContent.nativeElement[scrollTop] = currentScrollTopValue;
+      }
 
-        // update scroll top value
-        this.ngXsStore.dispatch(
-          new DnbhubStoreAction({
-            scrollTopValue: currentScrollTopValue,
-          }),
-        );
-      },
-    );
+      // update scroll top value
+      this.ngXsStore.dispatch(
+        new DnbhubStoreAction({
+          scrollTopValue: currentScrollTopValue,
+        }),
+      );
+    });
   }
 
   public ngOnInit(): void {
-    console.log('ngOnInit: AppRepostsComponent initialized');
     this.bindToContentScrollEvent();
   }
 
   public ngOnDestroy(): void {
-    console.log('ngOnDestroy: AppRepostsComponent destroyed');
     this.soundcloudService.resetServiceData();
   }
 }

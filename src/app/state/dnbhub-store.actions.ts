@@ -7,15 +7,8 @@ import { ISoundcloudPlaylist } from '../interfaces';
  * Dnbhub store action.
  */
 export class DnbhubStoreAction {
-  /**
-   * Dnbhub Store Action type.
-   */
-  static readonly type = '[DnbhubStore] Update state';
+  public static readonly type = '[DnbhubStore] Update state';
 
-  /**
-   * DnbhubStoreAction constructor.
-   * @param payload Dnbhub store action payload
-   */
   constructor(
     public payload: {
       blogPosts?: IBlogPost[];
@@ -24,7 +17,5 @@ export class DnbhubStoreAction {
       tracks?: any[]; // TODO soundcloud track interface
       playlist?: ISoundcloudPlaylist;
     },
-  ) {
-    console.log('DnbhubStoreAction constructor, payload', payload);
-  }
+  ) {}
 }

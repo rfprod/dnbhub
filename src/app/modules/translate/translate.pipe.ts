@@ -12,8 +12,8 @@ import { TranslateService } from './translate.service';
 export class TranslatePipe implements PipeTransform {
   constructor(private readonly translate: TranslateService) {}
 
-  public transform(value: string, args: any[]): any {
-    if (!value) {
+  public transform(value: string): string {
+    if (!Boolean(value)) {
       return;
     }
     return this.translate.instant(value);

@@ -1,35 +1,32 @@
 import { Inject, Injectable } from '@angular/core';
 
 import { TRANSLATIONS } from './translations';
+import { IDictionaryObject, IUiDictionary } from './translations.interface';
 
 /**
  * Translate service for UI.
  */
 @Injectable()
 export class TranslateService {
-  constructor(@Inject(TRANSLATIONS) private readonly translations: any) {}
+  constructor(@Inject(TRANSLATIONS) private readonly translations: IUiDictionary) {}
 
   /**
    * Current language.
    */
-  private CURRENT_LANGUAGE: string;
+  private language: string;
 
   /**
    * Current language getter.
    */
   public get currentLanguage(): string {
-    /*
-     *	public method for
-     *	current language retrieval
-     */
-    return this.CURRENT_LANGUAGE;
+    return this.language;
   }
 
   /**
    * Current language setter.
    */
   public use(key: string): void {
-    this.CURRENT_LANGUAGE = key;
+    this.language = key;
   }
 
   /**
@@ -44,24 +41,28 @@ export class TranslateService {
    * @param key dictionary key
    */
   private translate(key: string): string {
-    if (this.translations[this.currentLanguage]) {
-      let translation = undefined as any;
+    if (Boolean(this.translations[this.currentLanguage])) {
+      let translation: string | IDictionaryObject = null;
       const keys = key.split('.');
+      // eslint-disable-next-line no-labels
       searchString: for (const k of keys) {
-        if (!translation) {
-          if (this.translations[this.currentLanguage][k]) {
+        if (!Boolean(translation)) {
+          const currentLanguageDictionary = this.translations[this.currentLanguage];
+          if (Boolean(currentLanguageDictionary[k])) {
             translation = this.translations[this.currentLanguage][k];
           } else {
+            // eslint-disable-next-line no-labels
             break searchString;
           }
-        } else if (translation[k]) {
+        } else if (Boolean(translation[k])) {
           translation = translation[k];
         } else {
-          translation = undefined;
+          translation = null;
+          // eslint-disable-next-line no-labels
           break searchString;
         }
       }
-      translation = !translation || typeof translation !== 'string' ? key : translation;
+      translation = !Boolean(translation) || typeof translation !== 'string' ? key : translation;
       return translation;
     }
     return key;

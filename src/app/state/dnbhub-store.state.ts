@@ -30,6 +30,24 @@ export class DnbhubStoreStateModel {
 })
 export class DnbhubStoreState {
   /**
+   * Returns blog posts.
+   * @param state state
+   */
+  @Selector()
+  public static getBlog(state: DnbhubStoreStateModel) {
+    return state.blogPosts;
+  }
+
+  /**
+   * Returns previous scroll top value.
+   * @param state state
+   */
+  @Selector()
+  public static getScrollTopValue(state: DnbhubStoreStateModel) {
+    return state.previousScrollTopValue;
+  }
+
+  /**
    * Adds state.
    * @param ctx context
    * @param action action
@@ -48,23 +66,5 @@ export class DnbhubStoreState {
         : [...state.tracks],
       playlist: action.payload.playlist || state.playlist,
     });
-  }
-
-  /**
-   * Returns blog posts.
-   * @param state state
-   */
-  @Selector()
-  static getBlog(state: DnbhubStoreStateModel) {
-    return state.blogPosts;
-  }
-
-  /**
-   * Returns previous scroll top value.
-   * @param state state
-   */
-  @Selector()
-  static getScrollTopValue(state: DnbhubStoreStateModel) {
-    return state.previousScrollTopValue;
   }
 }

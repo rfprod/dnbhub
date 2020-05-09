@@ -1,9 +1,11 @@
+import { IDictionaryObject } from './translations.interface';
+
 export const LANG_RU_NAME = 'ru';
 
 /**
  * Russian substrings for UI.
  */
-export const LANG_RU_TRANSLATIONS = {
+export const LANG_RU_TRANSLATIONS: IDictionaryObject = {
   title: 'DNBHUB',
   index: 'Индекс',
   singles: 'Синглы',

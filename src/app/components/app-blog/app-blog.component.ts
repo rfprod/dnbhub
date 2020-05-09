@@ -37,7 +37,7 @@ export class AppBlogComponent implements OnInit, OnDestroy {
   /**
    * Release code.
    */
-  private inputReleaseCode: any;
+  public inputReleaseCode: any;
 
   /**
    * Blog posts array.

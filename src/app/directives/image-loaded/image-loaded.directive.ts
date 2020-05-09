@@ -1,10 +1,11 @@
 import { Directive, ElementRef, OnInit } from '@angular/core';
+import { IEventWithPath } from 'src/app/interfaces/ui/ui.interface';
 
 /**
  * Replaces image with app logo if its loading results in an error
  */
 @Directive({
-  selector: '[imageloaded]',
+  selector: '[appImageLoaded]',
 })
 export class ImageLoadedDirective implements OnInit {
   private nativeElement: HTMLElement;
@@ -15,7 +16,7 @@ export class ImageLoadedDirective implements OnInit {
    * Image load event listener.
    * Removes event listener only.
    */
-  private loadEventListener(event: any): void {
+  private loadEventListener(event: IEventWithPath): void {
     // console.log('imageload, loadEventListener, event', event);
     const el: ElementRef = new ElementRef(event.path[0]);
     const nativeElement: HTMLElement = el.nativeElement;
@@ -26,7 +27,7 @@ export class ImageLoadedDirective implements OnInit {
    * Image load error event listener.
    * Replaces errored image with default one, and removes event listener.
    */
-  private errorEventListener(event: any): void {
+  private errorEventListener(event: IEventWithPath): void {
     // console.log('imageload, errorEventListener, event', event);
     const el: ElementRef = new ElementRef(event.path[0]);
     const nativeElement: HTMLElement = el.nativeElement;

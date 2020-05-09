@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 
 /**
@@ -16,11 +18,14 @@ export class AnonymousGuard implements CanActivate {
   /**
    * Protects paths from anonimous users.
    */
-  public canActivate(): boolean {
-    const can: boolean = !this.firebaseService.anonUser() ? true : false;
-    if (!can) {
-      this.router.navigate(['index']);
-    }
-    return can;
+  public canActivate(): Observable<boolean> {
+    return this.firebaseService.anonUser().pipe(
+      tap(user => {
+        if (!user) {
+          void this.router.navigate(['index']);
+        }
+      }),
+      map(user => (user ? true : false)),
+    );
   }
 }

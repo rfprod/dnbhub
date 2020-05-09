@@ -1,12 +1,13 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { MediaChange, MediaService } from '@angular/flex-layout';
-import { DateAdapter, MatDialog, MatIconRegistry } from '@angular/material';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MediaChange, MediaObserver } from '@angular/flex-layout';
+import { DateAdapter } from '@angular/material/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { AppContactDialog } from 'src/app/components/app-contact/app-contact.component';
-import { TranslateService } from 'src/app/modules/translate/index';
-import { CustomServiceWorkerService } from 'src/app/services/custom-service-worker/custom-service-worker.service';
+import { ISupportedLanguage, TranslateService } from 'src/app/modules/translate/index';
 import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
 
 import { AppSpinnerService } from './services';
@@ -18,47 +19,48 @@ import { AppSpinnerService } from './services';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit {
   /**
-   * AppComponent constructor.
-   * @param matIconRegistry Material icons registry.
-   * @param dateAdapter Material moment date adapter.
-   * @param dialog Reusable dialog.
-   * @param domSanitizer DOM sanitizer.
-   * @param emitter Event emitter service - components interaction.
-   * @param translateService Translate service - UI translation to predefined languages.
-   * @param serviceWorker Service worker service.
-   * @param media Media service
-   * @param spinner Application spinner service
-   * @param window Browser window reference
+   * Show spinner observable.
    */
+  public readonly showSpinner$: Observable<boolean> = this.spinner.showSpinner$.pipe(
+    untilDestroyed(this),
+  );
+
+  public sidenavOpened = false;
+
+  private readonly supportedLanguages: ISupportedLanguage[] = [
+    { key: 'en', name: 'English' },
+    { key: 'ru', name: 'Russian' },
+  ];
+
+  /**
+   * Sidenav grid configuration object.
+   */
+  public gridConfig: { cols: string; rowHeight: string } = {
+    cols: '3',
+    rowHeight: '1:1',
+  };
+
+  /**
+   * Reusable modal dialog instance.
+   */
+  private dialogInstance: MatDialogRef<AppContactDialog>;
+
   constructor(
     private readonly matIconRegistry: MatIconRegistry,
-    private readonly dateAdapter: DateAdapter<any>,
+    private readonly dateAdapter: DateAdapter<Date>,
     private readonly dialog: MatDialog,
     private readonly domSanitizer: DomSanitizer,
     private readonly emitter: EventEmitterService,
     private readonly translate: TranslateService,
-    private readonly serviceWorker: CustomServiceWorkerService,
     private readonly spinner: AppSpinnerService,
-    private readonly media: MediaService,
+    private readonly media: MediaObserver,
     @Inject('Window') private readonly window: Window,
-  ) {
-    this.toggleConsoleOutput();
-  }
+  ) {}
 
-  /**
-   * Show spinner observable.
-   */
-  public showSpinner$: Observable<boolean> = this.spinner.showSpinner$.pipe(untilDestroyed(this));
-
-  public sidenavOpened = false;
-
-  private readonly supportedLanguages: any[] = [
-    { key: 'en', name: 'English' },
-    { key: 'ru', name: 'Russian' },
-  ];
   /**
    * Checks if selected one is a current language.
    */
@@ -82,7 +84,7 @@ export class AppComponent implements OnInit, OnDestroy {
    * set Russian if it is preferred, else use English
    */
   private setPreferredLanguage(): void {
-    const nav: any = this.window.navigator;
+    const nav = this.window.navigator;
     const userPreference: string =
       nav.language === 'ru-RU' || nav.language === 'ru' || nav.languages[0] === 'ru' ? 'ru' : 'en';
     this.selectLanguage(userPreference); // set default language
@@ -101,11 +103,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Reusable modal dialog instance.
-   */
-  private dialogInstance: any;
-
-  /**
    * Shows contact dialog.
    */
   public showContactDialog(): void {
@@ -118,25 +115,9 @@ export class AppComponent implements OnInit, OnDestroy {
       disableClose: false,
       data: {},
     });
-    this.dialogInstance.afterClosed().subscribe((result: any) => {
-      console.log('contact dialog closed with result', result);
-      this.dialogInstance = undefined;
+    this.dialogInstance.afterClosed().subscribe(() => {
+      this.dialogInstance = null;
     });
-  }
-
-  /**
-   * Holds a backup of console.log function.
-   */
-  private readonly consoleLoggerBackup: any = console.log;
-  /**
-   * Disables/Enables logging to user's browser console.
-   * Logging is automatically disabled when the app is deployed in a domain which name includes a substring 'dnbhub'.
-   */
-  private toggleConsoleOutput(): void {
-    if (new RegExp(/.*dnbhub.*/, 'i').test(this.window.location.origin)) {
-      console.log =
-        console.log === this.consoleLoggerBackup ? () => true : this.consoleLoggerBackup;
-    }
   }
 
   /**
@@ -148,13 +129,6 @@ export class AppComponent implements OnInit, OnDestroy {
     initUIobj.parentNode.removeChild(initUIobj);
   }
 
-  /**
-   * Sidenav grid configuration object.
-   */
-  public gridConfig: any = {
-    cols: '3',
-    rowHeight: '1:1',
-  };
   /**
    * Sets sidenav config object values.
    */
@@ -216,13 +190,13 @@ export class AppComponent implements OnInit, OnDestroy {
     this.media
       .asObservable()
       .pipe(untilDestroyed(this))
-      .subscribe((event: MediaChange) => {
+      .subscribe((event: MediaChange[]) => {
         // console.log('flex-layout media change event', event);
-        if (/(lg|xl)/.test(event.mqAlias)) {
+        if (/(lg|xl)/.test(event[0].mqAlias)) {
           this.setGridConfig('4', '2:1');
-        } else if (/(md)/.test(event.mqAlias)) {
+        } else if (/(md)/.test(event[0].mqAlias)) {
           this.setGridConfig('3', '1:1');
-        } else if (/(sm)/.test(event.mqAlias)) {
+        } else if (/(sm)/.test(event[0].mqAlias)) {
           this.setGridConfig('2', '2:1');
         } else {
           this.setGridConfig('1', '2.5:1');
@@ -260,8 +234,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    console.log('ngOnInit: AppComponent initialized');
-
     this.removeUIinit();
 
     this.eventEmitterSubscribe();
@@ -273,10 +245,5 @@ export class AppComponent implements OnInit, OnDestroy {
     this.addIconsToRegistry();
 
     this.mediaChangeSubscribe();
-  }
-
-  public ngOnDestroy(): void {
-    console.log('ngOnDestroy: AppComponent destroyed');
-    this.emitter.emitEvent({ serviceWorker: 'deinitialize' });
   }
 }

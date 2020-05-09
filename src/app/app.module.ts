@@ -34,7 +34,6 @@ import { MapToIterablePipe } from 'src/app/pipes/map-to-iterable/map-to-iterable
 import { AnonymousGuard } from 'src/app/services/anonymous-guard/anonymous-guard.service';
 import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
 import { CustomHttpHandlersService } from 'src/app/services/custom-http-handlers/custom-http-handlers.service';
-import { CustomServiceWorkerService } from 'src/app/services/custom-service-worker/custom-service-worker.service';
 import { EmailSubmissionService } from 'src/app/services/email-submission/email-submission.service';
 import { EmailSubscriptionService } from 'src/app/services/email-subscription/email-subscription.service';
 import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
@@ -45,7 +44,6 @@ import { RegularExpressionsService } from 'src/app/services/regular-expressions/
 import { SendEmailService } from 'src/app/services/send-email/send-email.service';
 import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.service';
 import { TwitterService } from 'src/app/services/twitter/twitter.service';
-import { UserInterfaceUtilsService } from 'src/app/services/user-interface-utils/user-interface-utils.service';
 
 import { BottomSheetTextDetailsComponent } from './components/bottom-sheet-text-details/bottom-sheet-text-details.component';
 import { AppSpinnerService } from './services';
@@ -96,11 +94,9 @@ import { DnbhubStoreState } from './state/dnbhub-store.state';
     { provide: APP_BASE_HREF, useValue: '/' },
     { provide: LocationStrategy, useClass: PathLocationStrategy },
     { provide: 'Window', useValue: window },
-    CustomServiceWorkerService,
     CustomDeferredService,
     CustomHttpHandlersService,
     EventEmitterService,
-    UserInterfaceUtilsService,
     SendEmailService,
     EmailSubmissionService,
     EmailSubscriptionService,

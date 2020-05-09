@@ -4,7 +4,7 @@ import { Directive, ElementRef, EventEmitter, Input, OnInit, Output } from '@ang
  * Emits spinner stop event when iframe content is loaded.
  */
 @Directive({
-  selector: '[contentloaded]',
+  selector: '[appIframeContentLoaded]',
 })
 export class IframeContentLoadedDirective implements OnInit {
   private nativeElement: HTMLElement;
@@ -13,7 +13,9 @@ export class IframeContentLoadedDirective implements OnInit {
 
   @Input('contentloaded') public contentLoaded = true;
 
-  @Output('loadedcallback') public loadedCallback: EventEmitter<any> = new EventEmitter<any>();
+  @Output('loadedcallback') public loadedCallback: EventEmitter<boolean> = new EventEmitter<
+    boolean
+  >();
 
   /**
    * Emits loaded event.

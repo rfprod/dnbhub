@@ -5,12 +5,12 @@ import {
   DataSnapshot,
 } from '@angular/fire/database/interfaces';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import {
-  MatAutocompleteSelectedEvent,
   MatBottomSheet,
   MatBottomSheetConfig,
   MatBottomSheetRef,
-} from '@angular/material';
+} from '@angular/material/bottom-sheet';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { take } from 'rxjs/operators';
 import { IBlogPost } from 'src/app/interfaces/blog/blog-post.interface';

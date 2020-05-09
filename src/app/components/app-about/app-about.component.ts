@@ -1,6 +1,6 @@
 import { AfterContentInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { DatabaseReference, DataSnapshot } from '@angular/fire/database/interfaces';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { Subscription } from 'rxjs';
 import { AppContactDialog } from 'src/app/components/app-contact/app-contact.component';

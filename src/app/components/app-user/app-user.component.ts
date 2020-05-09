@@ -37,7 +37,7 @@ export class AppUserComponent implements OnInit, OnDestroy {
    * Component data.
    */
   public details: {
-    currentUser: any;
+    currentUser: firebase.User;
     userDBrecord: UserDbRecord;
     submittedPlaylistsIDs: string[];
     userPlayLists: ISoundcloudPlaylist[];
@@ -46,8 +46,8 @@ export class AppUserComponent implements OnInit, OnDestroy {
       submission: ISoundcloudPlaylist;
     };
   } = {
-    currentUser: this.firebase.fire.auth.currentUser,
-    userDBrecord: <UserDbRecord>{},
+    currentUser: this.firebase.fire.authUser,
+    userDBrecord: {} as UserDbRecord,
     submittedPlaylistsIDs: [],
     userPlayLists: [],
     existingBlogEntriesIDs: [],
@@ -485,7 +485,7 @@ export class AppUserComponent implements OnInit, OnDestroy {
    */
   public ngOnInit(): void {
     console.log('ngOnInit: AppUserComponent initialized');
-    this.details.currentUser = this.firebase.fire.auth.currentUser;
+    this.details.currentUser = this.firebase.fire.authUser;
     console.log('this.details.currentUser', this.details.currentUser);
     const user = {
       email: this.details.currentUser.email,
