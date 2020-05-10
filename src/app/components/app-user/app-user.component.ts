@@ -7,7 +7,7 @@ import { take, tap } from 'rxjs/operators';
 import { IUserProfileForm, SoundcloudPlaylist, UserProfile } from 'src/app/interfaces/index';
 import { UserDbRecord } from 'src/app/interfaces/user/user-db-record.interface';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
-import { SoundcloudHttpService } from 'src/app/state/soundcloud/soundcloud-http.service';
+import { SoundcloudApiService } from 'src/app/state/soundcloud/soundcloud-api.service';
 
 /**
  * Application user component.
@@ -25,7 +25,7 @@ export class AppUserComponent implements OnInit, OnDestroy {
 
   constructor(
     public firebase: FirebaseService,
-    public soundcloud: SoundcloudHttpService,
+    public soundcloud: SoundcloudApiService,
     private readonly fb: FormBuilder,
     private readonly router: Router,
   ) {}

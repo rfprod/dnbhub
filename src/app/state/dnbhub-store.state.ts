@@ -2,14 +2,12 @@ import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 
 import { IAboutDetails } from '../interfaces';
-import { IBlogPost } from '../interfaces/blog/blog-post.interface';
 import { DnbhubStoreAction } from './dnbhub-store.actions';
 
 /**
  * Dnbhub store state model.
  */
 export class DnbhubStoreStateModel {
-  public blogPosts: IBlogPost[];
   public details: IAboutDetails;
 }
 
@@ -20,7 +18,6 @@ export class DnbhubStoreStateModel {
 @State<DnbhubStoreStateModel>({
   name: 'dnbhubStore',
   defaults: {
-    blogPosts: [],
     details: new IAboutDetails(),
   },
 })
@@ -32,11 +29,6 @@ export class DnbhubStoreState {
   }
 
   @Selector()
-  public static getBlog(state: DnbhubStoreStateModel) {
-    return state.blogPosts;
-  }
-
-  @Selector()
   public static getAbout(state: DnbhubStoreStateModel) {
     return state.details;
   }
@@ -45,9 +37,6 @@ export class DnbhubStoreState {
   public add(ctx: StateContext<DnbhubStoreStateModel>, action: DnbhubStoreAction) {
     const state = ctx.getState();
     ctx.setState({
-      blogPosts: action.payload.blogPosts
-        ? [...state.blogPosts, ...action.payload.blogPosts]
-        : [...state.blogPosts],
       details: action.payload.details || state.details,
     });
   }

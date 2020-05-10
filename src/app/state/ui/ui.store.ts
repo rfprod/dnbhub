@@ -13,7 +13,6 @@ export const uiActions = {
   defaults: {
     darkThemeEnabled: false,
     sidenavOpened: false,
-    scrollTopValue: 0,
   },
 })
 @Injectable()
@@ -31,11 +30,6 @@ export class UiState {
   @Selector()
   public static getSidenavOpened(state: IUiStateModel) {
     return state.sidenavOpened;
-  }
-
-  @Selector()
-  public static getScrollTopValue(state: IUiStateModel) {
-    return state.scrollTopValue;
   }
 
   @Action(setUiState)

@@ -1,13 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { DateAdapter } from '@angular/material/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { AppContactDialog } from 'src/app/components/app-contact/app-contact.component';
 import {
   ISupportedLanguage,
   supportedLanguages,
@@ -40,15 +38,9 @@ export class AppComponent implements OnInit {
     rowHeight: '1:1',
   };
 
-  /**
-   * Reusable modal dialog instance.
-   */
-  private dialogInstance: MatDialogRef<AppContactDialog>;
-
   constructor(
     private readonly matIconRegistry: MatIconRegistry,
     private readonly dateAdapter: DateAdapter<Date>,
-    private readonly dialog: MatDialog,
     private readonly domSanitizer: DomSanitizer,
     private readonly emitter: EventEmitterService,
     private readonly translate: TranslateService,
@@ -61,7 +53,7 @@ export class AppComponent implements OnInit {
    * Updates store when sidebar is closed.
    */
   public sidebarCloseHandler(): void {
-    void this.uiService.toggleSidenav();
+    void this.uiService.closeSidenav().subscribe();
   }
 
   /**
@@ -105,24 +97,6 @@ export class AppComponent implements OnInit {
     } else {
       this.dateAdapter.setLocale('en');
     }
-  }
-
-  /**
-   * Shows contact dialog.
-   */
-  public showContactDialog(): void {
-    this.dialogInstance = this.dialog.open(AppContactDialog, {
-      height: '85vh',
-      width: '95vw',
-      maxWidth: '1680',
-      maxHeight: '1024',
-      autoFocus: true,
-      disableClose: false,
-      data: {},
-    });
-    this.dialogInstance.afterClosed().subscribe(() => {
-      this.dialogInstance = null;
-    });
   }
 
   /**

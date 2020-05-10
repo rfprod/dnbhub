@@ -1,15 +1,14 @@
 import {
-  AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
+  HostListener,
   Inject,
   Input,
   OnChanges,
   OnDestroy,
-  Renderer2,
   SimpleChange,
   SimpleChanges,
-  ViewChild,
 } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject, combineLatest, timer } from 'rxjs';
@@ -20,10 +19,8 @@ import {
   SoundcloudPlaylist,
 } from 'src/app/interfaces/index';
 import { SoundcloudTrack } from 'src/app/interfaces/soundcloud/soundcloud-track.config';
-import { SoundcloudHttpService } from 'src/app/state/soundcloud/soundcloud-http.service';
+import { SoundcloudApiService } from 'src/app/state/soundcloud/soundcloud-api.service';
 import { SoundcloudState } from 'src/app/state/soundcloud/soundcloud.store';
-import { IUiStateModel } from 'src/app/state/ui/ui.interface';
-import { uiActions } from 'src/app/state/ui/ui.store';
 import { ETIMEOUT, WINDOW } from 'src/app/utils';
 
 const renderPlaylistTracksDefault = 15;
@@ -68,8 +65,9 @@ export type TSoundcloudPlayerMode =
   host: {
     class: 'mat-body-1',
   },
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SoundcloudPlayerComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class SoundcloudPlayerComponent implements OnChanges, OnDestroy {
   /**
    * Default config.
    */
@@ -106,12 +104,9 @@ export class SoundcloudPlayerComponent implements AfterViewInit, OnChanges, OnDe
    */
   @Input('playlistId') private playlistId: string | number = this.defaultConfig.playlist.everything;
 
-  @ViewChild('content') private readonly content: ElementRef;
-
   constructor(
     private readonly store: Store,
-    private readonly renderer: Renderer2,
-    private readonly soundcloud: SoundcloudHttpService,
+    private readonly soundcloud: SoundcloudApiService,
     @Inject(WINDOW) private readonly window: Window,
   ) {}
 
@@ -180,8 +175,8 @@ export class SoundcloudPlayerComponent implements AfterViewInit, OnChanges, OnDe
       this.loading.next(true);
       if (/(dnbhub|user)/.test(this.mode)) {
         this.soundcloud.getUserTracks(this.userId).then(
-          (collection: SoundcloudTrack[]) => {
-            if (!Boolean(collection.length)) {
+          data => {
+            if (!Boolean(data.collection.length)) {
               this.noMoreTracks.next(true);
             }
             this.loading.next(false);
@@ -328,54 +323,14 @@ export class SoundcloudPlayerComponent implements AfterViewInit, OnChanges, OnDe
     clearInterval(this.waveformProgressInterval);
   }
 
-  private rendererScrollTopCallback(event: Event): void {
-    const target = event.target as IEventTargetWithPosition;
-    const scrollTopValue: number = target.scrollTop;
-    const previousScrollTopValue: number = (this.store.snapshot().ui as IUiStateModel)
-      .scrollTopValue;
-
-    // check if should request more data from soundcloud
-    const listEndDividerElement: HTMLElement = new ElementRef(
-      this.window.document.getElementById('list-end'),
-    ).nativeElement;
-    const listEndOffsetTop: number = listEndDividerElement
-      ? listEndDividerElement.offsetTop
-      : previousScrollTopValue;
-    if (
-      previousScrollTopValue < scrollTopValue &&
-      scrollTopValue >= listEndOffsetTop - (this.window.innerHeight + 1)
-    ) {
-      const sidenavContent: ElementRef = new ElementRef(
-        this.window.document.getElementsByClassName('mat-sidenav-content')[0],
-      );
-      // set scrollTop for sidenav content so that it remains the same after tracks loading
-      (sidenavContent.nativeElement as HTMLElement).scrollTop = scrollTopValue;
-      console.warn('soundcloud player: load more tracks');
-      this.loadMoreTracks();
-    }
-
-    // update scroll top value
-    this.store.dispatch(new uiActions.setUiState({ scrollTopValue }));
-  }
-
-  private bindToContentScrollEvent(): void {
-    const element: HTMLElement = this.content.nativeElement;
-    const host = element.parentNode.parentNode.parentNode.parentNode;
-    this.renderer.listen(host, 'scroll', this.rendererScrollTopCallback.bind(this));
-  }
-
-  public ngAfterViewInit(): void {
-    this.bindToContentScrollEvent();
-  }
-
   public ngOnChanges(changes: ISoundcloudPlayerChanges): void {
     if (changes.mode) {
       if (changes.mode.currentValue === 'dnbhub') {
-        this.resetPlayer(true);
+        this.resetPlayer();
         this.userId = this.defaultConfig.user.dnbhub;
         this.loadMoreTracks();
       } else if (/pl\-/.test(changes.mode.currentValue)) {
-        this.resetPlayer(true);
+        this.resetPlayer();
         const prefixLength = 3;
         const playlistKey = (changes.mode.currentValue as TSoundcloudPlayerMode).slice(
           prefixLength,
@@ -385,13 +340,13 @@ export class SoundcloudPlayerComponent implements AfterViewInit, OnChanges, OnDe
       }
     } else if (changes.userId) {
       if (this.mode === 'user' && Boolean(changes.userId.currentValue)) {
-        this.resetPlayer(true);
+        this.resetPlayer();
         this.userId = changes.userId.currentValue;
         this.loadMoreTracks();
       }
     } else if (changes.playlistId) {
       if (this.mode === 'playlist' && Boolean(changes.playlistId.currentValue)) {
-        this.resetPlayer(true);
+        this.resetPlayer();
         this.playlistId = changes.playlistId.currentValue;
         this.loadMoreTracks();
       }
@@ -399,6 +354,16 @@ export class SoundcloudPlayerComponent implements AfterViewInit, OnChanges, OnDe
   }
 
   public ngOnDestroy(): void {
-    this.resetPlayer(true);
+    this.resetPlayer();
+  }
+
+  @HostListener('scroll', ['$event'])
+  public scrollHandler(event: Event): void {
+    const target = event.target as IEventTargetWithPosition;
+    const scrollFromBottom = target.scrollHeight - target.scrollTop - target.clientHeight;
+    const loadMoreOffset = 20;
+    if (scrollFromBottom < loadMoreOffset) {
+      this.loadMoreTracks();
+    }
   }
 }

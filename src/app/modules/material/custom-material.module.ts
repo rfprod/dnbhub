@@ -60,8 +60,8 @@ import { MatTreeModule } from '@angular/material/tree';
 export function matTooltipOptions(): MatTooltipDefaultOptions {
   const options: MatTooltipDefaultOptions = {
     showDelay: 500,
-    hideDelay: 1000,
-    touchendHideDelay: 1000,
+    hideDelay: 150,
+    touchendHideDelay: 500,
   };
   return options;
 }

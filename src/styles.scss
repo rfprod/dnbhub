@@ -295,22 +295,3 @@ form {
     max-height: 100%;
   }
 }
-
-// Following should be moved from this stylesheet
-app-index,
-app-singles,
-app-freedownloads,
-app-reposts,
-app-blog,
-app-user,
-app-admin,
-app-about {
-  flex: 1 1 auto;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  max-width: 100%;
-
-  soundcloud-player {
-    min-width: 300px;
-  }
-}

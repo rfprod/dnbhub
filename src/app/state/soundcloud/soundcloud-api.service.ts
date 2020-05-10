@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable @typescript-eslint/camelcase */
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -19,6 +21,7 @@ import { HttpHandlersService } from 'src/app/services/http-handlers/http-handler
 import { APP_ENV } from '../../utils/injection-tokens';
 import { soundcloudActions } from './soundcloud.store';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare let SC: any;
 
 /**
@@ -26,7 +29,7 @@ declare let SC: any;
  * Controls Soundcloud JavaScript SDK.
  */
 @Injectable()
-export class SoundcloudHttpService implements OnDestroy {
+export class SoundcloudApiService implements OnDestroy {
   /**
    * Widget link conftructor.
    */
@@ -120,7 +123,7 @@ export class SoundcloudHttpService implements OnDestroy {
   /**
    * Returns original Soundcloud js api.
    */
-  public get SC(): any {
+  public get SC() {
     return SC;
   }
 
@@ -148,7 +151,7 @@ export class SoundcloudHttpService implements OnDestroy {
    * Returns full processed collection.
    */
   private processTracksCollection(data: SoundcloudTracksLinkedPartitioning): any[] {
-    const processedTracks = data.collection.map((track: any) => {
+    const processedTracks = data.collection.map((track: SoundcloudTrack) => {
       track.description = this.processDescription(track.description);
       return track;
     });
@@ -172,18 +175,20 @@ export class SoundcloudHttpService implements OnDestroy {
    * Gets user details from Sourndcloud.
    * @param userScId User Soundcloud id
    */
-  public getMe(userScId: string): Promise<{ me: any; playlists: SoundcloudPlaylist[] }> {
+  public getMe(userScId: string): Promise<{ me: SoundcloudMe; playlists: SoundcloudPlaylist[] }> {
     console.warn('getMe, use has got a token');
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return SC.get('users/' + userScId)
-      .then((me: any) => {
+      .then((me: SoundcloudMe) => {
         console.warn('SC.me.then, me', me);
-        if (me.description) {
+        if (Boolean(me.description)) {
           me.description = this.processDescription(me.description);
         }
         this.data.user.me = me;
-        return SC.get('users/' + me.id + '/playlists');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        return SC.get(`users/${me.id}playlists`);
       })
-      .then(playlists => {
+      .then((playlists: SoundcloudPlaylist[]) => {
         console.warn('SC.playlists.then, playlists', playlists);
         this.data.user.playlists = playlists;
         const user = this.data.user;
@@ -197,28 +202,29 @@ export class SoundcloudHttpService implements OnDestroy {
    * Calls getTracksNextHref if data.tracks.next_href is truthy.
    * @param userId Soundcloud user id
    */
-  public getUserTracks(userId: string | number): Promise<any> {
+  public getUserTracks(userId: string | number): Promise<SoundcloudTracksLinkedPartitioning> {
     const def: CustomDeferredService<any> = new CustomDeferredService<any>();
     if (this.noMoreTracks) {
       // don't waste bandwidth, there's no more tracks
       console.warn('Soundcloud service: no more tracks');
       def.resolve([]);
-    } else if (!this.data.tracks.next_href) {
+    } else if (!Boolean(this.data.tracks.next_href)) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       SC.get(`/users/${userId}/tracks`, { linked_partitioning: 1 })
         .then((data: SoundcloudTracksLinkedPartitioning) => {
           console.warn('getUserTracks, data', data);
           this.data.tracks.next_href = data.next_href;
           const collection = this.processTracksCollection(data);
-          const tracks: SoundcloudTracksLinkedPartitioning = {
-            collection,
-            next_href: data.next_href,
-          };
+          const tracks = new SoundcloudTracksLinkedPartitioning(collection, data.next_href);
           this.store.dispatch(new soundcloudActions.setSoundcloudState({ tracks }));
           def.resolve(tracks);
         })
         .catch((error: any) => def.reject(error));
     } else {
-      this.getTracksNextHref().then(() => def.resolve(this.data.tracks.collection));
+      this.getTracksNextHref().then(() => {
+        this.store.dispatch(new soundcloudActions.setSoundcloudState({ tracks: this.data.tracks }));
+        def.resolve(this.data.tracks);
+      });
     }
     return def.promise;
   }
@@ -239,19 +245,23 @@ export class SoundcloudHttpService implements OnDestroy {
    * Gets soundcloud playlist.
    * @param playlistId Soundcloud playlist id
    */
-  public getPlaylist(playlistId: string | number): Promise<any> {
+  public getPlaylist(playlistId: string | number): Promise<SoundcloudPlaylist> {
     const def: CustomDeferredService<any> = new CustomDeferredService<any>();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     SC.get(`/playlists/${playlistId}`)
       .then((playlist: SoundcloudPlaylist) => {
         playlist.description = this.processDescription(playlist.description);
-        playlist.tracks = playlist.tracks.map((track: any) => {
+        playlist.tracks = playlist.tracks.map((track: SoundcloudTrack) => {
           track.description = this.processDescription(track.description);
           return track;
         });
+        this.store.dispatch(
+          new soundcloudActions.setSoundcloudState({ playlist: new SoundcloudPlaylist() }),
+        );
         this.store.dispatch(new soundcloudActions.setSoundcloudState({ playlist }));
         def.resolve(playlist);
       })
-      .catch((error: any) => def.reject(error));
+      .catch(error => def.reject(error));
     return def.promise;
   }
 

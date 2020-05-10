@@ -16,8 +16,6 @@ export class UiService implements IUiService {
 
   public readonly sidenavOpened$ = this.store.select(UiState.getSidenavOpened);
 
-  public readonly scrollTopValue$ = this.store.select(UiState.getScrollTopValue);
-
   private enableDarkTheme() {
     return this.store.dispatch(new uiActions.setUiState({ darkThemeEnabled: true })).pipe(
       tap(_ => {
@@ -42,11 +40,11 @@ export class UiService implements IUiService {
     );
   }
 
-  private openSidenav() {
+  public openSidenav() {
     return this.store.dispatch(new uiActions.setUiState({ sidenavOpened: true }));
   }
 
-  private closeSidenav() {
+  public closeSidenav() {
     return this.store.dispatch(new uiActions.setUiState({ sidenavOpened: false }));
   }
 

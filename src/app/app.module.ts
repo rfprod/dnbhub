@@ -44,11 +44,13 @@ import { HttpHandlersService } from 'src/app/services/http-handlers/http-handler
 import { RegularExpressionsService } from 'src/app/services/regular-expressions/regular-expressions.service';
 import { SendEmailService } from 'src/app/services/send-email/send-email.service';
 import { TwitterService } from 'src/app/services/twitter/twitter.service';
-import { SoundcloudHttpService } from 'src/app/state/soundcloud/soundcloud-http.service';
+import { SoundcloudApiService } from 'src/app/state/soundcloud/soundcloud-api.service';
 import { environment } from 'src/environments/environment';
 
+import { AppToolbarComponent } from './components/app-toolbar/app-toolbar.component';
 import { BottomSheetTextDetailsComponent } from './components/bottom-sheet-text-details/bottom-sheet-text-details.component';
 import { IndeterminateProgressBarComponent } from './components/progress/indeterminate-progress-bar.component.ts/indeterminate-progress-bar.component';
+import { BlogStoreModule } from './state/blog/blog.module';
 import { DnbhubStoreState } from './state/dnbhub-store.state';
 import { HttpProgressStoreModule } from './state/http-progress/http-progress.module';
 import { SoundcloudStoreModule } from './state/soundcloud/soundcloud.module';
@@ -70,6 +72,7 @@ const entryComponenets: (any[] | Type<any>)[] = [
   declarations: [
     AppComponent,
     AppNavComponent,
+    AppToolbarComponent,
     AppIndexComponent,
     AppSinglesComponent,
     AppFreedownloadsComponent,
@@ -108,6 +111,7 @@ const entryComponenets: (any[] | Type<any>)[] = [
     UiStoreModule.forRoot(),
     HttpProgressStoreModule.forRoot(),
     SoundcloudStoreModule.forRoot(),
+    BlogStoreModule.forRoot(),
     AppRoutingModule,
   ],
   providers: [
@@ -122,7 +126,7 @@ const entryComponenets: (any[] | Type<any>)[] = [
     EmailSubmissionService,
     FirebaseService,
     GoogleApiService,
-    SoundcloudHttpService,
+    SoundcloudApiService,
     FacebookService,
     TwitterService,
     RegularExpressionsService,

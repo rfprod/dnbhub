@@ -14,6 +14,7 @@ import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { AppEnvironmentConfig } from 'src/app/app.environment';
 import { CustomMaterialModule } from 'src/app/modules';
+import { BlogStoreModule } from 'src/app/state/blog/blog.module';
 import { HttpProgressStoreModule } from 'src/app/state/http-progress/http-progress.module';
 import { SoundcloudStoreModule } from 'src/app/state/soundcloud/soundcloud.module';
 import { UiStoreModule } from 'src/app/state/ui/ui.module';
@@ -71,6 +72,7 @@ export const mocksCoreModuleProviders: Provider[] = [
     UiStoreModule.forRoot(),
     HttpProgressStoreModule.forRoot(),
     SoundcloudStoreModule.forRoot(),
+    BlogStoreModule.forRoot(),
   ],
   declarations: [DummyComponent],
   exports: [

@@ -1,7 +1,5 @@
-import { Component, HostBinding } from '@angular/core';
-/**
- * Application free downloads component.
- */
+import { Component } from '@angular/core';
+
 @Component({
   selector: 'app-freedownloads',
   templateUrl: './app-freedownloads.component.html',
@@ -10,8 +8,4 @@ import { Component, HostBinding } from '@angular/core';
     class: 'mat-body-1',
   },
 })
-export class AppFreedownloadsComponent {
-  @HostBinding('fxFlex') public fxFlex = '1 1 auto';
-  @HostBinding('fxLayout') public fxLayout = 'row';
-  @HostBinding('fxLayoutAlign') public fxLayoutAlign = 'start stretch';
-}
+export class AppFreedownloadsComponent {}

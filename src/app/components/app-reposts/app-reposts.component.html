@@ -1,24 +1,27 @@
-<div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="space-between start">
-  <mat-toolbar fxLayoutAlign="center center">
-    <mat-button-toggle-group
-      #playlistSelector="matButtonToggleGroup"
-      name="playlistSelector"
-      aria-label="{{ 'action.select' | translate }}"
-    >
-      <mat-button-toggle checked value="pl-reposts1">Reposts #1</mat-button-toggle>
-      <mat-button-toggle value="pl-reposts2">Reposts #2</mat-button-toggle>
-    </mat-button-toggle-group>
-  </mat-toolbar>
-  <span fxFlex="100" fxLayout="row">
-    <app-soundcloud-player
-      fxFlex="100"
-      [fxHide]="playlistSelector.value !== 'pl-reposts1'"
-      [mode]="'pl-reposts1'"
-    ></app-soundcloud-player>
-    <app-soundcloud-player
-      fxFlex="100"
-      [fxHide]="playlistSelector.value !== 'pl-reposts2'"
-      [mode]="'pl-reposts2'"
-    ></app-soundcloud-player>
-  </span>
+<mat-card fxFlex="100px">
+  <mat-radio-group
+    color="primary"
+    #playlistSelector="matRadioGroup"
+    name="playlistSelector"
+    aria-label="{{ 'action.select' | translate }}"
+    fxLayout="column"
+    fxLayoutGap="10px"
+  >
+    <mat-radio-button checked value="pl-reposts1">
+      <a fxLayout="row" fxLayoutAlign="start center">
+        <mat-icon matTooltip="Playlist 1">library_music</mat-icon>
+        #1
+      </a>
+    </mat-radio-button>
+    <mat-radio-button value="pl-reposts2">
+      <a fxLayout="row" fxLayoutAlign="start center">
+        <mat-icon matTooltip="Playlist 2">library_music</mat-icon>
+        #2
+      </a>
+    </mat-radio-button>
+  </mat-radio-group>
+</mat-card>
+
+<div fxFlex="100" fxLayout="row">
+  <app-soundcloud-player fxFlex="100" [mode]="playlistSelector.value"></app-soundcloud-player>
 </div>

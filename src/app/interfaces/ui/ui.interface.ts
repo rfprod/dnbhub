@@ -9,5 +9,7 @@ export interface IEventWithPosition extends Event {
 
 export interface IEventTargetWithPosition extends EventTarget {
   scrollTop: number;
+  scrollHeight: number;
+  clientHeight: number;
   clientWidth: number;
 }

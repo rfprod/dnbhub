@@ -19,7 +19,7 @@ import { IBrand } from 'src/app/interfaces/brand/brand.interface';
 import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { RegularExpressionsService } from 'src/app/services/regular-expressions/regular-expressions.service';
-import { SoundcloudHttpService } from 'src/app/state/soundcloud/soundcloud-http.service';
+import { SoundcloudApiService } from 'src/app/state/soundcloud/soundcloud-api.service';
 
 import { BottomSheetTextDetailsComponent } from '../bottom-sheet-text-details/bottom-sheet-text-details.component';
 
@@ -39,7 +39,7 @@ export class AppAdminComponent implements OnInit, OnDestroy {
 
   constructor(
     public readonly firebase: FirebaseService,
-    private readonly soundcloud: SoundcloudHttpService,
+    private readonly soundcloud: SoundcloudApiService,
     private readonly regx: RegularExpressionsService,
     private readonly bottomSheet: MatBottomSheet,
     private readonly fb: FormBuilder,
