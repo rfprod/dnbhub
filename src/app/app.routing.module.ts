@@ -8,7 +8,7 @@ import { AppIndexComponent } from 'src/app/components/app-index/app-index.compon
 import { AppRepostsComponent } from 'src/app/components/app-reposts/app-reposts.component';
 import { AppSinglesComponent } from 'src/app/components/app-singles/app-singles.component';
 import { AppUserComponent } from 'src/app/components/app-user/app-user.component';
-import { AnonymousGuard } from 'src/app/services/anonymous-guard/anonymous-guard.service';
+import { AuthenticatedGuard } from 'src/app/guards/authenticated/authenticated.guard';
 
 export const APP_ROUTES: Routes = [
   { path: 'index', component: AppIndexComponent },
@@ -16,8 +16,8 @@ export const APP_ROUTES: Routes = [
   { path: 'freedownloads', component: AppFreedownloadsComponent },
   { path: 'reposts', component: AppRepostsComponent },
   { path: 'blog', component: AppBlogComponent },
-  { path: 'user', component: AppUserComponent, canActivate: [AnonymousGuard] },
-  { path: 'admin', component: AppAdminComponent, canActivate: [AnonymousGuard] },
+  { path: 'user', component: AppUserComponent, canActivate: [AuthenticatedGuard] },
+  { path: 'admin', component: AppAdminComponent, canActivate: [AuthenticatedGuard] },
   { path: 'about', component: AppAboutComponent },
   { path: '', redirectTo: 'index', pathMatch: 'full' },
   { path: '**', redirectTo: 'index' },

@@ -4,10 +4,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { take, tap } from 'rxjs/operators';
-import { ISoundcloudPlaylist, IUserProfileForm, UserProfile } from 'src/app/interfaces/index';
+import { IUserProfileForm, SoundcloudPlaylist, UserProfile } from 'src/app/interfaces/index';
 import { UserDbRecord } from 'src/app/interfaces/user/user-db-record.interface';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
-import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.service';
+import { SoundcloudHttpService } from 'src/app/state/soundcloud/soundcloud-http.service';
 
 /**
  * Application user component.
@@ -15,20 +15,17 @@ import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.servic
 @Component({
   selector: 'app-user',
   templateUrl: './app-user.component.html',
+  styleUrls: ['./app-user.component.scss'],
   host: {
     class: 'mat-body-1',
   },
 })
 export class AppUserComponent implements OnInit, OnDestroy {
-  /**
-   * @param firebase Firebase service
-   * @param soundcloud Soundcloud service
-   * @param fb Form builder
-   * @param router Application router
-   */
+  public readonly anonUser$ = this.firebase.anonUser$;
+
   constructor(
     public firebase: FirebaseService,
-    public soundcloud: SoundcloudService,
+    public soundcloud: SoundcloudHttpService,
     private readonly fb: FormBuilder,
     private readonly router: Router,
   ) {}
@@ -40,13 +37,13 @@ export class AppUserComponent implements OnInit, OnDestroy {
     currentUser: firebase.User;
     userDBrecord: UserDbRecord;
     submittedPlaylistsIDs: string[];
-    userPlayLists: ISoundcloudPlaylist[];
+    userPlayLists: SoundcloudPlaylist[];
     existingBlogEntriesIDs: any[];
     preview: {
-      submission: ISoundcloudPlaylist;
+      submission: SoundcloudPlaylist;
     };
   } = {
-    currentUser: this.firebase.fire.authUser,
+    currentUser: this.firebase.fire.user,
     userDBrecord: {} as UserDbRecord,
     submittedPlaylistsIDs: [],
     userPlayLists: [],
@@ -179,7 +176,7 @@ export class AppUserComponent implements OnInit, OnDestroy {
    */
   public resendVerificationEmail(): void {
     if (!this.details.currentUser.emailVerified) {
-      this.firebase.fire.authUser
+      this.firebase.fire.user
         .sendEmailVerification()
         .then(() => {
           console.log('TODO: toaster: check your email for an email with a verification link');
@@ -251,7 +248,7 @@ export class AppUserComponent implements OnInit, OnDestroy {
   private getMe(): void {
     this.soundcloud
       .getMe(this.details.userDBrecord.sc_id.toString())
-      .then((user: { me: any; playlists: ISoundcloudPlaylist[] }) => {
+      .then((user: { me: any; playlists: SoundcloudPlaylist[] }) => {
         this.details.userPlayLists = user.playlists;
         console.log('getMe, user', user);
       });
@@ -299,7 +296,7 @@ export class AppUserComponent implements OnInit, OnDestroy {
           });
         return this.soundcloud.SC.get('users/' + me.id + '/playlists');
       })
-      .then((playlists: ISoundcloudPlaylist[]) => {
+      .then((playlists: SoundcloudPlaylist[]) => {
         // console.log('SC.playlists.then, playlists', playlists);
         this.soundcloud.data.user.playlists = playlists;
         this.details.userPlayLists = playlists;
@@ -351,7 +348,7 @@ export class AppUserComponent implements OnInit, OnDestroy {
    * @param index playlist array index
    */
   public toggleBlogPostPreview(index?: number): void {
-    const post: ISoundcloudPlaylist = this.soundcloud.data.user.playlists[index];
+    const post: SoundcloudPlaylist = this.soundcloud.data.user.playlists[index];
     if (post) {
       post.description = this.soundcloud.processDescription(post.description);
     }
@@ -485,7 +482,7 @@ export class AppUserComponent implements OnInit, OnDestroy {
    */
   public ngOnInit(): void {
     console.log('ngOnInit: AppUserComponent initialized');
-    this.details.currentUser = this.firebase.fire.authUser;
+    this.details.currentUser = this.firebase.fire.user;
     console.log('this.details.currentUser', this.details.currentUser);
     const user = {
       email: this.details.currentUser.email,

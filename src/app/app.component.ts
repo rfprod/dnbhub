@@ -15,9 +15,9 @@ import {
 } from 'src/app/modules/translate/index';
 import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
 
-import { AppSpinnerService } from './services';
 import { UiService } from './state/ui/ui.service';
 import { UiState } from './state/ui/ui.store';
+import { WINDOW } from './utils';
 
 /**
  * Application root component.
@@ -29,11 +29,6 @@ import { UiState } from './state/ui/ui.store';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  /**
-   * Show spinner observable.
-   */
-  public readonly showSpinner$: Observable<boolean> = this.spinner.showSpinner$;
-
   @Select(UiState.getSidenavOpened)
   public readonly sidenavOpened$: Observable<boolean>;
 
@@ -57,10 +52,9 @@ export class AppComponent implements OnInit {
     private readonly domSanitizer: DomSanitizer,
     private readonly emitter: EventEmitterService,
     private readonly translate: TranslateService,
-    private readonly spinner: AppSpinnerService,
     private readonly media: MediaObserver,
     private readonly uiService: UiService,
-    @Inject('Window') private readonly window: Window,
+    @Inject(WINDOW) private readonly window: Window,
   ) {}
 
   /**

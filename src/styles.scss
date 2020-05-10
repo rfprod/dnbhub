@@ -267,17 +267,6 @@ form {
   background-attachment: fixed;
 }
 
-.progress-bar {
-  position: fixed;
-  z-index: 100000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100vw;
-  text-align: center;
-  background: rgba(0, 0, 0, 0.15);
-}
-
 .clamp-flex {
   width: 150px;
   overflow: hidden; /* Needed to make it work */

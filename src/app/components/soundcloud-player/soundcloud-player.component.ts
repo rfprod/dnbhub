@@ -1,75 +1,79 @@
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   Inject,
   Input,
   OnChanges,
   OnDestroy,
-  OnInit,
+  Renderer2,
+  SimpleChange,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { BehaviorSubject } from 'rxjs';
-import { ISoundcloudPlaylist } from 'src/app/interfaces/index';
-import { AppSpinnerService } from 'src/app/services';
-import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
-import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.service';
+import { Store } from '@ngxs/store';
+import { BehaviorSubject, combineLatest, timer } from 'rxjs';
+import { concatMap, map, tap } from 'rxjs/operators';
+import {
+  IEventTargetWithPosition,
+  IEventWithPosition,
+  SoundcloudPlaylist,
+} from 'src/app/interfaces/index';
+import { SoundcloudTrack } from 'src/app/interfaces/soundcloud/soundcloud-track.config';
+import { SoundcloudHttpService } from 'src/app/state/soundcloud/soundcloud-http.service';
+import { SoundcloudState } from 'src/app/state/soundcloud/soundcloud.store';
+import { IUiStateModel } from 'src/app/state/ui/ui.interface';
+import { uiActions } from 'src/app/state/ui/ui.store';
+import { ETIMEOUT, WINDOW } from 'src/app/utils';
 
 const renderPlaylistTracksDefault = 15;
 const renderPlaylistTracksIncrement = 25;
 
+export interface ISoundcloudPlayerConfig {
+  user: { dnbhub: string };
+  playlist: {
+    everything: string;
+    reposts1: string;
+    reposts2: string;
+    freedownloads: string;
+    samplepacks: string;
+  };
+}
+
+export interface ISoundcloudPlayerChanges extends SimpleChanges {
+  mode: SimpleChange;
+  displayDescription: SimpleChange;
+  useId: SimpleChange;
+  playlistId: SimpleChange;
+}
+
+export type TSoundcloudPlayerMode =
+  | 'dnbhub'
+  | 'user'
+  | 'pl-everything'
+  | 'pl-reposts1'
+  | 'pl-reposts2'
+  | 'pl-freedownloads'
+  | 'pl-samplepacks'
+  | 'playlist';
+
 /**
  * Soundcloud player component.
  */
-@UntilDestroy()
 @Component({
   selector: 'app-soundcloud-player',
   templateUrl: './soundcloud-player.component.html',
+  styleUrls: ['./soundcloud-player.component.scss'],
   inputs: ['mode', 'userId', 'playlistId'],
   host: {
     class: 'mat-body-1',
   },
 })
-export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
+export class SoundcloudPlayerComponent implements AfterViewInit, OnChanges, OnDestroy {
   /**
-   * @param emitter Event emitter service - components interaction
-   * @param spinenr Application spinner service
-   * @param soundcloudService Soundcloud API wrapper
-   * @param window Window reference
+   * Default config.
    */
-  constructor(
-    private readonly emitter: EventEmitterService,
-    private readonly spinner: AppSpinnerService,
-    private readonly soundcloudService: SoundcloudService,
-    @Inject('Window') private readonly window: Window,
-  ) {}
-
-  /**
-   * Soundcloud player mode.
-   */
-  @Input('mode') public mode:
-    | 'dnbhub'
-    | 'user'
-    | 'pl-everything'
-    | 'pl-reposts1'
-    | 'pl-reposts2'
-    | 'pl-freedownloads'
-    | 'pl-samplepacks'
-    | 'playlist' = 'dnbhub';
-
-  /**
-   * Predefined
-   */
-  private readonly predefinedIDs: {
-    user: { dnbhub: string };
-    playlist: {
-      everything: string;
-      reposts1: string;
-      reposts2: string;
-      freedownloads: string;
-      samplepacks: string;
-    };
-  } = {
+  private readonly defaultConfig: ISoundcloudPlayerConfig = {
     user: {
       dnbhub: '1275637',
     },
@@ -83,6 +87,11 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
   };
 
   /**
+   * Soundcloud player mode.
+   */
+  @Input('mode') public mode: TSoundcloudPlayerMode = 'dnbhub';
+
+  /**
    * Indicates if description should be shown.
    */
   @Input('displayDescription') public displayDescription = false;
@@ -90,33 +99,48 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
   /**
    * Soundcloud user id.
    */
-  @Input('userId') private userId: string | number = '1275637';
+  @Input('userId') private userId: string | number = this.defaultConfig.user.dnbhub;
 
   /**
    * Soundcloud playlist id.
    */
-  @Input('playlistId') private playlistId: string | number = '21086473';
+  @Input('playlistId') private playlistId: string | number = this.defaultConfig.playlist.everything;
+
+  @ViewChild('content') private readonly content: ElementRef;
+
+  constructor(
+    private readonly store: Store,
+    private readonly renderer: Renderer2,
+    private readonly soundcloud: SoundcloudHttpService,
+    @Inject(WINDOW) private readonly window: Window,
+  ) {}
 
   private readonly renderPlaylistTracks = new BehaviorSubject<number>(renderPlaylistTracksDefault);
+  public readonly renderPlaylistTracks$ = this.renderPlaylistTracks.asObservable();
 
   /**
-   * Soundcloud user tracks from shared service.
+   * Soundcloud user tracks.
    */
-  public tracks: any[] = this.soundcloudService.data.tracks.collection
-    ? this.soundcloudService.data.tracks.collection.slice()
-    : [];
+  public tracks$ = this.store
+    .select(SoundcloudState.getTracks)
+    .pipe(map(tracks => tracks.collection));
 
   /**
    * Soundcloud playlist.
    */
-  public playlist: ISoundcloudPlaylist =
-    this.soundcloudService.data.playlist || new ISoundcloudPlaylist();
+  public readonly playlist$ = this.store.select(SoundcloudState.getPlaylist);
 
-  /**
-   * Selected track index.
-   */
+  public readonly playlistTracks$ = combineLatest([
+    this.playlist$,
+    this.renderPlaylistTracks$,
+  ]).pipe(
+    map(([playlist, renderPlaylistTracks]) => {
+      const tracks = [...playlist.tracks].slice(0, renderPlaylistTracks);
+      return tracks;
+    }),
+  );
+
   private readonly selectedTrackIndex = new BehaviorSubject<number>(0);
-
   public readonly selectedTrackIndex$ = this.selectedTrackIndex.asObservable();
 
   /**
@@ -130,28 +154,9 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
   private readonly loading = new BehaviorSubject<boolean>(false);
 
   /**
-   * Indicates quantity of playlist tracks to be rendered.
+   * Current Soundcloud player object.
    */
-  public readonly renderPlaylistTracks$ = this.renderPlaylistTracks.asObservable();
-
-  /**
-   * Rendered playlist.
-   */
-  public renderedPlaylist: any[] =
-    this.soundcloudService.data.playlist.tracks.slice(0, this.renderPlaylistTracks.value) || [];
-
-  /**
-   * Renders more playlist tracks.
-   */
-  private renderMorePlaylistTracks(): void {
-    const nextValue =
-      this.playlist.tracks.length - this.renderPlaylistTracks.value > renderPlaylistTracksIncrement
-        ? this.renderPlaylistTracks.value + renderPlaylistTracksIncrement
-        : this.playlist.tracks.length;
-    this.renderPlaylistTracks.next(nextValue);
-    this.renderedPlaylist =
-      this.soundcloudService.data.playlist.tracks.slice(0, this.renderPlaylistTracks.value) || [];
-  }
+  public player: any;
 
   /**
    * Selects a track.
@@ -164,7 +169,7 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
    * Gets link with id from Soundcloud Service (public for template usage).
    */
   public getLinkWithId(href: string): string {
-    return this.soundcloudService.getLinkWithId(href);
+    return this.soundcloud.getLinkWithId(href);
   }
 
   /**
@@ -173,20 +178,16 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
   private loadMoreTracks(): void {
     if (!this.noMoreTracks.value && !this.loading.value) {
       this.loading.next(true);
-      this.spinner.startSpinner();
       if (/(dnbhub|user)/.test(this.mode)) {
-        this.soundcloudService.getUserTracks(this.userId).then(
-          (collection: any[]) => {
-            if (!collection.length) {
+        this.soundcloud.getUserTracks(this.userId).then(
+          (collection: SoundcloudTrack[]) => {
+            if (!Boolean(collection.length)) {
               this.noMoreTracks.next(true);
             }
-            this.tracks = this.soundcloudService.data.tracks.collection.slice();
             this.loading.next(false);
-            this.spinner.stopSpinner();
           },
-          (error: any) => {
+          error => {
             this.loading.next(false);
-            this.spinner.stopSpinner();
           },
         );
       } else if (
@@ -194,78 +195,76 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
           this.mode,
         )
       ) {
-        this.soundcloudService.getPlaylist(this.playlistId).then(
-          (playlist: ISoundcloudPlaylist) => {
+        this.soundcloud.getPlaylist(this.playlistId).then(
+          (playlist: SoundcloudPlaylist) => {
             this.noMoreTracks.next(true);
-            this.playlist = this.soundcloudService.data.playlist;
-            this.renderedPlaylist =
-              this.soundcloudService.data.playlist.tracks.slice(
-                0,
-                this.renderPlaylistTracks.value,
-              ) || [];
             this.loading.next(false);
-            this.spinner.stopSpinner();
           },
-          (error: any) => {
+          error => {
             this.loading.next(false);
-            this.spinner.stopSpinner();
           },
         );
       }
-    } else if (
-      /(pl\-|playlist)/.test(this.mode) &&
-      this.renderPlaylistTracks.value < this.playlist.tracks.length
-    ) {
+    } else if (/(pl\-|playlist)/.test(this.mode)) {
       this.renderMorePlaylistTracks();
     }
   }
 
   /**
-   * Current Soundcloud player object.
+   * Renders more playlist tracks.
    */
-  public player: any;
+  private renderMorePlaylistTracks(): void {
+    const nextValue = this.renderPlaylistTracks.value + renderPlaylistTracksIncrement;
+    this.renderPlaylistTracks.next(nextValue);
+  }
+
   /**
    * Returns if playback is in progress, required for UI.
    */
   public playbackInProgress(): boolean {
-    if (this.player) {
-      return this.player.isActuallyPlaying() ? true : false;
+    if (Boolean(this.player)) {
+      return Boolean(this.player.isActuallyPlaying()) ? true : false;
     }
     return false;
   }
+
   /**
    * Kills player.
    */
   private playerKill(): void {
-    if (this.player) {
+    if (Boolean(this.player)) {
       this.player.kill();
     }
   }
+
   /**
    * Triggers player playback/pause.
    * @param track Track object
    * @param trackIndex Track index in view component array
    */
-  public playTrack(track: any, trackIndex: number): void {
-    if (this.selectedTrackIndex.value !== trackIndex) {
+  public playTrack(track: SoundcloudTrack, trackIndex: number): void {
+    if (
+      (this.selectedTrackIndex.value !== trackIndex && Boolean(this.player)) ||
+      (this.selectedTrackIndex.value === trackIndex && !Boolean(this.player))
+    ) {
       this.playerKill();
       this.selectTrack(trackIndex);
-      this.spinner.startSpinner();
-      this.soundcloudService.streamTrack(track.id).then(
-        (player: any) => {
-          console.warn('soundcloudService.streamTrack, player: ', player);
-          this.player = player;
-          setTimeout(() => {
+
+      this.soundcloud
+        .streamTrack(track.id)
+        .pipe(
+          tap(player => {
+            console.warn('soundcloud.streamTrack, player: ', player);
+            this.player = player;
+          }),
+          concatMap(_ => timer(ETIMEOUT.SHORT).pipe()),
+          tap(_ => {
             this.player.play();
             this.reportWaveformProgress();
-            this.spinner.stopSpinner();
-          }, 1000);
-        },
-        (error: any) => {
-          this.spinner.stopSpinner();
-        },
-      );
-    } else if (this.player.isActuallyPlaying()) {
+          }),
+        )
+        .subscribe();
+    } else if (Boolean(this.player.isActuallyPlaying())) {
       this.player.pause();
       clearInterval(this.waveformProgressInterval);
     } else {
@@ -273,41 +272,42 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
       this.reportWaveformProgress();
     }
   }
+
   /**
    * Waveform progress interval.
    */
   private waveformProgressInterval: any;
+
   /**
    * Reports waveform progress to UI.
    */
   public reportWaveformProgress(): void {
-    console.log('reportWaveformProgress');
     this.waveformProgressInterval = setInterval(() => {
       const visibleWaveform: ElementRef = new ElementRef(
         this.window.document.getElementsByClassName('waveform')[0],
       );
-      console.log('this.player.currentTime', this.player.currentTime());
-      console.log('this.player.getDuration', this.player.getDuration());
+      const visibleWaveformElement: HTMLElement = visibleWaveform.nativeElement;
       const playbackProgress: number = Math.floor(
         (this.player.currentTime() * 100) / this.player.getDuration(),
       );
       const nextVal = playbackProgress + 1;
-      console.log('playbackProgress', playbackProgress);
-      visibleWaveform.nativeElement.style.background = `linear-gradient(to right, rgba(171,71,188,1) 0%,rgba(171,71,188,1) ${playbackProgress}%, rgba(30,87,153,0) ${nextVal}%, rgba(30,87,153,0) 100%)`;
+      visibleWaveformElement.style.background = `linear-gradient(to right, rgba(171,71,188,1) 0%,rgba(171,71,188,1) ${playbackProgress}%, rgba(30,87,153,0) ${nextVal}%, rgba(30,87,153,0) 100%)`;
     }, 1000);
   }
+
   /**
    * Waveform client event handler.
    * @param event waveform click event
    */
-  public waveformClick(event: any): void {
+  public waveformClick(event: IEventWithPosition): void {
     console.log('waveformClick, event', event);
-    const waveformWidth: number = event.srcElement.clientWidth;
+    const srcElement = event.srcElement as IEventTargetWithPosition;
+    const waveformWidth: number = srcElement.clientWidth;
     const offsetX: number = event.offsetX;
     const percent: number = (offsetX * 100) / waveformWidth;
     const newProgress: number = (this.player.getDuration() * percent) / 100;
     this.player.seek(newProgress).then((data: any) => {
-      console.log('player seek success', data);
+      console.warn('player seek success', data);
     });
   }
 
@@ -320,69 +320,84 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
   private resetPlayer(onlyProgress?: boolean): void {
     if (!onlyProgress) {
       this.playerKill();
-      this.soundcloudService.resetServiceData();
-      this.tracks = [];
-      this.playlist = new ISoundcloudPlaylist();
+      this.soundcloud.resetServiceData();
       this.noMoreTracks.next(false);
+      this.loading.next(false);
+      this.renderPlaylistTracks.next(renderPlaylistTracksDefault);
     }
     clearInterval(this.waveformProgressInterval);
   }
 
-  /**
-   * Lifecycle hook called after component is initialized.
-   */
-  public ngOnInit(): void {
-    this.loadMoreTracks();
+  private rendererScrollTopCallback(event: Event): void {
+    const target = event.target as IEventTargetWithPosition;
+    const scrollTopValue: number = target.scrollTop;
+    const previousScrollTopValue: number = (this.store.snapshot().ui as IUiStateModel)
+      .scrollTopValue;
 
-    this.emitter
-      .getEmitter()
-      .pipe(untilDestroyed(this))
-      .subscribe((event: any) => {
-        console.log('SoundcloudPlayerComponent consuming event:', event);
-        if (event.soundcloud === 'loadMoreTracks') {
-          if (!this.noMoreTracks.value) {
-            this.loadMoreTracks();
-          }
-        } else if (event.soundcloud === 'renderMoreTracks') {
-          this.loadMoreTracks();
-        }
-      });
+    // check if should request more data from soundcloud
+    const listEndDividerElement: HTMLElement = new ElementRef(
+      this.window.document.getElementById('list-end'),
+    ).nativeElement;
+    const listEndOffsetTop: number = listEndDividerElement
+      ? listEndDividerElement.offsetTop
+      : previousScrollTopValue;
+    if (
+      previousScrollTopValue < scrollTopValue &&
+      scrollTopValue >= listEndOffsetTop - (this.window.innerHeight + 1)
+    ) {
+      const sidenavContent: ElementRef = new ElementRef(
+        this.window.document.getElementsByClassName('mat-sidenav-content')[0],
+      );
+      // set scrollTop for sidenav content so that it remains the same after tracks loading
+      (sidenavContent.nativeElement as HTMLElement).scrollTop = scrollTopValue;
+      console.warn('soundcloud player: load more tracks');
+      this.loadMoreTracks();
+    }
+
+    // update scroll top value
+    this.store.dispatch(new uiActions.setUiState({ scrollTopValue }));
   }
-  /**
-   * Lifecycle hook called on input changes.
-   */
-  public ngOnChanges(changes: SimpleChanges): void {
-    console.log('SoundcloudPlayerComponent, changes', changes);
+
+  private bindToContentScrollEvent(): void {
+    const element: HTMLElement = this.content.nativeElement;
+    const host = element.parentNode.parentNode.parentNode.parentNode;
+    this.renderer.listen(host, 'scroll', this.rendererScrollTopCallback.bind(this));
+  }
+
+  public ngAfterViewInit(): void {
+    this.bindToContentScrollEvent();
+  }
+
+  public ngOnChanges(changes: ISoundcloudPlayerChanges): void {
     if (changes.mode) {
       if (changes.mode.currentValue === 'dnbhub') {
-        this.resetPlayer();
-        this.userId = this.predefinedIDs.user.dnbhub;
+        this.resetPlayer(true);
+        this.userId = this.defaultConfig.user.dnbhub;
         this.loadMoreTracks();
       } else if (/pl\-/.test(changes.mode.currentValue)) {
-        this.resetPlayer();
-        const playlistKey: string = changes.mode.currentValue.slice(3);
-        console.log('playlistKey', playlistKey);
-        this.playlistId = this.predefinedIDs.playlist[playlistKey];
+        this.resetPlayer(true);
+        const prefixLength = 3;
+        const playlistKey = (changes.mode.currentValue as TSoundcloudPlayerMode).slice(
+          prefixLength,
+        );
+        this.playlistId = this.defaultConfig.playlist[playlistKey];
         this.loadMoreTracks();
       }
     } else if (changes.userId) {
       if (this.mode === 'user' && Boolean(changes.userId.currentValue)) {
-        this.resetPlayer();
+        this.resetPlayer(true);
         this.userId = changes.userId.currentValue;
         this.loadMoreTracks();
       }
     } else if (changes.playlistId) {
       if (this.mode === 'playlist' && Boolean(changes.playlistId.currentValue)) {
-        this.resetPlayer();
+        this.resetPlayer(true);
         this.playlistId = changes.playlistId.currentValue;
         this.loadMoreTracks();
       }
     }
   }
 
-  /**
-   * Lifecycle hook called after component is destroyed.
-   */
   public ngOnDestroy(): void {
     this.resetPlayer(true);
   }

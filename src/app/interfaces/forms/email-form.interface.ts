@@ -1,5 +1,13 @@
 import { AbstractControl, FormGroup } from '@angular/forms';
 
+export interface IEmailFormValue {
+  email: string;
+  name: string;
+  header: string;
+  message: string;
+  domain: string;
+}
+
 /**
  * Email form interface.
  */

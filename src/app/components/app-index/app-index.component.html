@@ -1,9 +1,39 @@
-<div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start start" #content>
+<div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start start">
   <app-soundcloud-player fxFlex fxShow fxHide.lt-md [mode]="'dnbhub'"></app-soundcloud-player>
+
   <div fxFlex="40" fxFlex.lt-md="100">
-    <a fxFlex class="twitter-timeline" data-tweet-limit="50" width="100%" data-chrome="noheader noborders nofooter noscrollbar transparent" data-show-replies="false" data-dnt="true" lang="EN" href="https://twitter.com/dnbhub_com" data-screen-name="dnbhub_com" data-widget-id="434953599831900160">Tweets by @dnbhub_com</a>
+    <a
+      fxFlex
+      class="twitter-timeline"
+      data-tweet-limit="50"
+      width="100%"
+      data-chrome="noheader noborders nofooter noscrollbar transparent"
+      data-show-replies="false"
+      data-dnt="true"
+      lang="EN"
+      href="https://twitter.com/dnbhub_com"
+      data-screen-name="dnbhub_com"
+      data-widget-id="434953599831900160"
+      >Tweets by @dnbhub_com</a
+    >
   </div>
+
   <div fxFlex="360px" fxShow fxHide.lt-lg fxLayout="row" fxLayoutAlign="start stretch">
-    <div class="fb-page" [ngStyle]="{'width': '100%', 'min-width': '360'}" data-href="https://www.facebook.com/dnbhub/" data-tabs="timeline" data-width="800" data-height="3500" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/dnbhub/" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/dnbhub/">DNBHUB</a></blockquote></div>
+    <div
+      class="fb-page"
+      [ngStyle]="{ width: '100%', 'min-width': '360' }"
+      data-href="https://www.facebook.com/dnbhub/"
+      data-tabs="timeline"
+      data-width="800"
+      data-height="3500"
+      data-small-header="false"
+      data-adapt-container-width="true"
+      data-hide-cover="false"
+      data-show-facepile="true"
+    >
+      <blockquote cite="https://www.facebook.com/dnbhub/" class="fb-xfbml-parse-ignore">
+        <a href="https://www.facebook.com/dnbhub/">DNBHUB</a>
+      </blockquote>
+    </div>
   </div>
 </div>

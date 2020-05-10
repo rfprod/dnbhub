@@ -3,17 +3,20 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { concatMap, tap } from 'rxjs/operators';
 
+import { IUiService } from './ui.interface';
 import { uiActions, UiState } from './ui.store';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UiService {
+export class UiService implements IUiService {
   constructor(private readonly store: Store, private readonly overlayContainer: OverlayContainer) {}
 
   public readonly darkThemeEnabled$ = this.store.select(UiState.getDarkThemeEnabled);
 
   public readonly sidenavOpened$ = this.store.select(UiState.getSidenavOpened);
+
+  public readonly scrollTopValue$ = this.store.select(UiState.getScrollTopValue);
 
   private enableDarkTheme() {
     return this.store.dispatch(new uiActions.setUiState({ darkThemeEnabled: true })).pipe(

@@ -16,10 +16,10 @@ import { take } from 'rxjs/operators';
 import { IBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 import { IBrandForm } from 'src/app/interfaces/brand/brand-form.interface';
 import { IBrand } from 'src/app/interfaces/brand/brand.interface';
-import { SoundcloudService } from 'src/app/services';
 import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { RegularExpressionsService } from 'src/app/services/regular-expressions/regular-expressions.service';
+import { SoundcloudHttpService } from 'src/app/state/soundcloud/soundcloud-http.service';
 
 import { BottomSheetTextDetailsComponent } from '../bottom-sheet-text-details/bottom-sheet-text-details.component';
 
@@ -29,14 +29,17 @@ import { BottomSheetTextDetailsComponent } from '../bottom-sheet-text-details/bo
 @Component({
   selector: 'app-admin',
   templateUrl: './app-admin.component.html',
+  styleUrls: ['./app-admin.component.scss'],
   host: {
     class: 'mat-body-1',
   },
 })
 export class AppAdminComponent implements OnInit, OnDestroy {
+  public readonly anonUser$ = this.firebase.anonUser$;
+
   constructor(
     public readonly firebase: FirebaseService,
-    private readonly soundcloud: SoundcloudService,
+    private readonly soundcloud: SoundcloudHttpService,
     private readonly regx: RegularExpressionsService,
     private readonly bottomSheet: MatBottomSheet,
     private readonly fb: FormBuilder,
@@ -765,7 +768,7 @@ export class AppAdminComponent implements OnInit, OnDestroy {
    */
   public deleteUserSubmission(dbKey: number): Promise<any> {
     const def = new CustomDeferredService();
-    const userKey = this.firebase.fire.authUser.uid;
+    const userKey = this.firebase.fire.user.uid;
     (this.firebase.getDB(`users/${userKey}/submittedPlaylists/${dbKey}`, true) as DatabaseReference)
       .remove()
       .then(() => {

@@ -7,7 +7,7 @@ import {
   DataSnapshot,
 } from '@angular/fire/database/interfaces';
 import { from, Observable, of } from 'rxjs';
-import { concatMap } from 'rxjs/operators';
+import { concatMap, map, tap } from 'rxjs/operators';
 import { AppEnvironmentConfig } from 'src/app/app.environment';
 import { IFirebaseENVInterface } from 'src/app/interfaces';
 import { IBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
@@ -21,9 +21,7 @@ export class FirebaseService {
   constructor(
     private readonly fireDb: AngularFireDatabase,
     private readonly fireAuth: AngularFireAuth,
-  ) {
-    this.fireAuthUserSubscription();
-  }
+  ) {}
 
   /**
    * Application environment: Firebase API.
@@ -36,30 +34,26 @@ export class FirebaseService {
   public fire: {
     db: firebase.database.Database;
     auth: AngularFireAuth;
-    authUser: firebase.User;
+    user: firebase.User;
   } = {
     db: this.fireDb.database,
     auth: this.fireAuth,
-    authUser: null,
+    user: null, // TODO remove this static reference of authenticated firebase user eventually
   };
 
-  /**
-   * Indicates if user is anonymous.
-   */
-  public anonUser(): Observable<firebase.User> {
-    return from(this.fireAuth.currentUser);
-  }
+  public readonly user$: Observable<firebase.User> = this.fireAuth.user;
 
-  private fireAuthUserSubscription(): void {
-    this.fireAuth.user.subscribe(
-      (user: firebase.User) => {
-        this.fire.authUser = user;
-      },
-      (error: any) => {
-        console.warn('FirebaseService, delete, fireAuth.user, error', error);
-      },
-    );
-  }
+  public readonly anonUser$: Observable<boolean> = this.fireAuth.authState.pipe(
+    // TODO: remove this and refactor firebase user scenarios
+    tap(user => {
+      this.fire.user = { ...user };
+    }),
+    map(user => !Boolean(user)),
+  );
+
+  public readonly privilegedAccess$: Observable<boolean> = this.fireAuth.user.pipe(
+    map(user => user.uid !== this.config.privilegedAccessUID),
+  );
 
   /**
    * Gets firebase database
@@ -83,17 +77,6 @@ export class FirebaseService {
       : this.fireDb.database.ref('/' + collection);
     // console.warn('firebaseService, getDB', db);
     return db;
-  }
-
-  /**
-   * Resolves if user has privileged access.
-   */
-  public privilegedAccess(): boolean {
-    return !this.fire.authUser
-      ? false
-      : this.fire.authUser.uid !== this.config.privilegedAccessUID
-      ? false
-      : true;
   }
 
   /**
@@ -151,6 +134,18 @@ export class FirebaseService {
   }
 
   /**
+   * @deprecated
+   * privilegedAccess$ should be used instead.
+   */
+  public privilegedAccess(): boolean {
+    return !this.fire.user
+      ? false
+      : this.fire.user.uid !== this.config.privilegedAccessUID
+      ? false
+      : true;
+  }
+
+  /**
    * Creates a user
    * @param payload user credentials
    */
@@ -186,14 +181,14 @@ export class FirebaseService {
     const def = new CustomDeferredService<any>();
     const credential: any = await this.fireAuth.signInWithEmailAndPassword(email, password);
 
-    this.fire.authUser
+    this.fire.user
       .reauthenticateAndRetrieveDataWithCredential(credential)
       .then(() => {
         // console.warn('successfully reauthenticated');
-        return (this.getDB('users/' + this.fire.authUser.uid, true) as DatabaseReference).remove(); // delete user db profile also
+        return (this.getDB('users/' + this.fire.user.uid, true) as DatabaseReference).remove(); // delete user db profile also
       })
       .then(() => {
-        return this.fire.authUser.delete();
+        return this.fire.user.delete();
       })
       .then(() => {
         def.resolve(true);
@@ -213,7 +208,7 @@ export class FirebaseService {
     );
     if (!this.fireAuth.user) {
       throw typeError;
-    } else if (this.fireAuth.user && !Boolean(this.fire.authUser.uid)) {
+    } else if (this.fireAuth.user && !Boolean(this.fire.user.uid)) {
       throw typeError;
     }
   }
@@ -224,12 +219,12 @@ export class FirebaseService {
   public checkDBuserUID(): Promise<{ exists: boolean; created: boolean } | any> {
     const def = new CustomDeferredService<any>();
     this.authErrorCheck();
-    (this.getDB('users/' + this.fire.authUser.uid) as Promise<DataSnapshot>)
+    (this.getDB('users/' + this.fire.user.uid) as Promise<DataSnapshot>)
       .then((snapshot: DataSnapshot) => {
         console.warn('checking user db profile');
         if (!Boolean(snapshot.val())) {
           console.warn('creating user db profile');
-          (this.getDB('users/' + this.fire.authUser.uid, true) as DatabaseReference)
+          (this.getDB('users/' + this.fire.user.uid, true) as DatabaseReference)
             .set({
               created: new Date().getTime(),
             })
@@ -267,7 +262,7 @@ export class FirebaseService {
     this.checkDBuserUID()
       .then(data => {
         console.warn('checkDBuserUID', JSON.stringify(data));
-        (this.getDB('users/' + this.fire.authUser.uid, true) as DatabaseReference)
+        (this.getDB('users/' + this.fire.user.uid, true) as DatabaseReference)
           .update(valuesObj)
           .then(() => {
             console.warn('user db profile values set');

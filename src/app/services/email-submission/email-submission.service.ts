@@ -1,8 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { catchError, map, take, timeout } from 'rxjs/operators';
-import { CustomHttpHandlersService } from 'src/app/services/custom-http-handlers/custom-http-handlers.service';
+import { HttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
+import { WINDOW } from 'src/app/utils';
 
 /**
  * Email submission service.
@@ -11,15 +10,10 @@ import { CustomHttpHandlersService } from 'src/app/services/custom-http-handlers
 export class EmailSubmissionService {
   constructor(
     private readonly http: HttpClient,
-    private readonly handlers: CustomHttpHandlersService,
-    @Inject('Window') private readonly window: Window,
-  ) {
-    console.warn('EmailSubmissionService constructor');
-  }
+    private readonly handlers: HttpHandlersService,
+    @Inject(WINDOW) private readonly window: Window,
+  ) {}
 
-  /**
-   * Mailing list subscription endpoint.
-   */
   private readonly endpoint: string = this.window.location.origin + '/submitBlogPostOverEmail';
 
   /**
@@ -30,7 +24,7 @@ export class EmailSubmissionService {
     email: string;
     soundcloudPlaylistLink: string;
     domain: string;
-  }): Observable<any[]> {
+  }) {
     const params: HttpParams = new HttpParams()
       .append('email', formData.email)
       .append('link', formData.soundcloudPlaylistLink)
@@ -39,14 +33,8 @@ export class EmailSubmissionService {
       'Content-type',
       'application/x-www-form-urlencoded',
     );
-    const options: any = { headers, params };
-    return this.http
-      .post(this.endpoint, formData, options)
-      .pipe(
-        timeout(this.handlers.timeoutValue()),
-        take(1),
-        map(this.handlers.extractObject),
-        catchError(this.handlers.handleError),
-      );
+    return this.handlers.pipeHttpRequest<{ success: string }>(
+      this.http.post<{ success: string }>(this.endpoint, formData, { headers, params }),
+    );
   }
 }

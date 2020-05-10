@@ -23,10 +23,7 @@ import { FirebaseService } from 'src/app/services/firebase/firebase.service';
   },
 })
 export class AppNavComponent {
-  /**
-   * Insicates if user is anonymous.
-   */
-  public readonly anonUser$ = this.firebase.anonUser();
+  public readonly anonUser$ = this.firebase.anonUser$;
 
   constructor(
     private readonly emitter: EventEmitterService,

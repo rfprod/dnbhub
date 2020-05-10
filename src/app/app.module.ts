@@ -14,7 +14,7 @@ import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { AppComponent } from 'src/app/app.component';
-import { ENV } from 'src/app/app.environment';
+import { AppEnvironmentConfig, ENV } from 'src/app/app.environment';
 import { AppRoutingModule } from 'src/app/app.routing.module';
 import { AppAboutComponent } from 'src/app/components/app-about/app-about.component';
 import { AppAdminComponent } from 'src/app/components/app-admin/app-admin.component';
@@ -30,34 +30,37 @@ import { AppUserComponent } from 'src/app/components/app-user/app-user.component
 import { SoundcloudPlayerComponent } from 'src/app/components/soundcloud-player/soundcloud-player.component';
 import { IframeContentLoadedDirective } from 'src/app/directives/iframe-content-loaded/iframe-content-loaded.directive';
 import { ImageLoadedDirective } from 'src/app/directives/image-loaded/image-loaded.directive';
+import { AuthenticatedGuard } from 'src/app/guards/authenticated/authenticated.guard';
 import { CustomMaterialModule } from 'src/app/modules/material/custom-material.module';
 import { TranslateModule } from 'src/app/modules/translate/index';
 import { MapToIterablePipe } from 'src/app/pipes/map-to-iterable/map-to-iterable.pipe';
-import { AnonymousGuard } from 'src/app/services/anonymous-guard/anonymous-guard.service';
 import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
-import { CustomHttpHandlersService } from 'src/app/services/custom-http-handlers/custom-http-handlers.service';
 import { EmailSubmissionService } from 'src/app/services/email-submission/email-submission.service';
-import { EmailSubscriptionService } from 'src/app/services/email-subscription/email-subscription.service';
 import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
 import { FacebookService } from 'src/app/services/facebook/facebook.service';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { GoogleApiService } from 'src/app/services/google-api/google-api.service';
+import { HttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
 import { RegularExpressionsService } from 'src/app/services/regular-expressions/regular-expressions.service';
 import { SendEmailService } from 'src/app/services/send-email/send-email.service';
-import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.service';
 import { TwitterService } from 'src/app/services/twitter/twitter.service';
+import { SoundcloudHttpService } from 'src/app/state/soundcloud/soundcloud-http.service';
 import { environment } from 'src/environments/environment';
 
 import { BottomSheetTextDetailsComponent } from './components/bottom-sheet-text-details/bottom-sheet-text-details.component';
-import { AppSpinnerService } from './services';
+import { IndeterminateProgressBarComponent } from './components/progress/indeterminate-progress-bar.component.ts/indeterminate-progress-bar.component';
 import { DnbhubStoreState } from './state/dnbhub-store.state';
+import { HttpProgressStoreModule } from './state/http-progress/http-progress.module';
+import { SoundcloudStoreModule } from './state/soundcloud/soundcloud.module';
 import { UiStoreModule } from './state/ui/ui.module';
+import { APP_ENV, WINDOW } from './utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const entryComponenets: (any[] | Type<any>)[] = [
   AppContactDialog,
   AppLoginDialog,
   BottomSheetTextDetailsComponent,
+  IndeterminateProgressBarComponent,
 ];
 
 /**
@@ -82,6 +85,7 @@ const entryComponenets: (any[] | Type<any>)[] = [
     ImageLoadedDirective,
     MapToIterablePipe,
     BottomSheetTextDetailsComponent,
+    IndeterminateProgressBarComponent,
   ],
   entryComponents: [...entryComponenets],
   imports: [
@@ -102,26 +106,27 @@ const entryComponenets: (any[] | Type<any>)[] = [
     environment.production ? null : NgxsReduxDevtoolsPluginModule.forRoot(),
     environment.production ? null : NgxsLoggerPluginModule.forRoot(),
     UiStoreModule.forRoot(),
+    HttpProgressStoreModule.forRoot(),
+    SoundcloudStoreModule.forRoot(),
     AppRoutingModule,
   ],
   providers: [
     { provide: APP_BASE_HREF, useValue: '/' },
     { provide: LocationStrategy, useClass: PathLocationStrategy },
-    { provide: 'Window', useValue: window },
+    { provide: WINDOW, useValue: window },
+    { provide: APP_ENV, useFactory: () => new AppEnvironmentConfig() },
     CustomDeferredService,
-    CustomHttpHandlersService,
+    HttpHandlersService,
     EventEmitterService,
     SendEmailService,
     EmailSubmissionService,
-    EmailSubscriptionService,
     FirebaseService,
     GoogleApiService,
-    SoundcloudService,
+    SoundcloudHttpService,
     FacebookService,
     TwitterService,
     RegularExpressionsService,
-    AppSpinnerService,
-    AnonymousGuard,
+    AuthenticatedGuard,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent],

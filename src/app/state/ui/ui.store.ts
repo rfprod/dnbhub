@@ -4,7 +4,7 @@ import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { setUiState } from './ui.actions';
 import { IUiStateModel, UiPayload } from './ui.interface';
 
-const uiActions = {
+export const uiActions = {
   setUiState,
 };
 
@@ -13,12 +13,13 @@ const uiActions = {
   defaults: {
     darkThemeEnabled: false,
     sidenavOpened: false,
+    scrollTopValue: 0,
   },
 })
 @Injectable()
-class UiState {
+export class UiState {
   @Selector()
-  public static getUi(state: IUiStateModel) {
+  public static getState(state: IUiStateModel) {
     return state;
   }
 
@@ -32,10 +33,13 @@ class UiState {
     return state.sidenavOpened;
   }
 
+  @Selector()
+  public static getScrollTopValue(state: IUiStateModel) {
+    return state.scrollTopValue;
+  }
+
   @Action(setUiState)
   public setUiState(ctx: StateContext<IUiStateModel>, { payload }: UiPayload) {
     return ctx.patchState(payload);
   }
 }
-
-export { UiState, uiActions };

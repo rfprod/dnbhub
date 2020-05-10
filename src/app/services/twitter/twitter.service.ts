@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
+import { WINDOW } from 'src/app/utils';
 
 const rootId = 'twttr-root';
 const jssdkId = 'twitter-wjs';
@@ -10,7 +11,7 @@ const windowSdkKey = 'twttr';
  */
 @Injectable()
 export class TwitterService {
-  constructor(@Inject('Window') private window: Window) {
+  constructor(@Inject(WINDOW) private window: Window) {
     console.warn('TwitterService constructor');
     this.initTwitterJsSDK();
   }

@@ -11,6 +11,7 @@ import {
 } from '@angular/material-moment-adapter';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
@@ -151,6 +152,7 @@ export const customMaterialModuleProviders: Provider[] = [
     // Popups and modals
     MatDialogModule,
     MatSnackBarModule,
+    MatBottomSheetModule,
     MatTooltipModule,
     // Data table
     MatTableModule,
@@ -205,6 +207,7 @@ export const customMaterialModuleProviders: Provider[] = [
     // Popups and modals
     MatDialogModule,
     MatSnackBarModule,
+    MatBottomSheetModule,
     MatTooltipModule,
     // Data table
     MatTableModule,

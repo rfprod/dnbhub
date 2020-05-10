@@ -12,9 +12,12 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { NgxsFormPluginModule } from '@ngxs/form-plugin';
 import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { NgxsModule } from '@ngxs/store';
+import { AppEnvironmentConfig } from 'src/app/app.environment';
 import { CustomMaterialModule } from 'src/app/modules';
+import { HttpProgressStoreModule } from 'src/app/state/http-progress/http-progress.module';
+import { SoundcloudStoreModule } from 'src/app/state/soundcloud/soundcloud.module';
 import { UiStoreModule } from 'src/app/state/ui/ui.module';
-import { getWindow, WINDOW } from 'src/app/utils';
+import { APP_ENV, getWindow, WINDOW } from 'src/app/utils';
 
 import { DummyComponent } from '../components/dummy.component';
 
@@ -25,6 +28,7 @@ export const mocksCoreModuleProviders: Provider[] = [
   { provide: APP_BASE_HREF, useValue: '/' },
   { provide: LocationStrategy, useClass: PathLocationStrategy },
   { provide: WINDOW, useFactory: getWindow },
+  { provide: APP_ENV, useFactory: () => new AppEnvironmentConfig() },
   {
     provide: OverlayContainer,
     useValue: {
@@ -65,6 +69,8 @@ export const mocksCoreModuleProviders: Provider[] = [
     NgxsFormPluginModule.forRoot(),
     NgxsRouterPluginModule.forRoot(),
     UiStoreModule.forRoot(),
+    HttpProgressStoreModule.forRoot(),
+    SoundcloudStoreModule.forRoot(),
   ],
   declarations: [DummyComponent],
   exports: [

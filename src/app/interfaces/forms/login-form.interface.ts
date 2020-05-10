@@ -1,5 +1,10 @@
 import { AbstractControl, FormGroup } from '@angular/forms';
 
+export interface ILoginFormValue {
+  email: string;
+  password: string;
+}
+
 /**
  * Login form interface.
  */

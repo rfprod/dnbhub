@@ -7,7 +7,8 @@ import { BottomSheetTextDetailsData } from 'src/app/interfaces';
  */
 @Component({
   selector: 'app-bottom-sheet-text-details',
-  templateUrl: 'bottom-sheet-text-details.component.html',
+  templateUrl: './bottom-sheet-text-details.component.html',
+  styleUrls: ['./bottom-sheet-text-details.component.scss'],
 })
 export class BottomSheetTextDetailsComponent {
   /**

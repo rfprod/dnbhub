@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
+import { WINDOW } from 'src/app/utils';
 
 const rootId = 'fb-root';
 const jssdkId = 'facebook-jssdk';
@@ -10,7 +11,7 @@ const windowSdkKey = 'FB';
  */
 @Injectable()
 export class FacebookService {
-  constructor(@Inject('Window') private readonly window: Window) {
+  constructor(@Inject(WINDOW) private readonly window: Window) {
     console.warn('FacebookService constructor');
     this.initFacebookJsSDK();
   }

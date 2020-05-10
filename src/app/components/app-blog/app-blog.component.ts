@@ -6,21 +6,23 @@ import { Store } from '@ngxs/store';
 import { IBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
-import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.service';
 import { DnbhubStoreAction } from 'src/app/state/dnbhub-store.actions';
 import { DnbhubStoreStateModel } from 'src/app/state/dnbhub-store.state';
+import { SoundcloudHttpService } from 'src/app/state/soundcloud/soundcloud-http.service';
+import { EPAGE_SIZE } from 'src/app/utils';
 
 @Component({
   selector: 'app-blog',
   templateUrl: './app-blog.component.html',
+  styleUrls: ['./app-blog.component.scss'],
   host: {
     class: 'mat-body-1',
   },
 })
 export class AppBlogComponent implements OnInit, OnDestroy {
   constructor(
-    private readonly firebaseService: FirebaseService,
-    private readonly soundcloudService: SoundcloudService,
+    private readonly firebase: FirebaseService,
+    private readonly soundcloud: SoundcloudHttpService,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
     private readonly store: Store,
@@ -69,7 +71,7 @@ export class AppBlogComponent implements OnInit, OnDestroy {
    * @param playlistID playlist id
    */
   public widgetLink(playlistID: number): SafeResourceUrl {
-    return Boolean(playlistID) ? this.soundcloudService.widgetLink.playlist(playlistID) : '#';
+    return Boolean(playlistID) ? this.soundcloud.widgetLink.playlist(playlistID) : '#';
   }
 
   /**
@@ -94,8 +96,8 @@ export class AppBlogComponent implements OnInit, OnDestroy {
   private updateBlogPosts(): Promise<any> {
     const def = new CustomDeferredService<any>();
     // limit to last 50 records and show in reverse order by playlist number
-    (this.firebaseService.getDB('blog', true) as DatabaseReference)
-      .limitToLast(50)
+    (this.firebase.getDB('blog', true) as DatabaseReference)
+      .limitToLast(EPAGE_SIZE.MEDIUM)
       .once('value')
       .then(snapshot => {
         console.log('blog', snapshot.val());

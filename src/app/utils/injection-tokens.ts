@@ -1,3 +1,7 @@
 import { InjectionToken } from '@angular/core';
 
-export const WINDOW = new InjectionToken<string>('Window');
+import { AppEnvironmentConfig } from '../app.environment';
+
+export const WINDOW = new InjectionToken<Window>('Window');
+
+export const APP_ENV = new InjectionToken<AppEnvironmentConfig>('APP_ENV');
