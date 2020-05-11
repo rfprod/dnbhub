@@ -14,13 +14,16 @@ import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { AppEnvironmentConfig } from 'src/app/app.environment';
 import { CustomMaterialModule } from 'src/app/modules';
+import { HttpHandlersService } from 'src/app/services';
+import { FirebaseService } from 'src/app/services/firebase/firebase.service';
+import { AboutStoreModule } from 'src/app/state/about/about.module';
 import { BlogStoreModule } from 'src/app/state/blog/blog.module';
 import { HttpProgressStoreModule } from 'src/app/state/http-progress/http-progress.module';
+import { HttpProgressService } from 'src/app/state/http-progress/http-progress.service';
 import { SoundcloudStoreModule } from 'src/app/state/soundcloud/soundcloud.module';
 import { UiStoreModule } from 'src/app/state/ui/ui.module';
 import { APP_ENV, getWindow, WINDOW } from 'src/app/utils';
 
-import { AboutStoreModule } from '../../state/about/about.module';
 import { DummyComponent } from '../components/dummy.component';
 
 /**
@@ -32,6 +35,16 @@ export const mocksCoreModuleProviders: Provider[] = [
   { provide: WINDOW, useFactory: getWindow },
   { provide: APP_ENV, useFactory: () => new AppEnvironmentConfig() },
   {
+    provide: HttpHandlersService,
+    useFactory: (progress: HttpProgressService, snackbar: MatSnackBar) =>
+      new HttpHandlersService(progress, snackbar),
+    deps: [HttpProgressService, MatSnackBar],
+  },
+  {
+    provide: FirebaseService,
+    useValue: {},
+  },
+  {
     provide: OverlayContainer,
     useValue: {
       getContainerElement: () => {
@@ -40,6 +53,7 @@ export const mocksCoreModuleProviders: Provider[] = [
             add: (): void => null,
             remove: (): void => null,
           },
+          appendChild: (): void => null,
         };
       },
     },
@@ -88,6 +102,11 @@ export const mocksCoreModuleProviders: Provider[] = [
     CustomMaterialModule,
     NgxsModule,
     NgxsFormPluginModule,
+    UiStoreModule,
+    HttpProgressStoreModule,
+    SoundcloudStoreModule,
+    BlogStoreModule,
+    AboutStoreModule,
     DummyComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

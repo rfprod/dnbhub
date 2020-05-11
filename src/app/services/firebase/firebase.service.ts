@@ -16,7 +16,9 @@ import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-d
 /**
  * Firebase service, uses Angular Fire.
  */
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class FirebaseService {
   constructor(
     private readonly fireDb: AngularFireDatabase,

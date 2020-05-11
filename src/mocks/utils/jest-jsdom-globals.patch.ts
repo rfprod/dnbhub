@@ -77,6 +77,13 @@ export const setupJestJsdomGlobalMocks: () => void = () => {
     writable: false,
   });
 
+  Object.defineProperty(global, 'SC', {
+    value: {
+      initialize: () => null,
+    },
+    writable: true,
+  });
+
   /**
    * Override some console methods for testing environment.
    */
