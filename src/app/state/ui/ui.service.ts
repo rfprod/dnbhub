@@ -1,7 +1,9 @@
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { Injectable } from '@angular/core';
+import { DateAdapter } from '@angular/material/core';
 import { Store } from '@ngxs/store';
 import { concatMap, tap } from 'rxjs/operators';
+import { ESUPPORTED_LANGUAGE_KEY, TranslateService } from 'src/app/modules';
 
 import { IUiService } from './ui.interface';
 import { uiActions, UiState } from './ui.store';
@@ -10,9 +12,16 @@ import { uiActions, UiState } from './ui.store';
   providedIn: 'root',
 })
 export class UiService implements IUiService {
-  constructor(private readonly store: Store, private readonly overlayContainer: OverlayContainer) {}
+  constructor(
+    private readonly store: Store,
+    private readonly overlayContainer: OverlayContainer,
+    private readonly dateAdapter: DateAdapter<Date>,
+    private readonly translate: TranslateService,
+  ) {}
 
   public readonly darkThemeEnabled$ = this.store.select(UiState.getDarkThemeEnabled);
+
+  public readonly language$ = this.store.select(UiState.getLanguage);
 
   public readonly sidenavOpened$ = this.store.select(UiState.getSidenavOpened);
 
@@ -52,6 +61,16 @@ export class UiService implements IUiService {
     return this.store.selectOnce(UiState.getSidenavOpened).pipe(
       concatMap(sidenavOpened => {
         return sidenavOpened ? this.closeSidenav() : this.openSidenav();
+      }),
+    );
+  }
+
+  public selectLanguage(language: ESUPPORTED_LANGUAGE_KEY) {
+    return this.store.selectOnce(UiState.getLanguage).pipe(
+      concatMap(_ => this.store.dispatch(new uiActions.setUiState({ language }))),
+      tap(_ => {
+        this.translate.use(language);
+        this.dateAdapter.setLocale(language);
       }),
     );
   }

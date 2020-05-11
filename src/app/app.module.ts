@@ -36,7 +36,6 @@ import { TranslateModule } from 'src/app/modules/translate/index';
 import { MapToIterablePipe } from 'src/app/pipes/map-to-iterable/map-to-iterable.pipe';
 import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
 import { EmailSubmissionService } from 'src/app/services/email-submission/email-submission.service';
-import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
 import { FacebookService } from 'src/app/services/facebook/facebook.service';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { GoogleApiService } from 'src/app/services/google-api/google-api.service';
@@ -122,7 +121,6 @@ const entryComponenets: (any[] | Type<any>)[] = [
     { provide: APP_ENV, useFactory: () => new AppEnvironmentConfig() },
     CustomDeferredService,
     HttpHandlersService,
-    EventEmitterService,
     SendEmailService,
     EmailSubmissionService,
     FirebaseService,

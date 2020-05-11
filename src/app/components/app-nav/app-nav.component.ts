@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { AppLoginDialog } from 'src/app/components/app-login/app-login.component';
 import {
+  ESUPPORTED_LANGUAGE_KEY,
   ISupportedLanguage,
   supportedLanguages,
-  TranslateService,
 } from 'src/app/modules/translate/index';
-import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
+import { UiService } from 'src/app/state/ui/ui.service';
 
 /**
  * Application navigation component.
@@ -25,12 +25,13 @@ import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 export class AppNavComponent {
   public readonly anonUser$ = this.firebase.anonUser$;
 
+  public readonly language$ = this.ui.language$;
+
   constructor(
-    private readonly emitter: EventEmitterService,
     private readonly router: Router,
     private readonly dialog: MatDialog,
-    private readonly translate: TranslateService,
     private readonly firebase: FirebaseService,
+    private readonly ui: UiService,
   ) {}
 
   /**
@@ -39,30 +40,17 @@ export class AppNavComponent {
   public supportedLanguages: ISupportedLanguage[] = [...supportedLanguages];
 
   /**
-   * Selects language by key.
+   * Selects language.
    */
-  public selectLanguage(key: string): void {
-    this.emitter.emitEvent({ lang: key });
-  }
-
-  /**
-   * Returns if current language is selected.
-   */
-  public isLanguageSelected(key: string): boolean {
-    return key === this.translate.currentLanguage;
+  public selectLanguage(key: ESUPPORTED_LANGUAGE_KEY): void {
+    this.ui.selectLanguage(key).subscribe();
   }
 
   /**
    * Calls auth dialog.
    */
   public showAuthDialog(): void {
-    console.warn('TODO:client show auth dialog');
-    const dialogRef: MatDialogRef<AppLoginDialog> = this.dialog.open(AppLoginDialog, {
-      data: {},
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      console.warn('AppLoginDialog closed with result', result);
-    });
+    this.dialog.open(AppLoginDialog);
   }
 
   /**

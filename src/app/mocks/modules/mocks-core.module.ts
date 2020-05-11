@@ -14,6 +14,7 @@ import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { AppEnvironmentConfig } from 'src/app/app.environment';
 import { CustomMaterialModule } from 'src/app/modules';
+import { TranslateModule } from 'src/app/modules/translate/translate.module';
 import { HttpHandlersService } from 'src/app/services';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { AboutStoreModule } from 'src/app/state/about/about.module';
@@ -81,6 +82,7 @@ export const mocksCoreModuleProviders: Provider[] = [
     ReactiveFormsModule,
     FlexLayoutModule,
     CustomMaterialModule.forRoot(),
+    TranslateModule.forRoot(),
     NgxsModule.forRoot(),
     NgxsFormPluginModule.forRoot(),
     NgxsRouterPluginModule.forRoot(),

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { ESUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate/translations.interface';
 
 import { setUiState } from './ui.actions';
 import { IUiStateModel, UiPayload } from './ui.interface';
@@ -12,6 +13,7 @@ export const uiActions = {
   name: 'ui',
   defaults: {
     darkThemeEnabled: false,
+    language: ESUPPORTED_LANGUAGE_KEY.ENGLISH,
     sidenavOpened: false,
   },
 })
@@ -25,6 +27,11 @@ export class UiState {
   @Selector()
   public static getDarkThemeEnabled(state: IUiStateModel) {
     return state.darkThemeEnabled;
+  }
+
+  @Selector()
+  public static getLanguage(state: IUiStateModel) {
+    return state.language;
   }
 
   @Selector()

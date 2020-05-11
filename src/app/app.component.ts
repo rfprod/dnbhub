@@ -1,17 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
-import { DateAdapter } from '@angular/material/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import {
-  ISupportedLanguage,
-  supportedLanguages,
-  TranslateService,
-} from 'src/app/modules/translate/index';
-import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
+import { ESUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate/index';
 
 import { UiService } from './state/ui/ui.service';
 import { UiState } from './state/ui/ui.store';
@@ -40,12 +34,9 @@ export class AppComponent implements OnInit {
 
   constructor(
     private readonly matIconRegistry: MatIconRegistry,
-    private readonly dateAdapter: DateAdapter<Date>,
     private readonly domSanitizer: DomSanitizer,
-    private readonly emitter: EventEmitterService,
-    private readonly translate: TranslateService,
     private readonly media: MediaObserver,
-    private readonly uiService: UiService,
+    private readonly ui: UiService,
     @Inject(WINDOW) private readonly window: Window,
   ) {}
 
@@ -53,24 +44,7 @@ export class AppComponent implements OnInit {
    * Updates store when sidebar is closed.
    */
   public sidebarCloseHandler(): void {
-    void this.uiService.closeSidenav().subscribe();
-  }
-
-  /**
-   * Checks if selected one is a current language.
-   */
-  private isCurrentLanguage(key: string): boolean {
-    return key === this.translate.currentLanguage;
-  }
-
-  /**
-   * Selects language.
-   */
-  private selectLanguage(key: string): void {
-    if (!this.isCurrentLanguage(key)) {
-      this.translate.use(key); // set current language
-      this.setDatepickersLocale(key); // set datepickers locale
-    }
+    void this.ui.closeSidenav().subscribe();
   }
 
   /**
@@ -82,21 +56,11 @@ export class AppComponent implements OnInit {
    */
   private setPreferredLanguage(): void {
     const nav = this.window.navigator;
-    const userPreference: string =
-      nav.language === 'ru-RU' || nav.language === 'ru' || nav.languages[0] === 'ru' ? 'ru' : 'en';
-    this.selectLanguage(userPreference); // set default language
-  }
-
-  /**
-   * Sets datepickers locale.
-   * Supported languages: en, ru.
-   */
-  private setDatepickersLocale(key: string): void {
-    if (key === 'ru') {
-      this.dateAdapter.setLocale('ru');
-    } else {
-      this.dateAdapter.setLocale('en');
-    }
+    const userPreference =
+      nav.language === 'ru-RU' || nav.language === 'ru' || nav.languages[0] === 'ru'
+        ? ESUPPORTED_LANGUAGE_KEY.RUSSIAN
+        : ESUPPORTED_LANGUAGE_KEY.ENGLISH;
+    this.ui.selectLanguage(userPreference).subscribe();
   }
 
   /**
@@ -172,31 +136,8 @@ export class AppComponent implements OnInit {
       });
   }
 
-  /**
-   * Subscribes to event emitter events.
-   */
-  public eventEmitterSubscribe(): void {
-    this.emitter
-      .getEmitter()
-      .pipe(untilDestroyed(this))
-      .subscribe((event: { lang: string }) => {
-        if (Boolean(event.lang)) {
-          const supportedLanguage = Boolean(
-            supportedLanguages.filter((item: ISupportedLanguage) => item.key === event.lang).length,
-          );
-          if (supportedLanguage) {
-            this.selectLanguage(event.lang);
-          } else {
-            console.error('AppComponent, selected language is not supported');
-          }
-        }
-      });
-  }
-
   public ngOnInit(): void {
     this.removeUIinit();
-
-    this.eventEmitterSubscribe();
 
     this.setPreferredLanguage();
 
