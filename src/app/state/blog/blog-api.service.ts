@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { from } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -15,7 +15,7 @@ import { blogActions } from './blog.store';
 @Injectable({
   providedIn: 'root',
 })
-export class BlogApiService {
+export class BlogApiService implements OnDestroy {
   constructor(
     private readonly handlers: HttpHandlersService,
     private readonly firebase: FirebaseService,
@@ -42,5 +42,9 @@ export class BlogApiService {
         this.store.dispatch(new blogActions.setBlogState({ posts }));
       }),
     );
+  }
+
+  public ngOnDestroy() {
+    (this.firebase.getDB('blog', true) as firebase.database.Reference).off();
   }
 }

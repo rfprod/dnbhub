@@ -50,8 +50,8 @@ import { environment } from 'src/environments/environment';
 import { AppToolbarComponent } from './components/app-toolbar/app-toolbar.component';
 import { BottomSheetTextDetailsComponent } from './components/bottom-sheet-text-details/bottom-sheet-text-details.component';
 import { IndeterminateProgressBarComponent } from './components/progress/indeterminate-progress-bar.component.ts/indeterminate-progress-bar.component';
+import { AboutStoreModule } from './state/about/about.module';
 import { BlogStoreModule } from './state/blog/blog.module';
-import { DnbhubStoreState } from './state/dnbhub-store.state';
 import { HttpProgressStoreModule } from './state/http-progress/http-progress.module';
 import { SoundcloudStoreModule } from './state/soundcloud/soundcloud.module';
 import { UiStoreModule } from './state/ui/ui.module';
@@ -103,7 +103,7 @@ const entryComponenets: (any[] | Type<any>)[] = [
     AngularFireModule.initializeApp(ENV.firebase, 'dnbhub-a5d9c'),
     AngularFireDatabaseModule,
     AngularFireAuthModule,
-    NgxsModule.forRoot([DnbhubStoreState], { developmentMode: !environment.production }),
+    NgxsModule.forRoot([], { developmentMode: !environment.production }),
     NgxsRouterPluginModule.forRoot(),
     NgxsFormPluginModule.forRoot(),
     environment.production ? null : NgxsReduxDevtoolsPluginModule.forRoot(),
@@ -112,6 +112,7 @@ const entryComponenets: (any[] | Type<any>)[] = [
     HttpProgressStoreModule.forRoot(),
     SoundcloudStoreModule.forRoot(),
     BlogStoreModule.forRoot(),
+    AboutStoreModule.forRoot(),
     AppRoutingModule,
   ],
   providers: [

@@ -11,17 +11,16 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject, combineLatest, timer } from 'rxjs';
-import { concatMap, map, tap } from 'rxjs/operators';
-import {
-  IEventTargetWithPosition,
-  IEventWithPosition,
-  SoundcloudPlaylist,
-} from 'src/app/interfaces/index';
+import { BehaviorSubject, combineLatest, of, timer } from 'rxjs';
+import { concatMap, first, map, takeWhile, tap } from 'rxjs/operators';
+import { IEventTargetWithPosition, IEventWithPosition } from 'src/app/interfaces/index';
+import { ISoundcloudPlayer } from 'src/app/interfaces/soundcloud/soundcloud-player.interface';
 import { SoundcloudTrack } from 'src/app/interfaces/soundcloud/soundcloud-track.config';
-import { SoundcloudApiService } from 'src/app/state/soundcloud/soundcloud-api.service';
+import { HttpProgressState } from 'src/app/state/http-progress/http-progress.store';
 import { SoundcloudState } from 'src/app/state/soundcloud/soundcloud.store';
 import { ETIMEOUT, WINDOW } from 'src/app/utils';
+
+import { SoundcloudService } from '../../state/soundcloud/soundcloud.service';
 
 const renderPlaylistTracksDefault = 15;
 const renderPlaylistTracksIncrement = 25;
@@ -104,9 +103,11 @@ export class SoundcloudPlayerComponent implements OnChanges, OnDestroy {
    */
   @Input('playlistId') private playlistId: string | number = this.defaultConfig.playlist.everything;
 
+  private readonly loading$ = this.store.select(HttpProgressState.mainViewProgress);
+
   constructor(
     private readonly store: Store,
-    private readonly soundcloud: SoundcloudApiService,
+    private readonly soundcloud: SoundcloudService,
     @Inject(WINDOW) private readonly window: Window,
   ) {}
 
@@ -144,14 +145,14 @@ export class SoundcloudPlayerComponent implements OnChanges, OnDestroy {
   private readonly noMoreTracks = new BehaviorSubject<boolean>(false);
 
   /**
-   * Loading indicator, so that more tracks loading happens sequentially.
-   */
-  private readonly loading = new BehaviorSubject<boolean>(false);
-
-  /**
    * Current Soundcloud player object.
    */
-  public player: any;
+  public player: ISoundcloudPlayer;
+
+  /**
+   * Waveform progress timer.
+   */
+  private readonly waveformProgressTimer$ = timer(0, ETIMEOUT.SHORT);
 
   /**
    * Selects a track.
@@ -170,39 +171,39 @@ export class SoundcloudPlayerComponent implements OnChanges, OnDestroy {
   /**
    * Loads more soundcloud tracks.
    */
-  private loadMoreTracks(): void {
-    if (!this.noMoreTracks.value && !this.loading.value) {
-      this.loading.next(true);
-      if (/(dnbhub|user)/.test(this.mode)) {
-        this.soundcloud.getUserTracks(this.userId).then(
-          data => {
-            if (!Boolean(data.collection.length)) {
-              this.noMoreTracks.next(true);
+  private loadMoreTracks() {
+    this.loading$
+      .pipe(
+        first(),
+        concatMap(loading => {
+          if (!this.noMoreTracks.value && !loading) {
+            if (/(dnbhub|user)/.test(this.mode)) {
+              return this.soundcloud.getTracks(this.userId).pipe(
+                tap(data => {
+                  if (!Boolean(data.next_href)) {
+                    this.noMoreTracks.next(true);
+                  }
+                }),
+              );
+            } else if (
+              /(pl\-everything|pl\-reposts1|pl\-reposts2|pl\-freedownloads|pl\-samplepacks|playlist)/.test(
+                this.mode,
+              )
+            ) {
+              return this.soundcloud.getPlaylist(this.playlistId).pipe(
+                tap(_ => {
+                  this.noMoreTracks.next(true);
+                }),
+              );
             }
-            this.loading.next(false);
-          },
-          error => {
-            this.loading.next(false);
-          },
-        );
-      } else if (
-        /(pl\-everything|pl\-reposts1|pl\-reposts2|pl\-freedownloads|pl\-samplepacks|playlist)/.test(
-          this.mode,
-        )
-      ) {
-        this.soundcloud.getPlaylist(this.playlistId).then(
-          (playlist: SoundcloudPlaylist) => {
-            this.noMoreTracks.next(true);
-            this.loading.next(false);
-          },
-          error => {
-            this.loading.next(false);
-          },
-        );
-      }
-    } else if (/(pl\-|playlist)/.test(this.mode)) {
-      this.renderMorePlaylistTracks();
-    }
+          } else if (/(pl\-|playlist)/.test(this.mode)) {
+            this.renderMorePlaylistTracks();
+            return of();
+          }
+          return of();
+        }),
+      )
+      .subscribe();
   }
 
   /**
@@ -218,7 +219,7 @@ export class SoundcloudPlayerComponent implements OnChanges, OnDestroy {
    */
   public playbackInProgress(): boolean {
     if (Boolean(this.player)) {
-      return Boolean(this.player.isActuallyPlaying()) ? true : false;
+      return Boolean(this.player.isActuallyPlaying());
     }
     return false;
   }
@@ -248,46 +249,50 @@ export class SoundcloudPlayerComponent implements OnChanges, OnDestroy {
       this.soundcloud
         .streamTrack(track.id)
         .pipe(
-          tap(player => {
-            console.warn('soundcloud.streamTrack, player: ', player);
+          tap((player: ISoundcloudPlayer) => {
+            // debug player here
             this.player = player;
+            this.player.play();
           }),
           concatMap(_ => timer(ETIMEOUT.SHORT).pipe()),
           tap(_ => {
-            this.player.play();
-            this.reportWaveformProgress();
+            this.reportWaveformProgress().subscribe();
           }),
         )
         .subscribe();
     } else if (Boolean(this.player.isActuallyPlaying())) {
       this.player.pause();
-      clearInterval(this.waveformProgressInterval);
     } else {
       this.player.play();
-      this.reportWaveformProgress();
+      this.reportWaveformProgress().subscribe();
     }
   }
 
   /**
-   * Waveform progress interval.
+   * Renders waveform progress in UI.
    */
-  private waveformProgressInterval: any;
-
-  /**
-   * Reports waveform progress to UI.
-   */
-  public reportWaveformProgress(): void {
-    this.waveformProgressInterval = setInterval(() => {
-      const visibleWaveform: ElementRef = new ElementRef(
-        this.window.document.getElementsByClassName('waveform')[0],
-      );
-      const visibleWaveformElement: HTMLElement = visibleWaveform.nativeElement;
-      const playbackProgress: number = Math.floor(
-        (this.player.currentTime() * 100) / this.player.getDuration(),
-      );
-      const nextVal = playbackProgress + 1;
-      visibleWaveformElement.style.background = `linear-gradient(to right, rgba(171,71,188,1) 0%,rgba(171,71,188,1) ${playbackProgress}%, rgba(30,87,153,0) ${nextVal}%, rgba(30,87,153,0) 100%)`;
-    }, 1000);
+  public reportWaveformProgress() {
+    return this.waveformProgressTimer$.pipe(
+      tap(_ => {
+        const visibleWaveform: ElementRef = new ElementRef(
+          this.window.document.getElementsByClassName('waveform')[0],
+        );
+        const visibleWaveformElement: HTMLElement = visibleWaveform.nativeElement;
+        const dividend = 100;
+        const playbackProgress: number = Math.floor(
+          (this.player.currentTime() * dividend) / this.player.getDuration(),
+        );
+        const nextVal = playbackProgress + 1;
+        visibleWaveformElement.style.background = `linear-gradient(to right, rgba(171,71,188,1) 0%,rgba(171,71,188,1) ${playbackProgress}%, rgba(30,87,153,0) ${nextVal}%, rgba(30,87,153,0) 100%)`;
+      }),
+      takeWhile(
+        () =>
+          this.player &&
+          this.player.isActuallyPlaying() &&
+          !this.player.isDead() &&
+          !this.player.isEnded(),
+      ),
+    );
   }
 
   /**
@@ -295,14 +300,14 @@ export class SoundcloudPlayerComponent implements OnChanges, OnDestroy {
    * @param event waveform click event
    */
   public waveformClick(event: IEventWithPosition): void {
-    console.log('waveformClick, event', event);
     const srcElement = event.srcElement as IEventTargetWithPosition;
     const waveformWidth: number = srcElement.clientWidth;
     const offsetX: number = event.offsetX;
-    const percent: number = (offsetX * 100) / waveformWidth;
-    const newProgress: number = (this.player.getDuration() * percent) / 100;
-    this.player.seek(newProgress).then((data: any) => {
-      console.warn('player seek success', data);
+    const dividend = 100;
+    const percent: number = (offsetX * dividend) / waveformWidth;
+    const newProgress: number = (this.player.getDuration() * percent) / dividend;
+    void this.player.seek(newProgress).then(result => {
+      console.warn('player seek success', result);
     });
   }
 
@@ -315,41 +320,61 @@ export class SoundcloudPlayerComponent implements OnChanges, OnDestroy {
   private resetPlayer(onlyProgress?: boolean): void {
     if (!onlyProgress) {
       this.playerKill();
-      this.soundcloud.resetServiceData();
+      this.soundcloud.resetData();
       this.noMoreTracks.next(false);
-      this.loading.next(false);
       this.renderPlaylistTracks.next(renderPlaylistTracksDefault);
     }
-    clearInterval(this.waveformProgressInterval);
+  }
+
+  /**
+   * Should be used in ngOnChanges handler.
+   * @param changes input changes
+   */
+  private modeChangeHandler(changes: ISoundcloudPlayerChanges): void {
+    if (changes.mode.currentValue === 'dnbhub') {
+      this.resetPlayer();
+      this.userId = this.defaultConfig.user.dnbhub;
+      this.loadMoreTracks();
+    } else if (/pl\-/.test(changes.mode.currentValue)) {
+      this.resetPlayer();
+      const prefixLength = 3;
+      const playlistKey = (changes.mode.currentValue as TSoundcloudPlayerMode).slice(prefixLength);
+      this.playlistId = this.defaultConfig.playlist[playlistKey];
+      this.loadMoreTracks();
+    }
+  }
+
+  /**
+   * Should be used in ngOnChanges handler.
+   * @param changes input changes
+   */
+  private userIdChangeHandler(changes: ISoundcloudPlayerChanges): void {
+    if (this.mode === 'user' && Boolean(changes.userId.currentValue)) {
+      this.resetPlayer();
+      this.userId = changes.userId.currentValue;
+      this.loadMoreTracks();
+    }
+  }
+
+  /**
+   * Should be used in ngOnChanges handler.
+   * @param changes input changes
+   */
+  private playlistIdChangeHandler(changes: ISoundcloudPlayerChanges): void {
+    if (this.mode === 'playlist' && Boolean(changes.playlistId.currentValue)) {
+      this.resetPlayer();
+      this.playlistId = changes.playlistId.currentValue;
+      this.loadMoreTracks();
+    }
   }
 
   public ngOnChanges(changes: ISoundcloudPlayerChanges): void {
-    if (changes.mode) {
-      if (changes.mode.currentValue === 'dnbhub') {
-        this.resetPlayer();
-        this.userId = this.defaultConfig.user.dnbhub;
-        this.loadMoreTracks();
-      } else if (/pl\-/.test(changes.mode.currentValue)) {
-        this.resetPlayer();
-        const prefixLength = 3;
-        const playlistKey = (changes.mode.currentValue as TSoundcloudPlayerMode).slice(
-          prefixLength,
-        );
-        this.playlistId = this.defaultConfig.playlist[playlistKey];
-        this.loadMoreTracks();
-      }
+    if (changes.mode && !changes.playlistId && !changes.userId) {
+      this.modeChangeHandler(changes);
     } else if (changes.userId) {
-      if (this.mode === 'user' && Boolean(changes.userId.currentValue)) {
-        this.resetPlayer();
-        this.userId = changes.userId.currentValue;
-        this.loadMoreTracks();
-      }
+      this.userIdChangeHandler(changes);
     } else if (changes.playlistId) {
-      if (this.mode === 'playlist' && Boolean(changes.playlistId.currentValue)) {
-        this.resetPlayer();
-        this.playlistId = changes.playlistId.currentValue;
-        this.loadMoreTracks();
-      }
+      this.playlistIdChangeHandler(changes);
     }
   }
 
@@ -357,6 +382,10 @@ export class SoundcloudPlayerComponent implements OnChanges, OnDestroy {
     this.resetPlayer();
   }
 
+  /**
+   * Host element scroll listener.
+   * @param event scroll event
+   */
   @HostListener('scroll', ['$event'])
   public scrollHandler(event: Event): void {
     const target = event.target as IEventTargetWithPosition;

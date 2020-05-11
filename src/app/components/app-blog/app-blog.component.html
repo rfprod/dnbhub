@@ -2,7 +2,7 @@
   fxFlex="100"
   fxLayout="column"
   fxLayoutGap="10px"
-  *ngIf="(posts$ | async).length && selectedBlogPost$ | async as selectedBlogPost"
+  *ngIf="(posts$ | async) && selectedBlogPost$ | async as selectedBlogPost"
 >
   <h4 fxFlex="0 1 auto" fxLayout="row" fxLayoutAlign="center center">
     <button

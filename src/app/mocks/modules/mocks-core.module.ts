@@ -20,6 +20,7 @@ import { SoundcloudStoreModule } from 'src/app/state/soundcloud/soundcloud.modul
 import { UiStoreModule } from 'src/app/state/ui/ui.module';
 import { APP_ENV, getWindow, WINDOW } from 'src/app/utils';
 
+import { AboutStoreModule } from '../../state/about/about.module';
 import { DummyComponent } from '../components/dummy.component';
 
 /**
@@ -73,6 +74,7 @@ export const mocksCoreModuleProviders: Provider[] = [
     HttpProgressStoreModule.forRoot(),
     SoundcloudStoreModule.forRoot(),
     BlogStoreModule.forRoot(),
+    AboutStoreModule.forRoot(),
   ],
   declarations: [DummyComponent],
   exports: [

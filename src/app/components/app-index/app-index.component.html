@@ -1,12 +1,19 @@
-<div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start start">
+<div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start stretch">
   <app-soundcloud-player fxFlex fxShow fxHide.lt-md [mode]="'dnbhub'"></app-soundcloud-player>
 
-  <div fxFlex="40" fxFlex.lt-md="100">
+  <div
+    fxFlex="40"
+    fxFlex.lt-md="100"
+    [ngStyle]="{ 'overflow-y': 'auto', height: '100%', 'max-height': '100%' }"
+    fxLayout="row"
+    fxLayoutAlign="start stretch"
+  >
     <a
       fxFlex
       class="twitter-timeline"
       data-tweet-limit="50"
       width="100%"
+      height="100%"
       data-chrome="noheader noborders nofooter noscrollbar transparent"
       data-show-replies="false"
       data-dnt="true"

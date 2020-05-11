@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Store } from '@ngxs/store';
-import { from, Observable } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AppEnvironmentConfig } from 'src/app/app.environment';
 import {
@@ -15,10 +15,9 @@ import {
   SoundcloudTrack,
   SoundcloudTracksLinkedPartitioning,
 } from 'src/app/interfaces/index';
-import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
 import { HttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
+import { APP_ENV } from 'src/app/utils/injection-tokens';
 
-import { APP_ENV } from '../../utils/injection-tokens';
 import { soundcloudActions } from './soundcloud.store';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -97,26 +96,20 @@ export class SoundcloudApiService implements OnDestroy {
       me: SoundcloudMe;
       playlists: SoundcloudPlaylist[];
     };
-    tracks: SoundcloudTracksLinkedPartitioning;
-    playlist: SoundcloudPlaylist;
+    tracksLinkedPartNextHref: string;
   } = {
     user: {
       me: new SoundcloudMe(),
       playlists: [],
     },
-    tracks: new SoundcloudTracksLinkedPartitioning(),
-    playlist: new SoundcloudPlaylist(),
+    tracksLinkedPartNextHref: null,
   };
-
-  /**
-   * Indicates that there's no more tracks to load.
-   */
-  private noMoreTracks = false;
 
   /**
    * Soundcloud initialization.
    */
   private init(): void {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return SC.initialize(this.options);
   }
 
@@ -139,36 +132,28 @@ export class SoundcloudApiService implements OnDestroy {
    * May be useful later, for now is not used.
    */
   public resetServiceData(): void {
-    this.data.user.me = new SoundcloudMe();
-    this.data.user.playlists = [];
-    this.data.tracks = new SoundcloudTracksLinkedPartitioning();
-    this.data.playlist = new SoundcloudPlaylist();
-    this.noMoreTracks = false;
+    this.data.user.me = new SoundcloudMe(); // TODO: this should be removed
+    this.data.user.playlists = []; // TODO: this should be removed
+    this.data.tracksLinkedPartNextHref = null;
   }
 
   /**
    * Processes received tracks collection. Saves data to local shared model.
    * Returns full processed collection.
    */
-  private processTracksCollection(data: SoundcloudTracksLinkedPartitioning): any[] {
-    const processedTracks = data.collection.map((track: SoundcloudTrack) => {
+  private processTracksCollection(
+    data: SoundcloudTracksLinkedPartitioning,
+  ): SoundcloudTracksLinkedPartitioning {
+    const collection = data.collection.map((track: SoundcloudTrack) => {
       track.description = this.processDescription(track.description);
       return track;
     });
-    // console.warn('processedTracks', processedTracks);
-    // console.warn('this.data.tracks.collection', this.data.tracks.collection);
-    const previousCollectionLength: number = this.data.tracks.collection.length;
-    for (const track of processedTracks) {
-      if (!this.data.tracks.collection.filter((item: any) => item.id === track.id).length) {
-        this.data.tracks.collection.push(track);
-      }
-    }
-    // console.warn('this.data.tracks.collection pushed', this.data.tracks.collection);
-    if (previousCollectionLength === this.data.tracks.collection.length) {
-      this.noMoreTracks = true;
-    }
-    this.data.tracks.next_href = data.next_href;
-    return processedTracks;
+    this.data.tracksLinkedPartNextHref = data.next_href;
+    const processedLinkedPartitioning = new SoundcloudTracksLinkedPartitioning(
+      collection,
+      data.next_href,
+    );
+    return processedLinkedPartitioning;
   }
 
   /**
@@ -198,71 +183,63 @@ export class SoundcloudApiService implements OnDestroy {
 
   /**
    * Gets user tracks.
-   * Performs initial request if data.tracks.next_href is falsy.
-   * Calls getTracksNextHref if data.tracks.next_href is truthy.
+   * Performs initial request if data.tracksLinkedPartNextHref is falsy.
+   * Calls getTracksNextHref if data.tracksLinkedPartNextHref is truthy.
    * @param userId Soundcloud user id
    */
-  public getUserTracks(userId: string | number): Promise<SoundcloudTracksLinkedPartitioning> {
-    const def: CustomDeferredService<any> = new CustomDeferredService<any>();
-    if (this.noMoreTracks) {
-      // don't waste bandwidth, there's no more tracks
-      console.warn('Soundcloud service: no more tracks');
-      def.resolve([]);
-    } else if (!Boolean(this.data.tracks.next_href)) {
+  public getUserTracks(userId: string | number): Observable<SoundcloudTracksLinkedPartitioning> {
+    let observable = of(new SoundcloudTracksLinkedPartitioning());
+    if (!Boolean(this.data.tracksLinkedPartNextHref)) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      SC.get(`/users/${userId}/tracks`, { linked_partitioning: 1 })
+      const promise: Promise<SoundcloudTracksLinkedPartitioning> = SC.get(
+        `/users/${userId}/tracks`,
+        {
+          linked_partitioning: 1,
+        },
+      )
         .then((data: SoundcloudTracksLinkedPartitioning) => {
           console.warn('getUserTracks, data', data);
-          this.data.tracks.next_href = data.next_href;
-          const collection = this.processTracksCollection(data);
-          const tracks = new SoundcloudTracksLinkedPartitioning(collection, data.next_href);
-          this.store.dispatch(new soundcloudActions.setSoundcloudState({ tracks }));
-          def.resolve(tracks);
+          this.data.tracksLinkedPartNextHref = data.next_href;
+          const tracks = this.processTracksCollection(data);
+          return tracks;
         })
-        .catch((error: any) => def.reject(error));
+        .catch(error => error);
+      observable = from(promise);
     } else {
-      this.getTracksNextHref().then(() => {
-        this.store.dispatch(new soundcloudActions.setSoundcloudState({ tracks: this.data.tracks }));
-        def.resolve(this.data.tracks);
-      });
+      observable = this.getTracksNextHref();
     }
-    return def.promise;
+    return this.handlers.pipeHttpRequest(observable);
   }
 
   /**
    * Gets user tracks when initial request was already made, and next_href is present in this.data.tracks.
    */
-  public getTracksNextHref(): Promise<SoundcloudTrack[]> {
+  public getTracksNextHref(): Observable<SoundcloudTracksLinkedPartitioning> {
     return this.handlers
       .pipeHttpRequest<SoundcloudTracksLinkedPartitioning>(
-        this.http.get<SoundcloudTracksLinkedPartitioning>(this.data.tracks.next_href),
+        this.http.get<SoundcloudTracksLinkedPartitioning>(this.data.tracksLinkedPartNextHref),
       )
-      .pipe(map(data => this.processTracksCollection(data)))
-      .toPromise();
+      .pipe(map(tracksLinkedPart => this.processTracksCollection(tracksLinkedPart)));
   }
 
   /**
    * Gets soundcloud playlist.
    * @param playlistId Soundcloud playlist id
    */
-  public getPlaylist(playlistId: string | number): Promise<SoundcloudPlaylist> {
-    const def: CustomDeferredService<any> = new CustomDeferredService<any>();
+  public getPlaylist(playlistId: string | number): Observable<SoundcloudPlaylist> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    SC.get(`/playlists/${playlistId}`)
+    const promise: Promise<SoundcloudPlaylist> = SC.get(`/playlists/${playlistId}`)
       .then((playlist: SoundcloudPlaylist) => {
         playlist.description = this.processDescription(playlist.description);
         playlist.tracks = playlist.tracks.map((track: SoundcloudTrack) => {
           track.description = this.processDescription(track.description);
           return track;
         });
-        this.store.dispatch(
-          new soundcloudActions.setSoundcloudState({ playlist: new SoundcloudPlaylist() }),
-        );
-        this.store.dispatch(new soundcloudActions.setSoundcloudState({ playlist }));
-        def.resolve(playlist);
+        return playlist;
       })
-      .catch(error => def.reject(error));
-    return def.promise;
+      .catch(error => error);
+    const observable = from(promise);
+    return this.handlers.pipeHttpRequest(observable);
   }
 
   /**
@@ -303,6 +280,7 @@ export class SoundcloudApiService implements OnDestroy {
    * @param trackId Soundcloud track id
    */
   public streamTrack(trackId: string | number): Observable<unknown> {
+    // TODO type
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const promise = SC.stream(`/tracks/${trackId}`);
     return from(promise);

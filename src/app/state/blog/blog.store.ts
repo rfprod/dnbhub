@@ -43,12 +43,12 @@ export class BlogState {
 
   @Selector()
   public static listStartReached(state: IBlogStateModel) {
-    return state.selectedPostId === 0;
+    return state.selectedPostId === state.posts.length - 1;
   }
 
   @Selector()
   public static listEndReached(state: IBlogStateModel) {
-    return state.selectedPostId === state.posts.length - 1;
+    return state.selectedPostId === 0;
   }
 
   @Action(setBlogState)
@@ -68,9 +68,7 @@ export class BlogState {
   public selectNextBlogPost(ctx: StateContext<IBlogStateModel>) {
     const state = ctx.getState();
     const selectedPostId =
-      state.posts.length < state.selectedPostId + 1
-        ? state.selectedPostId + 1
-        : state.selectedPostId;
+      state.selectedPostId - 1 >= 0 ? state.selectedPostId - 1 : state.selectedPostId;
     const selectedPost = state.posts[selectedPostId];
     return ctx.patchState({ selectedPostId, selectedPost });
   }
@@ -79,7 +77,9 @@ export class BlogState {
   public selectPreviousBlogPost(ctx: StateContext<IBlogStateModel>) {
     const state = ctx.getState();
     const selectedPostId =
-      state.selectedPostId - 1 >= 0 ? state.selectedPostId - 1 : state.selectedPostId;
+      state.selectedPostId + 1 < state.posts.length
+        ? state.selectedPostId + 1
+        : state.selectedPostId;
     const selectedPost = state.posts[selectedPostId];
     return ctx.patchState({ selectedPostId, selectedPost });
   }
