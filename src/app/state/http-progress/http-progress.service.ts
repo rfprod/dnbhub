@@ -47,11 +47,15 @@ export class HttpProgressService implements IHttpProgressService {
     const portal = new ComponentPortal<IndeterminateProgressBarComponent>(
       IndeterminateProgressBarComponent,
     );
-    this.progressRef.attach(portal);
+    if (!this.progressRef.hasAttached()) {
+      this.progressRef.attach(portal);
+    }
   }
 
   private detachIndicator(): void {
-    this.progressRef.detach();
+    if (this.progressRef.hasAttached()) {
+      this.progressRef.detach();
+    }
   }
 
   private startProgress(payload: Partial<IHttpProgressStateModel>) {

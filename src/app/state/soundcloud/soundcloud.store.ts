@@ -49,6 +49,11 @@ export class SoundcloudState {
     return state.playlist;
   }
 
+  @Selector()
+  public static allPlaylists(state: ISoundcloudStateModel) {
+    return [...state.myPlaylists, state.playlist];
+  }
+
   @Action(setSoundcloudState)
   public setSoundcloudState(
     ctx: StateContext<ISoundcloudStateModel>,

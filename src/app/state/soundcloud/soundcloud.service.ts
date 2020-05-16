@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { concatMap, mapTo } from 'rxjs/operators';
-import { SoundcloudMe } from 'src/app/interfaces/soundcloud/soundscloud-me.config';
 
 import { SoundcloudApiService } from './soundcloud-api.service';
 import { ISoundcloudService } from './soundcloud.interface';
@@ -18,19 +17,36 @@ export class SoundcloudService implements ISoundcloudService {
   public readonly tracks$ = this.store.select(SoundcloudState.getTracks);
   public readonly playlist$ = this.store.select(SoundcloudState.getPlaylist);
 
-  public getMe() {
-    // TODO
-    return this.store.dispatch(
-      new soundcloudActions.setSoundcloudState({ me: new SoundcloudMe() }),
-    );
+  /**
+   * TODO: types, and store wiring
+   */
+  public connect() {
+    return this.api.connect();
   }
 
-  public getMyPlaylists() {
-    // TODO
-    return this.store.dispatch(new soundcloudActions.setSoundcloudState({ myPlaylists: [] }));
+  public getMe(userId?: number) {
+    return this.api
+      .getMe(userId)
+      .pipe(
+        concatMap(me =>
+          this.store.dispatch(new soundcloudActions.setSoundcloudState({ me })).pipe(mapTo(me)),
+        ),
+      );
   }
 
-  public getTracks(userId: string | number) {
+  public getMyPlaylists(userId: number) {
+    return this.api
+      .getMyPlaylists(userId)
+      .pipe(
+        concatMap(myPlaylists =>
+          this.store
+            .dispatch(new soundcloudActions.setSoundcloudState({ myPlaylists }))
+            .pipe(mapTo(myPlaylists)),
+        ),
+      );
+  }
+
+  public getTracks(userId: number) {
     return this.api
       .getUserTracks(userId)
       .pipe(
@@ -42,7 +58,7 @@ export class SoundcloudService implements ISoundcloudService {
       );
   }
 
-  public getPlaylist(playlistId: string | number) {
+  public getPlaylist(playlistId: number) {
     return this.api
       .getPlaylist(playlistId)
       .pipe(
@@ -54,7 +70,7 @@ export class SoundcloudService implements ISoundcloudService {
       );
   }
 
-  public streamTrack(trackId: string | number) {
+  public streamTrack(trackId: number) {
     return this.api.streamTrack(trackId);
   }
 

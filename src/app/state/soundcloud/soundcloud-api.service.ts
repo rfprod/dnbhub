@@ -88,22 +88,7 @@ export class SoundcloudApiService implements OnDestroy {
     'http://dnbhub.com/callback.html',
   );
 
-  /**
-   * Shared Soundcloud data.
-   */
-  public readonly data: {
-    user: {
-      me: SoundcloudMe;
-      playlists: SoundcloudPlaylist[];
-    };
-    tracksLinkedPartNextHref: string;
-  } = {
-    user: {
-      me: new SoundcloudMe(),
-      playlists: [],
-    },
-    tracksLinkedPartNextHref: null,
-  };
+  private tracksLinkedPartNextHref: string = null;
 
   /**
    * Soundcloud initialization.
@@ -126,15 +111,12 @@ export class SoundcloudApiService implements OnDestroy {
   public getLinkWithId(href: string): string {
     return `${href}?client_id=${this.options.client_id}`;
   }
-
   /**
    * Resets Soundcloud service stored data.
    * May be useful later, for now is not used.
    */
   public resetServiceData(): void {
-    this.data.user.me = new SoundcloudMe(); // TODO: this should be removed
-    this.data.user.playlists = []; // TODO: this should be removed
-    this.data.tracksLinkedPartNextHref = null;
+    this.tracksLinkedPartNextHref = null;
   }
 
   /**
@@ -148,7 +130,7 @@ export class SoundcloudApiService implements OnDestroy {
       track.description = this.processDescription(track.description);
       return track;
     });
-    this.data.tracksLinkedPartNextHref = data.next_href;
+    this.tracksLinkedPartNextHref = data.next_href;
     const processedLinkedPartitioning = new SoundcloudTracksLinkedPartitioning(
       collection,
       data.next_href,
@@ -156,29 +138,45 @@ export class SoundcloudApiService implements OnDestroy {
     return processedLinkedPartitioning;
   }
 
+  public connect(): Promise<any> {
+    return SC.connect();
+  }
+
   /**
    * Gets user details from Sourndcloud.
    * @param userScId User Soundcloud id
    */
-  public getMe(userScId: string): Promise<{ me: SoundcloudMe; playlists: SoundcloudPlaylist[] }> {
+  public getMe(userScId?: number): Observable<SoundcloudMe> {
     console.warn('getMe, use has got a token');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    return SC.get('users/' + userScId)
-      .then((me: SoundcloudMe) => {
-        console.warn('SC.me.then, me', me);
-        if (Boolean(me.description)) {
-          me.description = this.processDescription(me.description);
-        }
-        this.data.user.me = me;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        return SC.get(`users/${me.id}playlists`);
-      })
-      .then((playlists: SoundcloudPlaylist[]) => {
+    const promise: Promise<SoundcloudMe> = SC.get(
+      Boolean(userScId) ? `users/${userScId}` : 'me',
+    ).then((me: SoundcloudMe) => {
+      console.warn('SC.me.then, me', me);
+      if (Boolean(me.description)) {
+        me.description = this.processDescription(me.description);
+      }
+      return me;
+    });
+    const observable = from(promise);
+    return this.handlers.pipeHttpRequest<SoundcloudMe>(observable);
+  }
+
+  /**
+   * Gets user details from Sourndcloud.
+   * @param userScId User Soundcloud id
+   */
+  public getMyPlaylists(userScId: number): Observable<SoundcloudPlaylist[]> {
+    console.warn('getMe, use has got a token');
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const promise: Promise<SoundcloudPlaylist[]> = SC.get(`users/${userScId}/playlists`).then(
+      (playlists: SoundcloudPlaylist[]) => {
         console.warn('SC.playlists.then, playlists', playlists);
-        this.data.user.playlists = playlists;
-        const user = this.data.user;
-        return user;
-      });
+        return playlists;
+      },
+    );
+    const observable = from(promise);
+    return this.handlers.pipeHttpRequest<SoundcloudPlaylist[]>(observable);
   }
 
   /**
@@ -187,9 +185,9 @@ export class SoundcloudApiService implements OnDestroy {
    * Calls getTracksNextHref if data.tracksLinkedPartNextHref is truthy.
    * @param userId Soundcloud user id
    */
-  public getUserTracks(userId: string | number): Observable<SoundcloudTracksLinkedPartitioning> {
+  public getUserTracks(userId: number): Observable<SoundcloudTracksLinkedPartitioning> {
     let observable = of(new SoundcloudTracksLinkedPartitioning());
-    if (!Boolean(this.data.tracksLinkedPartNextHref)) {
+    if (!Boolean(this.tracksLinkedPartNextHref)) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const promise: Promise<SoundcloudTracksLinkedPartitioning> = SC.get(
         `/users/${userId}/tracks`,
@@ -199,7 +197,7 @@ export class SoundcloudApiService implements OnDestroy {
       )
         .then((data: SoundcloudTracksLinkedPartitioning) => {
           console.warn('getUserTracks, data', data);
-          this.data.tracksLinkedPartNextHref = data.next_href;
+          this.tracksLinkedPartNextHref = data.next_href;
           const tracks = this.processTracksCollection(data);
           return tracks;
         })
@@ -208,7 +206,7 @@ export class SoundcloudApiService implements OnDestroy {
     } else {
       observable = this.getTracksNextHref();
     }
-    return this.handlers.pipeHttpRequest(observable);
+    return this.handlers.pipeHttpRequest<SoundcloudTracksLinkedPartitioning>(observable);
   }
 
   /**
@@ -217,7 +215,7 @@ export class SoundcloudApiService implements OnDestroy {
   public getTracksNextHref(): Observable<SoundcloudTracksLinkedPartitioning> {
     return this.handlers
       .pipeHttpRequest<SoundcloudTracksLinkedPartitioning>(
-        this.http.get<SoundcloudTracksLinkedPartitioning>(this.data.tracksLinkedPartNextHref),
+        this.http.get<SoundcloudTracksLinkedPartitioning>(this.tracksLinkedPartNextHref),
       )
       .pipe(map(tracksLinkedPart => this.processTracksCollection(tracksLinkedPart)));
   }
@@ -226,7 +224,7 @@ export class SoundcloudApiService implements OnDestroy {
    * Gets soundcloud playlist.
    * @param playlistId Soundcloud playlist id
    */
-  public getPlaylist(playlistId: string | number): Observable<SoundcloudPlaylist> {
+  public getPlaylist(playlistId: number): Observable<SoundcloudPlaylist> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const promise: Promise<SoundcloudPlaylist> = SC.get(`/playlists/${playlistId}`)
       .then((playlist: SoundcloudPlaylist) => {
@@ -279,7 +277,7 @@ export class SoundcloudApiService implements OnDestroy {
    * Returns resolved soundcloud track stream object.
    * @param trackId Soundcloud track id
    */
-  public streamTrack(trackId: string | number): Observable<unknown> {
+  public streamTrack(trackId: number): Observable<unknown> {
     // TODO type
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const promise = SC.stream(`/tracks/${trackId}`);

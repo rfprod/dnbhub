@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFireDatabase } from '@angular/fire/database';
@@ -254,10 +255,12 @@ export class FirebaseService {
    * @param valuesObj new values object
    */
   public setDBuserNewValues(valuesObj: {
-    submittedPlaylists?: any[];
+    submittedPlaylists?: {
+      [key: number]: boolean;
+    };
     sc_code?: string;
     sc_oauth_token?: string;
-    sc_id?: string;
+    sc_id?: number;
   }): Promise<{ valuesSet: boolean } | any> {
     const def = new CustomDeferredService<any>();
     this.authErrorCheck();

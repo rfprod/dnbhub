@@ -7,5 +7,7 @@ export interface UserDbRecord {
   sc_code: string;
   sc_id: number;
   sc_oauth_token: string;
-  submittedPlaylists: any;
+  submittedPlaylists: {
+    [key: number]: boolean;
+  };
 }

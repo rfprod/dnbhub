@@ -26,13 +26,13 @@ const renderPlaylistTracksDefault = 15;
 const renderPlaylistTracksIncrement = 25;
 
 export interface ISoundcloudPlayerConfig {
-  user: { dnbhub: string };
+  user: { dnbhub: number };
   playlist: {
-    everything: string;
-    reposts1: string;
-    reposts2: string;
-    freedownloads: string;
-    samplepacks: string;
+    everything: number;
+    reposts1: number;
+    reposts2: number;
+    freedownloads: number;
+    samplepacks: number;
   };
 }
 
@@ -72,14 +72,14 @@ export class SoundcloudPlayerComponent implements OnChanges, OnDestroy {
    */
   private readonly defaultConfig: ISoundcloudPlayerConfig = {
     user: {
-      dnbhub: '1275637',
+      dnbhub: 1275637,
     },
     playlist: {
-      everything: '21086473',
-      reposts1: '108170272',
-      reposts2: '502780338',
-      freedownloads: '79430766',
-      samplepacks: '234463958',
+      everything: 21086473,
+      reposts1: 108170272,
+      reposts2: 502780338,
+      freedownloads: 79430766,
+      samplepacks: 234463958,
     },
   };
 
@@ -96,12 +96,12 @@ export class SoundcloudPlayerComponent implements OnChanges, OnDestroy {
   /**
    * Soundcloud user id.
    */
-  @Input('userId') private userId: string | number = this.defaultConfig.user.dnbhub;
+  @Input('userId') private userId: number = this.defaultConfig.user.dnbhub;
 
   /**
    * Soundcloud playlist id.
    */
-  @Input('playlistId') private playlistId: string | number = this.defaultConfig.playlist.everything;
+  @Input('playlistId') private playlistId: number = this.defaultConfig.playlist.everything;
 
   private readonly loading$ = this.store.select(HttpProgressState.mainViewProgress);
 
@@ -124,7 +124,9 @@ export class SoundcloudPlayerComponent implements OnChanges, OnDestroy {
   /**
    * Soundcloud playlist.
    */
-  public readonly playlist$ = this.store.select(SoundcloudState.getPlaylist);
+  public playlist$ = this.store
+    .select(SoundcloudState.allPlaylists)
+    .pipe(map(playlists => playlists.find(item => item.id === this.playlistId)));
 
   public readonly playlistTracks$ = combineLatest([
     this.playlist$,
