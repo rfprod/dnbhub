@@ -50,6 +50,7 @@ import { AppToolbarComponent } from './components/app-toolbar/app-toolbar.compon
 import { BottomSheetTextDetailsComponent } from './components/bottom-sheet-text-details/bottom-sheet-text-details.component';
 import { IndeterminateProgressBarComponent } from './components/progress/indeterminate-progress-bar.component.ts/indeterminate-progress-bar.component';
 import { AboutStoreModule } from './state/about/about.module';
+import { AdminStoreModule } from './state/admin/admin.module';
 import { BlogStoreModule } from './state/blog/blog.module';
 import { HttpProgressStoreModule } from './state/http-progress/http-progress.module';
 import { SoundcloudStoreModule } from './state/soundcloud/soundcloud.module';
@@ -112,6 +113,7 @@ const entryComponenets: (any[] | Type<any>)[] = [
     SoundcloudStoreModule.forRoot(),
     BlogStoreModule.forRoot(),
     AboutStoreModule.forRoot(),
+    AdminStoreModule.forRoot(),
     AppRoutingModule,
   ],
   providers: [

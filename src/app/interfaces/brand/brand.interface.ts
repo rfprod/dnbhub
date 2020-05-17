@@ -10,6 +10,7 @@ export class Brand {
       }
     }
   }
+  public key?: string;
   public name = '';
   public bandcamp = '';
   public facebook = '';
@@ -18,4 +19,8 @@ export class Brand {
   public twitter = '';
   public website = '';
   public youtube = '';
+}
+
+export interface IBrands {
+  [key: string]: Brand;
 }

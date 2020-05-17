@@ -36,14 +36,6 @@ export class AppUserComponent implements OnInit, OnDestroy {
 
   public submissionPreview: SoundcloudPlaylist = null;
 
-  constructor(
-    private readonly fb: FormBuilder,
-    private readonly router: Router,
-    private readonly firebase: FirebaseService,
-    private readonly soundcloud: SoundcloudService,
-    private readonly snackBar: MatSnackBar,
-  ) {}
-
   /**
    * User profile mode:
    * - edit user
@@ -66,6 +58,14 @@ export class AppUserComponent implements OnInit, OnDestroy {
    * Idivates if password should be visible to a user.
    */
   public showPassword = false;
+
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly router: Router,
+    private readonly firebase: FirebaseService,
+    private readonly soundcloud: SoundcloudService,
+    private readonly snackBar: MatSnackBar,
+  ) {}
 
   /**
    * Toggles password visibility.

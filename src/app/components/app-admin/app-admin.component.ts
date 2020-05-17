@@ -1,9 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  DatabaseReference,
-  DatabaseSnapshotExists,
-  DataSnapshot,
-} from '@angular/fire/database/interfaces';
+import { DatabaseReference, DatabaseSnapshotExists } from '@angular/fire/database/interfaces';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import {
@@ -11,15 +7,18 @@ import {
   MatBottomSheetConfig,
   MatBottomSheetRef,
 } from '@angular/material/bottom-sheet';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { take } from 'rxjs/operators';
+import { IEmailMessage, IEmailSubmission } from 'src/app/interfaces/admin';
 import { BlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 import { IBrandForm } from 'src/app/interfaces/brand/brand-form.interface';
 import { Brand } from 'src/app/interfaces/brand/brand.interface';
-import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { RegularExpressionsService } from 'src/app/services/regular-expressions/regular-expressions.service';
+import { AdminService } from 'src/app/state/admin/admin.service';
 import { SoundcloudApiService } from 'src/app/state/soundcloud/soundcloud-api.service';
+import { ETIMEOUT } from 'src/app/utils';
 
 import { BottomSheetTextDetailsComponent } from '../bottom-sheet-text-details/bottom-sheet-text-details.component';
 
@@ -37,22 +36,11 @@ import { BottomSheetTextDetailsComponent } from '../bottom-sheet-text-details/bo
 export class AppAdminComponent implements OnInit, OnDestroy {
   public readonly anonUser$ = this.firebase.anonUser$;
 
-  constructor(
-    public readonly firebase: FirebaseService,
-    private readonly soundcloud: SoundcloudApiService,
-    private readonly regx: RegularExpressionsService,
-    private readonly bottomSheet: MatBottomSheet,
-    private readonly fb: FormBuilder,
-  ) {}
-
   /**
    * Bottom sheet text details component reference.
    */
   private bottomSheetRef: MatBottomSheetRef<BottomSheetTextDetailsComponent>;
 
-  /**
-   * Company details object.
-   */
   public details: {
     emails: {
       messages: any;
@@ -119,200 +107,111 @@ export class AppAdminComponent implements OnInit, OnDestroy {
     },
   };
 
-  /**
-   * Returns object values.
-   * @param object input object
-   */
-  public getObjectKeys(object: object): Iterable<any> {
-    const keys: any = Object.keys(object);
-    // console.log('getObjectValues, object', object, '| keys', keys);
-    return keys;
-  }
+  public readonly emailMessages$ = this.admin.emailMessages$;
+
+  public readonly emailSubmissions$ = this.admin.emailSubmissions$;
+
+  public readonly brands$ = this.admin.brands$;
+
+  public readonly users$ = this.admin.users$;
+
+  public readonly blogEntriesIDs$ = this.admin.blogEntriesIDs$;
 
   /**
-   * Gets email messages from firebase.
+   * Brand autocomplete form control.
    */
-  private getEmailMessages(): Promise<any> {
-    const def = new CustomDeferredService();
-    (this.firebase.getDB('emails/messages') as Promise<DataSnapshot>)
-      .then((snapshot: DataSnapshot) => {
-        const response = snapshot.val();
-        this.details.emails.messages = response;
-        this.details.emails.messagesKeys = response ? Object.keys(response) : [];
-        console.log('this.details.emails.messages', this.details.emails.messages);
-        console.log('this.details.emails.messagesKeys', this.details.emails.messagesKeys);
-        def.resolve();
-      })
-      .catch((error: string) => {
-        console.log('getEmailMessages, error', error);
-        def.reject();
-      });
-    return def.promise;
-  }
+  public brandAutocompleteControl: FormControl = new FormControl();
 
   /**
-   * Gets blog post submissions sent over email from firebase.
+   * Edit brand form.
    */
-  private getEmailBlogSubmissions(): Promise<any> {
-    const def = new CustomDeferredService();
-    (this.firebase.getDB('emails/blogSubmissions') as Promise<DataSnapshot>)
-      .then((snapshot: DataSnapshot) => {
-        const response = snapshot.val();
-        this.details.emails.blogSubmissions = response;
-        this.details.emails.blogSubmissionsKeys = response ? Object.keys(response) : [];
-        console.log('this.details.emails.blogSubmissions', this.details.emails.blogSubmissions);
-        console.log(
-          'this.details.emails.blogSubmissionsKeys',
-          this.details.emails.blogSubmissionsKeys,
-        );
-        def.resolve(response);
-      })
-      .catch((error: string) => {
-        console.log('getEmailBlogSubmissions, error', error);
-        def.reject();
-      });
-    return def.promise;
+  public editBrandForm: IBrandForm;
+
+  constructor(
+    public readonly firebase: FirebaseService,
+    private readonly soundcloud: SoundcloudApiService,
+    private readonly admin: AdminService,
+    private readonly regx: RegularExpressionsService,
+    private readonly bottomSheet: MatBottomSheet,
+    private readonly fb: FormBuilder,
+    private readonly snackBar: MatSnackBar,
+  ) {}
+
+  public displayMessage(message: string): void {
+    this.snackBar.open(message, null, {
+      duration: ETIMEOUT.SHORT,
+    });
   }
 
-  /**
-   * Resolves if there're no blog submissions.
-   */
-  public noEmailBlogSubmissions(): boolean {
-    return !Boolean(this.details.emails.blogSubmissionsKeys.length);
+  private getEmailMessages() {
+    this.admin.getEmailMessages().subscribe();
   }
 
-  /**
-   * Resolves if there're no email messages.
-   */
-  public noEmailMessages(): boolean {
-    return !Boolean(this.details.emails.messagesKeys.length);
+  private getEmailBlogSubmissions() {
+    this.admin.getEmailSubmissions().subscribe();
   }
 
-  /**
-   * Resolves if there're no brands.
-   */
-  public noBrands(): boolean {
-    return !Boolean(this.details.brandsKeys.length);
+  private getBrands() {
+    this.admin.getBrands().subscribe();
   }
 
-  /**
-   * Gets brands from firebase.
-   */
-  private getBrands(): Promise<any> {
-    const def = new CustomDeferredService();
-    (this.firebase.getDB('brands') as Promise<DataSnapshot>)
-      .then((snapshot: DataSnapshot) => {
-        const response = snapshot.val();
-        this.details.brands = response ? response : {};
-        this.details.brandsKeys = response ? Object.keys(response) : [];
-        console.log('this.details.brands', this.details.brands);
-        def.resolve();
-      })
-      .catch((error: string) => {
-        console.log('getBrands, error', error);
-        def.reject();
-      });
-    return def.promise;
+  private getUsers() {
+    this.admin.getUsers().subscribe();
   }
 
-  /**
-   * Gets users from firebase.
-   */
-  private getUsers(): Promise<any> {
-    const def = new CustomDeferredService();
-    (this.firebase.getDB('users') as Promise<DataSnapshot>)
-      .then((snapshot: DataSnapshot) => {
-        const response = snapshot.val();
-        this.details.users = response ? response : {};
-        this.details.usersKeys = response ? Object.keys(response) : [];
-        console.log('this.details.users', this.details.users);
-        def.resolve();
-      })
-      .catch((error: string) => {
-        console.log('getUsers, error', error);
-        def.reject();
-      });
-    return def.promise;
-  }
-
-  /**
-   * Gets existing blog entries ids.
-   */
-  public getExistingBlogEntriesIDs(): Promise<any> {
-    const def = new CustomDeferredService();
-    (this.firebase.getDB('blogEntriesIDs') as Promise<DataSnapshot>)
-      .then((snapshot: DataSnapshot) => {
-        const response = snapshot.val();
-        this.details.blog.existingIDs = response[0];
-        console.log('existingBlogEntriesIDs, existingIDs', this.details.blog.existingIDs);
-      })
-      .catch((error: string) => {
-        console.log('getExistingBlogEntriesIDs, error', error);
-      });
-    return def.promise;
+  public getBlogEntriesIDs() {
+    this.admin.getBlogEntriesIDs().subscribe();
   }
 
   /**
    * Deletes email message.
-   * @param index email message key index
    */
-  public deleteMessage(index: number): Promise<any> {
-    const def = new CustomDeferredService();
-    const dbKey: string = this.details.emails.messagesKeys[index];
-    (this.firebase.getDB(`email/messages/${dbKey}`, true) as DatabaseReference)
+  public deleteMessage(dbKey: string): Promise<any> {
+    const promise = (this.firebase.getDB(`email/messages/${dbKey}`, true) as DatabaseReference)
       .remove()
       .then(() => {
         console.log(`message id ${dbKey} was successfully deleted`);
-        this.details.emails.messagesKeys.splice(index, 1);
-        delete this.details.emails.messages[dbKey];
+        this.getEmailMessages();
       })
       .catch((error: string) => {
         console.log('deleteMessage, error', error);
       });
-    return def.promise;
+    return promise;
   }
 
   /**
    * Deletes email blog submission.
-   * @param index blog post email submission key index
    */
-  public deleteEmailBlogSubmission(index: number): Promise<any> {
-    const def = new CustomDeferredService();
-    const dbKey: string = this.details.emails.messagesKeys[index];
-    (this.firebase.getDB(`emails/blogSubmissions/${dbKey}`, true) as DatabaseReference)
+  public deleteEmailBlogSubmission(dbKey: string): Promise<any> {
+    const promise = (this.firebase.getDB(
+      `emails/blogSubmissions/${dbKey}`,
+      true,
+    ) as DatabaseReference)
       .remove()
       .then(() => {
         console.log(`blog submission id ${dbKey} was successfully deleted`);
-        this.details.emails.blogSubmissionsKeys.splice(index, 1);
-        delete this.details.emails.blogSubmissions[dbKey];
+        this.getEmailBlogSubmissions();
       })
       .catch((error: string) => {
         console.log('deleteBlogSubmission, error', error);
       });
-    return def.promise;
+    return promise;
   }
 
   /**
    * Deletes brand.
-   * @param index brand key index
    */
-  public deleteBrand(index: number): Promise<any> {
-    const def = new CustomDeferredService();
-    const dbKey: string = this.details.brandsKeys[index];
-    (this.firebase.getDB(`brands/${dbKey}`, true) as DatabaseReference)
+  public deleteBrand(dbKey: string): Promise<any> {
+    const promise = (this.firebase.getDB(`brands/${dbKey}`, true) as DatabaseReference)
       .remove()
       .then(() => {
         console.log(`brand id ${dbKey} was successfully deleted`);
-        /*
-         *	update local models
-         */
-        this.details.brandsKeys.splice(index, 1);
-        delete this.details.brands[dbKey];
+        this.getBrands();
       })
       .catch((error: string) => {
         console.log('deleteBrand, error', error);
       });
-    return def.promise;
+    return promise;
   }
 
   /**
@@ -386,11 +285,6 @@ export class AppAdminComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Brand autocomplete form control.
-   */
-  public brandAutocompleteControl: FormControl = new FormControl();
-
-  /**
    * Returns matched brands for autocomplete.
    */
   public getMatchedBrands(): string[] {
@@ -405,77 +299,71 @@ export class AppAdminComponent implements OnInit, OnDestroy {
    * Approves blog submission sent over email.
    * @param index blog post email submission key index
    */
-  public approveEmailSubmission(keyIndex: number): Promise<any> {
-    const def = new CustomDeferredService();
-    const dbKey = this.details.emails.blogSubmissionsKeys[keyIndex];
-    console.log('TODO: approve submission, dbKey', dbKey);
-    const selectedSubmission = this.details.emails.blogSubmissions[dbKey];
-    console.log('TODO: approve submission', selectedSubmission);
-    this.firebase.blogEntryExistsByValue(selectedSubmission.id).then(result => {
+  public approveEmailSubmission(submission: IEmailSubmission): Promise<any> {
+    console.log('TODO: approve submission', submission);
+    return this.firebase.blogEntryExistsByValue(submission.key).then(result => {
       console.log('blogEntryExistsByValue', result);
       if (result) {
         /*
          *	entry does exist, call delete submission automatically
          */
-        this.deleteEmailSubmission(keyIndex);
-      } else {
+        return this.deleteEmailSubmission(submission.key);
+      }
+      return this.soundcloud.SC.get(`/resolve?url=${submission.link}`).then(scData => {
+        console.log('scData', scData);
         /*
          *	create new records, delete submission record
          */
         const valuesObj: BlogPost = new BlogPost();
-        valuesObj.code =
-          selectedSubmission.scData.user.username.replace(/\s/, '') +
-          selectedSubmission.scData.permalink.toUpperCase();
+        valuesObj.code = `${scData.user.username.replace(
+          /\s/,
+          '',
+        )}${scData.permalink.toUpperCase()}`;
         valuesObj.links = this.getSelectedBrand();
-        valuesObj.playlistId = selectedSubmission.scData.id;
-        valuesObj.soundcloudUserId = selectedSubmission.scData.user.id;
+        valuesObj.playlistId = scData.id;
+        valuesObj.soundcloudUserId = scData.user.id;
         console.log('valuesObj', valuesObj);
-        this.firebase
+        return this.firebase
           .addBlogPost(valuesObj)
           .then(() => {
             console.log('blog entry values set');
-            this.deleteEmailSubmission(keyIndex);
             this.getEmailBlogSubmissions();
-            this.getExistingBlogEntriesIDs();
+            this.getBlogEntriesIDs();
             this.selectBrand(null);
+            return this.deleteEmailSubmission(submission.key);
           })
           .catch((error: any) => {
             console.log('error setting blod entry values', error);
             this.selectBrand(null);
           });
-      }
+      });
     });
-    return def.promise;
   }
 
   /**
    * Deletes email submission by key index.
-   * @param keyIndex email submission key index
    */
-  public deleteEmailSubmission(keyIndex: number): Promise<any> {
-    const def = new CustomDeferredService();
-    const dbKey = this.details.emails.blogSubmissionsKeys[keyIndex];
-    (this.firebase.getDB(`emails/blogSubmissions/${dbKey}`, true) as DatabaseReference)
+  public deleteEmailSubmission(dbKey: string): Promise<any> {
+    const promise = (this.firebase.getDB(
+      `emails/blogSubmissions/${dbKey}`,
+      true,
+    ) as DatabaseReference)
       .remove()
       .then(() => {
         console.log(`submission id ${dbKey} was successfully deleted`);
-        /*
-         *	update local models
-         */
-        this.details.emails.blogSubmissionsKeys.splice(keyIndex, 1);
-        delete this.details.emails.blogSubmissions[dbKey];
+        this.getEmailBlogSubmissions();
       })
       .catch(error => {
         console.log('error deleting email submission', error);
       });
-    return def.promise;
+    return promise;
   }
 
   /**
    * Shows email message text.
    * @param emailMessage email message
    */
-  public showMessageText(emailMessage: any): void {
+  public showMessageText(emailMessage: IEmailMessage): void {
     this.bottomSheetRef = this.bottomSheet.open(BottomSheetTextDetailsComponent, {
       data: {
         text: emailMessage.message,
@@ -485,28 +373,25 @@ export class AppAdminComponent implements OnInit, OnDestroy {
     this.bottomSheetRef
       .afterDismissed()
       .pipe(take(1))
-      .subscribe((result: any) => {
-        console.log('bottomSheetRef dismissed, result', result);
+      .subscribe(() => {
+        this.bottomSheetRef = null;
       });
   }
 
   /**
    * Shows blog post submission preview.
-   * @param index blog post index
    */
-  public showSubmissionPreview(index: number): Promise<any> {
-    const def = new CustomDeferredService();
-    const dbKey = this.details.emails.blogSubmissionsKeys[index];
-    const selectedSubmission = this.details.emails.blogSubmissions[dbKey];
-    this.soundcloud.SC.get(`/resolve?url=${selectedSubmission.link}`).then(data => {
-      console.log('data', data);
-      this.details.preview.submission = data;
-      this.details.preview.submission.description = this.soundcloud.processDescription(
-        this.details.preview.submission.description,
-      );
-      def.resolve();
-    });
-    return def.promise;
+  public showSubmissionPreview(submission: IEmailSubmission): Promise<any> {
+    return (this.soundcloud.SC.get(`/resolve?url=${submission.link}`) as Promise<any>).then(
+      data => {
+        console.log('data', data);
+        this.details.preview.submission = data;
+        this.details.preview.submission.description = this.soundcloud.processDescription(
+          this.details.preview.submission.description,
+        );
+        return data;
+      },
+    );
   }
 
   /**
@@ -552,16 +437,9 @@ export class AppAdminComponent implements OnInit, OnDestroy {
 
   /**
    * Resolves if submission is already added.
-   * @param index in array
    */
-  public submissionAlreadyAdded(index: string): boolean {
-    let added = false;
-    const dbKey = this.details.emails.blogSubmissionsKeys[index];
-    const selectedSubmission = this.details.emails.blogSubmissions[dbKey];
-    if (selectedSubmission) {
-      added = this.details.blog.existingIDs.includes(selectedSubmission.id) ? true : added;
-    }
-    return added;
+  public submissionAlreadyAdded(submission: IEmailSubmission): boolean {
+    return this.details.blog.existingIDs.includes(submission.key);
   }
 
   /**
@@ -576,26 +454,15 @@ export class AppAdminComponent implements OnInit, OnDestroy {
    * Switches Edit Brand mode.
    * Toggles Edit Brand mode off if the same item is selected as an editable.
    */
-  public editBrand(index: number): void {
-    console.log(`edit brand, keyIndex: ${index}`);
-    if (index !== null && this.details.edit.brand.key === null) {
-      const dbKey = this.details.brandsKeys[index];
-      this.details.edit.brand.key = dbKey !== this.details.edit.brand.key ? dbKey : null;
-      console.log('this.details.edit.brand.key', this.details.edit.brand.key);
-      if (this.details.edit.brand.key) {
-        const brand = this.details.brands[dbKey];
-        this.initializeBrandForm(brand);
-      }
-    } else {
-      this.details.edit.brand.key = null;
-      this.editBrandForm = null;
+  public editBrand(dbKey: string): void {
+    console.log(`edit brand, dbKey: ${dbKey}`);
+    this.details.edit.brand.key = dbKey !== this.details.edit.brand.key ? dbKey : null;
+    console.log('this.details.edit.brand.key', this.details.edit.brand.key);
+    if (this.details.edit.brand.key) {
+      const brand = this.details.brands[dbKey];
+      this.initializeBrandForm(brand);
     }
   }
-
-  /**
-   * Edit brand form.
-   */
-  public editBrandForm: IBrandForm;
 
   /**
    * Initializes brand form.
@@ -689,10 +556,9 @@ export class AppAdminComponent implements OnInit, OnDestroy {
    * Updates brand.
    */
   private updateBrand(): Promise<any> {
-    const def = new CustomDeferredService();
     const dbKey: string = this.details.selected.brand.key;
     const newBrandValues: Brand = this.editBrandForm.value;
-    (this.firebase.getDB(`brands/${dbKey}`, true) as DatabaseReference)
+    return (this.firebase.getDB(`brands/${dbKey}`, true) as DatabaseReference)
       .update(newBrandValues)
       .then(() => {
         console.log(`brand id ${dbKey} was successfully deleted`);
@@ -702,7 +568,6 @@ export class AppAdminComponent implements OnInit, OnDestroy {
       .catch((error: string) => {
         console.log('updateBrand, error', error);
       });
-    return def.promise;
   }
 
   /**
@@ -722,23 +587,19 @@ export class AppAdminComponent implements OnInit, OnDestroy {
    * Submits new brand.
    */
   public submitNewBrand(): Promise<any> {
-    const def = new CustomDeferredService();
     const formData: any = this.editBrandForm.value;
-    (this.firebase.getDB('brands', true) as DatabaseReference)
+    return (this.firebase.getDB('brands', true) as DatabaseReference)
       .child(this.editBrandForm.controls.name.value)
       .set(formData)
       .then(() => {
         console.log('brand values set');
         this.createBrand();
-        this.getBrands().then(() => def.resolve());
+        this.getBrands();
       })
-      .catch(error => def.reject(error));
-    return def.promise;
+      .catch(error => error);
   }
 
   public approveUserSubmission(playlistId: number): Promise<any> {
-    // former name: approvePost()
-    const def = new CustomDeferredService();
     const dbKey = playlistId;
     console.log('TODO: approve post, playlistID/dbkey', dbKey);
     const selectedSubmission = {
@@ -746,12 +607,11 @@ export class AppAdminComponent implements OnInit, OnDestroy {
       scData: null,
     };
     console.log('TODO: approve submission', selectedSubmission);
-    this.soundcloud.SC.get(`/playlists/${dbKey}`).then(data => {
+    return (this.soundcloud.SC.get(`/playlists/${dbKey}`) as Promise<any>).then(data => {
       console.log('any data', data);
       selectedSubmission.scData = data;
-      this.checkAndAddUserPlaylist(selectedSubmission);
+      return this.checkAndAddUserPlaylist(selectedSubmission);
     });
-    return def.promise;
   }
 
   /**
@@ -767,9 +627,11 @@ export class AppAdminComponent implements OnInit, OnDestroy {
    * @param dbKey user submission database key
    */
   public deleteUserSubmission(dbKey: number): Promise<any> {
-    const def = new CustomDeferredService();
     const userKey = this.firebase.fire.user.uid;
-    (this.firebase.getDB(`users/${userKey}/submittedPlaylists/${dbKey}`, true) as DatabaseReference)
+    return (this.firebase.getDB(
+      `users/${userKey}/submittedPlaylists/${dbKey}`,
+      true,
+    ) as DatabaseReference)
       .remove()
       .then(() => {
         console.log(`user ${userKey} submission ${dbKey} was successfully deleted`);
@@ -778,7 +640,6 @@ export class AppAdminComponent implements OnInit, OnDestroy {
       .catch((error: any) => {
         console.log('error deleting user submission', error);
       });
-    return def.promise;
   }
 
   /**
@@ -786,9 +647,8 @@ export class AppAdminComponent implements OnInit, OnDestroy {
    * @param selectedSubmission user submitted playlist
    */
   private checkAndAddUserPlaylist(selectedSubmission: { id: number; scData: any }): Promise<any> {
-    const def = new CustomDeferredService();
     console.log('checkAndAddUserPlaylist, selectedSubmission', selectedSubmission);
-    this.firebase
+    return this.firebase
       .blogEntryExistsByValue(selectedSubmission.id.toString())
       .then((result: DatabaseSnapshotExists<any>) => {
         console.log('blogEntryExistsByValue', result);
@@ -796,55 +656,52 @@ export class AppAdminComponent implements OnInit, OnDestroy {
           /*
            *	entry does exist, call delete submission automatically
            */
-          this.deleteUserSubmission(selectedSubmission.id);
+
           this.getUsers();
-        } else {
-          /*
-           *	create new records, delete submission record
-           */
-          const valuesObj: BlogPost = new BlogPost();
-          valuesObj.code =
-            selectedSubmission.scData.user.username.replace(/\s/, '') +
-            selectedSubmission.scData.permalink.toUpperCase();
-          valuesObj.links = this.getSelectedBrand();
-          valuesObj.playlistId = selectedSubmission.scData.id;
-          valuesObj.soundcloudUserId = selectedSubmission.scData.user.id;
-          console.log(valuesObj);
-          this.firebase
-            .addBlogPost(valuesObj)
-            .then(() => {
-              console.log('blog entry values set');
-              this.deleteUserSubmission(selectedSubmission.id);
-              this.getUsers();
-              this.getExistingBlogEntriesIDs();
-              this.selectBrand(null);
-            })
-            .catch((error: any) => {
-              console.log('error setting blod entry values', error);
-              this.selectBrand(null);
-            });
+          return this.deleteUserSubmission(selectedSubmission.id);
         }
+        /*
+         *	create new records, delete submission record
+         */
+        const valuesObj: BlogPost = new BlogPost();
+        valuesObj.code =
+          selectedSubmission.scData.user.username.replace(/\s/, '') +
+          selectedSubmission.scData.permalink.toUpperCase();
+        valuesObj.links = this.getSelectedBrand();
+        valuesObj.playlistId = selectedSubmission.scData.id;
+        valuesObj.soundcloudUserId = selectedSubmission.scData.user.id;
+        console.log(valuesObj);
+        return this.firebase
+          .addBlogPost(valuesObj)
+          .then(() => {
+            console.log('blog entry values set');
+            this.getUsers();
+            this.getBlogEntriesIDs();
+            this.selectBrand(null);
+            return this.deleteUserSubmission(selectedSubmission.id);
+          })
+          .catch((error: any) => {
+            console.log('error setting blod entry values', error);
+            this.selectBrand(null);
+          });
       });
-    return def.promise;
   }
 
   /**
    * Lifecycle hook called on component initialization.
    */
   public ngOnInit(): void {
-    console.log('ngOnInit: AppAdminComponent initialized');
-    this.getEmailMessages()
-      .then(() => this.getEmailBlogSubmissions())
-      .then(() => this.getBrands())
-      .then(() => this.getUsers())
-      .then(() => this.getExistingBlogEntriesIDs());
+    this.getEmailMessages();
+    this.getEmailBlogSubmissions();
+    this.getBrands();
+    this.getUsers();
+    this.getBlogEntriesIDs();
   }
 
   /**
    * Lifecycle hook called on component destruction.
    */
   public ngOnDestroy(): void {
-    console.log('ngOnDestroy: AppAdminComponent destroyed');
     (this.firebase.getDB('emails/messages', true) as DatabaseReference).off();
     (this.firebase.getDB('emails/blogSubmissions', true) as DatabaseReference).off();
     (this.firebase.getDB('blogEntriesIDs', true) as DatabaseReference).off();

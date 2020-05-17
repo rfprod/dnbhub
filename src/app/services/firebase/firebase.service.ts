@@ -194,7 +194,7 @@ export class FirebaseService {
   /**
    * Checks database user id.
    */
-  public checkDBuserUID(): Promise<{ exists: boolean; created: boolean } | any> {
+  public checkDBuserUID(): Promise<{ exists: boolean; created: boolean }> {
     const def = new CustomDeferredService<any>();
     this.authErrorCheck();
     (this.getDB('users/' + this.fire.user.uid) as Promise<DataSnapshot>)
@@ -253,9 +253,9 @@ export class FirebaseService {
     (this.getDB('blogEntriesIDs', true) as DatabaseReference)
       .orderByValue()
       .equalTo(dbKey)
-      .on('value', (snapshot: DatabaseSnapshotExists<any>) => {
+      .on('value', (snapshot: DatabaseSnapshotExists<BlogPost>) => {
         const response = snapshot.val();
-        // console.warn('blogEntryExists, blogEntriesIDs response', response);
+        console.warn('blogEntryExists, blogEntriesIDs response', response);
         // null - not found
         def.resolve(response);
       });
@@ -272,9 +272,9 @@ export class FirebaseService {
     (this.getDB('blog', true) as DatabaseReference)
       .orderByChild(childKey)
       .equalTo(value)
-      .on('value', snapshot => {
+      .on('value', (snapshot: DatabaseSnapshotExists<BlogPost>) => {
         const response = snapshot.val();
-        // console.warn('blogEntryExists, blogEntriesIDs response', response);
+        console.warn('blogEntryExists, blogEntriesIDs response', response);
         // null - not found
         def.resolve(response);
       });
@@ -292,12 +292,12 @@ export class FirebaseService {
     const def = new CustomDeferredService();
     this.authErrorCheck();
     this.checkDBuserUID()
-      .then((data: any) => {
+      .then(data => {
         console.warn('checkDBuserUID', JSON.stringify(data));
         (this.getDB('blogEntriesIDs', true) as DatabaseReference)
           .orderByValue()
           .once('value', (snapshot: DataSnapshot) => {
-            const idsArray = snapshot.val();
+            const idsArray: [number[]] = snapshot.val();
             console.warn('idsArray', idsArray);
             idsArray[0].push(valuesObj.playlistId);
             (this.getDB('blogEntriesIDs', true) as DatabaseReference)
