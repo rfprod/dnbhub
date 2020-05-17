@@ -179,8 +179,8 @@
       <mat-card
         [ngStyle]="{ margin: '0.5em' }"
         fxFlex.lt-sm="100"
-        fxFlex="49"
-        fxFlex.gt-md="32"
+        fxFlex="47"
+        fxFlex.gt-md="31"
         *ngFor="let playlistObj of myPlaylists; let i = index"
       >
         <mat-card-content
@@ -211,7 +211,7 @@
                 *ngIf="alreadyAdded(playlistObj) && unsubmittable(playlistObj)"
                 matTooltip="Submission is under review"
               >
-                library_add
+                timelapse
               </mat-icon>
 
               <mat-icon
@@ -224,6 +224,7 @@
 
             <button
               mat-icon-button
+              color="warn"
               *ngIf="alreadySubmitted(playlistObj) && unsubmittable(playlistObj)"
               (click)="unsubmitBlogPost(playlistObj)"
               aria-label="Unsubmit playlist: available only before moderation happens"

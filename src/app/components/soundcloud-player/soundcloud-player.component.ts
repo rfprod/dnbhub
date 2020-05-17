@@ -133,10 +133,14 @@ export class SoundcloudPlayerComponent implements OnChanges, OnDestroy {
     this.renderPlaylistTracks$,
   ]).pipe(
     map(([playlist, renderPlaylistTracks]) => {
-      const tracks = [...playlist.tracks].slice(0, renderPlaylistTracks);
+      const tracks = playlist ? [...playlist.tracks].slice(0, renderPlaylistTracks) : [];
       return tracks;
     }),
   );
+
+  public get renderTracks$() {
+    return this.mode === 'dnbhub' || this.mode === 'user' ? this.tracks$ : this.playlistTracks$;
+  }
 
   private readonly selectedTrackIndex = new BehaviorSubject<number>(0);
   public readonly selectedTrackIndex$ = this.selectedTrackIndex.asObservable();

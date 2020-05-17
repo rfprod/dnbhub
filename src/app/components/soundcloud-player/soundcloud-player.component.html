@@ -2,7 +2,7 @@
   <div
     fxFlex.lt-md="100"
     fxFlex.gt-sm="50"
-    *ngIf="mode === 'playlist' && displayDescription"
+    *ngIf="mode === 'playlist' && displayDescription && playlist$ | async"
     [innerHTML]="(playlist$ | async).description"
     [ngStyle]="{ padding: '0 10px 0 10px' }"
   ></div>
@@ -12,21 +12,16 @@
     fxFlex.gt-sm="{{ displayDescription ? 50 : 100 }}"
     fxLayout="row wrap"
     fxLayoutAlign="start start"
-    *ngIf="renderPlaylistTracks$ | async as renderPlaylistTracks"
+    *ngIf="renderTracks$ | async"
   >
     <div
       fxFlex="100"
-      *ngFor="
-        let track of mode === 'dnbhub' || mode === 'user'
-          ? (tracks$ | async)
-          : (playlistTracks$ | async);
-        let j = index
-      "
+      *ngFor="let track of renderTracks$ | async; let j = index"
       id="soundcloud-track-{{ j }}"
       fxLayout="row wrap"
       fxLayoutAlign="start stretch"
       [ngClass]="{ selected: j === (selectedTrackIndex$ | async) }"
-      [fxHide]="j > renderPlaylistTracks"
+      [fxHide]="j > (renderPlaylistTracks$ | async)"
       [ngStyle]="{ 'border-bottom': '1px solid grey' }"
     >
       <div fxFlex="100" matTooltip="{{ track.title }}" matTooltipPosition="below" fxLayout="row">
