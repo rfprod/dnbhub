@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
 import { ESUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate/translations.interface';
 
 import { setUiState } from './ui.actions';
@@ -9,8 +9,10 @@ export const uiActions = {
   setUiState,
 };
 
+export const UI_STATE_TOKEN = new StateToken<IUiStateModel>('ui');
+
 @State<IUiStateModel>({
-  name: 'ui',
+  name: UI_STATE_TOKEN,
   defaults: {
     darkThemeEnabled: false,
     language: ESUPPORTED_LANGUAGE_KEY.ENGLISH,

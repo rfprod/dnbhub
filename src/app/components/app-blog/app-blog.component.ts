@@ -45,7 +45,7 @@ export class AppBlogComponent {
   );
 
   public readonly selectedBlogPost$ = this.blog.selectedPost$.pipe(
-    filter(post => !!post),
+    filter(post => Boolean(post)),
     tap(post => {
       const code = post.code;
       void this.router.navigate(['/blog'], { queryParams: { code } });

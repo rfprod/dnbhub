@@ -173,95 +173,94 @@
     <div
       fxFlex="100"
       fxLayout="row wrap"
-      fxLayoutAlign="space-around center"
+      fxLayoutAlign="space-between start"
       *ngIf="myPlaylists$ | async as myPlaylists"
     >
-      <div
-        fxFlex
-        fxLayout="row wrap"
-        fxLayoutAlign="start stretch"
+      <mat-card
+        [ngStyle]="{ margin: '0.5em' }"
+        fxFlex.lt-sm="100"
+        fxFlex="49"
+        fxFlex.gt-md="32"
         *ngFor="let playlistObj of myPlaylists; let i = index"
       >
-        <span
-          fxFlex="100"
+        <mat-card-content
           [ngStyle]="{
             height: '200px',
             'overflow-x': 'hidden',
-            'overflow-y': 'auto',
-            border: '1px dotted'
+            'overflow-y': 'auto'
           }"
         >
-          <app-soundcloud-player fxFlex [mode]="'playlist'" [playlistId]="playlistObj.id">
+          <app-soundcloud-player [mode]="'playlist'" [playlistId]="playlistObj.id">
           </app-soundcloud-player>
-        </span>
+        </mat-card-content>
 
-        <span fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start center">
-          <button
-            mat-icon-button
-            [disabled]="alreadyAdded(playlistObj)"
-            (click)="submitBlogPost(playlistObj)"
-            aria-label="Submit to blog"
-          >
-            <mat-icon
-              *ngIf="!alreadyAdded(playlistObj)"
-              fontSet="fas"
-              fontIcon="fa-plus"
-              class="material-icons-fas"
-              title="Submit to blog"
+        <mat-card-actions>
+          <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start center">
+            <button
+              mat-icon-button
+              color="primary"
+              [disabled]="alreadyAdded(playlistObj)"
+              (click)="submitBlogPost(playlistObj)"
+              aria-label="Submit to blog"
             >
-            </mat-icon>
+              <mat-icon *ngIf="!alreadyAdded(playlistObj)" matTooltip="Submit to blog">
+                library_add
+              </mat-icon>
 
-            <mat-icon
-              *ngIf="alreadyAdded(playlistObj) && unsubmittable(playlistObj)"
-              fontSet="fas"
-              fontIcon="fa-plus"
-              class="material-icons-fas"
-              title="Submission is in procession"
+              <mat-icon
+                *ngIf="alreadyAdded(playlistObj) && unsubmittable(playlistObj)"
+                matTooltip="Submission is under review"
+              >
+                library_add
+              </mat-icon>
+
+              <mat-icon
+                *ngIf="alreadyAdded(playlistObj) && !unsubmittable(playlistObj)"
+                matTooltip="Submitted to blog"
+              >
+                check_circle
+              </mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
+              *ngIf="alreadySubmitted(playlistObj) && unsubmittable(playlistObj)"
+              (click)="unsubmitBlogPost(playlistObj)"
+              aria-label="Unsubmit playlist: available only before moderation happens"
+              matTooltip="Unsubmit playlist: available only before moderation happens"
             >
-            </mat-icon>
+              <mat-icon>
+                remove_circle
+              </mat-icon>
+            </button>
 
-            <mat-icon
+            <button
+              mat-icon-button
+              [disabled]="alreadyAdded(playlistObj)"
+              *ngIf="unsubmittable(playlistObj)"
+              (click)="toggleBlogPostPreview(playlistObj)"
+              aria-label="Preview blog post"
+              matTooltip="Preview blog post"
+            >
+              <mat-icon>
+                pagepreview
+              </mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
               *ngIf="alreadyAdded(playlistObj) && !unsubmittable(playlistObj)"
-              fontSet="fas"
-              fontIcon="fa-check"
-              class="material-icons-fas"
-              title="Submitted to blog"
+              (click)="toggleBlogPostPreview(playlistObj)"
+              aria-label="Go to blog entry"
+              matTooltip="Go to blog entry"
             >
-            </mat-icon>
-          </button>
-
-          <button
-            mat-icon-button
-            *ngIf="alreadySubmitted(playlistObj) && unsubmittable(playlistObj)"
-            (click)="unsubmitBlogPost(playlistObj)"
-            aria-label="Unsubmit playlist: available only before moderation happens"
-            matTooltip="Unsubmit playlist: available only before moderation happens"
-          >
-            <mat-icon fontSet="fas" fontIcon="fa-remove" class="material-icons-fas"> </mat-icon>
-          </button>
-
-          <button
-            mat-icon-button
-            [disabled]="alreadyAdded(playlistObj)"
-            *ngIf="unsubmittable(playlistObj)"
-            (click)="toggleBlogPostPreview(playlistObj)"
-            aria-label="Preview blog post"
-            matTooltip="Preview blog post"
-          >
-            <mat-icon fontSet="fas" fontIcon="fa-th-large" class="material-icons-fas"> </mat-icon>
-          </button>
-
-          <button
-            mat-icon-button
-            *ngIf="alreadyAdded(playlistObj) && !unsubmittable(playlistObj)"
-            (click)="toggleBlogPostPreview(playlistObj)"
-            aria-label="Go to blog entry"
-            title="Go to blog entry"
-          >
-            <mat-icon fontSet="fas" fontIcon="fa-link" class="material-icons-fas"> </mat-icon>
-          </button>
-        </span>
-      </div>
+              <mat-icon>
+                pagepreview
+              </mat-icon>
+            </button>
+          </div>
+        </mat-card-actions>
+      </mat-card>
     </div>
   </div>
 
@@ -285,9 +284,10 @@
             fxFlex="20"
             disabled
             aria-label="previous blog post"
-            title="previous blog post"
+            matTooltip="previous blog post"
           >
-            <mat-icon fontSet="fas" fontIcon="fa-chevron-left" class="material-icons-fas">
+            <mat-icon>
+              chevron_left
             </mat-icon>
           </button>
 
@@ -303,9 +303,10 @@
             fxFlex="20"
             disabled
             aria-label="next blog post"
-            title="next blog post"
+            matTooltip="next blog post"
           >
-            <mat-icon fontSet="fas" fontIcon="fa-chevron-right" class="material-icons-fas">
+            <mat-icon>
+              chevron_right
             </mat-icon>
           </button>
         </h4>

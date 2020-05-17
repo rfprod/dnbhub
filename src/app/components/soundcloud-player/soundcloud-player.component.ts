@@ -22,7 +22,7 @@ import { ETIMEOUT, WINDOW } from 'src/app/utils';
 
 import { SoundcloudService } from '../../state/soundcloud/soundcloud.service';
 
-const renderPlaylistTracksDefault = 15;
+const renderPlaylistTracksDefault = 10;
 const renderPlaylistTracksIncrement = 25;
 
 export interface ISoundcloudPlayerConfig {

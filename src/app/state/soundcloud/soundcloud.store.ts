@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
 import {
   SoundcloudMe,
   SoundcloudPlaylist,
@@ -13,8 +13,10 @@ export const soundcloudActions = {
   setSoundcloudState,
 };
 
+export const SOUNDCLOUD_STATE_TOKEN = new StateToken<ISoundcloudStateModel>('soundcloud');
+
 @State<ISoundcloudStateModel>({
-  name: 'soundcloud',
+  name: SOUNDCLOUD_STATE_TOKEN,
   defaults: {
     me: new SoundcloudMe(),
     myPlaylists: [],

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
 
 import {
   selectBlogPost,
@@ -16,8 +16,10 @@ export const blogActions = {
   selectPreviousBlogPost,
 };
 
+export const BLOG_STATE_TOKEN = new StateToken<IBlogStateModel>('blog');
+
 @State<IBlogStateModel>({
-  name: 'blog',
+  name: BLOG_STATE_TOKEN,
   defaults: {
     posts: [],
     selectedPostId: 0,

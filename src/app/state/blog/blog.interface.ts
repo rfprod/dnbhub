@@ -1,18 +1,18 @@
 import { Observable } from 'rxjs';
-import { IBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
+import { BlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 import { IActionPayload } from 'src/app/utils/ngxs.util';
 
 export interface IBlogStateModel {
-  posts: IBlogPost[];
+  posts: BlogPost[];
   selectedPostId: number;
-  selectedPost: IBlogPost;
+  selectedPost: BlogPost;
 }
 
 export type BlogPayload = IActionPayload<Partial<IBlogStateModel>>;
 
 export interface IBlogService {
-  posts$: Observable<IBlogPost[]>;
-  selectedPost$: Observable<IBlogPost>;
+  posts$: Observable<BlogPost[]>;
+  selectedPost$: Observable<BlogPost>;
 }
 
 export type SelectBlogPostPayload = IActionPayload<{ code: string }>;

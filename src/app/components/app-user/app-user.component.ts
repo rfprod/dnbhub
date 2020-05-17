@@ -3,9 +3,9 @@ import { DatabaseReference, DataSnapshot } from '@angular/fire/database/interfac
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { concatMap, take, tap } from 'rxjs/operators';
-import { IUserProfileForm, SoundcloudPlaylist, UserProfile } from 'src/app/interfaces/index';
-import { UserDbRecord } from 'src/app/interfaces/user/user-db-record.interface';
+import { concatMap, mapTo, take, tap } from 'rxjs/operators';
+import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
+import { IUserProfile, IUserProfileForm, SoundcloudPlaylist } from 'src/app/interfaces/index';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { SoundcloudService } from 'src/app/state/soundcloud/soundcloud.service';
 import { ETIMEOUT } from 'src/app/utils';
@@ -30,7 +30,7 @@ export class AppUserComponent implements OnInit, OnDestroy {
 
   public readonly firebaseUser = this.firebase.fire.user;
 
-  private userDbRecord: UserDbRecord = {} as UserDbRecord;
+  private userDbRecord: IFirebaseUserRecord = {} as IFirebaseUserRecord;
 
   private existingBlogEntriesIDs: number[] = [];
 
@@ -127,7 +127,7 @@ export class AppUserComponent implements OnInit, OnDestroy {
     this.profileForm.valueChanges
       .pipe(
         take(1),
-        tap((changes: UserProfile) => {
+        tap((changes: IUserProfile) => {
           this.profileForm.patchValue({
             email: {
               value: changes.email,
@@ -209,15 +209,12 @@ export class AppUserComponent implements OnInit, OnDestroy {
     } else {
       this.firebase
         .delete(this.profileForm.controls.email.value, this.profileForm.controls.password.value)
-        .then(
-          success => {
+        .pipe(
+          tap(success => {
             const message = `Your profile was deleted. ${success}`;
             this.displayMessage(message);
             void this.router.navigate(['']);
-          },
-          error => {
-            this.displayMessage(error);
-          },
+          }),
         );
     }
   }
@@ -228,7 +225,7 @@ export class AppUserComponent implements OnInit, OnDestroy {
   private getUserData(userScId?: number) {
     return this.soundcloud
       .getMe(userScId)
-      .pipe(concatMap(me => this.soundcloud.getMyPlaylists(me.id)));
+      .pipe(concatMap(me => this.soundcloud.getMyPlaylists(me.id).pipe(mapTo(me))));
   }
 
   /**
@@ -244,26 +241,19 @@ export class AppUserComponent implements OnInit, OnDestroy {
       localStorage.removeItem('callback');
 
       this.firebase
-        .setDBuserNewValues({ sc_code: code, sc_oauth_token: oauthToken })
-        .then(data => {
-          const message = `Your user profile was updated. ${data}`;
-          this.displayMessage(message);
-        })
-        .catch(error => {
-          this.displayMessage(error);
-        });
-
-      this.getUserData().subscribe(([me, _]) => {
-        this.firebase
-          .setDBuserNewValues({ sc_id: me.id })
-          .then(data => {
-            const message = `Your user profile was updated. ${data}`;
-            this.displayMessage(message);
-          })
-          .catch(error => {
-            this.displayMessage(error);
-          });
-      });
+        .setDBuserNewValues({ soundcloudCode: code, soundcloudOauthToken: oauthToken })
+        .pipe(
+          concatMap(_ => this.getUserData()),
+          concatMap(me =>
+            this.firebase.setDBuserNewValues({ soundcloudId: me.id }).pipe(
+              tap(data => {
+                const message = `${data}: Your user profile was updated.`;
+                this.displayMessage(message);
+              }),
+            ),
+          ),
+        )
+        .subscribe();
 
       return connectResult;
     });
@@ -277,8 +267,8 @@ export class AppUserComponent implements OnInit, OnDestroy {
     (this.firebase.getDB('users/' + this.firebaseUser.uid, false) as Promise<DataSnapshot>)
       .then(snapshot => {
         this.userDbRecord = snapshot.val();
-        if (Boolean(this.userDbRecord.sc_id) && !passGetMeMethodCall) {
-          this.getUserData(this.userDbRecord.sc_id).subscribe();
+        if (Boolean(this.userDbRecord.soundcloudId) && !passGetMeMethodCall) {
+          this.getUserData(this.userDbRecord.soundcloudId).subscribe();
         }
       })
       .catch(error => {
@@ -366,14 +356,14 @@ export class AppUserComponent implements OnInit, OnDestroy {
         delete playlists[playlist.id];
         this.firebase
           .setDBuserNewValues({ submittedPlaylists: playlists })
-          .then(data => {
-            const message = `Your user profile was updated. ${data}`;
-            this.displayMessage(message);
-            this.getDBuser(true);
-          })
-          .catch(error => {
-            this.displayMessage(error);
-          });
+          .pipe(
+            tap(data => {
+              const message = `Your user profile was updated. ${data}`;
+              this.displayMessage(message);
+              this.getDBuser(true);
+            }),
+          )
+          .subscribe();
       }
     }
   }
@@ -396,14 +386,14 @@ export class AppUserComponent implements OnInit, OnDestroy {
       playlists[playlist.id] = false;
       this.firebase
         .setDBuserNewValues({ submittedPlaylists: playlists })
-        .then(data => {
-          const message = `Your user profile was updated. ${data}`;
-          this.displayMessage(message);
-          this.getDBuser(true);
-        })
-        .catch(error => {
-          this.displayMessage(error);
-        });
+        .pipe(
+          tap(data => {
+            const message = `Your user profile was updated. ${data}`;
+            this.displayMessage(message);
+            this.getDBuser(true);
+          }),
+        )
+        .subscribe();
     }
   }
 

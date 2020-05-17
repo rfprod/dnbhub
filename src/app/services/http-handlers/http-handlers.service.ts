@@ -24,8 +24,12 @@ export class HttpHandlersService {
     });
   }
 
-  public getErrorMessage(error: HttpErrorResponse): string {
-    const msg: string = Boolean(error.message) ? error.message : error.error;
+  public getErrorMessage(error: HttpErrorResponse & firebase.FirebaseError): string {
+    const msg: string = Boolean(error.message)
+      ? error.message
+      : Boolean(error.code)
+      ? error.code
+      : error.error;
     const errorMessage: string = Boolean(msg)
       ? msg
       : Boolean(error.status)
@@ -38,7 +42,7 @@ export class HttpHandlersService {
    * Handles error.
    * @param error error object
    */
-  public handleError(error: HttpErrorResponse): Observable<never> {
+  public handleError(error: HttpErrorResponse & firebase.FirebaseError): Observable<never> {
     const errorMessage = this.getErrorMessage(error);
     this.displayErrorToast(errorMessage);
     return throwError(errorMessage);

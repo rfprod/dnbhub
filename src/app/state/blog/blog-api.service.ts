@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { from } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { IBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
+import { BlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 import { FirebaseService } from 'src/app/services';
 import { HttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
 import { EPAGE_SIZE } from 'src/app/utils';
@@ -27,8 +27,8 @@ export class BlogApiService implements OnDestroy {
       .limitToLast(EPAGE_SIZE.MEDIUM)
       .once('value')
       .then(snapshot => {
-        const response: IBlogPost[] = snapshot.val();
-        const blogPosts: IBlogPost[] = [];
+        const response: BlogPost[] = snapshot.val();
+        const blogPosts: BlogPost[] = [];
         for (const key in response) {
           if (response[key]) {
             const item = response[key];
@@ -37,7 +37,7 @@ export class BlogApiService implements OnDestroy {
         }
         return blogPosts;
       });
-    return this.handlers.pipeHttpRequest(from(promise)).pipe(
+    return this.handlers.pipeHttpRequest<BlogPost[]>(from(promise)).pipe(
       tap(posts => {
         this.store.dispatch(new blogActions.setBlogState({ posts }));
       }),

@@ -1,11 +1,12 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { from } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { ILoginForm, ILoginFormValue } from 'src/app/interfaces';
-import { HttpHandlersService } from 'src/app/services';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
+import { ETIMEOUT } from 'src/app/utils';
 
 /**
  * Application login dialog.
@@ -23,9 +24,9 @@ export class AppLoginDialog {
     @Inject(MAT_DIALOG_DATA) public data: ILoginFormValue,
     private readonly dialogRef: MatDialogRef<AppLoginDialog>,
     private readonly fb: FormBuilder,
-    private readonly handlers: HttpHandlersService,
     private readonly router: Router,
     private readonly firebase: FirebaseService,
+    private readonly snackBar: MatSnackBar,
   ) {}
 
   /**
@@ -42,7 +43,11 @@ export class AppLoginDialog {
 
   public wrongPassword = false;
 
-  public feedback: string;
+  private displayFeedback(message: string): void {
+    this.snackBar.open(message, null, {
+      duration: ETIMEOUT.MEDUIM,
+    });
+  }
 
   /**
    * Toggles password readability via UI,
@@ -52,47 +57,41 @@ export class AppLoginDialog {
   }
 
   private createUser(formData = this.loginForm.value as ILoginFormValue) {
-    const promise = this.firebase
-      .create({ email: formData.email, password: formData.password })
-      .then(
-        user => {
+    this.firebase
+      .create(formData.email, formData.password)
+      .pipe(
+        tap(_ => {
           this.closeDialog({ success: true });
           void this.router.navigate(['/user']);
-        },
-        (error: { code: string }) => {
-          this.feedback = `An error occurred: ${error.code}`;
-        },
-      );
-    return from(promise);
+        }),
+      )
+      .subscribe();
   }
 
   private authenticateUser(formData = this.loginForm.value as ILoginFormValue) {
-    const promise = this.firebase
-      .authenticate('email', { email: formData.email, password: formData.password })
-      .then(
-        user => {
-          this.closeDialog({ success: true });
-          if (this.firebase.privilegedAccess()) {
-            void this.router.navigate(['/admin']);
-          } else {
-            void this.router.navigate(['/user']);
-          }
-        },
-        (error: { code: string }) => {
-          if (error.code === 'auth/user-not-found') {
-            this.feedback =
-              'We did not find an account registered with this email address. To create a new account hit a CREATE ACCOUNT button.';
-            this.signupMode = true;
-            this.wrongPassword = false;
-          } else if (error.code === 'auth/wrong-password') {
-            this.feedback = 'Password does not match an email address.';
-            this.wrongPassword = true;
-          } else {
-            this.feedback = 'Unknown error occurred. Try again later.';
-          }
-        },
-      );
-    return from(promise);
+    this.firebase
+      .authenticate('email', formData.email, formData.password)
+      .pipe(
+        tap(
+          _ => {
+            this.closeDialog({ success: true });
+            if (this.firebase.privilegedAccess()) {
+              void this.router.navigate(['/admin']);
+            } else {
+              void this.router.navigate(['/user']);
+            }
+          },
+          (error: firebase.FirebaseError) => {
+            if (error.code === 'auth/user-not-found') {
+              this.signupMode = true;
+              this.wrongPassword = false;
+            } else if (error.code === 'auth/wrong-password') {
+              this.wrongPassword = true;
+            }
+          },
+        ),
+      )
+      .subscribe();
   }
 
   /**
@@ -107,24 +106,22 @@ export class AppLoginDialog {
    */
   public submitForm(): void {
     if (this.loginForm.valid && !this.loginForm.pristine) {
-      this.submitAction().subscribe();
+      this.submitAction();
     }
   }
 
   /**
    * Resets user password.
    */
-  public resetPassword(): void {
-    this.handlers
-      .pipeHttpRequest(
-        from(
-          this.firebase
-            .resetUserPassword(this.loginForm.controls.email.value)
-            .then(() => {
-              this.feedback = `Password reset email was sent to ${this.loginForm.controls.email.value}. It may take some time for the email to be delivered. Request it again if you do not receive it in about 15 minutes.`;
-            })
-            .catch(error => error),
-        ),
+  public resetPassword() {
+    this.firebase
+      .resetUserPassword(this.loginForm.controls.email.value)
+      .pipe(
+        tap(() => {
+          const message = `Password reset email was sent to ${this.loginForm.controls.email.value}.
+              It may take some time for the email to be delivered. Request it again if you do not receive it in about 15 minutes.`;
+          this.displayFeedback(message);
+        }),
       )
       .subscribe();
   }

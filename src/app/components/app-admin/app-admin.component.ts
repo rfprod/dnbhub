@@ -13,9 +13,9 @@ import {
 } from '@angular/material/bottom-sheet';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { take } from 'rxjs/operators';
-import { IBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
+import { BlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 import { IBrandForm } from 'src/app/interfaces/brand/brand-form.interface';
-import { IBrand } from 'src/app/interfaces/brand/brand.interface';
+import { Brand } from 'src/app/interfaces/brand/brand.interface';
 import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { RegularExpressionsService } from 'src/app/services/regular-expressions/regular-expressions.service';
@@ -348,8 +348,8 @@ export class AppAdminComponent implements OnInit, OnDestroy {
    * Returns selected brand object.
    * @param keys indicates if selected brand keys should be returned
    */
-  public getSelectedBrand(keys?: boolean): IBrand {
-    let result = new IBrand();
+  public getSelectedBrand(keys?: boolean): Brand {
+    let result = new Brand();
     if (this.brandIsSelected('', true)) {
       result = keys
         ? Object.keys(this.details.selected.brand.object)
@@ -422,7 +422,7 @@ export class AppAdminComponent implements OnInit, OnDestroy {
         /*
          *	create new records, delete submission record
          */
-        const valuesObj: IBlogPost = new IBlogPost();
+        const valuesObj: BlogPost = new BlogPost();
         valuesObj.code =
           selectedSubmission.scData.user.username.replace(/\s/, '') +
           selectedSubmission.scData.permalink.toUpperCase();
@@ -601,7 +601,7 @@ export class AppAdminComponent implements OnInit, OnDestroy {
    * Initializes brand form.
    * @param brand selected brand object
    */
-  private initializeBrandForm(brand?: IBrand): void {
+  private initializeBrandForm(brand?: Brand): void {
     console.log('initializeBrandForm, brand', brand);
     this.editBrandForm = this.fb.group({
       name: [
@@ -691,7 +691,7 @@ export class AppAdminComponent implements OnInit, OnDestroy {
   private updateBrand(): Promise<any> {
     const def = new CustomDeferredService();
     const dbKey: string = this.details.selected.brand.key;
-    const newBrandValues: IBrand = this.editBrandForm.value;
+    const newBrandValues: Brand = this.editBrandForm.value;
     (this.firebase.getDB(`brands/${dbKey}`, true) as DatabaseReference)
       .update(newBrandValues)
       .then(() => {
@@ -802,7 +802,7 @@ export class AppAdminComponent implements OnInit, OnDestroy {
           /*
            *	create new records, delete submission record
            */
-          const valuesObj: IBlogPost = new IBlogPost();
+          const valuesObj: BlogPost = new BlogPost();
           valuesObj.code =
             selectedSubmission.scData.user.username.replace(/\s/, '') +
             selectedSubmission.scData.permalink.toUpperCase();

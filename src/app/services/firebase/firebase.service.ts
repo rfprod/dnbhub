@@ -7,12 +7,15 @@ import {
   DatabaseSnapshotExists,
   DataSnapshot,
 } from '@angular/fire/database/interfaces';
-import { from, Observable, of } from 'rxjs';
+import { from, Observable, of, throwError } from 'rxjs';
 import { concatMap, map, tap } from 'rxjs/operators';
 import { AppEnvironmentConfig } from 'src/app/app.environment';
 import { IFirebaseENVInterface } from 'src/app/interfaces';
-import { IBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
+import { BlogPost } from 'src/app/interfaces/blog/blog-post.interface';
+import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
 import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
+
+import { HttpHandlersService } from '../http-handlers/http-handlers.service';
 
 /**
  * Firebase service, uses Angular Fire.
@@ -24,6 +27,7 @@ export class FirebaseService {
   constructor(
     private readonly fireDb: AngularFireDatabase,
     private readonly fireAuth: AngularFireAuth,
+    private readonly handlers: HttpHandlersService,
   ) {}
 
   /**
@@ -87,46 +91,25 @@ export class FirebaseService {
    * @param mode login mode
    * @param payload login payload
    */
-  public authenticate(
-    mode: 'email' | 'twitter',
-    payload: { email: string; password: string },
-  ): Promise<any> {
-    const def = new CustomDeferredService<any>();
-    console.warn('mode:', mode);
-    console.warn('payload:', payload);
+  public authenticate(mode: 'email' | 'twitter', email: string, password: string) {
+    const promise = this.fireAuth
+      .signInWithEmailAndPassword(email, password)
+      .then(credential => credential);
 
-    if (mode === 'email') {
-      this.fireAuth
-        .signInWithEmailAndPassword(payload.email, payload.password)
-        .then((success: any) => {
-          // console.warn('auth success', success);
-          def.resolve(success);
-        })
-        .catch((error: any) => {
-          // console.warn('auth error', error);
-          def.reject(error);
-        });
-    }
-
-    if (mode === 'twitter') {
-      /*
-       *	TODO
-       *	https://firebase.google.com/docs/auth/web/twitter-login?authuser=0
-       */
-      def.reject({
-        TODO:
-          'twitter authentication - https://firebase.google.com/docs/auth/web/twitter-login?authuser=0',
-      });
-    }
-    return def.promise;
+    const observable =
+      mode === 'email'
+        ? from(promise)
+        : throwError(
+            'TODO: Twitter authentication - https://firebase.google.com/docs/auth/web/twitter-login?authuser=0',
+          );
+    return this.handlers.pipeHttpRequest(observable);
   }
 
   /**
    * Signs user out.
    */
-  public signout(): Observable<void> {
-    console.warn('signout', this.fireAuth);
-    return from(this.fireAuth.currentUser).pipe(
+  public signout() {
+    const observable = from(this.fireAuth.currentUser).pipe(
       concatMap(user => {
         if (Boolean(user)) {
           return from(this.fireAuth.signOut());
@@ -134,6 +117,7 @@ export class FirebaseService {
         return of<void>();
       }),
     );
+    return this.handlers.pipeHttpRequest(observable);
   }
 
   /**
@@ -150,29 +134,23 @@ export class FirebaseService {
 
   /**
    * Creates a user
-   * @param payload user credentials
+   * @param email user email
+   * @param password user password
    */
-  public create(payload: { email: string; password: string }): Promise<any> {
-    const def = new CustomDeferredService<any>();
-    this.fireAuth
-      .createUserWithEmailAndPassword(payload.email, payload.password)
-      .then(success => {
-        // console.warn('auth success', success);
-        def.resolve(success);
-      })
-      .catch(error => {
-        // console.warn('auth error', error);
-        def.reject(error);
-      });
-    return def.promise;
+  public create(email: string, password: string) {
+    const promise = this.fireAuth.createUserWithEmailAndPassword(email, password);
+    const observable = from(promise);
+    return this.handlers.pipeHttpRequest<firebase.auth.UserCredential>(observable);
   }
 
   /**
    * Sends password reset link to user's email.
    * @param email user email
    */
-  public resetUserPassword(email: string): Promise<any> {
-    return this.fireAuth.sendPasswordResetEmail(email);
+  public resetUserPassword(email: string) {
+    const promise = this.fireAuth.sendPasswordResetEmail(email);
+    const observable = from(promise);
+    return this.handlers.pipeHttpRequest(observable);
   }
 
   /**
@@ -180,26 +158,23 @@ export class FirebaseService {
    * @param email user email
    * @param password user password
    */
-  public async delete(email: string, password: string): Promise<any> {
-    const def = new CustomDeferredService<any>();
-    const credential: any = await this.fireAuth.signInWithEmailAndPassword(email, password);
+  public delete(email: string, password: string) {
+    const promise = this.fireAuth
+      .signInWithEmailAndPassword(email, password)
+      .then(credential => {
+        const cred = (credential as unknown) as firebase.auth.AuthCredential;
+        return this.fire.user.reauthenticateAndRetrieveDataWithCredential(cred);
+      })
 
-    this.fire.user
-      .reauthenticateAndRetrieveDataWithCredential(credential)
       .then(() => {
         // console.warn('successfully reauthenticated');
         return (this.getDB('users/' + this.fire.user.uid, true) as DatabaseReference).remove(); // delete user db profile also
       })
       .then(() => {
         return this.fire.user.delete();
-      })
-      .then(() => {
-        def.resolve(true);
-      })
-      .catch(error => {
-        def.reject(error);
       });
-    return def.promise;
+    const observable = from(promise);
+    return this.handlers.pipeHttpRequest(observable);
   }
 
   /**
@@ -254,35 +229,19 @@ export class FirebaseService {
    * Sets new values for database user.
    * @param valuesObj new values object
    */
-  public setDBuserNewValues(valuesObj: {
-    submittedPlaylists?: {
-      [key: number]: boolean;
-    };
-    sc_code?: string;
-    sc_oauth_token?: string;
-    sc_id?: number;
-  }): Promise<{ valuesSet: boolean } | any> {
-    const def = new CustomDeferredService<any>();
+  public setDBuserNewValues(valuesObj: Partial<IFirebaseUserRecord>) {
     this.authErrorCheck();
-    this.checkDBuserUID()
-      .then(data => {
-        console.warn('checkDBuserUID', JSON.stringify(data));
-        (this.getDB('users/' + this.fire.user.uid, true) as DatabaseReference)
-          .update(valuesObj)
-          .then(() => {
-            console.warn('user db profile values set');
-            def.resolve({ valuesSet: true });
-          })
-          .catch(error => {
-            console.warn('error setting user db profile values', error);
-            def.reject({ valuesSet: false });
-          });
-      })
-      .catch(error => {
-        console.warn('setDBuserValues, user db profile check error', error);
-        def.reject(error);
-      });
-    return def.promise;
+    const promise = this.checkDBuserUID().then(data => {
+      console.warn('checkDBuserUID', JSON.stringify(data));
+      return (this.getDB('users/' + this.fire.user.uid, true) as DatabaseReference)
+        .update(valuesObj)
+        .then(() => {
+          console.warn('user db profile values set');
+          return { valuesSet: true };
+        });
+    });
+    const observable = from(promise);
+    return this.handlers.pipeHttpRequest(observable);
   }
 
   /**
@@ -326,7 +285,7 @@ export class FirebaseService {
    * Adds blog post to database.
    * @param valuesObj blog post model
    */
-  public addBlogPost(valuesObj: IBlogPost): Promise<any> {
+  public addBlogPost(valuesObj: BlogPost): Promise<any> {
     /*
      *	create new records, delete submission record
      */

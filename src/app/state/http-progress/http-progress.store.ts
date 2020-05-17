@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
 
 import { startProgress, stopProgress } from './http-progress.actions';
 import { HttpProgressPayload, IHttpProgressStateModel } from './http-progress.interface';
@@ -9,8 +9,10 @@ export const httpProgressActions = {
   stopProgress,
 };
 
+export const HTTP_PROGRESS_STATE_TOKEN = new StateToken<IHttpProgressStateModel>('httpProgress');
+
 @State<IHttpProgressStateModel>({
-  name: 'httpProgress',
+  name: HTTP_PROGRESS_STATE_TOKEN,
   defaults: {
     mainView: false,
   },

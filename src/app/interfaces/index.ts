@@ -8,4 +8,3 @@ export * from './brand/index';
 export * from './forms/index';
 export * from './soundcloud/index';
 export * from './ui/index';
-export * from './user/index';

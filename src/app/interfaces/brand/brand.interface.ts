@@ -1,7 +1,15 @@
 /**
  * Brand interface.
  */
-export class IBrand {
+export class Brand {
+  constructor(input?: Brand) {
+    if (input) {
+      const keys = Object.keys(input);
+      for (const key of keys) {
+        this[key] = input[key];
+      }
+    }
+  }
   public name = '';
   public bandcamp = '';
   public facebook = '';

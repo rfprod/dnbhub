@@ -138,7 +138,8 @@ export class SoundcloudApiService implements OnDestroy {
     return processedLinkedPartitioning;
   }
 
-  public connect(): Promise<any> {
+  public connect(): Promise<unknown> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return SC.connect();
   }
 

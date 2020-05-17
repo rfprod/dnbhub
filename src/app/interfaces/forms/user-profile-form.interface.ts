@@ -3,7 +3,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 /**
  * User profile interface.
  */
-export interface UserProfile {
+export interface IUserProfile {
   email: string;
   name: string;
   password: string;
