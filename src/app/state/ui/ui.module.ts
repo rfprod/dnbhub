@@ -1,20 +1,20 @@
 import { ModuleWithProviders, NgModule, Provider } from '@angular/core';
 import { NgxsModule } from '@ngxs/store';
-import { CustomMaterialModule, TranslateModule } from 'src/app/modules';
+import { DnbhubMaterialModule, DnbhubTranslateModule } from 'src/app/modules';
 
-import { UiService } from './ui.service';
-import { UiState } from './ui.store';
+import { DnbhubUiService } from './ui.service';
+import { DnbhubUiState } from './ui.store';
 
-export const uiStoreModuleProviders: Provider[] = [UiService];
+export const uiStoreModuleProviders: Provider[] = [DnbhubUiService];
 
 @NgModule({
-  imports: [CustomMaterialModule, TranslateModule, NgxsModule.forFeature([UiState])],
+  imports: [DnbhubMaterialModule, DnbhubTranslateModule, NgxsModule.forFeature([DnbhubUiState])],
   providers: [...uiStoreModuleProviders],
 })
-export class UiStoreModule {
-  public static forRoot(): ModuleWithProviders<UiStoreModule> {
+export class DnbhubUiStoreModule {
+  public static forRoot(): ModuleWithProviders<DnbhubUiStoreModule> {
     return {
-      ngModule: UiStoreModule,
+      ngModule: DnbhubUiStoreModule,
       providers: [...uiStoreModuleProviders],
     };
   }

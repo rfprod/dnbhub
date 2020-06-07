@@ -5,20 +5,24 @@ import {
   selectBlogPost,
   selectNextBlogPost,
   selectPreviousBlogPost,
-  setBlogState,
+  setDnbhubBlogState,
 } from './blog.actions';
-import { BlogPayload, IBlogStateModel, SelectBlogPostPayload } from './blog.interface';
+import {
+  IDnbhubBlogStateModel,
+  TDnbhubBlogPayload,
+  TDnbhubSelectBlogPostPayload,
+} from './blog.interface';
 
 export const blogActions = {
-  setBlogState,
+  setDnbhubBlogState,
   selectBlogPost,
   selectNextBlogPost,
   selectPreviousBlogPost,
 };
 
-export const BLOG_STATE_TOKEN = new StateToken<IBlogStateModel>('blog');
+export const BLOG_STATE_TOKEN = new StateToken<IDnbhubBlogStateModel>('blog');
 
-@State<IBlogStateModel>({
+@State<IDnbhubBlogStateModel>({
   name: BLOG_STATE_TOKEN,
   defaults: {
     posts: [],
@@ -26,40 +30,48 @@ export const BLOG_STATE_TOKEN = new StateToken<IBlogStateModel>('blog');
     selectedPost: null,
   },
 })
-@Injectable()
-export class BlogState {
+@Injectable({
+  providedIn: 'root',
+})
+export class DnbhubBlogState {
   @Selector()
-  public static getState(state: IBlogStateModel) {
+  public static getState(state: IDnbhubBlogStateModel) {
     return state;
   }
 
   @Selector()
-  public static getPosts(state: IBlogStateModel) {
+  public static getPosts(state: IDnbhubBlogStateModel) {
     return state.posts;
   }
 
   @Selector()
-  public static getSelectedPost(state: IBlogStateModel) {
+  public static getSelectedPost(state: IDnbhubBlogStateModel) {
     return state.selectedPost;
   }
 
   @Selector()
-  public static listStartReached(state: IBlogStateModel) {
+  public static listStartReached(state: IDnbhubBlogStateModel) {
     return state.selectedPostId === state.posts.length - 1;
   }
 
   @Selector()
-  public static listEndReached(state: IBlogStateModel) {
+  public static listEndReached(state: IDnbhubBlogStateModel) {
     return state.selectedPostId === 0;
   }
 
-  @Action(setBlogState)
-  public setBlogState(ctx: StateContext<IBlogStateModel>, { payload }: BlogPayload) {
+  @Action(setDnbhubBlogState)
+  public setDnbhubBlogState(
+    ctx: StateContext<IDnbhubBlogStateModel>,
+    { payload }: TDnbhubBlogPayload,
+  ) {
     return ctx.patchState(payload);
   }
 
   @Action(selectBlogPost)
-  public selectBlogPost(ctx: StateContext<IBlogStateModel>, { payload }: SelectBlogPostPayload) {
+  public selectBlogPost(
+    ctx: StateContext<IDnbhubBlogStateModel>,
+    { payload }: TDnbhubSelectBlogPostPayload,
+  ) {
     const state = ctx.getState();
     const selectedPostId = state.posts.findIndex(item => item.code === payload.code);
     const selectedPost = state.posts[selectedPostId];
@@ -67,7 +79,7 @@ export class BlogState {
   }
 
   @Action(selectNextBlogPost)
-  public selectNextBlogPost(ctx: StateContext<IBlogStateModel>) {
+  public selectNextBlogPost(ctx: StateContext<IDnbhubBlogStateModel>) {
     const state = ctx.getState();
     const selectedPostId =
       state.selectedPostId - 1 >= 0 ? state.selectedPostId - 1 : state.selectedPostId;
@@ -76,7 +88,7 @@ export class BlogState {
   }
 
   @Action(selectPreviousBlogPost)
-  public selectPreviousBlogPost(ctx: StateContext<IBlogStateModel>) {
+  public selectPreviousBlogPost(ctx: StateContext<IDnbhubBlogStateModel>) {
     const state = ctx.getState();
     const selectedPostId =
       state.selectedPostId + 1 < state.posts.length

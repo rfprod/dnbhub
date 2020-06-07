@@ -1,1 +1,1 @@
-test.todo('AppComponent');
+test.todo('DnbhubRootComponent');

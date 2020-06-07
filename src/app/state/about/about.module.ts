@@ -3,20 +3,20 @@ import { ModuleWithProviders, NgModule, Provider } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { NgxsModule } from '@ngxs/store';
 
-import { AboutApiService } from './about-api.service';
-import { AboutService } from './about.service';
-import { AboutState } from './about.store';
+import { DnbhubAboutApiService } from './about-api.service';
+import { DnbhubAboutService } from './about.service';
+import { DnbhubAboutState } from './about.store';
 
-export const blogStoreModuleProviders: Provider[] = [AboutService, AboutApiService];
+export const blogStoreModuleProviders: Provider[] = [DnbhubAboutService, DnbhubAboutApiService];
 
 @NgModule({
-  imports: [MatSidenavModule, OverlayModule, NgxsModule.forFeature([AboutState])],
+  imports: [MatSidenavModule, OverlayModule, NgxsModule.forFeature([DnbhubAboutState])],
   providers: [...blogStoreModuleProviders],
 })
-export class AboutStoreModule {
-  public static forRoot(): ModuleWithProviders<AboutStoreModule> {
+export class DnbhubAboutStoreModule {
+  public static forRoot(): ModuleWithProviders<DnbhubAboutStoreModule> {
     return {
-      ngModule: AboutStoreModule,
+      ngModule: DnbhubAboutStoreModule,
       providers: [...blogStoreModuleProviders],
     };
   }

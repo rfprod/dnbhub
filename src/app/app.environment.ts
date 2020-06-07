@@ -33,7 +33,7 @@ export const ENV = {
 /**
  * Application environment.
  */
-export class AppEnvironmentConfig {
+export class DnbhubEnvironmentConfig {
   public soundcloud: ISoundcloudENVInterface = {
     clientId: 'SOUNDCLOUD_CLIENT_ID',
   };

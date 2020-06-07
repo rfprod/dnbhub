@@ -2,16 +2,16 @@ import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
 import { ESUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate/translations.interface';
 
-import { setUiState } from './ui.actions';
-import { IUiStateModel, UiPayload } from './ui.interface';
+import { setDnbhubUiState } from './ui.actions';
+import { IDnbhubUiStateModel, TDnbhubUiPayload } from './ui.interface';
 
 export const uiActions = {
-  setUiState,
+  setDnbhubUiState,
 };
 
-export const UI_STATE_TOKEN = new StateToken<IUiStateModel>('ui');
+export const UI_STATE_TOKEN = new StateToken<IDnbhubUiStateModel>('ui');
 
-@State<IUiStateModel>({
+@State<IDnbhubUiStateModel>({
   name: UI_STATE_TOKEN,
   defaults: {
     darkThemeEnabled: false,
@@ -19,30 +19,32 @@ export const UI_STATE_TOKEN = new StateToken<IUiStateModel>('ui');
     sidenavOpened: false,
   },
 })
-@Injectable()
-export class UiState {
+@Injectable({
+  providedIn: 'root',
+})
+export class DnbhubUiState {
   @Selector()
-  public static getState(state: IUiStateModel) {
+  public static getState(state: IDnbhubUiStateModel) {
     return state;
   }
 
   @Selector()
-  public static getDarkThemeEnabled(state: IUiStateModel) {
+  public static getDarkThemeEnabled(state: IDnbhubUiStateModel) {
     return state.darkThemeEnabled;
   }
 
   @Selector()
-  public static getLanguage(state: IUiStateModel) {
+  public static getLanguage(state: IDnbhubUiStateModel) {
     return state.language;
   }
 
   @Selector()
-  public static getSidenavOpened(state: IUiStateModel) {
+  public static getSidenavOpened(state: IDnbhubUiStateModel) {
     return state.sidenavOpened;
   }
 
-  @Action(setUiState)
-  public setUiState(ctx: StateContext<IUiStateModel>, { payload }: UiPayload) {
+  @Action(setDnbhubUiState)
+  public setDnbhubUiState(ctx: StateContext<IDnbhubUiStateModel>, { payload }: TDnbhubUiPayload) {
     return ctx.patchState(payload);
   }
 }

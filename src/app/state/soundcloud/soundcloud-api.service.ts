@@ -6,7 +6,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Store } from '@ngxs/store';
 import { from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { AppEnvironmentConfig } from 'src/app/app.environment';
+import { DnbhubEnvironmentConfig } from 'src/app/app.environment';
 import {
   ISoundcloudENVInterface,
   ScInitOptions,
@@ -15,7 +15,7 @@ import {
   SoundcloudTrack,
   SoundcloudTracksLinkedPartitioning,
 } from 'src/app/interfaces/index';
-import { HttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
+import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
 import { APP_ENV } from 'src/app/utils/injection-tokens';
 
 import { soundcloudActions } from './soundcloud.store';
@@ -27,8 +27,10 @@ declare let SC: any;
  * Soundcloud service.
  * Controls Soundcloud JavaScript SDK.
  */
-@Injectable()
-export class SoundcloudApiService implements OnDestroy {
+@Injectable({
+  providedIn: 'root',
+})
+export class DnbhubSoundcloudApiService implements OnDestroy {
   /**
    * Widget link conftructor.
    */
@@ -67,10 +69,10 @@ export class SoundcloudApiService implements OnDestroy {
 
   constructor(
     private readonly http: HttpClient,
-    private readonly handlers: HttpHandlersService,
+    private readonly handlers: DnbhubHttpHandlersService,
     public sanitizer: DomSanitizer,
     private readonly store: Store,
-    @Inject(APP_ENV) private readonly env: AppEnvironmentConfig,
+    @Inject(APP_ENV) private readonly env: DnbhubEnvironmentConfig,
   ) {
     this.init();
   }
@@ -288,6 +290,6 @@ export class SoundcloudApiService implements OnDestroy {
   public ngOnDestroy(): void {
     const tracks = new SoundcloudTracksLinkedPartitioning();
     const playlist = new SoundcloudPlaylist();
-    this.store.dispatch(new soundcloudActions.setSoundcloudState({ tracks, playlist }));
+    this.store.dispatch(new soundcloudActions.setDnbhubSoundcloudState({ tracks, playlist }));
   }
 }

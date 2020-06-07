@@ -9,10 +9,12 @@ const windowSdkKey = 'twttr';
  * Twitter service.
  * Controls Twitter JavaScript SDK.
  */
-@Injectable()
-export class TwitterService {
+@Injectable({
+  providedIn: 'root',
+})
+export class DnbhubTwitterService {
   constructor(@Inject(WINDOW) private window: Window) {
-    console.warn('TwitterService constructor');
+    console.warn('DnbhubTwitterService constructor');
     this.initTwitterJsSDK();
   }
 

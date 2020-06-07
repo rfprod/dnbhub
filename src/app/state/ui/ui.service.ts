@@ -3,46 +3,46 @@ import { Injectable } from '@angular/core';
 import { DateAdapter } from '@angular/material/core';
 import { Store } from '@ngxs/store';
 import { concatMap, tap } from 'rxjs/operators';
-import { ESUPPORTED_LANGUAGE_KEY, TranslateService } from 'src/app/modules';
+import { DnbhubTranslateService, ESUPPORTED_LANGUAGE_KEY } from 'src/app/modules';
 
-import { IUiService } from './ui.interface';
-import { uiActions, UiState } from './ui.store';
+import { IDnbhubUiService } from './ui.interface';
+import { DnbhubUiState, uiActions } from './ui.store';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UiService implements IUiService {
+export class DnbhubUiService implements IDnbhubUiService {
   constructor(
     private readonly store: Store,
     private readonly overlayContainer: OverlayContainer,
     private readonly dateAdapter: DateAdapter<Date>,
-    private readonly translate: TranslateService,
+    private readonly translate: DnbhubTranslateService,
   ) {}
 
-  public readonly darkThemeEnabled$ = this.store.select(UiState.getDarkThemeEnabled);
+  public readonly darkThemeEnabled$ = this.store.select(DnbhubUiState.getDarkThemeEnabled);
 
-  public readonly language$ = this.store.select(UiState.getLanguage);
+  public readonly language$ = this.store.select(DnbhubUiState.getLanguage);
 
-  public readonly sidenavOpened$ = this.store.select(UiState.getSidenavOpened);
+  public readonly sidenavOpened$ = this.store.select(DnbhubUiState.getSidenavOpened);
 
   private enableDarkTheme() {
-    return this.store.dispatch(new uiActions.setUiState({ darkThemeEnabled: true })).pipe(
-      tap(_ => {
+    return this.store.dispatch(new uiActions.setDnbhubUiState({ darkThemeEnabled: true })).pipe(
+      tap(() => {
         this.overlayContainer.getContainerElement().classList.add('unicorn-dark-theme');
       }),
     );
   }
 
   private disableDarkTheme() {
-    return this.store.dispatch(new uiActions.setUiState({ darkThemeEnabled: false })).pipe(
-      tap(_ => {
+    return this.store.dispatch(new uiActions.setDnbhubUiState({ darkThemeEnabled: false })).pipe(
+      tap(() => {
         this.overlayContainer.getContainerElement().classList.remove('unicorn-dark-theme');
       }),
     );
   }
 
   public toggleMaterialTheme() {
-    return this.store.selectOnce(UiState.getDarkThemeEnabled).pipe(
+    return this.store.selectOnce(DnbhubUiState.getDarkThemeEnabled).pipe(
       concatMap(darkThemeEnabled => {
         return darkThemeEnabled ? this.disableDarkTheme() : this.enableDarkTheme();
       }),
@@ -50,15 +50,15 @@ export class UiService implements IUiService {
   }
 
   public openSidenav() {
-    return this.store.dispatch(new uiActions.setUiState({ sidenavOpened: true }));
+    return this.store.dispatch(new uiActions.setDnbhubUiState({ sidenavOpened: true }));
   }
 
   public closeSidenav() {
-    return this.store.dispatch(new uiActions.setUiState({ sidenavOpened: false }));
+    return this.store.dispatch(new uiActions.setDnbhubUiState({ sidenavOpened: false }));
   }
 
   public toggleSidenav() {
-    return this.store.selectOnce(UiState.getSidenavOpened).pipe(
+    return this.store.selectOnce(DnbhubUiState.getSidenavOpened).pipe(
       concatMap(sidenavOpened => {
         return sidenavOpened ? this.closeSidenav() : this.openSidenav();
       }),
@@ -66,9 +66,9 @@ export class UiService implements IUiService {
   }
 
   public selectLanguage(language: ESUPPORTED_LANGUAGE_KEY) {
-    return this.store.selectOnce(UiState.getLanguage).pipe(
-      concatMap(_ => this.store.dispatch(new uiActions.setUiState({ language }))),
-      tap(_ => {
+    return this.store.selectOnce(DnbhubUiState.getLanguage).pipe(
+      concatMap(() => this.store.dispatch(new uiActions.setDnbhubUiState({ language }))),
+      tap(() => {
         this.translate.use(language);
         this.dateAdapter.setLocale(language);
       }),

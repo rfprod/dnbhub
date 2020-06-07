@@ -1,1 +1,1 @@
-test.todo('SoundcloudPlayerComponent');
+test.todo('DnbhubSoundcloudPlayerComponent');

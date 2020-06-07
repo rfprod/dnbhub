@@ -3,20 +3,20 @@ import { ModuleWithProviders, NgModule, Provider } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { NgxsModule } from '@ngxs/store';
 
-import { AdminApiService } from './admin-api.service';
-import { AdminService } from './admin.service';
-import { AdminState } from './admin.store';
+import { DnbhubAdminApiService } from './admin-api.service';
+import { DnbhubAdminService } from './admin.service';
+import { DnbhubAdminState } from './admin.store';
 
-export const adminStoreModuleProviders: Provider[] = [AdminService, AdminApiService];
+export const adminStoreModuleProviders: Provider[] = [DnbhubAdminService, DnbhubAdminApiService];
 
 @NgModule({
-  imports: [MatSidenavModule, OverlayModule, NgxsModule.forFeature([AdminState])],
+  imports: [MatSidenavModule, OverlayModule, NgxsModule.forFeature([DnbhubAdminState])],
   providers: [...adminStoreModuleProviders],
 })
-export class AdminStoreModule {
-  public static forRoot(): ModuleWithProviders<AdminStoreModule> {
+export class DnbhubAdminStoreModule {
+  public static forRoot(): ModuleWithProviders<DnbhubAdminStoreModule> {
     return {
-      ngModule: AdminStoreModule,
+      ngModule: DnbhubAdminStoreModule,
       providers: [...adminStoreModuleProviders],
     };
   }

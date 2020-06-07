@@ -3,18 +3,20 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize, take, timeout } from 'rxjs/operators';
-import { HttpProgressService } from 'src/app/state/http-progress/http-progress.service';
+import { DnbhubHttpProgressService } from 'src/app/state/http-progress/http-progress.service';
 import { ETIMEOUT } from 'src/app/utils';
 
 /**
  * Custom http handlers service.
  */
-@Injectable()
-export class HttpHandlersService {
+@Injectable({
+  providedIn: 'root',
+})
+export class DnbhubHttpHandlersService {
   private readonly defaultHttpTimeout = 10000;
 
   constructor(
-    private readonly httpProgress: HttpProgressService,
+    private readonly httpProgress: DnbhubHttpProgressService,
     private readonly snackBar: MatSnackBar,
   ) {}
 

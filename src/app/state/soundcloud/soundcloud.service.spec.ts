@@ -1,10 +1,10 @@
 import { async, TestBed, TestModuleMetadata } from '@angular/core/testing';
 import { getTestBedConfig, newTestBedMetadata } from 'src/app/mocks/utils/test-bed-config.mock';
 
-import { SoundcloudService } from './soundcloud.service';
+import { DnbhubSoundcloudService } from './soundcloud.service';
 
-describe('SoundcloudService', () => {
-  let service: SoundcloudService;
+describe('DnbhubSoundcloudService', () => {
+  let service: DnbhubSoundcloudService;
 
   const testBedMetadata: TestModuleMetadata = newTestBedMetadata({});
   const testBedConfig: TestModuleMetadata = getTestBedConfig(testBedMetadata);
@@ -12,8 +12,8 @@ describe('SoundcloudService', () => {
   beforeEach(async(() => {
     void TestBed.configureTestingModule(testBedConfig)
       .compileComponents()
-      .then(_ => {
-        service = TestBed.inject(SoundcloudService);
+      .then(() => {
+        service = TestBed.inject(DnbhubSoundcloudService);
       });
   }));
 

@@ -3,20 +3,23 @@ import { ModuleWithProviders, NgModule, Provider } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { NgxsModule } from '@ngxs/store';
 
-import { SoundcloudApiService } from './soundcloud-api.service';
-import { SoundcloudService } from './soundcloud.service';
-import { SoundcloudState } from './soundcloud.store';
+import { DnbhubSoundcloudApiService } from './soundcloud-api.service';
+import { DnbhubSoundcloudService } from './soundcloud.service';
+import { DnbhubSoundcloudState } from './soundcloud.store';
 
-export const soundcloudStoreModuleProviders: Provider[] = [SoundcloudService, SoundcloudApiService];
+export const soundcloudStoreModuleProviders: Provider[] = [
+  DnbhubSoundcloudService,
+  DnbhubSoundcloudApiService,
+];
 
 @NgModule({
-  imports: [MatSidenavModule, OverlayModule, NgxsModule.forFeature([SoundcloudState])],
+  imports: [MatSidenavModule, OverlayModule, NgxsModule.forFeature([DnbhubSoundcloudState])],
   providers: [...soundcloudStoreModuleProviders],
 })
-export class SoundcloudStoreModule {
-  public static forRoot(): ModuleWithProviders<SoundcloudStoreModule> {
+export class DnbhubSoundcloudStoreModule {
+  public static forRoot(): ModuleWithProviders<DnbhubSoundcloudStoreModule> {
     return {
-      ngModule: SoundcloudStoreModule,
+      ngModule: DnbhubSoundcloudStoreModule,
       providers: [...soundcloudStoreModuleProviders],
     };
   }

@@ -3,8 +3,10 @@ import { Injectable } from '@angular/core';
 /**
  * Custom deferred service.
  */
-@Injectable()
-export class CustomDeferredService<T> {
+@Injectable({
+  providedIn: 'root',
+})
+export class DnbhubCustomDeferredService<T> {
   constructor() {
     this.promise = new Promise<T>((resolve, reject) => {
       this.resolve = resolve;

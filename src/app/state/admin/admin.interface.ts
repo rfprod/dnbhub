@@ -4,20 +4,22 @@ import { IEmailMessage, IEmailSubmission } from 'src/app/interfaces/admin';
 import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
 import { IActionPayload } from 'src/app/utils/ngxs.util';
 
-export interface IAdminStateModel {
+export interface IDnbhubAdminStateModel {
   emailSubmissions: IEmailSubmission[];
   emailMessages: IEmailMessage[];
   brands: Brand[];
   users: IFirebaseUserRecord[];
   blogEntriesIDs: number[];
+  selectedBrand: Brand;
 }
 
-export type AdminPayload = IActionPayload<Partial<IAdminStateModel>>;
+export type TDnbhubAdminPayload = IActionPayload<Partial<IDnbhubAdminStateModel>>;
 
-export interface IAdminService {
+export interface IDnbhubAdminService {
   emailSubmissions$: Observable<IEmailSubmission[]>;
   emailMessages$: Observable<IEmailMessage[]>;
   brands$: Observable<Brand[]>;
   users$: Observable<IFirebaseUserRecord[]>;
   blogEntriesIDs$: Observable<number[]>;
+  selectedBrand$: Observable<Brand>;
 }

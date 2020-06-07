@@ -2,20 +2,20 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { concatMap, mapTo } from 'rxjs/operators';
 
-import { SoundcloudApiService } from './soundcloud-api.service';
-import { ISoundcloudService } from './soundcloud.interface';
-import { soundcloudActions, SoundcloudState } from './soundcloud.store';
+import { DnbhubSoundcloudApiService } from './soundcloud-api.service';
+import { IDnbhubSoundcloudService } from './soundcloud.interface';
+import { DnbhubSoundcloudState, soundcloudActions } from './soundcloud.store';
 
 @Injectable({
   providedIn: 'root',
 })
-export class SoundcloudService implements ISoundcloudService {
-  constructor(private readonly store: Store, private readonly api: SoundcloudApiService) {}
+export class DnbhubSoundcloudService implements IDnbhubSoundcloudService {
+  constructor(private readonly store: Store, private readonly api: DnbhubSoundcloudApiService) {}
 
-  public readonly me$ = this.store.select(SoundcloudState.getMe);
-  public readonly myPlaylists$ = this.store.select(SoundcloudState.getMyPlaylists);
-  public readonly tracks$ = this.store.select(SoundcloudState.getTracks);
-  public readonly playlist$ = this.store.select(SoundcloudState.getPlaylist);
+  public readonly me$ = this.store.select(DnbhubSoundcloudState.getMe);
+  public readonly myPlaylists$ = this.store.select(DnbhubSoundcloudState.getMyPlaylists);
+  public readonly tracks$ = this.store.select(DnbhubSoundcloudState.getTracks);
+  public readonly playlist$ = this.store.select(DnbhubSoundcloudState.getPlaylist);
 
   /**
    * TODO: types, and store wiring
@@ -29,7 +29,9 @@ export class SoundcloudService implements ISoundcloudService {
       .getMe(userId)
       .pipe(
         concatMap(me =>
-          this.store.dispatch(new soundcloudActions.setSoundcloudState({ me })).pipe(mapTo(me)),
+          this.store
+            .dispatch(new soundcloudActions.setDnbhubSoundcloudState({ me }))
+            .pipe(mapTo(me)),
         ),
       );
   }
@@ -40,7 +42,7 @@ export class SoundcloudService implements ISoundcloudService {
       .pipe(
         concatMap(myPlaylists =>
           this.store
-            .dispatch(new soundcloudActions.setSoundcloudState({ myPlaylists }))
+            .dispatch(new soundcloudActions.setDnbhubSoundcloudState({ myPlaylists }))
             .pipe(mapTo(myPlaylists)),
         ),
       );
@@ -52,7 +54,7 @@ export class SoundcloudService implements ISoundcloudService {
       .pipe(
         concatMap(tracks =>
           this.store
-            .dispatch(new soundcloudActions.setSoundcloudState({ tracks }))
+            .dispatch(new soundcloudActions.setDnbhubSoundcloudState({ tracks }))
             .pipe(mapTo(tracks)),
         ),
       );
@@ -64,7 +66,7 @@ export class SoundcloudService implements ISoundcloudService {
       .pipe(
         concatMap(playlist =>
           this.store
-            .dispatch(new soundcloudActions.setSoundcloudState({ playlist }))
+            .dispatch(new soundcloudActions.setDnbhubSoundcloudState({ playlist }))
             .pipe(mapTo(playlist)),
         ),
       );

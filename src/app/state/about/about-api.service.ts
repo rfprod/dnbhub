@@ -3,8 +3,8 @@ import { Store } from '@ngxs/store';
 import { from } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { AboutDetails } from 'src/app/interfaces/about/about-details.interface';
-import { FirebaseService } from 'src/app/services';
-import { HttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
+import { DnbhubFirebaseService } from 'src/app/services';
+import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
 
 import { aboutActions } from './about.store';
 
@@ -14,10 +14,10 @@ import { aboutActions } from './about.store';
 @Injectable({
   providedIn: 'root',
 })
-export class AboutApiService implements OnDestroy {
+export class DnbhubAboutApiService implements OnDestroy {
   constructor(
-    private readonly handlers: HttpHandlersService,
-    private readonly firebase: FirebaseService,
+    private readonly handlers: DnbhubHttpHandlersService,
+    private readonly firebase: DnbhubFirebaseService,
     private readonly store: Store,
   ) {}
 
@@ -30,7 +30,7 @@ export class AboutApiService implements OnDestroy {
       });
     return this.handlers.pipeHttpRequest(from(promise)).pipe(
       tap(details => {
-        this.store.dispatch(new aboutActions.setAboutState({ details }));
+        this.store.dispatch(new aboutActions.setDnbhubAboutState({ details }));
       }),
     );
   }

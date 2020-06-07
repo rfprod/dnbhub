@@ -2,24 +2,24 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { tap } from 'rxjs/operators';
 
-import { BlogApiService } from './blog-api.service';
-import { IBlogService } from './blog.interface';
-import { blogActions, BlogState } from './blog.store';
+import { DnbhubBlogApiService } from './blog-api.service';
+import { IDnbhubBlogService } from './blog.interface';
+import { blogActions, DnbhubBlogState } from './blog.store';
 
 @Injectable({
   providedIn: 'root',
 })
-export class BlogService implements IBlogService {
-  constructor(private readonly store: Store, private readonly api: BlogApiService) {}
+export class DnbhubBlogService implements IDnbhubBlogService {
+  constructor(private readonly store: Store, private readonly api: DnbhubBlogApiService) {}
 
-  public readonly posts$ = this.store.select(BlogState.getPosts);
+  public readonly posts$ = this.store.select(DnbhubBlogState.getPosts);
 
-  public readonly selectedPost$ = this.store.select(BlogState.getSelectedPost);
+  public readonly selectedPost$ = this.store.select(DnbhubBlogState.getSelectedPost);
 
   public getPosts() {
     return this.api.getPosts().pipe(
       tap(posts => {
-        this.store.dispatch(new blogActions.setBlogState({ posts }));
+        this.store.dispatch(new blogActions.setDnbhubBlogState({ posts }));
       }),
     );
   }

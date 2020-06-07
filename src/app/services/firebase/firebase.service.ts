@@ -9,13 +9,13 @@ import {
 } from '@angular/fire/database/interfaces';
 import { from, Observable, of, throwError } from 'rxjs';
 import { concatMap, map, tap } from 'rxjs/operators';
-import { AppEnvironmentConfig } from 'src/app/app.environment';
+import { DnbhubEnvironmentConfig } from 'src/app/app.environment';
 import { IFirebaseENVInterface } from 'src/app/interfaces';
 import { BlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
-import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
+import { DnbhubCustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
 
-import { HttpHandlersService } from '../http-handlers/http-handlers.service';
+import { DnbhubHttpHandlersService } from '../http-handlers/http-handlers.service';
 
 /**
  * Firebase service, uses Angular Fire.
@@ -23,17 +23,17 @@ import { HttpHandlersService } from '../http-handlers/http-handlers.service';
 @Injectable({
   providedIn: 'root',
 })
-export class FirebaseService {
+export class DnbhubFirebaseService {
   constructor(
     private readonly fireDb: AngularFireDatabase,
     private readonly fireAuth: AngularFireAuth,
-    private readonly handlers: HttpHandlersService,
+    private readonly handlers: DnbhubHttpHandlersService,
   ) {}
 
   /**
    * Application environment: Firebase API.
    */
-  private readonly config: IFirebaseENVInterface = new AppEnvironmentConfig().firebase;
+  private readonly config: IFirebaseENVInterface = new DnbhubEnvironmentConfig().firebase;
 
   /**
    * Angular fire public shortcuts.
@@ -195,7 +195,7 @@ export class FirebaseService {
    * Checks database user id.
    */
   public checkDBuserUID(): Promise<{ exists: boolean; created: boolean }> {
-    const def = new CustomDeferredService<any>();
+    const def = new DnbhubCustomDeferredService<any>();
     this.authErrorCheck();
     (this.getDB('users/' + this.fire.user.uid) as Promise<DataSnapshot>)
       .then((snapshot: DataSnapshot) => {
@@ -249,7 +249,7 @@ export class FirebaseService {
    * @param dbKey blog entry database key
    */
   public blogEntryExistsByValue(dbKey: string): Promise<any> {
-    const def = new CustomDeferredService();
+    const def = new DnbhubCustomDeferredService();
     (this.getDB('blogEntriesIDs', true) as DatabaseReference)
       .orderByValue()
       .equalTo(dbKey)
@@ -268,7 +268,7 @@ export class FirebaseService {
    * @param value child key value
    */
   public blogEntryExistsByChildValue(childKey: string, value: any): Promise<any> {
-    const def = new CustomDeferredService();
+    const def = new DnbhubCustomDeferredService();
     (this.getDB('blog', true) as DatabaseReference)
       .orderByChild(childKey)
       .equalTo(value)
@@ -289,7 +289,7 @@ export class FirebaseService {
     /*
      *	create new records, delete submission record
      */
-    const def = new CustomDeferredService();
+    const def = new DnbhubCustomDeferredService();
     this.authErrorCheck();
     this.checkDBuserUID()
       .then(data => {

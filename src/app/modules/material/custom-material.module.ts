@@ -230,10 +230,10 @@ export const customMaterialModuleProviders: Provider[] = [
     ScrollingModule,
   ],
 })
-export class CustomMaterialModule {
-  public static forRoot(): ModuleWithProviders<CustomMaterialModule> {
+export class DnbhubMaterialModule {
+  public static forRoot(): ModuleWithProviders<DnbhubMaterialModule> {
     return {
-      ngModule: CustomMaterialModule,
+      ngModule: DnbhubMaterialModule,
       providers: customMaterialModuleProviders,
     };
   }

@@ -6,16 +6,16 @@ import {
 } from 'src/app/interfaces';
 import { IActionPayload } from 'src/app/utils/ngxs.util';
 
-export interface ISoundcloudStateModel {
+export interface IDnbhubSoundcloudStateModel {
   me: SoundcloudMe;
   myPlaylists: SoundcloudPlaylist[];
   tracks: SoundcloudTracksLinkedPartitioning;
   playlist: SoundcloudPlaylist;
 }
 
-export type SoundcloudPayload = IActionPayload<Partial<ISoundcloudStateModel>>;
+export type TDnbhubSoundcloudPayload = IActionPayload<Partial<IDnbhubSoundcloudStateModel>>;
 
-export interface ISoundcloudService {
+export interface IDnbhubSoundcloudService {
   me$: Observable<SoundcloudMe>;
   myPlaylists$: Observable<SoundcloudPlaylist[]>;
   tracks$: Observable<SoundcloudTracksLinkedPartitioning>;

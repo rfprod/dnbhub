@@ -6,8 +6,10 @@ import { IDictionaryObject, IUiDictionary } from './translations.interface';
 /**
  * Translate service for UI.
  */
-@Injectable()
-export class TranslateService {
+@Injectable({
+  providedIn: 'root',
+})
+export class DnbhubTranslateService {
   constructor(@Inject(TRANSLATIONS) private readonly translations: IUiDictionary) {}
 
   /**

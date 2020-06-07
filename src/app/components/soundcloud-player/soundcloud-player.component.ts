@@ -16,11 +16,11 @@ import { concatMap, first, map, takeWhile, tap } from 'rxjs/operators';
 import { IEventTargetWithPosition, IEventWithPosition } from 'src/app/interfaces/index';
 import { ISoundcloudPlayer } from 'src/app/interfaces/soundcloud/soundcloud-player.interface';
 import { SoundcloudTrack } from 'src/app/interfaces/soundcloud/soundcloud-track.config';
-import { HttpProgressState } from 'src/app/state/http-progress/http-progress.store';
-import { SoundcloudState } from 'src/app/state/soundcloud/soundcloud.store';
+import { DnbhubHttpProgressState } from 'src/app/state/http-progress/http-progress.store';
+import { DnbhubSoundcloudState } from 'src/app/state/soundcloud/soundcloud.store';
 import { ETIMEOUT, WINDOW } from 'src/app/utils';
 
-import { SoundcloudService } from '../../state/soundcloud/soundcloud.service';
+import { DnbhubSoundcloudService } from '../../state/soundcloud/soundcloud.service';
 
 const renderPlaylistTracksDefault = 10;
 const renderPlaylistTracksIncrement = 25;
@@ -57,16 +57,12 @@ export type TSoundcloudPlayerMode =
  * Soundcloud player component.
  */
 @Component({
-  selector: 'app-soundcloud-player',
+  selector: 'dnbhub-soundcloud-player',
   templateUrl: './soundcloud-player.component.html',
   styleUrls: ['./soundcloud-player.component.scss'],
-  inputs: ['mode', 'userId', 'playlistId'],
-  host: {
-    class: 'mat-body-1',
-  },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SoundcloudPlayerComponent implements OnChanges, OnDestroy {
+export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
   /**
    * Default config.
    */
@@ -103,11 +99,11 @@ export class SoundcloudPlayerComponent implements OnChanges, OnDestroy {
    */
   @Input('playlistId') private playlistId: number = this.defaultConfig.playlist.everything;
 
-  private readonly loading$ = this.store.select(HttpProgressState.mainViewProgress);
+  private readonly loading$ = this.store.select(DnbhubHttpProgressState.mainViewProgress);
 
   constructor(
     private readonly store: Store,
-    private readonly soundcloud: SoundcloudService,
+    private readonly soundcloud: DnbhubSoundcloudService,
     @Inject(WINDOW) private readonly window: Window,
   ) {}
 
@@ -118,14 +114,14 @@ export class SoundcloudPlayerComponent implements OnChanges, OnDestroy {
    * Soundcloud user tracks.
    */
   public tracks$ = this.store
-    .select(SoundcloudState.getTracks)
+    .select(DnbhubSoundcloudState.getTracks)
     .pipe(map(tracks => tracks.collection));
 
   /**
    * Soundcloud playlist.
    */
   public playlist$ = this.store
-    .select(SoundcloudState.allPlaylists)
+    .select(DnbhubSoundcloudState.allPlaylists)
     .pipe(map(playlists => playlists.find(item => item.id === this.playlistId)));
 
   public readonly playlistTracks$ = combineLatest([
@@ -197,7 +193,7 @@ export class SoundcloudPlayerComponent implements OnChanges, OnDestroy {
               )
             ) {
               return this.soundcloud.getPlaylist(this.playlistId).pipe(
-                tap(_ => {
+                tap(() => {
                   this.noMoreTracks.next(true);
                 }),
               );
@@ -260,8 +256,8 @@ export class SoundcloudPlayerComponent implements OnChanges, OnDestroy {
             this.player = player;
             this.player.play();
           }),
-          concatMap(_ => timer(ETIMEOUT.SHORT).pipe()),
-          tap(_ => {
+          concatMap(() => timer(ETIMEOUT.SHORT).pipe()),
+          tap(() => {
             this.reportWaveformProgress().subscribe();
           }),
         )
@@ -279,7 +275,7 @@ export class SoundcloudPlayerComponent implements OnChanges, OnDestroy {
    */
   public reportWaveformProgress() {
     return this.waveformProgressTimer$.pipe(
-      tap(_ => {
+      tap(() => {
         const visibleWaveform: ElementRef = new ElementRef(
           this.window.document.getElementsByClassName('waveform')[0],
         );

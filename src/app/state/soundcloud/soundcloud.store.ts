@@ -6,16 +6,16 @@ import {
   SoundcloudTracksLinkedPartitioning,
 } from 'src/app/interfaces';
 
-import { setSoundcloudState } from './soundcloud.actions';
-import { ISoundcloudStateModel, SoundcloudPayload } from './soundcloud.interface';
+import { setDnbhubSoundcloudState } from './soundcloud.actions';
+import { IDnbhubSoundcloudStateModel, TDnbhubSoundcloudPayload } from './soundcloud.interface';
 
 export const soundcloudActions = {
-  setSoundcloudState,
+  setDnbhubSoundcloudState,
 };
 
-export const SOUNDCLOUD_STATE_TOKEN = new StateToken<ISoundcloudStateModel>('soundcloud');
+export const SOUNDCLOUD_STATE_TOKEN = new StateToken<IDnbhubSoundcloudStateModel>('soundcloud');
 
-@State<ISoundcloudStateModel>({
+@State<IDnbhubSoundcloudStateModel>({
   name: SOUNDCLOUD_STATE_TOKEN,
   defaults: {
     me: new SoundcloudMe(),
@@ -24,42 +24,44 @@ export const SOUNDCLOUD_STATE_TOKEN = new StateToken<ISoundcloudStateModel>('sou
     playlist: new SoundcloudPlaylist(),
   },
 })
-@Injectable()
-export class SoundcloudState {
+@Injectable({
+  providedIn: 'root',
+})
+export class DnbhubSoundcloudState {
   @Selector()
-  public static getState(state: ISoundcloudStateModel) {
+  public static getState(state: IDnbhubSoundcloudStateModel) {
     return state;
   }
 
   @Selector()
-  public static getMe(state: ISoundcloudStateModel) {
+  public static getMe(state: IDnbhubSoundcloudStateModel) {
     return state.me;
   }
 
   @Selector()
-  public static getMyPlaylists(state: ISoundcloudStateModel) {
+  public static getMyPlaylists(state: IDnbhubSoundcloudStateModel) {
     return state.myPlaylists;
   }
 
   @Selector()
-  public static getTracks(state: ISoundcloudStateModel) {
+  public static getTracks(state: IDnbhubSoundcloudStateModel) {
     return state.tracks;
   }
 
   @Selector()
-  public static getPlaylist(state: ISoundcloudStateModel) {
+  public static getPlaylist(state: IDnbhubSoundcloudStateModel) {
     return state.playlist;
   }
 
   @Selector()
-  public static allPlaylists(state: ISoundcloudStateModel) {
+  public static allPlaylists(state: IDnbhubSoundcloudStateModel) {
     return [...state.myPlaylists, state.playlist];
   }
 
-  @Action(setSoundcloudState)
-  public setSoundcloudState(
-    ctx: StateContext<ISoundcloudStateModel>,
-    { payload }: SoundcloudPayload,
+  @Action(setDnbhubSoundcloudState)
+  public setDnbhubSoundcloudState(
+    ctx: StateContext<IDnbhubSoundcloudStateModel>,
+    { payload }: TDnbhubSoundcloudPayload,
   ) {
     return ctx.patchState(payload);
   }

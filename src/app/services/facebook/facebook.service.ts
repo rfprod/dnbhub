@@ -9,10 +9,12 @@ const windowSdkKey = 'FB';
  * Facebook service.
  * Controls Facebook JavaScript SDK.
  */
-@Injectable()
-export class FacebookService {
+@Injectable({
+  providedIn: 'root',
+})
+export class DnbhubFacebookService {
   constructor(@Inject(WINDOW) private readonly window: Window) {
-    console.warn('FacebookService constructor');
+    console.warn('DnbhubFacebookService constructor');
     this.initFacebookJsSDK();
   }
 

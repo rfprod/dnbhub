@@ -1,6 +1,6 @@
 import { TestModuleMetadata } from '@angular/core/testing';
 
-import { MocksCoreModule } from '../modules/mocks-core.module';
+import { DnbhubMocksCoreModule } from '../modules/mocks-core.module';
 
 /**
  * New TestBed metadata getter type.
@@ -32,7 +32,7 @@ export const getTestBedConfig: TestBedConfigGetter = (
 ) =>
   new Object({
     declarations: [...metadata.declarations],
-    imports: [MocksCoreModule.forRoot(), ...metadata.imports],
+    imports: [DnbhubMocksCoreModule.forRoot(), ...metadata.imports],
     providers: [...metadata.providers],
     schemas: [...metadata.providers],
   });

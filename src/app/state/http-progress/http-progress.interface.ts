@@ -1,13 +1,13 @@
 import { MonoTypeOperatorFunction, Observable } from 'rxjs';
 import { IActionPayload } from 'src/app/utils/ngxs.util';
 
-export interface IHttpProgressStateModel {
+export interface IDnbhubHttpProgressStateModel {
   mainView: boolean;
 }
 
-export type HttpProgressPayload = IActionPayload<Partial<IHttpProgressStateModel>>;
+export type TDnbhubHttpProgressPayload = IActionPayload<Partial<IDnbhubHttpProgressStateModel>>;
 
-export interface IHttpProgressService {
+export interface IDnbhubHttpProgressService {
   mainView$: Observable<boolean>;
 }
 

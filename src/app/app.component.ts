@@ -7,8 +7,8 @@ import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { ESUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate/index';
 
-import { UiService } from './state/ui/ui.service';
-import { UiState } from './state/ui/ui.store';
+import { DnbhubUiService } from './state/ui/ui.service';
+import { DnbhubUiState } from './state/ui/ui.store';
 import { WINDOW } from './utils';
 
 /**
@@ -16,12 +16,12 @@ import { WINDOW } from './utils';
  */
 @UntilDestroy()
 @Component({
-  selector: 'app-root',
+  selector: 'dnbhub-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
-  @Select(UiState.getSidenavOpened)
+export class DnbhubRootComponent implements OnInit {
+  @Select(DnbhubUiState.getSidenavOpened)
   public readonly sidenavOpened$: Observable<boolean>;
 
   /**
@@ -36,7 +36,7 @@ export class AppComponent implements OnInit {
     private readonly matIconRegistry: MatIconRegistry,
     private readonly domSanitizer: DomSanitizer,
     private readonly media: MediaObserver,
-    private readonly ui: UiService,
+    private readonly ui: DnbhubUiService,
     @Inject(WINDOW) private readonly window: Window,
   ) {}
 

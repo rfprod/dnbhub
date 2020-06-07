@@ -1,24 +1,24 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AppAboutComponent } from 'src/app/components/app-about/app-about.component';
-import { AppAdminComponent } from 'src/app/components/app-admin/app-admin.component';
-import { AppBlogComponent } from 'src/app/components/app-blog/app-blog.component';
-import { AppFreedownloadsComponent } from 'src/app/components/app-freedownloads/app-freedownloads.component';
-import { AppIndexComponent } from 'src/app/components/app-index/app-index.component';
-import { AppRepostsComponent } from 'src/app/components/app-reposts/app-reposts.component';
-import { AppSinglesComponent } from 'src/app/components/app-singles/app-singles.component';
-import { AppUserComponent } from 'src/app/components/app-user/app-user.component';
-import { AuthenticatedGuard } from 'src/app/guards/authenticated/authenticated.guard';
+import { DnbhubAboutComponent } from 'src/app/components/about/about.component';
+import { DnbhubAdminComponent } from 'src/app/components/admin/admin.component';
+import { DnbhubBlogComponent } from 'src/app/components/blog/blog.component';
+import { DnbhubFreedownloadsComponent } from 'src/app/components/freedownloads/freedownloads.component';
+import { DnbhubIndexComponent } from 'src/app/components/index/index.component';
+import { DnbhubRepostsComponent } from 'src/app/components/reposts/reposts.component';
+import { DnbhubSinglesComponent } from 'src/app/components/singles/singles.component';
+import { DnbhubUserComponent } from 'src/app/components/user/user.component';
+import { DnbhubAuthenticatedGuard } from 'src/app/guards/authenticated/authenticated.guard';
 
 export const APP_ROUTES: Routes = [
-  { path: 'index', component: AppIndexComponent },
-  { path: 'singles', component: AppSinglesComponent },
-  { path: 'freedownloads', component: AppFreedownloadsComponent },
-  { path: 'reposts', component: AppRepostsComponent },
-  { path: 'blog', component: AppBlogComponent },
-  { path: 'user', component: AppUserComponent, canActivate: [AuthenticatedGuard] },
-  { path: 'admin', component: AppAdminComponent, canActivate: [AuthenticatedGuard] },
-  { path: 'about', component: AppAboutComponent },
+  { path: 'index', component: DnbhubIndexComponent },
+  { path: 'singles', component: DnbhubSinglesComponent },
+  { path: 'freedownloads', component: DnbhubFreedownloadsComponent },
+  { path: 'reposts', component: DnbhubRepostsComponent },
+  { path: 'blog', component: DnbhubBlogComponent },
+  { path: 'user', component: DnbhubUserComponent, canActivate: [DnbhubAuthenticatedGuard] },
+  { path: 'admin', component: DnbhubAdminComponent, canActivate: [DnbhubAuthenticatedGuard] },
+  { path: 'about', component: DnbhubAboutComponent },
   { path: '', redirectTo: 'index', pathMatch: 'full' },
   { path: '**', redirectTo: 'index' },
 ];
@@ -30,4 +30,4 @@ export const APP_ROUTES: Routes = [
   imports: [RouterModule.forRoot(APP_ROUTES)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class DnbhubRoutingModule {}

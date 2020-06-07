@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-interface IRegExpPatterns {
+export interface IRegExpPatterns {
   email: RegExp;
   soundcloudPlaylistLink: RegExp;
   brandName: RegExp;
@@ -23,10 +23,12 @@ interface IRegExpPatterns {
 /**
  * Application regular expressions service.
  */
-@Injectable()
-export class RegularExpressionsService {
+@Injectable({
+  providedIn: 'root',
+})
+export class DnbhubRegularExpressionsService {
   constructor() {
-    console.warn('RegularExpressionsService init');
+    console.warn('DnbhubRegularExpressionsService init');
   }
 
   /**

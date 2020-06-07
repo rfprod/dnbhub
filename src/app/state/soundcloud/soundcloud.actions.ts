@@ -1,7 +1,9 @@
 import { getActionCreator } from 'src/app/utils/ngxs.util';
 
-import { SoundcloudPayload } from './soundcloud.interface';
+import { TDnbhubSoundcloudPayload } from './soundcloud.interface';
 
 const createAction = getActionCreator('Soundcloud');
 
-export const setSoundcloudState = createAction<SoundcloudPayload>('Soundcloud: set state');
+export const setDnbhubSoundcloudState = createAction<TDnbhubSoundcloudPayload>(
+  'Soundcloud: set state',
+);

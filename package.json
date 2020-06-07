@@ -95,7 +95,7 @@
     "@typescript-eslint/parser": "2.33.0",
     "codelyzer": "5.2.2",
     "cypress": "4.5.0",
-    "eslint": "7.0.0",
+    "eslint": "6.8.0",
     "eslint-config-prettier": "6.11.0",
     "eslint-plugin-compat": "3.6.0",
     "eslint-plugin-deprecation": "1.0.1",

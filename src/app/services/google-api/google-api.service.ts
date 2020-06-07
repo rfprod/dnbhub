@@ -1,19 +1,21 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { AppEnvironmentConfig } from 'src/app/app.environment';
+import { DnbhubEnvironmentConfig } from 'src/app/app.environment';
 import { IGoogleApiENVInterface } from 'src/app/interfaces/index';
-import { HttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
+import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
 import { APP_ENV } from 'src/app/utils';
 
 /**
  * Google API service.
  */
-@Injectable()
-export class GoogleApiService {
+@Injectable({
+  providedIn: 'root',
+})
+export class DnbhubGoogleApiService {
   constructor(
     private readonly http: HttpClient,
-    private readonly handlers: HttpHandlersService,
-    @Inject(APP_ENV) private readonly env: AppEnvironmentConfig,
+    private readonly handlers: DnbhubHttpHandlersService,
+    @Inject(APP_ENV) private readonly env: DnbhubEnvironmentConfig,
   ) {}
 
   /**

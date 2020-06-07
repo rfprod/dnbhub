@@ -1,10 +1,10 @@
 import { async, TestBed, TestModuleMetadata } from '@angular/core/testing';
 import { getTestBedConfig, newTestBedMetadata } from 'src/app/mocks/utils/test-bed-config.mock';
 
-import { BlogService } from './blog.service';
+import { DnbhubBlogService } from './blog.service';
 
-describe('BlogService', () => {
-  let service: BlogService;
+describe('DnbhubBlogService', () => {
+  let service: DnbhubBlogService;
 
   const testBedMetadata: TestModuleMetadata = newTestBedMetadata({});
   const testBedConfig: TestModuleMetadata = getTestBedConfig(testBedMetadata);
@@ -12,8 +12,8 @@ describe('BlogService', () => {
   beforeEach(async(() => {
     void TestBed.configureTestingModule(testBedConfig)
       .compileComponents()
-      .then(_ => {
-        service = TestBed.inject(BlogService);
+      .then(() => {
+        service = TestBed.inject(DnbhubBlogService);
       });
   }));
 

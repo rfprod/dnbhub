@@ -12,20 +12,20 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { NgxsFormPluginModule } from '@ngxs/form-plugin';
 import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { NgxsModule } from '@ngxs/store';
-import { AppEnvironmentConfig } from 'src/app/app.environment';
-import { CustomMaterialModule } from 'src/app/modules';
-import { TranslateModule } from 'src/app/modules/translate/translate.module';
-import { HttpHandlersService } from 'src/app/services';
-import { FirebaseService } from 'src/app/services/firebase/firebase.service';
-import { AboutStoreModule } from 'src/app/state/about/about.module';
-import { BlogStoreModule } from 'src/app/state/blog/blog.module';
-import { HttpProgressStoreModule } from 'src/app/state/http-progress/http-progress.module';
-import { HttpProgressService } from 'src/app/state/http-progress/http-progress.service';
-import { SoundcloudStoreModule } from 'src/app/state/soundcloud/soundcloud.module';
-import { UiStoreModule } from 'src/app/state/ui/ui.module';
+import { DnbhubEnvironmentConfig } from 'src/app/app.environment';
+import { DnbhubMaterialModule } from 'src/app/modules';
+import { DnbhubTranslateModule } from 'src/app/modules/translate/translate.module';
+import { DnbhubHttpHandlersService } from 'src/app/services';
+import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
+import { DnbhubAboutStoreModule } from 'src/app/state/about/about.module';
+import { DnbhubBlogStoreModule } from 'src/app/state/blog/blog.module';
+import { DnbhubHttpProgressStoreModule } from 'src/app/state/http-progress/http-progress.module';
+import { DnbhubHttpProgressService } from 'src/app/state/http-progress/http-progress.service';
+import { DnbhubSoundcloudStoreModule } from 'src/app/state/soundcloud/soundcloud.module';
+import { DnbhubUiStoreModule } from 'src/app/state/ui/ui.module';
 import { APP_ENV, getWindow, WINDOW } from 'src/app/utils';
 
-import { DummyComponent } from '../components/dummy.component';
+import { DummyComponent } from '../components/dummy.component.mock';
 
 /**
  * Mocks core module providers.
@@ -34,15 +34,15 @@ export const mocksCoreModuleProviders: Provider[] = [
   { provide: APP_BASE_HREF, useValue: '/' },
   { provide: LocationStrategy, useClass: PathLocationStrategy },
   { provide: WINDOW, useFactory: getWindow },
-  { provide: APP_ENV, useFactory: () => new AppEnvironmentConfig() },
+  { provide: APP_ENV, useFactory: () => new DnbhubEnvironmentConfig() },
   {
-    provide: HttpHandlersService,
-    useFactory: (progress: HttpProgressService, snackbar: MatSnackBar) =>
-      new HttpHandlersService(progress, snackbar),
-    deps: [HttpProgressService, MatSnackBar],
+    provide: DnbhubHttpHandlersService,
+    useFactory: (progress: DnbhubHttpProgressService, snackbar: MatSnackBar) =>
+      new DnbhubHttpHandlersService(progress, snackbar),
+    deps: [DnbhubHttpProgressService, MatSnackBar],
   },
   {
-    provide: FirebaseService,
+    provide: DnbhubFirebaseService,
     useValue: {},
   },
   {
@@ -81,16 +81,16 @@ export const mocksCoreModuleProviders: Provider[] = [
     FormsModule,
     ReactiveFormsModule,
     FlexLayoutModule,
-    CustomMaterialModule.forRoot(),
-    TranslateModule.forRoot(),
+    DnbhubMaterialModule.forRoot(),
+    DnbhubTranslateModule.forRoot(),
     NgxsModule.forRoot(),
     NgxsFormPluginModule.forRoot(),
     NgxsRouterPluginModule.forRoot(),
-    UiStoreModule.forRoot(),
-    HttpProgressStoreModule.forRoot(),
-    SoundcloudStoreModule.forRoot(),
-    BlogStoreModule.forRoot(),
-    AboutStoreModule.forRoot(),
+    DnbhubUiStoreModule.forRoot(),
+    DnbhubHttpProgressStoreModule.forRoot(),
+    DnbhubSoundcloudStoreModule.forRoot(),
+    DnbhubBlogStoreModule.forRoot(),
+    DnbhubAboutStoreModule.forRoot(),
   ],
   declarations: [DummyComponent],
   exports: [
@@ -101,22 +101,22 @@ export const mocksCoreModuleProviders: Provider[] = [
     FormsModule,
     ReactiveFormsModule,
     FlexLayoutModule,
-    CustomMaterialModule,
+    DnbhubMaterialModule,
     NgxsModule,
     NgxsFormPluginModule,
-    UiStoreModule,
-    HttpProgressStoreModule,
-    SoundcloudStoreModule,
-    BlogStoreModule,
-    AboutStoreModule,
+    DnbhubUiStoreModule,
+    DnbhubHttpProgressStoreModule,
+    DnbhubSoundcloudStoreModule,
+    DnbhubBlogStoreModule,
+    DnbhubAboutStoreModule,
     DummyComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class MocksCoreModule {
-  public static forRoot(): ModuleWithProviders<MocksCoreModule> {
+export class DnbhubMocksCoreModule {
+  public static forRoot(): ModuleWithProviders<DnbhubMocksCoreModule> {
     return {
-      ngModule: MocksCoreModule,
+      ngModule: DnbhubMocksCoreModule,
       providers: [...mocksCoreModuleProviders],
     };
   }

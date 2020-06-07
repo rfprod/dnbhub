@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
 
-import { setAdminState } from './admin.actions';
-import { AdminPayload, IAdminStateModel } from './admin.interface';
+import { setDnbhubAdminState } from './admin.actions';
+import { IDnbhubAdminStateModel, TDnbhubAdminPayload } from './admin.interface';
 
 export const blogActions = {
-  setAdminState,
+  setDnbhubAdminState,
 };
 
-export const ADMIN_STATE_TOKEN = new StateToken<IAdminStateModel>('admin');
+export const ADMIN_STATE_TOKEN = new StateToken<IDnbhubAdminStateModel>('admin');
 
-@State<IAdminStateModel>({
+@State<IDnbhubAdminStateModel>({
   name: ADMIN_STATE_TOKEN,
   defaults: {
     emailSubmissions: [],
@@ -18,42 +18,53 @@ export const ADMIN_STATE_TOKEN = new StateToken<IAdminStateModel>('admin');
     brands: [],
     users: [],
     blogEntriesIDs: [],
+    selectedBrand: null,
   },
 })
-@Injectable()
-export class AdminState {
+@Injectable({
+  providedIn: 'root',
+})
+export class DnbhubAdminState {
   @Selector()
-  public static getState(state: IAdminStateModel) {
+  public static getState(state: IDnbhubAdminStateModel) {
     return state;
   }
 
   @Selector()
-  public static getEmailSubmissions(state: IAdminStateModel) {
+  public static getEmailSubmissions(state: IDnbhubAdminStateModel) {
     return state.emailSubmissions;
   }
 
   @Selector()
-  public static getEmailMessages(state: IAdminStateModel) {
+  public static getEmailMessages(state: IDnbhubAdminStateModel) {
     return state.emailMessages;
   }
 
   @Selector()
-  public static getBrands(state: IAdminStateModel) {
+  public static getBrands(state: IDnbhubAdminStateModel) {
     return state.brands;
   }
 
   @Selector()
-  public static getUsers(state: IAdminStateModel) {
+  public static getUsers(state: IDnbhubAdminStateModel) {
     return state.users;
   }
 
   @Selector()
-  public static getBlogEntriesIDs(state: IAdminStateModel) {
+  public static getBlogEntriesIDs(state: IDnbhubAdminStateModel) {
     return state.blogEntriesIDs;
   }
 
-  @Action(setAdminState)
-  public setAdminState(ctx: StateContext<IAdminStateModel>, { payload }: AdminPayload) {
+  @Selector()
+  public static getSelectedBrand(state: IDnbhubAdminStateModel) {
+    return state.selectedBrand;
+  }
+
+  @Action(setDnbhubAdminState)
+  public setDnbhubAdminState(
+    ctx: StateContext<IDnbhubAdminStateModel>,
+    { payload }: TDnbhubAdminPayload,
+  ) {
     return ctx.patchState(payload);
   }
 }

@@ -79,7 +79,7 @@ export const setupJestJsdomGlobalMocks: () => void = () => {
     },
   });
 
-  function mutationObserver(..._args: any[]) {
+  function mutationObserver(...args: any[]) {
     return {
       observe: jest.fn(),
       takeRecords: jest.fn(),

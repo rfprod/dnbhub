@@ -8,8 +8,8 @@ import {
   IEmailSubmissions,
 } from 'src/app/interfaces/admin';
 import { IFirebaseUserRecord, IFirebaseUserRecords } from 'src/app/interfaces/firebase';
-import { FirebaseService } from 'src/app/services';
-import { HttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
+import { DnbhubFirebaseService } from 'src/app/services';
+import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
 
 /**
  * Admin API service.
@@ -17,10 +17,10 @@ import { HttpHandlersService } from 'src/app/services/http-handlers/http-handler
 @Injectable({
   providedIn: 'root',
 })
-export class AdminApiService implements OnDestroy {
+export class DnbhubAdminApiService implements OnDestroy {
   constructor(
-    private readonly handlers: HttpHandlersService,
-    private readonly firebase: FirebaseService,
+    private readonly handlers: DnbhubHttpHandlersService,
+    private readonly firebase: DnbhubFirebaseService,
   ) {}
 
   public getEmailSubmissions() {

@@ -2,35 +2,40 @@ import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
 
 import { AboutDetails } from '../../interfaces/about/about-details.interface';
-import { setAboutState } from './about.actions';
-import { AboutPayload, IAboutStateModel } from './about.interface';
+import { setDnbhubAboutState } from './about.actions';
+import { IDnbhubAboutStateModel, TDnbhubAboutPayload } from './about.interface';
 
 export const aboutActions = {
-  setAboutState,
+  setDnbhubAboutState,
 };
 
-export const ABOUT_STATE_TOKEN = new StateToken<IAboutStateModel>('about');
+export const ABOUT_STATE_TOKEN = new StateToken<IDnbhubAboutStateModel>('about');
 
-@State<IAboutStateModel>({
+@State<IDnbhubAboutStateModel>({
   name: ABOUT_STATE_TOKEN,
   defaults: {
     details: new AboutDetails(),
   },
 })
-@Injectable()
-export class AboutState {
+@Injectable({
+  providedIn: 'root',
+})
+export class DnbhubAboutState {
   @Selector()
-  public static getState(state: IAboutStateModel) {
+  public static getState(state: IDnbhubAboutStateModel) {
     return state;
   }
 
   @Selector()
-  public static getDetails(state: IAboutStateModel) {
+  public static getDetails(state: IDnbhubAboutStateModel) {
     return state.details;
   }
 
-  @Action(setAboutState)
-  public setAboutState(ctx: StateContext<IAboutStateModel>, { payload }: AboutPayload) {
+  @Action(setDnbhubAboutState)
+  public setDnbhubAboutState(
+    ctx: StateContext<IDnbhubAboutStateModel>,
+    { payload }: TDnbhubAboutPayload,
+  ) {
     return ctx.patchState(payload);
   }
 }

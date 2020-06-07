@@ -5,9 +5,10 @@ import { Pipe, PipeTransform } from '@angular/core';
  */
 @Pipe({
   name: 'mapToIterable',
+  // eslint-disable-next-line @angular-eslint/no-pipe-impure
   pure: false,
 })
-export class MapToIterablePipe implements PipeTransform {
+export class DnbhubMapToIterablePipe implements PipeTransform {
   /**
    * Retrieves map keys to iterable array.
    * @param value object

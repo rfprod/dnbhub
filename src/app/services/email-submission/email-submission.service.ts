@@ -1,16 +1,18 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { HttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
+import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
 import { WINDOW } from 'src/app/utils';
 
 /**
  * Email submission service.
  */
-@Injectable()
-export class EmailSubmissionService {
+@Injectable({
+  providedIn: 'root',
+})
+export class DnbhubEmailSubmissionService {
   constructor(
     private readonly http: HttpClient,
-    private readonly handlers: HttpHandlersService,
+    private readonly handlers: DnbhubHttpHandlersService,
     @Inject(WINDOW) private readonly window: Window,
   ) {}
 
