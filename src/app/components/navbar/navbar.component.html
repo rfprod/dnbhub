@@ -1,0 +1,133 @@
+<mat-toolbar color="primary">
+  <span fxLayout="row" fxLayoutAlign="start stretch">
+    <mat-icon
+      svgIcon="dnbhub-logo-roundbg"
+      class="material-icons-svg"
+      alt="{{ 'title' | translate }}"
+      title="{{ 'title' | translate }}"
+    ></mat-icon>
+  </span>
+
+  <span fxFlex="1 1 auto"></span>
+
+  <span fxFlex="0 1 auto">
+    <button mat-icon-button [matMenuTriggerFor]="mobileMenu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #mobileMenu="matMenu" [fxHide.md]="true" [fxHide.lg]="true">
+      <button
+        mat-menu-item
+        [routerLink]="['index']"
+        routerLinkActive
+        #rlaIndex="routerLinkActive"
+        [disabled]="rlaIndex.isActive"
+      >
+        <mat-icon>explore</mat-icon>
+        <span>{{ 'index' | translate }}</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button
+        mat-menu-item
+        [routerLink]="['singles']"
+        routerLinkActive
+        #rlaSingles="routerLinkActive"
+        [disabled]="rlaSingles.isActive"
+      >
+        <mat-icon>library_music</mat-icon>
+        <span>{{ 'singles' | translate }}</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button
+        mat-menu-item
+        [routerLink]="['freedownloads']"
+        routerLinkActive
+        #rlaFreedownloads="routerLinkActive"
+        [disabled]="rlaFreedownloads.isActive"
+      >
+        <mat-icon>library_music</mat-icon>
+        <span>{{ 'freedownloads' | translate }}</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button
+        mat-menu-item
+        [routerLink]="['reposts']"
+        routerLinkActive
+        #rlaReports="routerLinkActive"
+        [disabled]="rlaReports.isActive"
+      >
+        <mat-icon>library_music</mat-icon>
+        <span>{{ 'reposts' | translate }}</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button
+        mat-menu-item
+        [routerLink]="['blog']"
+        routerLinkActive
+        #rlaBlog="routerLinkActive"
+        [disabled]="rlaBlog.isActive"
+      >
+        <mat-icon>featured_play_list</mat-icon>
+        <span>{{ 'blog' | translate }}</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button
+        mat-menu-item
+        [routerLink]="['about']"
+        routerLinkActive
+        #rlaAbout="routerLinkActive"
+        [disabled]="rlaAbout.isActive"
+      >
+        <mat-icon>info</mat-icon>
+        <span>{{ 'about' | translate }}</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="showAuthDialog()" *ngIf="anonUser$ | async">
+        <mat-icon>lock_open</mat-icon>
+        <span>{{ 'login' | translate }}</span>
+      </button>
+      <button mat-menu-item (click)="logout()" *ngIf="!(anonUser$ | async)">
+        <mat-icon>lock</mat-icon>
+        {{ 'logout' | translate }}
+      </button>
+      <mat-divider></mat-divider>
+      <button
+        mat-menu-item
+        [routerLink]="['user']"
+        routerLinkActive
+        #rlaUser="routerLinkActive"
+        [disabled]="rlaUser.isActive"
+        *ngIf="!(anonUser$ | async)"
+      >
+        <mat-icon>person</mat-icon>
+        <span>{{ 'user' | translate }}</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button
+        mat-menu-item
+        [routerLink]="['admin']"
+        routerLinkActive
+        #rlaAdmin="routerLinkActive"
+        [disabled]="rlaAdmin.isActive"
+        *ngIf="!(anonUser$ | async) && isAdmin()"
+      >
+        <mat-icon>verified_user</mat-icon>
+        <span>{{ 'admin' | translate }}</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item [disabled]="true">
+        <mat-icon>language</mat-icon>
+        <span>{{ 'language.title' | translate }}</span>
+      </button>
+      <span fxFlex fxLayout="row" fxLayoutAlign="center center">
+        <button
+          mat-button
+          *ngFor="let lang of supportedLanguages"
+          [disabled]="(language$ | async) === lang.key"
+          (click)="selectLanguage(lang.key)"
+        >
+          <span>{{ 'language.' + lang.key | translate }}</span>
+        </button>
+      </span>
+    </mat-menu>
+  </span>
+</mat-toolbar>

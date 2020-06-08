@@ -1,0 +1,115 @@
+<div
+  fxFlex="100"
+  fxLayout="column"
+  fxLayoutGap="10px"
+  *ngIf="(posts$ | async) && selectedBlogPost$ | async as selectedBlogPost"
+>
+  <h4 fxFlex="0 1 auto" fxLayout="row" fxLayoutAlign="center center">
+    <button
+      mat-button
+      color="primary"
+      [disabled]="listStartReached$ | async"
+      (click)="previousBlogPost()"
+      aria-label="previous blog post"
+      title="previous blog post"
+    >
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+
+    <span fxFlex="1 1 auto" fxLayout="row wrap" fxLayoutAlign="center center">
+      {{ selectedBlogPost.code }}
+    </span>
+
+    <button
+      mat-button
+      color="primary"
+      [disabled]="listEndReached$ | async"
+      (click)="nextBlogPost()"
+      aria-label="next blog post"
+      title="next blog post"
+    >
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </h4>
+
+  <div fxFlex="0 1 auto" fxLayout="row wrap" fxLayoutAlign="space-around center">
+    <a
+      mat-flat-button
+      href="{{ selectedBlogPost.links.website }}"
+      [fxHide]="!selectedBlogPost.links.website"
+      target="_blank"
+      aria-label="website link"
+      title="website link"
+    >
+      Website
+    </a>
+    <a
+      mat-flat-button
+      href="{{ selectedBlogPost.links.soundcloud }}"
+      [fxHide]="!selectedBlogPost.links.soundcloud"
+      target="_blank"
+      aria-label="soundcloud link"
+      title="soundcloud link"
+    >
+      Soundcloud
+    </a>
+    <a
+      mat-flat-button
+      href="{{ selectedBlogPost.links.twitter }}"
+      [fxHide]="!selectedBlogPost.links.twitter"
+      target="_blank"
+      aria-label="twitter link"
+      title="twitter link"
+    >
+      RSS
+    </a>
+    <a
+      mat-flat-button
+      href="{{ selectedBlogPost.links.facebook }}"
+      [fxHide]="!selectedBlogPost.links.facebook"
+      target="_blank"
+      aria-label="facebook link"
+      title="facebook link"
+    >
+      Facebook
+    </a>
+    <a
+      mat-flat-button
+      href="{{ selectedBlogPost.links.youtube }}"
+      [fxHide]="!selectedBlogPost.links.youtube"
+      target="_blank"
+      aria-label="youtube link"
+      title="youtube link"
+    >
+      Youtube
+    </a>
+    <a
+      mat-flat-button
+      href="{{ selectedBlogPost.links.instagram }}"
+      [fxHide]="!selectedBlogPost.links.instagram"
+      target="_blank"
+      aria-label="instagram link"
+      title="instagram link"
+    >
+      Instagram
+    </a>
+    <a
+      mat-flat-button
+      href="{{ selectedBlogPost.links.bandcamp }}"
+      [fxHide]="!selectedBlogPost.links.bandcamp"
+      target="_blank"
+      aria-label="bandcamp link"
+      title="bandcamp link"
+    >
+      Bandcamp
+    </a>
+  </div>
+
+  <dnbhub-soundcloud-player
+    fxFlex="0 1 auto"
+    [mode]="'playlist'"
+    *ngIf="selectedBlogPost.playlistId"
+    [playlistId]="selectedBlogPost.playlistId"
+    [displayDescription]="true"
+  ></dnbhub-soundcloud-player>
+</div>

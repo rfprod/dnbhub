@@ -1,0 +1,342 @@
+<div
+  *ngIf="anonUser$ | async"
+  class="mat-body-2"
+  fxFlex="100"
+  fxLayoutFill
+  fxLayout="row"
+  fxLayoutAlign="center center"
+>
+  You must me authenticated to access admin controls
+</div>
+
+<ng-container *ngIf="!(anonUser$ | async)">
+  <div
+    *ngIf="!submissionPreview"
+    fxFlex="100"
+    fxLayout="row wrap"
+    fxLayoutAlign="start start"
+    [ngStyle]="{ padding: '0 10px 0 10px' }"
+  >
+    <ng-container *ngIf="me$ | async as me">
+      <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center center">
+        <form
+          fxFlex="100"
+          fxLayout="row wrap"
+          fxLayoustAlign="start stretch"
+          [formGroup]="profileForm"
+        >
+          <span fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="15px">
+            <mat-form-field>
+              <mat-icon
+                matPrefix
+                *ngIf="!firebaseUser.emailVerified"
+                title="your email is not verified, click here to request a verification link"
+                (click)="resendVerificationEmail()"
+              >
+                send
+              </mat-icon>
+              <mat-icon
+                matPrefix
+                class="material-icons"
+                *ngIf="firebaseUser.emailVerified"
+                matTooltip="your email is verified"
+              >
+                check
+              </mat-icon>
+              <input
+                matInput
+                type="email"
+                formControlName="email"
+                placeholder="your_email@domain.tld"
+              />
+              <mat-icon matSuffix class="material-icons">
+                email
+              </mat-icon>
+              <mat-error *ngIf="profileForm.controls.email.invalid">
+                This field is required, and it should be an email
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
+              <input matInput type="text" formControlName="name" placeholder="your display name" />
+
+              <mat-icon matSuffix class="material-icons">
+                account_circle
+              </mat-icon>
+            </mat-form-field>
+          </span>
+
+          <span fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="15px">
+            <button
+              mat-button
+              *ngIf="!mode.edit"
+              (click)="resetPassword()"
+              aria-label="reset password"
+            >
+              reset password
+            </button>
+
+            <button mat-button (click)="toggleEditMode()" aria-label="toggle edit mode">
+              <span *ngIf="!mode.edit">edit profile</span>
+              <span *ngIf="mode.edit">cancel</span>
+            </button>
+
+            <button
+              mat-button
+              type="submit"
+              *ngIf="mode.edit"
+              [disabled]="profileForm.invalid"
+              (click)="updateProfile()"
+              aria-label="update profile"
+            >
+              update
+            </button>
+
+            <button
+              mat-button
+              type="submit"
+              *ngIf="mode.edit"
+              [disabled]="!profileForm.controls.password.value.trim()"
+              (click)="deleteProfile()"
+              color="warn"
+              aria-label="delete profile"
+            >
+              delete
+            </button>
+
+            <mat-form-field *ngIf="mode.edit">
+              <input
+                matInput
+                type="{{ showPassword ? 'text' : 'password' }}"
+                formControlName="password"
+                name="password"
+                placeholder="provide a password to DELETE your account"
+              />
+
+              <mat-icon
+                matSuffix
+                class="material-icons"
+                *ngIf="!showPassword"
+                (click)="togglePasswordVisibility()"
+              >
+                visibility
+              </mat-icon>
+
+              <mat-icon
+                matSuffix
+                class="material-icons"
+                *ngIf="showPassword"
+                (click)="togglePasswordVisibility()"
+              >
+                visibility_off
+              </mat-icon>
+            </mat-form-field>
+
+            <button
+              mat-button
+              *ngIf="!mode.edit && !me"
+              color="warn"
+              (click)="scConnect()"
+              aria-label="connect with Soundcloud"
+              title="Connect with Soundcloud"
+            >
+              connect with soundcloud
+            </button>
+
+            <button
+              mat-button
+              *ngIf="!mode.edit && me"
+              color="primary"
+              (click)="scConnect()"
+              aria-label="reconnect with Soundcloud or connect another account"
+              title="Reconnect with Soundcloud or connect another account"
+            >
+              reconnect with soundcloud
+            </button>
+          </span>
+        </form>
+      </div>
+
+      <div fxFlex="100" fxLayout="row wrap">
+        <span fxFlex="100"> Username: {{ me.username }} </span>
+
+        <span fxFlex="100"> Full name: {{ me.full_name }} </span>
+
+        <span fxFlex="100"> Playlists: {{ me.playlist_count }} </span>
+
+        <span fxFlex="100" fxShow fxHide.lt-md [innerHtml]="me.description"></span>
+      </div>
+    </ng-container>
+
+    <div
+      fxFlex="100"
+      fxLayout="row wrap"
+      fxLayoutAlign="space-between start"
+      *ngIf="myPlaylists$ | async as myPlaylists"
+    >
+      <mat-card
+        [ngStyle]="{ margin: '0.5em' }"
+        fxFlex.lt-sm="100"
+        fxFlex="47"
+        fxFlex.gt-md="31"
+        *ngFor="let playlistObj of myPlaylists; let i = index"
+      >
+        <mat-card-content
+          [ngStyle]="{
+            height: '200px',
+            'overflow-x': 'hidden',
+            'overflow-y': 'auto'
+          }"
+        >
+          <dnbhub-soundcloud-player [mode]="'playlist'" [playlistId]="playlistObj.id">
+          </dnbhub-soundcloud-player>
+        </mat-card-content>
+
+        <mat-card-actions>
+          <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start center">
+            <button
+              mat-icon-button
+              color="primary"
+              [disabled]="alreadyAdded(playlistObj)"
+              (click)="submitBlogPost(playlistObj)"
+              aria-label="Submit to blog"
+            >
+              <mat-icon *ngIf="!alreadyAdded(playlistObj)" matTooltip="Submit to blog">
+                library_add
+              </mat-icon>
+
+              <mat-icon
+                *ngIf="alreadyAdded(playlistObj) && unsubmittable(playlistObj)"
+                matTooltip="Submission is under review"
+              >
+                timelapse
+              </mat-icon>
+
+              <mat-icon
+                *ngIf="alreadyAdded(playlistObj) && !unsubmittable(playlistObj)"
+                matTooltip="Submitted to blog"
+              >
+                check_circle
+              </mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
+              color="warn"
+              *ngIf="alreadySubmitted(playlistObj) && unsubmittable(playlistObj)"
+              (click)="unsubmitBlogPost(playlistObj)"
+              aria-label="Unsubmit playlist: available only before moderation happens"
+              matTooltip="Unsubmit playlist: available only before moderation happens"
+            >
+              <mat-icon>
+                remove_circle
+              </mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
+              [disabled]="alreadyAdded(playlistObj)"
+              *ngIf="unsubmittable(playlistObj)"
+              (click)="toggleBlogPostPreview(playlistObj)"
+              aria-label="Preview blog post"
+              matTooltip="Preview blog post"
+            >
+              <mat-icon>
+                pagepreview
+              </mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
+              *ngIf="alreadyAdded(playlistObj) && !unsubmittable(playlistObj)"
+              (click)="toggleBlogPostPreview(playlistObj)"
+              aria-label="Go to blog entry"
+              matTooltip="Go to blog entry"
+            >
+              <mat-icon>
+                pagepreview
+              </mat-icon>
+            </button>
+          </div>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+
+  <div fxFlex="100" fxLayoutFill fxLayout="row" *ngIf="submissionPreview">
+    <div fxFlex="100" fxLayoutFill fxLayout="column" fxLayoutAlign="start stretch">
+      <button mat-button (click)="toggleBlogPostPreview()">
+        close preview
+      </button>
+
+      <div
+        fxFlex="15"
+        fxFlex-xs="30"
+        class="heading"
+        fxLayout="row wrap"
+        fxLayoutAlign="start center"
+      >
+        <h4 fxFlex fxFlex.lt-lg="100" fxLayout="row" fxLayoutAlign="center center">
+          <button
+            mat-button
+            color="accent"
+            fxFlex="20"
+            disabled
+            aria-label="previous blog post"
+            matTooltip="previous blog post"
+          >
+            <mat-icon>
+              chevron_left
+            </mat-icon>
+          </button>
+
+          <span fxFlex="60" fxLayout="row wrap" fxLayoutAlign="center center">
+            <span fxFlex="100">
+              {{ submissionPreview.title }}
+            </span>
+          </span>
+
+          <button
+            mat-button
+            color="accent"
+            fxFlex="20"
+            disabled
+            aria-label="next blog post"
+            matTooltip="next blog post"
+          >
+            <mat-icon>
+              chevron_right
+            </mat-icon>
+          </button>
+        </h4>
+      </div>
+
+      <div fxFlex fxLayout="row wrap" *ngIf="submissionPreview">
+        <dnbhub-soundcloud-player fxFlex="100" [mode]="'playlist'" [playlistId]="submissionPreview.id">
+        </dnbhub-soundcloud-player>
+
+        <div
+          fxFlex="50"
+          fxFlex.lt-md="100"
+          id="text"
+          *ngIf="submissionPreview.description"
+          [ngStyle]="{ padding: '0 10px 0 10px' }"
+        >
+          <div [innerHtml]="submissionPreview.description"></div>
+
+          <p
+            *ngIf="
+              submissionPreview.release_year &&
+              submissionPreview.release_month &&
+              submissionPreview.release_day
+            "
+          >
+            Release date: {{ submissionPreview.release_year }}.{{
+              submissionPreview.release_month
+            }}.{{ submissionPreview.release_day }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

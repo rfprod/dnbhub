@@ -1,21 +1,20 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
-
+import { ModuleWithProviders, NgModule } from '@angular/core';
+import { DnbhubTranslatePipe } from 'src/app/modules/translate/translate.pipe';
+import { DnbhubTranslateService } from 'src/app/modules/translate/translate.service';
 import { TRANSLATION_PROVIDERS } from 'src/app/modules/translate/translations';
-import { TranslatePipe } from 'src/app/modules/translate/translate.pipe';
-import { TranslateService } from 'src/app/modules/translate/translate.service';
 
 /**
  * Translate module.
  */
 @NgModule({
-  declarations: [ TranslatePipe ],
-  exports: [ TranslatePipe ]
+  declarations: [DnbhubTranslatePipe],
+  exports: [DnbhubTranslatePipe],
 })
-export class TranslateModule {
+export class DnbhubTranslateModule {
   public static forRoot(): ModuleWithProviders {
     return {
-      ngModule: TranslateModule,
-      providers: [ TRANSLATION_PROVIDERS, TranslateService ]
+      ngModule: DnbhubTranslateModule,
+      providers: [TRANSLATION_PROVIDERS, DnbhubTranslateService],
     };
   }
 }

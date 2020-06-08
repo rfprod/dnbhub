@@ -8,5 +8,5 @@ export class BottomSheetTextDetailsData {
     }
   }
 
-  public text: string = '';
+  public text = '';
 }

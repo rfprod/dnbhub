@@ -1,89 +1,89 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@angular/core';
-
-import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
-
-import { AngularFireDatabase } from '@angular/fire/database';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireDatabase } from '@angular/fire/database';
 import {
-  DataSnapshot,
   DatabaseReference,
-  DatabaseSnapshotExists
+  DatabaseSnapshotExists,
+  DataSnapshot,
 } from '@angular/fire/database/interfaces';
-import {
-  FirebaseDatabase,
-  FirebaseAuth
-} from '@angular/fire/firebase-node';
-
-import { AppEnvironmentConfig } from 'src/app/app.environment';
+import { from, Observable, of, throwError } from 'rxjs';
+import { concatMap, map, tap } from 'rxjs/operators';
+import { DnbhubEnvironmentConfig } from 'src/app/app.environment';
 import { IFirebaseENVInterface } from 'src/app/interfaces';
-import { IBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
+import { BlogPost } from 'src/app/interfaces/blog/blog-post.interface';
+import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
+import { DnbhubCustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
+
+import { DnbhubHttpHandlersService } from '../http-handlers/http-handlers.service';
 
 /**
  * Firebase service, uses Angular Fire.
  */
-@Injectable()
-export class FirebaseService {
-
-  /**
-   * @param fireDB Firebase database
-   * @param fireAuth Firebase auth
-   */
+@Injectable({
+  providedIn: 'root',
+})
+export class DnbhubFirebaseService {
   constructor(
-    private fireDB: AngularFireDatabase,
-    private fireAuth: AngularFireAuth
-  ) {
-    this.fireAuthUserSubscription();
-  }
+    private readonly fireDb: AngularFireDatabase,
+    private readonly fireAuth: AngularFireAuth,
+    private readonly handlers: DnbhubHttpHandlersService,
+  ) {}
 
   /**
    * Application environment: Firebase API.
    */
-  private config: IFirebaseENVInterface = new AppEnvironmentConfig().firebase;
+  private readonly config: IFirebaseENVInterface = new DnbhubEnvironmentConfig().firebase;
 
   /**
    * Angular fire public shortcuts.
    */
-  public fire: { db: FirebaseDatabase, auth: FirebaseAuth, authUser: firebase.User } = {
-    db: this.fireDB.database,
-    auth: this.fireAuth.auth,
-    authUser: null
+  public fire: {
+    db: firebase.database.Database;
+    auth: AngularFireAuth;
+    user: firebase.User;
+  } = {
+    db: this.fireDb.database,
+    auth: this.fireAuth,
+    user: null, // TODO remove this static reference of authenticated firebase user eventually
   };
 
-  /**
-   * Indicates if user is anonymous.
-   */
-  public anonUser(): boolean {
-    // console.log('this.fireAuth.auth.currentUser', this.fireAuth.auth.currentUser);
-    return !this.fireAuth.auth.currentUser ? true : false;
-  }
+  public readonly user$: Observable<firebase.User> = this.fireAuth.user;
 
-  private fireAuthUserSubscription(): void {
-    this.fireAuth.user.subscribe(
-      (user: firebase.User) => {
-        this.fire.authUser = user;
-      },
-      (error: any) => {
-        console.log('FirebaseService, delete, fireAuth.user, error', error);
-      }
-    );
-  }
+  public readonly anonUser$: Observable<boolean> = this.fireAuth.authState.pipe(
+    // TODO: remove this and refactor firebase user scenarios
+    tap(user => {
+      this.fire.user = { ...user };
+    }),
+    map(user => !Boolean(user)),
+  );
+
+  public readonly privilegedAccess$: Observable<boolean> = this.fireAuth.user.pipe(
+    map(user => user.uid !== this.config.privilegedAccessUID),
+  );
 
   /**
    * Gets firebase database
    * @param collection firebase collection name
    * @param refOnly indicates if db reference only should be returned
    */
-  public getDB(collection: 'about'|'blog'|'blogEntriesIDs'|'brands'|'emails'|'freedownloads'|'users'|string, refOnly?: boolean): Promise<DataSnapshot>|DatabaseReference {
-    const db: Promise<DataSnapshot>|DatabaseReference = (!refOnly) ? this.fireDB.database.ref('/' + collection).once('value') : this.fireDB.database.ref('/' + collection);
-    // console.log('firebaseService, getDB', db);
+  public getDB(
+    collection:
+      | 'about'
+      | 'blog'
+      | 'blogEntriesIDs'
+      | 'brands'
+      | 'emails'
+      | 'freedownloads'
+      | 'users'
+      | string,
+    refOnly?: boolean,
+  ): Promise<DataSnapshot> | DatabaseReference {
+    const db: Promise<DataSnapshot> | DatabaseReference = !refOnly
+      ? this.fireDb.database.ref('/' + collection).once('value')
+      : this.fireDb.database.ref('/' + collection);
+    // console.warn('firebaseService, getDB', db);
     return db;
-  }
-
-  /**
-   * Resolves if user has privileged access.
-   */
-  public privilegedAccess(): boolean {
-    return (!this.fire.authUser) ? false : (this.fire.authUser.uid !== this.config.privilegedAccessUID) ? false : true;
   }
 
   /**
@@ -91,67 +91,66 @@ export class FirebaseService {
    * @param mode login mode
    * @param payload login payload
    */
-  public authenticate(mode: 'email'|'twitter', payload: { email: string, password: string }): Promise<any> {
-    const def = new CustomDeferredService<any>();
-    console.log('mode:', mode);
-    console.log('payload:', payload);
+  public authenticate(mode: 'email' | 'twitter', email: string, password: string) {
+    const promise = this.fireAuth
+      .signInWithEmailAndPassword(email, password)
+      .then(credential => credential);
 
-    if (mode === 'email') {
-      this.fireAuth.auth.signInWithEmailAndPassword(payload.email, payload.password)
-        .then((success: any) => {
-          // console.log('auth success', success);
-          def.resolve(success);
-        })
-        .catch((error: any) => {
-          // console.log('auth error', error);
-          def.reject(error);
-        });
-    }
-
-    if (mode === 'twitter') {
-      /*
-      *	TODO
-      *	https://firebase.google.com/docs/auth/web/twitter-login?authuser=0
-      */
-      def.reject({ TODO: 'twitter authentication - https://firebase.google.com/docs/auth/web/twitter-login?authuser=0'});
-    }
-    return def.promise;
+    const observable =
+      mode === 'email'
+        ? from(promise)
+        : throwError(
+            'TODO: Twitter authentication - https://firebase.google.com/docs/auth/web/twitter-login?authuser=0',
+          );
+    return this.handlers.pipeHttpRequest(observable);
   }
 
   /**
    * Signs user out.
    */
-  public signout(): void {
-    console.log('signout', this.fireAuth);
-    if (this.fireAuth.auth.currentUser) {
-      this.fireAuth.auth.signOut();
-    }
+  public signout() {
+    const observable = from(this.fireAuth.currentUser).pipe(
+      concatMap(user => {
+        if (Boolean(user)) {
+          return from(this.fireAuth.signOut());
+        }
+        return of<void>();
+      }),
+    );
+    return this.handlers.pipeHttpRequest(observable);
+  }
+
+  /**
+   * @deprecated
+   * privilegedAccess$ should be used instead.
+   */
+  public privilegedAccess(): boolean {
+    return !this.fire.user
+      ? false
+      : this.fire.user.uid !== this.config.privilegedAccessUID
+      ? false
+      : true;
   }
 
   /**
    * Creates a user
-   * @param payload user credentials
+   * @param email user email
+   * @param password user password
    */
-  public create(payload: { email: string, password: string }): Promise<any> {
-    const def = new CustomDeferredService<any>();
-    this.fireAuth.auth.createUserWithEmailAndPassword(payload.email, payload.password)
-      .then((success) => {
-        // console.log('auth success', success);
-        def.resolve(success);
-      })
-      .catch((error) => {
-        // console.log('auth error', error);
-        def.reject(error);
-      });
-    return def.promise;
+  public create(email: string, password: string) {
+    const promise = this.fireAuth.createUserWithEmailAndPassword(email, password);
+    const observable = from(promise);
+    return this.handlers.pipeHttpRequest<firebase.auth.UserCredential>(observable);
   }
 
   /**
    * Sends password reset link to user's email.
    * @param email user email
    */
-  public resetUserPassword(email: string): Promise<any> {
-    return this.fireAuth.auth.sendPasswordResetEmail(email);
+  public resetUserPassword(email: string) {
+    const promise = this.fireAuth.sendPasswordResetEmail(email);
+    const observable = from(promise);
+    return this.handlers.pipeHttpRequest(observable);
   }
 
   /**
@@ -159,36 +158,35 @@ export class FirebaseService {
    * @param email user email
    * @param password user password
    */
-  public async delete(email: string, password: string): Promise<any> {
-    const def = new CustomDeferredService<any>();
-    const credential: any = await this.fireAuth.auth.signInWithEmailAndPassword(email, password);
-
-    this.fire.authUser.reauthenticateAndRetrieveDataWithCredential(credential)
-      .then(() => {
-        // console.log('successfully reauthenticated');
-        (this.getDB('users/' + this.fire.authUser.uid, true) as DatabaseReference).remove(); // delete user db profile also
-        this.fire.authUser.delete()
-          .then(() => {
-            def.resolve(true);
-          })
-          .catch((error) => {
-            def.reject(error);
-          });
+  public delete(email: string, password: string) {
+    const promise = this.fireAuth
+      .signInWithEmailAndPassword(email, password)
+      .then(credential => {
+        const cred = (credential as unknown) as firebase.auth.AuthCredential;
+        return this.fire.user.reauthenticateAndRetrieveDataWithCredential(cred);
       })
-      .catch((error) => {
-        def.reject(error);
+
+      .then(() => {
+        // console.warn('successfully reauthenticated');
+        return (this.getDB('users/' + this.fire.user.uid, true) as DatabaseReference).remove(); // delete user db profile also
+      })
+      .then(() => {
+        return this.fire.user.delete();
       });
-    return def.promise;
+    const observable = from(promise);
+    return this.handlers.pipeHttpRequest(observable);
   }
 
   /**
    * Checks authentication for errors.
    */
   public authErrorCheck(): void {
-    const typeError = new TypeError('firebaseService, user DB record action error: there seems to be no authenticated users');
+    const typeError = new TypeError(
+      'firebaseService, user DB record action error: there seems to be no authenticated users',
+    );
     if (!this.fireAuth.user) {
       throw typeError;
-    } else if (this.fireAuth.user && !this.fire.authUser.uid) {
+    } else if (this.fireAuth.user && !Boolean(this.fire.user.uid)) {
       throw typeError;
     }
   }
@@ -196,32 +194,32 @@ export class FirebaseService {
   /**
    * Checks database user id.
    */
-  public checkDBuserUID(): Promise<{exists: boolean, created: boolean}|any> {
-    const def = new CustomDeferredService<any>();
+  public checkDBuserUID(): Promise<{ exists: boolean; created: boolean }> {
+    const def = new DnbhubCustomDeferredService<any>();
     this.authErrorCheck();
-    (this.getDB('users/' + this.fire.authUser.uid) as Promise<DataSnapshot>)
+    (this.getDB('users/' + this.fire.user.uid) as Promise<DataSnapshot>)
       .then((snapshot: DataSnapshot) => {
-        console.log('checking user db profile');
-        if (!snapshot.val()) {
-          console.log('creating user db profile');
-          (this.getDB('users/' + this.fire.authUser.uid, true) as DatabaseReference)
+        console.warn('checking user db profile');
+        if (!Boolean(snapshot.val())) {
+          console.warn('creating user db profile');
+          (this.getDB('users/' + this.fire.user.uid, true) as DatabaseReference)
             .set({
-              created: new Date().getTime()
+              created: new Date().getTime(),
             })
             .then(() => {
-              console.log('created user db profile');
+              console.warn('created user db profile');
               def.resolve({ exists: false, created: true });
             })
-            .catch((error) => {
-              console.log('error creating user db profile', error);
+            .catch(error => {
+              console.warn('error creating user db profile', error);
               def.reject({ exists: false, created: false });
             });
         } else {
           def.resolve({ exists: true, created: false });
         }
       })
-      .catch((error) => {
-        console.log('checkDBuserUID, user db profile check:', error);
+      .catch(error => {
+        console.warn('checkDBuserUID, user db profile check:', error);
         def.reject(error);
       });
     return def.promise;
@@ -231,25 +229,19 @@ export class FirebaseService {
    * Sets new values for database user.
    * @param valuesObj new values object
    */
-  public setDBuserNewValues(valuesObj: { submittedPlaylists?: any[], sc_code?: string, sc_oauth_token?: string, sc_id?: string }): Promise<{valuesSet: boolean}|any> {
-    const def = new CustomDeferredService<any>();
+  public setDBuserNewValues(valuesObj: Partial<IFirebaseUserRecord>) {
     this.authErrorCheck();
-    this.checkDBuserUID()
-      .then((data) => {
-        console.log('checkDBuserUID', JSON.stringify(data));
-        (this.getDB('users/' + this.fire.authUser.uid, true) as DatabaseReference).update(valuesObj)
-          .then(() => {
-            console.log('user db profile values set');
-            def.resolve({ valuesSet: true });
-          }).catch((error) => {
-            console.log('error setting user db profile values', error);
-            def.reject({ valuesSet: false });
-          });
-      }).catch((error) => {
-        console.log('setDBuserValues, user db profile check error', error);
-        def.reject(error);
-      });
-    return def.promise;
+    const promise = this.checkDBuserUID().then(data => {
+      console.warn('checkDBuserUID', JSON.stringify(data));
+      return (this.getDB('users/' + this.fire.user.uid, true) as DatabaseReference)
+        .update(valuesObj)
+        .then(() => {
+          console.warn('user db profile values set');
+          return { valuesSet: true };
+        });
+    });
+    const observable = from(promise);
+    return this.handlers.pipeHttpRequest(observable);
   }
 
   /**
@@ -257,13 +249,13 @@ export class FirebaseService {
    * @param dbKey blog entry database key
    */
   public blogEntryExistsByValue(dbKey: string): Promise<any> {
-    const def = new CustomDeferredService();
+    const def = new DnbhubCustomDeferredService();
     (this.getDB('blogEntriesIDs', true) as DatabaseReference)
       .orderByValue()
       .equalTo(dbKey)
-      .on('value', (snapshot: DatabaseSnapshotExists<any>) => {
+      .on('value', (snapshot: DatabaseSnapshotExists<BlogPost>) => {
         const response = snapshot.val();
-        // console.log('blogEntryExists, blogEntriesIDs response', response);
+        console.warn('blogEntryExists, blogEntriesIDs response', response);
         // null - not found
         def.resolve(response);
       });
@@ -276,13 +268,13 @@ export class FirebaseService {
    * @param value child key value
    */
   public blogEntryExistsByChildValue(childKey: string, value: any): Promise<any> {
-    const def = new CustomDeferredService();
+    const def = new DnbhubCustomDeferredService();
     (this.getDB('blog', true) as DatabaseReference)
       .orderByChild(childKey)
       .equalTo(value)
-      .on('value', (snapshot) => {
+      .on('value', (snapshot: DatabaseSnapshotExists<BlogPost>) => {
         const response = snapshot.val();
-        // console.log('blogEntryExists, blogEntriesIDs response', response);
+        console.warn('blogEntryExists, blogEntriesIDs response', response);
         // null - not found
         def.resolve(response);
       });
@@ -293,44 +285,49 @@ export class FirebaseService {
    * Adds blog post to database.
    * @param valuesObj blog post model
    */
-  public addBlogPost(valuesObj: IBlogPost): Promise<any> {
+  public addBlogPost(valuesObj: BlogPost): Promise<any> {
     /*
-    *	create new records, delete submission record
-    */
-    const def = new CustomDeferredService();
+     *	create new records, delete submission record
+     */
+    const def = new DnbhubCustomDeferredService();
     this.authErrorCheck();
     this.checkDBuserUID()
-      .then((data: any) => {
-        console.log('checkDBuserUID', JSON.stringify(data));
+      .then(data => {
+        console.warn('checkDBuserUID', JSON.stringify(data));
         (this.getDB('blogEntriesIDs', true) as DatabaseReference)
           .orderByValue()
           .once('value', (snapshot: DataSnapshot) => {
-            const idsArray = snapshot.val();
-            console.log('idsArray', idsArray);
+            const idsArray: [number[]] = snapshot.val();
+            console.warn('idsArray', idsArray);
             idsArray[0].push(valuesObj.playlistId);
-            (this.getDB('blogEntriesIDs', true) as DatabaseReference).set(idsArray) // update blog entries ids
+            (this.getDB('blogEntriesIDs', true) as DatabaseReference)
+              .set(idsArray) // update blog entries ids
               .then(() => {
                 const newRecord = (this.getDB('blog', true) as DatabaseReference).push(); // update blog
-                newRecord.set(valuesObj)
+                newRecord
+                  .set(valuesObj)
                   .then(() => {
-                    console.log('blog post added');
+                    console.warn('blog post added');
                     def.resolve({ valuesSet: true });
                   })
                   .catch((error: any) => {
-                    console.log('error adding blog post entry', error);
+                    console.warn('error adding blog post entry', error);
                     def.reject({ valuesSet: false });
                   });
               })
               .catch((error: any) => {
-                console.log('error adding blog post entry ref to blogEntriesIDs collection', error);
+                console.warn(
+                  'error adding blog post entry ref to blogEntriesIDs collection',
+                  error,
+                );
                 def.reject({ valuesSet: false });
               });
           });
-      }).catch((error) => {
-        console.log('addBlogPost, user db profile check error', error);
+      })
+      .catch(error => {
+        console.warn('addBlogPost, user db profile check error', error);
         def.reject(error);
       });
     return def.promise;
   }
-
 }

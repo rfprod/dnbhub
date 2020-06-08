@@ -1,24 +1,24 @@
 import { Component, Inject } from '@angular/core';
-import { MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA } from '@angular/material';
+import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { BottomSheetTextDetailsData } from 'src/app/interfaces';
 
 /**
  * Bottom sheet text details component.
  */
 @Component({
-  selector: 'bottom-sheet-text-details',
-  templateUrl: 'bottom-sheet-text-details.component.html',
+  selector: 'dnbhub-bottom-sheet-text-details',
+  templateUrl: './bottom-sheet-text-details.component.html',
+  styleUrls: ['./bottom-sheet-text-details.component.scss'],
 })
-export class BottomSheetTextDetailsComponent {
-
+export class DnbhubBottomSheetTextDetailsComponent {
   /**
-   * BottomSheetTextDetailsComponent constructor.
+   * DnbhubBottomSheetTextDetailsComponent constructor.
    * @param bottomSheetRef bottom sheet reference
    * @param data bottom sheet data
    */
   constructor(
-    private bottomSheetRef: MatBottomSheetRef<BottomSheetTextDetailsComponent>,
-    @Inject(MAT_BOTTOM_SHEET_DATA) public data: BottomSheetTextDetailsData
+    private readonly bottomSheetRef: MatBottomSheetRef<DnbhubBottomSheetTextDetailsComponent>,
+    @Inject(MAT_BOTTOM_SHEET_DATA) public data: BottomSheetTextDetailsData,
   ) {}
 
   /**

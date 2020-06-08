@@ -1,11 +1,9 @@
 #!/bin/bash
 
 ##
-# Colors:
-# DEFAULT, BLACK, DARK_GRAY, RED, LIGHT_RED, GREEN, LIGHT_GREEN, BROWN, YELLOW,
-# BLUE, LIGHT_BLUE, PURPLE, LIGHT_PURPLE, CYAN, LIGHT_CYAN, LIGHT_GRAY, WHITE.
+# Color definitions.
 ##
-source shell/colors.sh
+source shell/colors.sh ''
 
 ##
 # Usage:
@@ -13,14 +11,14 @@ source shell/colors.sh
 # > bash build.sh prod - build app in production mode
 ##
 
-devModeNgBuild () {
+devModeNgBuild() {
   printf "\n ${LIGHT_BLUE}<< BUILDING APPLICATION DEFINED IN angular.json DEV MODE >>${DEFAULT}\n\n"
-  npm run ng-build
+  npm run ng:build
 }
 
-prodModeNgBuild () {
+prodModeNgBuild() {
   printf "\n ${LIGHT_BLUE}<< BUILDING APPLICATION DEFINED IN angular.json PROD MODE >>${DEFAULT}\n\n"
-  npm run ng-build-prod
+  npm run ng:build:prod
 }
 
 ##
@@ -29,7 +27,7 @@ prodModeNgBuild () {
 # - builds application using Angular CLI;
 # - resets client app environment variables.
 ##
-buildApplication () {
+buildApplication() {
   npm run set-client-app-env
   if [ $# -lt 1 ] || [ "$1" != "prod" ]; then
     devModeNgBuild
@@ -43,4 +41,4 @@ buildApplication () {
 # Builds applications defined in angular.json using Angular CLI.
 ##
 
-buildApplication $1
+buildApplication "$1"

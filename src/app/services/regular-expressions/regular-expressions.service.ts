@@ -1,6 +1,6 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 
-interface IRegExpPatterns {
+export interface IRegExpPatterns {
   email: RegExp;
   soundcloudPlaylistLink: RegExp;
   brandName: RegExp;
@@ -23,17 +23,18 @@ interface IRegExpPatterns {
 /**
  * Application regular expressions service.
  */
-@Injectable()
-export class RegularExpressionsService {
-
+@Injectable({
+  providedIn: 'root',
+})
+export class DnbhubRegularExpressionsService {
   constructor() {
-    console.log('RegularExpressionsService init');
+    console.warn('DnbhubRegularExpressionsService init');
   }
 
   /**
    * Regular expression patterns shared service.
    */
-  private regExpPatterns: IRegExpPatterns = {
+  private readonly regExpPatterns: IRegExpPatterns = {
     email: /\w{2}@\w{2,}(\.)?\w{2,}/,
     soundcloudPlaylistLink: /^https:\/\/soundcloud\.com\/\w+[^/]*\/sets\/\w+[^/]*$/,
     brandName: /^[a-zA-Z0-9]{2,}$/,
@@ -44,17 +45,16 @@ export class RegularExpressionsService {
       soundcloud: /^https:\/\/www\.soundcloud\.com\/[^/\s]+(\/)?$/,
       twitter: /^https:\/\/twitter\.com\/[^/\s]+(\/)?$/,
       website: /^http(s)?:\/\/(www\.)?[^/\s]+\.[a-z]{2,}(\/)?$/,
-      youtube: /^https:\/\/www\.youtube\.com\/(c|user)\/[^/\s]+(\/)?$/
+      youtube: /^https:\/\/www\.youtube\.com\/(c|user)\/[^/\s]+(\/)?$/,
     },
     text: /\w{3,}/,
     name: /\w{2,}/,
     header: /\w{5,}/,
     message: /[\w\s_-]{75,}/,
-    password: /\w{8,}/
+    password: /\w{8,}/,
   };
 
   public get patterns(): IRegExpPatterns {
     return this.regExpPatterns;
   }
-
 }

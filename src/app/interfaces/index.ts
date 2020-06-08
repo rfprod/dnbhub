@@ -1,20 +1,10 @@
 /**
  * Application interfaces barrel.
  */
-
-export * from 'src/app/interfaces/soundcloud/soundcloud-tracks-linked-partitioning.interface';
-export * from 'src/app/interfaces/soundcloud/soundcloud-playlist.interface';
-
-export * from 'src/app/interfaces/user/user-profile-form.interface';
-
-export * from 'src/app/interfaces/app-environment/app-environment.interface';
-
-export * from 'src/app/interfaces/forms/login-form.interface';
-export * from 'src/app/interfaces/forms/email-form.interface';
-
-export * from 'src/app/interfaces/brand/brand.interface';
-export * from 'src/app/interfaces/brand/brand-form.interface';
-
-export * from 'src/app/interfaces/about/about-details.interface';
-
-export * from 'src/app/interfaces/bottom-sheet/bottom-sheet-data.interface';
+export * from './about/about-details.interface';
+export * from './environment/environment.interface';
+export * from './bottom-sheet/index';
+export * from './brand/index';
+export * from './forms/index';
+export * from './soundcloud/index';
+export * from './ui/index';

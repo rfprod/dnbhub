@@ -1,13 +1,26 @@
 /**
  * Brand interface.
  */
-export class IBrand {
-  public name: string = '';
-  public bandcamp: string = '';
-  public facebook: string = '';
-  public instagram: string = '';
-  public soundcloud: string = '';
-  public twitter: string = '';
-  public website: string = '';
-  public youtube: string = '';
+export class Brand {
+  constructor(input?: Brand) {
+    if (input) {
+      const keys = Object.keys(input);
+      for (const key of keys) {
+        this[key] = input[key];
+      }
+    }
+  }
+  public key?: string;
+  public name = '';
+  public bandcamp = '';
+  public facebook = '';
+  public instagram = '';
+  public soundcloud = '';
+  public twitter = '';
+  public website = '';
+  public youtube = '';
+}
+
+export interface IBrands {
+  [key: string]: Brand;
 }

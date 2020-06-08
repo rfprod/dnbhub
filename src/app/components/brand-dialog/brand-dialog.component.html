@@ -1,0 +1,121 @@
+<h1 mat-dialog-title>Create/Edit brand</h1>
+
+<mat-dialog-content>
+  <form fxFlex="100" fxLayout="row wrap" *ngIf="form" [formGroup]="form" (ngSubmit)="submitForm()">
+    <mat-form-field fxFlex="100">
+      <input
+        matInput
+        type="text"
+        name="bandcamp"
+        [formControl]="form.controls.bandcamp"
+        placeholder="Bandcamp profile link, e.g.: https://some-name.bandcamp.com"
+      />
+      <mat-error *ngIf="form.controls.bandcamp.invalid" class="mat-body-1">
+        {{ 'form.invalid.link' | translate }}
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field fxFlex="100">
+      <input
+        matInput
+        type="text"
+        name="facebook"
+        [formControl]="form.controls.facebook"
+        placeholder="Facebook page link, e.g.: https://www.facebook.com/some-name"
+      />
+      <mat-error *ngIf="form.controls.facebook.invalid" class="mat-body-1">
+        {{ 'form.invalid.link' | translate }}
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field fxFlex="100">
+      <input
+        matInput
+        type="text"
+        name="instagram"
+        [formControl]="form.controls.instagram"
+        placeholder="Instagram page link, e.g.: https://www.facebook.com/some-name"
+      />
+      <mat-error *ngIf="form.controls.instagram.invalid" class="mat-body-1">
+        {{ 'form.invalid.link' | translate }}
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field fxFlex="100">
+      <input
+        matInput
+        type="text"
+        name="soundcloud"
+        [formControl]="form.controls.soundcloud"
+        placeholder="Soundcloud page link, e.g.: https://www.soundcloud.com/some-name"
+      />
+      <mat-error *ngIf="form.controls.soundcloud.invalid" class="mat-body-1">
+        {{ 'form.invalid.link' | translate }}
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field fxFlex="100">
+      <input
+        matInput
+        type="text"
+        name="twitter"
+        [formControl]="form.controls.twitter"
+        placeholder="Twitter page link, e.g.: https://twitter.com/some-name"
+      />
+      <mat-error *ngIf="form.controls.twitter.invalid" class="mat-body-1">
+        {{ 'form.invalid.link' | translate }}
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field fxFlex="100">
+      <input
+        matInput
+        type="text"
+        name="website"
+        [formControl]="form.controls.website"
+        placeholder="Website link, e.g.: https://website.tld"
+      />
+      <mat-error *ngIf="form.controls.website.invalid" class="mat-body-1">
+        {{ 'form.invalid.link' | translate }}
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field fxFlex="100">
+      <input
+        matInput
+        type="text"
+        name="youtube"
+        [formControl]="form.controls.youtube"
+        placeholder="Youtube link, e.g.: https://www.youtube.com/c_or_users/channelName"
+      />
+      <mat-error *ngIf="form.controls.youtube.invalid" class="mat-body-1">
+        {{ 'form.invalid.link' | translate }}
+      </mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button
+    mat-icon-button
+    type="button"
+    (click)="closeDialog()"
+    aria-label="cancel editing"
+    title="cancel editing"
+  >
+    <mat-icon>cancel</mat-icon>
+  </button>
+  <button
+    mat-icon-button
+    type="submit"
+    *ngIf="submitForm()"
+    aria-label="update brand"
+    title="update brand"
+    [disabled]="form.pristine"
+  >
+    <mat-icon>check</mat-icon>
+  </button>
+  <button
+    mat-icon-button
+    type="button"
+    (click)="deleteBrand()"
+    aria-label="delete brand"
+    title="delete brand"
+  >
+    <mat-icon>delete_forever</mat-icon>
+  </button>
+</mat-dialog-actions>

@@ -1,305 +1,315 @@
-import { Component, Input, Inject, OnInit, OnDestroy, OnChanges, SimpleChanges, ElementRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  HostListener,
+  Inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  SimpleChange,
+  SimpleChanges,
+} from '@angular/core';
+import { Store } from '@ngxs/store';
+import { BehaviorSubject, combineLatest, of, timer } from 'rxjs';
+import { concatMap, first, map, takeWhile, tap } from 'rxjs/operators';
+import { IEventTargetWithPosition, IEventWithPosition } from 'src/app/interfaces/index';
+import { ISoundcloudPlayer } from 'src/app/interfaces/soundcloud/soundcloud-player.interface';
+import { SoundcloudTrack } from 'src/app/interfaces/soundcloud/soundcloud-track.config';
+import { DnbhubHttpProgressState } from 'src/app/state/http-progress/http-progress.store';
+import { DnbhubSoundcloudState } from 'src/app/state/soundcloud/soundcloud.store';
+import { ETIMEOUT, WINDOW } from 'src/app/utils';
 
-import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
-import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.service';
+import { DnbhubSoundcloudService } from '../../state/soundcloud/soundcloud.service';
 
-import { UserInterfaceUtilsService } from 'src/app/services/user-interface-utils/user-interface-utils.service';
+const renderPlaylistTracksDefault = 10;
+const renderPlaylistTracksIncrement = 25;
 
-import { ISoundcloudPlaylist } from 'src/app/interfaces/index';
-import { untilDestroyed } from 'ngx-take-until-destroy';
-import { AppSpinnerService } from 'src/app/services';
+export interface ISoundcloudPlayerConfig {
+  user: { dnbhub: number };
+  playlist: {
+    everything: number;
+    reposts1: number;
+    reposts2: number;
+    freedownloads: number;
+    samplepacks: number;
+  };
+}
+
+export interface ISoundcloudPlayerChanges extends SimpleChanges {
+  mode: SimpleChange;
+  displayDescription: SimpleChange;
+  useId: SimpleChange;
+  playlistId: SimpleChange;
+}
+
+export type TSoundcloudPlayerMode =
+  | 'dnbhub'
+  | 'user'
+  | 'pl-everything'
+  | 'pl-reposts1'
+  | 'pl-reposts2'
+  | 'pl-freedownloads'
+  | 'pl-samplepacks'
+  | 'playlist';
 
 /**
  * Soundcloud player component.
  */
 @Component({
-  selector: 'soundcloud-player',
+  selector: 'dnbhub-soundcloud-player',
   templateUrl: './soundcloud-player.component.html',
-  inputs: [ 'mode', 'userId', 'playlistId' ],
-  host: {
-    class: 'mat-body-1'
-  }
+  styleUrls: ['./soundcloud-player.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
-
+export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
   /**
-   * @param emitter Event emitter service - components interaction
-   * @param spinenr Application spinner service
-   * @param soundcloudService Soundcloud API wrapper
-   * @param uiUtils User Interface Utilities Service
-   * @param window Window reference
+   * Default config.
    */
-  constructor(
-    private emitter: EventEmitterService,
-    private spinner: AppSpinnerService,
-    private soundcloudService: SoundcloudService,
-    public uiUtils: UserInterfaceUtilsService,
-    @Inject('Window') private window: Window
-  ) {}
+  private readonly defaultConfig: ISoundcloudPlayerConfig = {
+    user: {
+      dnbhub: 1275637,
+    },
+    playlist: {
+      everything: 21086473,
+      reposts1: 108170272,
+      reposts2: 502780338,
+      freedownloads: 79430766,
+      samplepacks: 234463958,
+    },
+  };
 
   /**
    * Soundcloud player mode.
    */
-  @Input('mode') public mode: 'dnbhub'|'user'|'pl-everything'|'pl-reposts1'|'pl-reposts2'|'pl-freedownloads'|'pl-samplepacks'|'playlist' = 'dnbhub';
-
-  /**
-   * Predefined
-   */
-  private predefinedIDs: {
-    user: { dnbhub: string },
-    playlist: { everything: string, reposts1: string, reposts2: string, freedownloads: string, samplepacks: string }
-  } = {
-    user: {
-      dnbhub: '1275637'
-    },
-    playlist: {
-      everything: '21086473',
-      reposts1: '108170272',
-      reposts2: '502780338',
-      freedownloads: '79430766',
-      samplepacks: '234463958'
-    }
-  };
+  @Input('mode') public mode: TSoundcloudPlayerMode = 'dnbhub';
 
   /**
    * Indicates if description should be shown.
    */
-  @Input('displayDescription') public displayDescription: boolean = false;
+  @Input('displayDescription') public displayDescription = false;
 
   /**
    * Soundcloud user id.
    */
-  @Input('userId') private userId: string|number = '1275637';
+  @Input('userId') private userId: number = this.defaultConfig.user.dnbhub;
 
   /**
    * Soundcloud playlist id.
    */
-  @Input('playlistId') private playlistId: string|number = '21086473';
+  @Input('playlistId') private playlistId: number = this.defaultConfig.playlist.everything;
+
+  private readonly loading$ = this.store.select(DnbhubHttpProgressState.mainViewProgress);
+
+  constructor(
+    private readonly store: Store,
+    private readonly soundcloud: DnbhubSoundcloudService,
+    @Inject(WINDOW) private readonly window: Window,
+  ) {}
+
+  private readonly renderPlaylistTracks = new BehaviorSubject<number>(renderPlaylistTracksDefault);
+  public readonly renderPlaylistTracks$ = this.renderPlaylistTracks.asObservable();
 
   /**
-   * Soundcloud user tracks from shared service.
+   * Soundcloud user tracks.
    */
-  public tracks: any[] = (this.soundcloudService.data.tracks.collection) ? this.soundcloudService.data.tracks.collection.slice() : [];
+  public tracks$ = this.store
+    .select(DnbhubSoundcloudState.getTracks)
+    .pipe(map(tracks => tracks.collection));
 
   /**
    * Soundcloud playlist.
    */
-  public playlist: ISoundcloudPlaylist = this.soundcloudService.data.playlist || new ISoundcloudPlaylist();
+  public playlist$ = this.store
+    .select(DnbhubSoundcloudState.allPlaylists)
+    .pipe(map(playlists => playlists.find(item => item.id === this.playlistId)));
 
-  /**
-   * Indicates quantity of playlist tracks to be rendered.
-   */
-  public renderPlaylistTracks: number = 15;
+  public readonly playlistTracks$ = combineLatest([
+    this.playlist$,
+    this.renderPlaylistTracks$,
+  ]).pipe(
+    map(([playlist, renderPlaylistTracks]) => {
+      const tracks = playlist ? [...playlist.tracks].slice(0, renderPlaylistTracks) : [];
+      return tracks;
+    }),
+  );
 
-  /**
-   * Rendered playlist.
-   */
-  public renderedPlaylist: any[] = this.soundcloudService.data.playlist.tracks.slice(0, this.renderPlaylistTracks) || [];
-
-  /**
-   * Renders more playlist tracks.
-   */
-  private renderMorePlaylistTracks(): void {
-    this.renderPlaylistTracks = (this.playlist.tracks.length - this.renderPlaylistTracks > 25) ? this.renderPlaylistTracks + 25 : this.playlist.tracks.length;
-    this.renderedPlaylist = this.soundcloudService.data.playlist.tracks.slice(0, this.renderPlaylistTracks) || [];
+  public get renderTracks$() {
+    return this.mode === 'dnbhub' || this.mode === 'user' ? this.tracks$ : this.playlistTracks$;
   }
 
+  private readonly selectedTrackIndex = new BehaviorSubject<number>(0);
+  public readonly selectedTrackIndex$ = this.selectedTrackIndex.asObservable();
+
   /**
-   * Selected track index.
+   * Indicated that there's not more tracks left in the list.
    */
-  public selectedTrackIndex: number;
+  private readonly noMoreTracks = new BehaviorSubject<boolean>(false);
+
+  /**
+   * Current Soundcloud player object.
+   */
+  public player: ISoundcloudPlayer;
+
+  /**
+   * Waveform progress timer.
+   */
+  private readonly waveformProgressTimer$ = timer(0, ETIMEOUT.SHORT);
 
   /**
    * Selects a track.
    */
   public selectTrack(index: number): void {
-    this.selectedTrackIndex = index;
+    this.selectedTrackIndex.next(index);
   }
 
   /**
    * Gets link with id from Soundcloud Service (public for template usage).
    */
   public getLinkWithId(href: string): string {
-    return this.soundcloudService.getLinkWithId(href);
+    return this.soundcloud.getLinkWithId(href);
   }
-
-  /**
-   * Indicated that there's not more tracks left in the list.
-   */
-  private noMoreTracks: boolean = false;
-
-  /**
-   * Loading indicator, so that more tracks loading happens sequentially.
-   */
-  private loading: boolean = false;
 
   /**
    * Loads more soundcloud tracks.
    */
-  private loadMoreTracks(): void {
-    if (!this.noMoreTracks && !this.loading) {
-      this.loading = true;
-      this.spinner.startSpinner();
-      if (/(dnbhub|user)/.test(this.mode)) {
-        console.log('this.tracks.length', this.tracks.length);
-        this.soundcloudService.getUserTracks(this.userId).then(
-          (collection: any[]) => {
-            // console.log('current tracks, this tracks', this.tracks);
-            // console.log('got more user tracks, collection', collection);
-            if (!collection.length) {
-              this.noMoreTracks = true;
+  private loadMoreTracks() {
+    this.loading$
+      .pipe(
+        first(),
+        concatMap(loading => {
+          if (!this.noMoreTracks.value && !loading) {
+            if (/(dnbhub|user)/.test(this.mode)) {
+              return this.soundcloud.getTracks(this.userId).pipe(
+                tap(data => {
+                  if (!Boolean(data.next_href)) {
+                    this.noMoreTracks.next(true);
+                  }
+                }),
+              );
+            } else if (
+              /(pl\-everything|pl\-reposts1|pl\-reposts2|pl\-freedownloads|pl\-samplepacks|playlist)/.test(
+                this.mode,
+              )
+            ) {
+              return this.soundcloud.getPlaylist(this.playlistId).pipe(
+                tap(() => {
+                  this.noMoreTracks.next(true);
+                }),
+              );
             }
-            this.tracks = this.soundcloudService.data.tracks.collection.slice();
-            this.loading = false;
-            this.spinner.stopSpinner();
-          },
-          (error: any) => {
-            console.log('soundcloudService.getUserTracks, error', error);
-            this.loading = false;
-            this.spinner.stopSpinner();
+          } else if (/(pl\-|playlist)/.test(this.mode)) {
+            this.renderMorePlaylistTracks();
+            return of();
           }
-        );
-      } else if (/(pl\-everything|pl\-reposts1|pl\-reposts2|pl\-freedownloads|pl\-samplepacks|playlist)/.test(this.mode)) {
-        // console.log('this.playlist', this.playlist);
-        this.soundcloudService.getPlaylist(this.playlistId).then(
-          (playlist: ISoundcloudPlaylist) => {
-            // console.log('current playlist', this.playlist);
-            // console.log('new playlist value', playlist);
-            this.noMoreTracks = true;
-            this.playlist = this.soundcloudService.data.playlist;
-            this.renderedPlaylist = this.soundcloudService.data.playlist.tracks.slice(0, this.renderPlaylistTracks) || [];
-            this.loading = false;
-            this.spinner.stopSpinner();
-          },
-          (error: any) => {
-            console.log('soundcloudService.getUserTracks, error', error);
-            this.loading = false;
-            this.spinner.stopSpinner();
-          }
-        );
-      }
-    } else if (/(pl\-|playlist)/.test(this.mode) && this.renderPlaylistTracks < this.playlist.tracks.length) {
-      this.renderMorePlaylistTracks();
-    } else {
-      console.log('Soundcloud player: no more tracks');
-    }
+          return of();
+        }),
+      )
+      .subscribe();
   }
 
   /**
-   * Current Soundcloud player object.
+   * Renders more playlist tracks.
    */
-  public player: any;
+  private renderMorePlaylistTracks(): void {
+    const nextValue = this.renderPlaylistTracks.value + renderPlaylistTracksIncrement;
+    this.renderPlaylistTracks.next(nextValue);
+  }
+
   /**
    * Returns if playback is in progress, required for UI.
    */
   public playbackInProgress(): boolean {
-    if (this.player) {
-      return (this.player.isActuallyPlaying()) ? true : false;
+    if (Boolean(this.player)) {
+      return Boolean(this.player.isActuallyPlaying());
     }
     return false;
   }
+
   /**
    * Kills player.
    */
   private playerKill(): void {
-    if (this.player) {
+    if (Boolean(this.player)) {
       this.player.kill();
     }
   }
+
   /**
    * Triggers player playback/pause.
    * @param track Track object
    * @param trackIndex Track index in view component array
    */
-  public playTrack(track: any, trackIndex: number): void {
-    console.log('playTrack, track: ', track, ', trackIndex', trackIndex);
-    if (this.selectedTrackIndex !== trackIndex) {
-      // kill player if exists
+  public playTrack(track: SoundcloudTrack, trackIndex: number): void {
+    if (
+      (this.selectedTrackIndex.value !== trackIndex && Boolean(this.player)) ||
+      (this.selectedTrackIndex.value === trackIndex && !Boolean(this.player))
+    ) {
       this.playerKill();
       this.selectTrack(trackIndex);
-      this.spinner.startSpinner();
-      this.soundcloudService.streamTrack(track.id).then(
-        (player: any) => {
-          console.log('soundcloudService.streamTrack, player: ', player);
-          /**
-           * Player functions:
-           * - currentTime
-           * - getDuration
-           * - getState
-           * - getVolume
-           * - hasErrored
-           * - isActuallyPlaying
-           * - isBuffering
-           * - isDead
-           * - isEnded
-           * - isPlaying
-           * - kill
-           * - listenTo
-           * - listenToOnce
-           * - off
-           * - on
-           * - once
-           * - pause
-           * - play
-           * - seek
-           * - setVolume
-           * - stopListening
-           * - trigger
-           * - unbind
-           */
-          this.player = player;
-          setTimeout(() => {
+
+      this.soundcloud
+        .streamTrack(track.id)
+        .pipe(
+          tap((player: ISoundcloudPlayer) => {
+            // debug player here
+            this.player = player;
             this.player.play();
-            this.reportWaveformProgress();
-            this.spinner.stopSpinner();
-          }, 1000);
-        },
-        (error: any) => {
-          this.spinner.stopSpinner();
-        }
-      );
+          }),
+          concatMap(() => timer(ETIMEOUT.SHORT).pipe()),
+          tap(() => {
+            this.reportWaveformProgress().subscribe();
+          }),
+        )
+        .subscribe();
+    } else if (Boolean(this.player.isActuallyPlaying())) {
+      this.player.pause();
     } else {
-      console.log('trigger player, player', this.player);
-      if (this.player.isActuallyPlaying()) {
-        this.player.pause();
-        clearInterval(this.waveformProgressInterval);
-      } else {
-        this.player.play();
-        this.reportWaveformProgress();
-      }
+      this.player.play();
+      this.reportWaveformProgress().subscribe();
     }
   }
+
   /**
-   * Waveform progress interval.
+   * Renders waveform progress in UI.
    */
-  private waveformProgressInterval: any;
-  /**
-   * Reports waveform progress to UI.
-   */
-  public reportWaveformProgress(): void {
-    console.log('reportWaveformProgress');
-    this.waveformProgressInterval = setInterval(() => {
-      const visibleWaveform: ElementRef = new ElementRef(this.window.document.getElementsByClassName('waveform')[0]);
-      console.log('this.player.currentTime', this.player.currentTime());
-      console.log('this.player.getDuration', this.player.getDuration());
-      const playbackProgress: number = Math.floor(this.player.currentTime() * 100 / this.player.getDuration());
-      const nextVal = playbackProgress + 1;
-      console.log('playbackProgress', playbackProgress);
-      visibleWaveform.nativeElement.style.background = `linear-gradient(to right, rgba(171,71,188,1) 0%,rgba(171,71,188,1) ${playbackProgress}%, rgba(30,87,153,0) ${nextVal}%, rgba(30,87,153,0) 100%)`;
-    }, 1000);
+  public reportWaveformProgress() {
+    return this.waveformProgressTimer$.pipe(
+      tap(() => {
+        const visibleWaveform: ElementRef = new ElementRef(
+          this.window.document.getElementsByClassName('waveform')[0],
+        );
+        const visibleWaveformElement: HTMLElement = visibleWaveform.nativeElement;
+        const dividend = 100;
+        const playbackProgress: number = Math.floor(
+          (this.player.currentTime() * dividend) / this.player.getDuration(),
+        );
+        const nextVal = playbackProgress + 1;
+        visibleWaveformElement.style.background = `linear-gradient(to right, rgba(171,71,188,1) 0%,rgba(171,71,188,1) ${playbackProgress}%, rgba(30,87,153,0) ${nextVal}%, rgba(30,87,153,0) 100%)`;
+      }),
+      takeWhile(
+        () =>
+          this.player &&
+          this.player.isActuallyPlaying() &&
+          !this.player.isDead() &&
+          !this.player.isEnded(),
+      ),
+    );
   }
+
   /**
    * Waveform client event handler.
    * @param event waveform click event
    */
-  public waveformClick(event: any): void {
-    console.log('waveformClick, event', event);
-    const waveformWidth: number = event.srcElement.clientWidth;
+  public waveformClick(event: IEventWithPosition): void {
+    const srcElement = event.srcElement as IEventTargetWithPosition;
+    const waveformWidth: number = srcElement.clientWidth;
     const offsetX: number = event.offsetX;
-    const percent: number = offsetX * 100 / waveformWidth;
-    const newProgress: number = this.player.getDuration() * percent / 100;
-    this.player.seek(newProgress).then((data: any) => {
-      console.log('player seek success', data);
+    const dividend = 100;
+    const percent: number = (offsetX * dividend) / waveformWidth;
+    const newProgress: number = (this.player.getDuration() * percent) / dividend;
+    void this.player.seek(newProgress).then(result => {
+      console.warn('player seek success', result);
     });
   }
 
@@ -312,71 +322,79 @@ export class SoundcloudPlayerComponent implements OnInit, OnDestroy, OnChanges {
   private resetPlayer(onlyProgress?: boolean): void {
     if (!onlyProgress) {
       this.playerKill();
-      this.soundcloudService.resetServiceData();
-      this.tracks = [];
-      this.playlist = new ISoundcloudPlaylist();
-      this.noMoreTracks = false;
+      this.soundcloud.resetData();
+      this.noMoreTracks.next(false);
+      this.renderPlaylistTracks.next(renderPlaylistTracksDefault);
     }
-    clearInterval(this.waveformProgressInterval);
   }
 
   /**
-   * Lifecycle hook called after component is initialized.
+   * Should be used in ngOnChanges handler.
+   * @param changes input changes
    */
-  public ngOnInit(): void {
-    console.log('ngOnInit: SoundcloudPlayerComponent initialized');
-
-    this.loadMoreTracks();
-
-    this.emitter.getEmitter().pipe(untilDestroyed(this)).subscribe((event: any) => {
-      console.log('SoundcloudPlayerComponent consuming event:', event);
-      if (event.soundcloud === 'loadMoreTracks') {
-        if (!this.noMoreTracks) {
-          this.loadMoreTracks();
-        }
-      } else if (event.soundcloud === 'renderMoreTracks') {
-        this.loadMoreTracks();
-      }
-    });
+  private modeChangeHandler(changes: ISoundcloudPlayerChanges): void {
+    if (changes.mode.currentValue === 'dnbhub') {
+      this.resetPlayer();
+      this.userId = this.defaultConfig.user.dnbhub;
+      this.loadMoreTracks();
+    } else if (/pl\-/.test(changes.mode.currentValue)) {
+      this.resetPlayer();
+      const prefixLength = 3;
+      const playlistKey = (changes.mode.currentValue as TSoundcloudPlayerMode).slice(prefixLength);
+      this.playlistId = this.defaultConfig.playlist[playlistKey];
+      this.loadMoreTracks();
+    }
   }
+
   /**
-   * Lifecycle hook called on input changes.
+   * Should be used in ngOnChanges handler.
+   * @param changes input changes
    */
-  public ngOnChanges(changes: SimpleChanges): void {
-    console.log('SoundcloudPlayerComponent, changes', changes);
-    if (changes.mode) {
-      if (changes.mode.currentValue === 'dnbhub') {
-        this.resetPlayer();
-        this.userId = this.predefinedIDs.user.dnbhub;
-        this.loadMoreTracks();
-      } else if (/pl\-/.test(changes.mode.currentValue)) {
-        this.resetPlayer();
-        const playlistKey: string = changes.mode.currentValue.slice(3);
-        console.log('playlistKey', playlistKey);
-        this.playlistId = this.predefinedIDs.playlist[playlistKey];
-        this.loadMoreTracks();
-      }
+  private userIdChangeHandler(changes: ISoundcloudPlayerChanges): void {
+    if (this.mode === 'user' && Boolean(changes.userId.currentValue)) {
+      this.resetPlayer();
+      this.userId = changes.userId.currentValue;
+      this.loadMoreTracks();
+    }
+  }
+
+  /**
+   * Should be used in ngOnChanges handler.
+   * @param changes input changes
+   */
+  private playlistIdChangeHandler(changes: ISoundcloudPlayerChanges): void {
+    if (this.mode === 'playlist' && Boolean(changes.playlistId.currentValue)) {
+      this.resetPlayer();
+      this.playlistId = changes.playlistId.currentValue;
+      this.loadMoreTracks();
+    }
+  }
+
+  public ngOnChanges(changes: ISoundcloudPlayerChanges): void {
+    if (changes.mode && !changes.playlistId && !changes.userId) {
+      this.modeChangeHandler(changes);
     } else if (changes.userId) {
-      if (this.mode === 'user' && changes.userId.currentValue) {
-        this.resetPlayer();
-        this.userId = changes.userId.currentValue;
-        this.loadMoreTracks();
-      }
+      this.userIdChangeHandler(changes);
     } else if (changes.playlistId) {
-      if (this.mode === 'playlist' && changes.playlistId.currentValue) {
-        this.resetPlayer();
-        this.playlistId = changes.playlistId.currentValue;
-        this.loadMoreTracks();
-      }
+      this.playlistIdChangeHandler(changes);
     }
   }
 
-  /**
-   * Lifecycle hook called after component is destroyed.
-   */
   public ngOnDestroy(): void {
-    console.log('ngOnDestroy: SoundcloudPlayerComponent destroyed');
-    this.resetPlayer(true);
+    this.resetPlayer();
   }
 
+  /**
+   * Host element scroll listener.
+   * @param event scroll event
+   */
+  @HostListener('scroll', ['$event'])
+  public scrollHandler(event: Event): void {
+    const target = event.target as IEventTargetWithPosition;
+    const scrollFromBottom = target.scrollHeight - target.scrollTop - target.clientHeight;
+    const loadMoreOffset = 20;
+    if (scrollFromBottom < loadMoreOffset) {
+      this.loadMoreTracks();
+    }
+  }
 }

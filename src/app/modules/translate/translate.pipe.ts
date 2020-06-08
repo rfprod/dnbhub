@@ -1,22 +1,22 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { TranslateService } from './translate.service';
+
+import { DnbhubTranslateService } from './translate.service';
 
 /**
  * Translate pipe.
  */
 @Pipe({
   name: 'translate',
-  pure: false // this should be set to false fro values to be updated on language change
+  // eslint-disable-next-line @angular-eslint/no-pipe-impure
+  pure: false, // this should be set to false fro values to be updated on language change
 })
-export class TranslatePipe implements PipeTransform {
+export class DnbhubTranslatePipe implements PipeTransform {
+  constructor(private readonly translate: DnbhubTranslateService) {}
 
-  constructor(
-    private translate: TranslateService
-  ) {}
-
-  public transform(value: string, args: any[]): any {
-    if (!value) { return; }
+  public transform(value: string): string {
+    if (!Boolean(value)) {
+      return;
+    }
     return this.translate.instant(value);
   }
-
 }

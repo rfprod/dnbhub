@@ -1,30 +1,54 @@
 /**
  * Application about links interface with initialization.
  */
-export class IAboutLinks {
-  bandcamp: string = '';
-  facebook: string = '';
-  instagram: string = '';
-  mixcloud: string = '';
-  soundcloud: string = '';
-  twitter: string = '';
-  rss: string = '';
-  youtube: string = '';
+export class AboutLinks {
+  constructor(input?: AboutLinks) {
+    if (input) {
+      const keys = Object.keys(input);
+      for (const key of keys) {
+        this[key] = input[key];
+      }
+    }
+  }
+  public bandcamp = '';
+  public facebook = '';
+  public instagram = '';
+  public mixcloud = '';
+  public soundcloud = '';
+  public twitter = '';
+  public rss = '';
+  public youtube = '';
 }
 
-export class IPoweredBy {
-  name: string = '';
-  logo: string = '';
+export class PoweredBy {
+  constructor(input?: PoweredBy) {
+    if (input) {
+      const keys = Object.keys(input);
+      for (const key of keys) {
+        this[key] = input[key];
+      }
+    }
+  }
+  public name = '';
+  public logo = '';
 }
 
 /**
  * Application about details interface with initialization.
  */
-export class IAboutDetails {
-  public links: IAboutLinks = new IAboutLinks();
+export class AboutDetails {
+  constructor(input?: AboutDetails) {
+    if (input) {
+      const keys = Object.keys(input);
+      for (const key of keys) {
+        this[key] = input[key];
+      }
+    }
+  }
+  public links: AboutLinks = new AboutLinks();
   public soundcloudUserId: string = null;
   public text: string = null;
   public title: string = null;
   public widgetLink: string = null;
-  public poweredBy: IPoweredBy[] = [new IPoweredBy()];
+  public poweredBy: PoweredBy[] = [new PoweredBy()];
 }

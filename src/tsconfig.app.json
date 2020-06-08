@@ -1,12 +1,8 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../out-tsc/app",
-    "types": []
+    "outDir": "../dist/out-tsc/app"
   },
-  "exclude": [
-    "test.ts",
-    "**/*.spec.ts",
-    "**/set-env.ts"
-  ]
+  "files": ["main.ts", "polyfills.ts"],
+  "exclude": ["test-setup.ts", "set-env.ts", "mocks/**", "**/*.spec.ts", "**/*.patch.ts"]
 }

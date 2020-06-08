@@ -1,0 +1,27 @@
+<mat-card fxFlex="100px">
+  <mat-radio-group
+    color="primary"
+    #playlistSelector="matRadioGroup"
+    name="playlistSelector"
+    aria-label="{{ 'action.select' | translate }}"
+    fxLayout="column"
+    fxLayoutGap="10px"
+  >
+    <mat-radio-button checked value="pl-reposts1">
+      <a fxLayout="row" fxLayoutAlign="start center">
+        <mat-icon matTooltip="Playlist 1">library_music</mat-icon>
+        #1
+      </a>
+    </mat-radio-button>
+    <mat-radio-button value="pl-reposts2">
+      <a fxLayout="row" fxLayoutAlign="start center">
+        <mat-icon matTooltip="Playlist 2">library_music</mat-icon>
+        #2
+      </a>
+    </mat-radio-button>
+  </mat-radio-group>
+</mat-card>
+
+<div fxFlex="100" fxLayout="row">
+  <dnbhub-soundcloud-player fxFlex="100" [mode]="playlistSelector.value"></dnbhub-soundcloud-player>
+</div>

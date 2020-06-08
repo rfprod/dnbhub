@@ -1,0 +1,626 @@
+<div
+  *ngIf="anonUser$ | async"
+  class="mat-body-2"
+  fxFlex="100"
+  fxLayoutFill
+  fxLayout="row"
+  fxLayoutAlign="center center"
+>
+  You must me authenticated to access admin controls
+</div>
+
+<div
+  *ngIf="!firebase.privilegedAccess()"
+  class="mat-body-2"
+  fxFlex="100"
+  fxLayoutFill
+  fxLayout="row"
+  fxLayoutAlign="center center"
+>
+  You must have privileged access rights to access admin controls
+</div>
+
+<div
+  *ngIf="!(anonUser$ | async) && firebase.privilegedAccess()"
+  fxFlex="100"
+  fxLayoutFill
+  fxLayout="row"
+  [ngStyle]="{ padding: '0 10px 0 10px' }"
+>
+  <div
+    fxLayout="row wrap"
+    fxFlex="100"
+    fxLayoutFill
+    fxLayoutAlign="start start"
+    *ngIf="!details.preview.submission"
+  >
+    <span
+      fxFlex="100"
+      fxLayout="row"
+      fxLayoutAlign="start stretch"
+      fxLayoutAlign.xs="center center"
+      class="md-padding"
+    >
+      <div class="mat-body-2">
+        some general data here
+      </div>
+    </span>
+
+    <mat-tab-group fxFlex="100">
+      <mat-tab label="email submissions">
+        <mat-tab-body fxLayout="row">
+          <div
+            fxFlex
+            fxLayoutFill
+            fxLayout="row"
+            fxLayoutAlign="center start"
+            *ngIf="!(emailSubmissions$ | async)"
+          >
+            The're are no email blog submissions.
+          </div>
+
+          <div
+            fxFlex
+            fxLayoutFill
+            fxLayout="row wrap"
+            fxLayoutAlign="start stretch"
+            *ngIf="emailSubmissions$ | async"
+          >
+            <div
+              *ngFor="let emailSubmission of emailSubmissions$ | async"
+              fxFlex.xs="100"
+              fxFlex="49"
+              fxLayout="row wrap"
+              fxLayoutAlign="start stretch"
+              [ngStyle]="{ padding: '0 10px 0 10px' }"
+            >
+              <span fxFlex class="mat-body-2">From: {{ emailSubmission.email }} </span>
+
+              <span fxFlex="100" class="mat-body-1">
+                <p>
+                  Link:
+                  <a fxHide fxShow.xs fxShow.sm href="{{ emailSubmission.link }}" target="_blank">
+                    <mat-icon>link</mat-icon>
+                  </a>
+
+                  <a fxHide fxShow.gt-sm href="{{ emailSubmission.link }}" target="_blank">
+                    {{ emailSubmission.link }}
+                  </a>
+                </p>
+                <p>Sent from domain: {{ emailSubmission.domain }}</p>
+              </span>
+
+              <span
+                fxFlex="100"
+                class="mat-body-1"
+                *ngIf="details.selected.brand.key"
+                fxLayout="row wrap"
+              >
+                <p fxFlex="100">
+                  Selected label links:
+                </p>
+
+                <span
+                  *ngFor="let key of details.selected.brand.object | mapToIterable"
+                  fxFlex="100"
+                  fxLayout="row wrap"
+                >
+                  <a
+                    *ngIf="details.selected.brand.object[key]"
+                    href="{{ details.selected.brand.object[key] }}"
+                    target="_blank"
+                  >
+                    {{ key }}
+                    <mat-icon>link</mat-icon>
+                  </a>
+
+                  <span *ngIf="details.selected.brand.object[key] === ''">
+                    {{ key }}
+                    <mat-icon>link</mat-icon>
+                  </span>
+                </span>
+              </span>
+
+              <span fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start center">
+                <form fxFlex="100">
+                  <mat-form-field fxFlex [ngStyle]="{ width: '100%' }">
+                    <input
+                      matInput
+                      type="text"
+                      placeholder="Pick one"
+                      aria-label="Number"
+                      [formControl]="brandAutocompleteControl"
+                      [matAutocomplete]="brandAuto"
+                    />
+
+                    <mat-autocomplete
+                      #brandAuto="matAutocomplete"
+                      (optionSelected)="selectBrandFromList($event)"
+                    >
+                      <mat-option *ngFor="let option of getMatchedBrands()" [value]="option">
+                        {{ option }}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+                </form>
+
+                <button
+                  mat-icon-button
+                  *ngIf="true"
+                  (click)="deleteEmailBlogSubmission(emailSubmission.key)"
+                  aria-label="delete submission"
+                  title="delete submission"
+                >
+                  <mat-icon>
+                    delete
+                  </mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  *ngIf="brandIsSelected('', true)"
+                  (click)="showSubmissionPreview(emailSubmission)"
+                  aria-label="preview submission"
+                  title="preview submission"
+                >
+                  <mat-icon>view_comfy</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  [disabled]="submissionAlreadyAdded(emailSubmission.key)"
+                  *ngIf="brandIsSelected('', true)"
+                  (click)="approveEmailSubmission(emailSubmission)"
+                  [attr.aria-label]="
+                    submissionAlreadyAdded(emailSubmission.key)
+                      ? 'this playlist was already added'
+                      : 'approve email submission'
+                  "
+                  [attr.title]="
+                    submissionAlreadyAdded(emailSubmission.key)
+                      ? 'this playlist was already added'
+                      : 'approve email submission'
+                  "
+                >
+                  <mat-icon *ngIf="!submissionAlreadyAdded(emailSubmission.key)">check</mat-icon>
+                  <mat-icon *ngIf="submissionAlreadyAdded(emailSubmission.key)">
+                    not_interested
+                  </mat-icon>
+                </button>
+              </span>
+            </div>
+          </div>
+        </mat-tab-body>
+      </mat-tab>
+
+      <mat-tab label="email messages">
+        <mat-tab-body fxLayout="row">
+          <div
+            fxFlex
+            fxLayoutFill
+            fxLayout="row"
+            fxLayoutAlign="center start"
+            *ngIf="!(emailMessages$ | async)"
+          >
+            The're are no email messags.
+          </div>
+
+          <div
+            fxFlex
+            fxLayoutFill
+            fxLayout="row wrap"
+            fxLayoutAlign="start stretch"
+            *ngIf="emailMessages$ | async"
+          >
+            <div
+              *ngFor="let emailMessage of emailMessages$ | async"
+              fxFlex.xs="100"
+              fxFlex="33"
+              fxLayout="row wrap"
+              fxLayoutAlign="start stretch"
+              [ngStyle]="{ padding: '0 10px 0 10px' }"
+            >
+              <span fxFlex="100" class="mat-body-2">{{ emailMessage.header }} </span>
+              <span fxFlex="100" class="mat-body-1" fxLayout="row wrap">
+                <p fxFlex="100">From: {{ emailMessage.name }} < {{ emailMessage.email }} ></p>
+                <p fxFlex="100">Sent from domain: {{ emailMessage.domain }}</p>
+              </span>
+              <span fxFlex fxLayout="row wrap" fxLayoutAlign="start center">
+                <button
+                  mat-icon-button
+                  (click)="deleteMessage(emailMessage.key)"
+                  aria-label="delete message"
+                  title="delete message"
+                >
+                  <mat-icon>delete_forever</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  (click)="showMessageText(emailMessage)"
+                  aria-label="show message text"
+                  title="show message text"
+                >
+                  <mat-icon>email</mat-icon>
+                </button>
+              </span>
+            </div>
+          </div>
+        </mat-tab-body>
+      </mat-tab>
+
+      <mat-tab label="brands">
+        <mat-tab-body fxLayout="row wrap">
+          <div fxFlex="100" fxLayout="row" fxLayoutAlign="center center">
+            <button
+              mat-button
+              fxFlex="100"
+              type="button"
+              (click)="createBrand()"
+              aria-label="add a new brand"
+              title="add a new brand"
+            >
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+
+          <div
+            fxFlex
+            fxLayoutFill
+            fxLayout="row"
+            fxLayoutAlign="center start"
+            *ngIf="(brands$ | async) && !details.create.brand"
+          >
+            The're are no brands yet, create one.
+          </div>
+
+          <div fxFlex="100" fxLayout="row" *ngIf="brands$ | async">
+            <div
+              *ngIf="!details.create.brand"
+              fxFlex="100"
+              fxLayout="row wrap"
+              fxLayoutAlign="space-between start"
+            >
+              <div
+                *ngFor="let brand of brands$ | async"
+                fxFlex.xs="100"
+                [fxFlex]="isBrandCurrentlyEditable(brand.key) ? '100' : 32"
+                fxLayout="row"
+              >
+                <div
+                  fxFlex
+                  fxLayoutFill
+                  *ngIf="
+                    (details.edit.brand.key && isBrandCurrentlyEditable(brand.key)) ||
+                    !details.edit.brand.key
+                  "
+                  fxLayout="row wrap"
+                  [ngStyle]="{
+                    margin: '2px',
+                    padding: '0 10px 0 10px',
+                    'border-radius': '3px',
+                    border: '1px dotted #000000'
+                  }"
+                >
+                  <span
+                    fxFlex="100"
+                    class="mat-body-2"
+                    fxLayout="row"
+                    fxLayoutAlign="center center"
+                  >
+                    {{ brand.key }}
+                  </span>
+                  <span fxFlex="100" class="mat-body-1">
+                    <div fxFlex fxLayout="row wrap" *ngIf="!isBrandCurrentlyEditable(brand.key)">
+                      <a
+                        mat-button
+                        href="{{ brand.bandcamp }}"
+                        target="_blank"
+                        *ngIf="brand.bandcamp"
+                      >
+                        Bandcamp
+                        <mat-icon>open_in_new</mat-icon>
+                      </a>
+                      <a
+                        mat-button
+                        href="{{ brand.facebook }}"
+                        target="_blank"
+                        *ngIf="brand.facebook"
+                      >
+                        Facebook
+                        <mat-icon>open_in_new</mat-icon>
+                      </a>
+                      <a
+                        mat-button
+                        href="{{ brand.instagram }}"
+                        target="_blank"
+                        *ngIf="brand.instagram"
+                      >
+                        Instagram
+                        <mat-icon>open_in_new</mat-icon>
+                      </a>
+                      <a
+                        mat-button
+                        href="{{ brand.soundcloud }}"
+                        target="_blank"
+                        *ngIf="brand.soundcloud"
+                      >
+                        Soundcloud
+                        <mat-icon>open_in_new</mat-icon>
+                      </a>
+                      <a
+                        mat-button
+                        href="{{ brand.twitter }}"
+                        target="_blank"
+                        *ngIf="brand.twitter"
+                      >
+                        Twitter
+                        <mat-icon>open_in_new</mat-icon>
+                      </a>
+                      <a
+                        mat-button
+                        href="{{ brand.website }}"
+                        target="_blank"
+                        *ngIf="brand.website"
+                      >
+                        Website
+                        <mat-icon>open_in_new</mat-icon>
+                      </a>
+                      <a
+                        mat-button
+                        href="{{ brand.youtube }}"
+                        target="_blank"
+                        *ngIf="brand.youtube"
+                      >
+                        Youtube
+                        <mat-icon>open_in_new</mat-icon>
+                      </a>
+                    </div>
+
+                    <span fxFlex="100" fxLayout="row wrap">
+                      <button
+                        mat-icon-button
+                        type="button"
+                        *ngIf="!isBrandCurrentlyEditable(brand.key)"
+                        (click)="editBrand(brand.key)"
+                        aria-label="edit brand links"
+                        title="edit brand links"
+                      >
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab-body>
+      </mat-tab>
+
+      <mat-tab label="users">
+        <mat-tab-body fxLayout="row wrap">
+          <div fxFlex fxLayout="row wrap" fxLayoutAlign="center stretch">
+            <div
+              *ngFor="let user of users$ | async"
+              fxFlex.lt-lg="100"
+              fxFlex="48"
+              fxLayout="row wrap"
+              fxLayoutAlign="center start"
+              [ngStyle]="{ border: '1px #000000 dotted', 'border-radius': '3px', margin: '5px' }"
+            >
+              <span fxFlex="100" class="mat-body-2">{{ user.key }} </span>
+              <span fxFlex="100" class="mat-body-1" fxLayout="row wrap" fxLayoutAlign="start start">
+                <span fxFlex="100" *ngIf="user.created"> Created {{ user.created | date }} </span>
+                <span fxFlex="100" *ngIf="user.soundcloudId">
+                  Soundcloud ID {{ user.soundcloudId }}
+                </span>
+                <span fxFlex="100" fxLayout="row wrap" *ngIf="user.submittedPlaylists">
+                  <p fxFlex="100">
+                    Submitted Playlists
+                  </p>
+
+                  <div
+                    fxFlex="50"
+                    fxFlex.lt-lg="100"
+                    *ngFor="let submittedPlaylistId of user.submittedPlaylists | mapToIterable"
+                  >
+                    <span fxLayout="row wrap" fxLayoutAlign="start start">
+                      <p fxFlex="100">id: {{ submittedPlaylistId }}</p>
+
+                      <span
+                        fxFlex
+                        [ngStyle]="{
+                          height: '200px',
+                          'overflow-x': 'hidden',
+                          'overflow-y': 'scroll',
+                          border: '1px dotted'
+                        }"
+                      >
+                        <dnbhub-soundcloud-player
+                          fxFlex
+                          [mode]="'playlist'"
+                          [playlistId]="submittedPlaylistId"
+                        >
+                        </dnbhub-soundcloud-player>
+                      </span>
+
+                      <mat-form-field fxFlex="100">
+                        <input
+                          matInput
+                          type="text"
+                          placeholder="Select brand"
+                          aria-label="Select brand"
+                          [formControl]="brandAutocompleteControl"
+                          [matAutocomplete]="brandAuto"
+                        />
+
+                        <mat-autocomplete
+                          #brandAuto="matAutocomplete"
+                          (optionSelected)="selectBrandFromList($event)"
+                        >
+                          <mat-option *ngFor="let option of getMatchedBrands()" [value]="option">
+                            {{ option }}
+                          </mat-option>
+                        </mat-autocomplete>
+                      </mat-form-field>
+
+                      <span fxFlex="100">
+                        <button
+                          mat-button
+                          type="button"
+                          [disabled]="submissionAlreadyAdded(submittedPlaylistId)"
+                          *ngIf="
+                            !brandIsSelected(brandAutocompleteControl.value) &&
+                            user.submittedPlaylists[submittedPlaylistId]
+                          "
+                          (click)="selectBrand(brandAutocompleteControl.value)"
+                          aria-label="select a brand to approve an email submission"
+                          title="select a brand to approve an email submission"
+                        >
+                          <mat-icon>contacts</mat-icon>
+                        </button>
+                        <button
+                          mat-button
+                          type="button"
+                          [disabled]="submissionAlreadyAdded(submittedPlaylistId)"
+                          *ngIf="
+                            brandIsSelected(brandAutocompleteControl.value) &&
+                            user.submittedPlaylists[submittedPlaylistId]
+                          "
+                          (click)="approveUserSubmission(submittedPlaylistId)"
+                          aria-label="approve post"
+                          title="approve post"
+                        >
+                          <mat-icon>check_circle</mat-icon>
+                        </button>
+                        <button
+                          mat-button
+                          type="button"
+                          *ngIf="!user.submittedPlaylists[submittedPlaylistId]"
+                          (click)="rejectUserSubmission(submittedPlaylistId)"
+                          aria-label="reject post"
+                          title="reject post"
+                        >
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      </span>
+                    </span>
+
+                    <span
+                      fxFlex="100"
+                      class="mat-body-1"
+                      *ngIf="details.selected.brand.key"
+                      fxLayout="row wrap"
+                    >
+                      <p fxFlex="100">
+                        Selected label links:
+                      </p>
+                      <span
+                        *ngFor="let key of details.selected.brand.object | mapToIterable"
+                        fxFlex="100"
+                        fxLayout="row wrap"
+                      >
+                        <a
+                          *ngIf="details.selected.brand.object[key]"
+                          href="{{ details.selected.brand.object[key] }}"
+                          target="_blank"
+                        >
+                          {{ key }}
+                          <mat-icon>link</mat-icon>
+                        </a>
+                        <span *ngIf="details.selected.brand.object[key] === ''">
+                          {{ key }}
+                          <mat-icon>link</mat-icon>
+                        </span>
+                      </span>
+                    </span>
+                  </div>
+                </span>
+              </span>
+            </div>
+          </div>
+        </mat-tab-body>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+
+  <div fxFlex="100" fxLayout="row" fxLayoutFill *ngIf="details.preview.submission">
+    <div fxFlex="100" fxLayoutFill fxLayout="column" fxLayoutAlign="start stretch">
+      <button mat-button (click)="hideSubmissionPreview()">
+        close preview
+      </button>
+
+      <div
+        fxFlex="15"
+        fxFlex-xs="30"
+        class="heading"
+        fxLayout="row wrap"
+        fxLayoutAlign="start center"
+      >
+        <h4 fxFlex fxFlex.lt-lg="100" fxLayout="row" fxLayoutAlign="center center">
+          <button
+            mat-button
+            color="accent"
+            fxFlex="20"
+            disabled="true"
+            aria-label="previous blog post"
+            title="previous blog post"
+          >
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+
+          <span fxFlex="60" fxLayout="row wrap" fxLayoutAlign="center center">
+            <span fxFlex="100">
+              {{ details.preview.submission.title }}
+            </span>
+          </span>
+
+          <button
+            mat-button
+            color="accent"
+            fxFlex="20"
+            disabled="true"
+            aria-label="next blog post"
+            title="next blog post"
+          >
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </h4>
+      </div>
+
+      <div fxFlex fxLayout="row wrap">
+        <div fxFlex fxFlex.xs="100" fxFlex.sm="100" *ngIf="details.preview.submission">
+          <iframe
+            width="100%"
+            height="350"
+            scrolling="no"
+            frameborder="no"
+            [src]="soundcloudWidgetLink(details.preview.submission.id)"
+            *ngIf="showSoundcloudWidgetLink(details.preview.submission.id)"
+          >
+          </iframe>
+        </div>
+
+        <div
+          fxFlex="50"
+          fxFlex-xs="100"
+          fxFlex-sm="100"
+          id="text"
+          *ngIf="details.preview.submission.description"
+          [ngStyle]="{ padding: '0 10px 0 10px' }"
+        >
+          <div ng-bind-html="details.preview.submission.description"></div>
+
+          <p
+            *ngIf="
+              details.preview.submission.release_year &&
+              details.preview.submission.release_month &&
+              details.preview.submission.release_day
+            "
+          >
+            Release date: {{ details.preview.submission.release_year }}.{{
+              details.preview.submission.release_month
+            }}.{{ details.preview.submission.release_day }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

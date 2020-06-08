@@ -1,16 +1,20 @@
-import { Injectable, Inject } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
+import { WINDOW } from 'src/app/utils';
+
+const rootId = 'fb-root';
+const jssdkId = 'facebook-jssdk';
+const windowSdkKey = 'FB';
 
 /**
  * Facebook service.
  * Controls Facebook JavaScript SDK.
  */
-@Injectable()
-export class FacebookService {
-
-  constructor(
-    @Inject('Window') private window: Window
-  ) {
-    console.log('FacebookService constructor');
+@Injectable({
+  providedIn: 'root',
+})
+export class DnbhubFacebookService {
+  constructor(@Inject(WINDOW) private readonly window: Window) {
+    console.warn('DnbhubFacebookService constructor');
     this.initFacebookJsSDK();
   }
 
@@ -18,14 +22,14 @@ export class FacebookService {
    * Creates Facebook root div.
    * @return Facebook root div reference <div id="fb-root"></div>
    */
-  private createFbRoot(): any {
+  private createFbRoot(): HTMLElement {
     const doc: Document = this.window.document;
-    let ref: any = doc.getElementById('fb-root'); // try getting it first
+    let ref: HTMLElement = doc.getElementById(rootId); // try getting it first
     if (!ref) {
       // create 'fb-root' if it does not exist
       ref = doc.createElement('div');
-      ref.id = 'fb-root';
-      const firstScriptTag: any = doc.getElementsByTagName('script')[0];
+      ref.id = rootId;
+      const firstScriptTag: HTMLScriptElement = doc.getElementsByTagName('script')[0];
       firstScriptTag.parentNode.insertBefore(ref, firstScriptTag);
     }
     return ref;
@@ -39,31 +43,30 @@ export class FacebookService {
    * - https://blog.brunoscopelliti.com/facebook-authentication-in-your-angularjs-web-app/
    */
   private initFacebookJsSDK(): void {
-    const id: string = 'facebook-jssdk';
     const doc: Document = this.window.document;
-    const ref: any = this.createFbRoot();
-    console.log('ref', ref);
+    const ref = this.createFbRoot();
+    console.warn('ref', ref);
     // return if script is already included
-    if (doc.getElementById(id)) {
+    if (doc.getElementById(jssdkId)) {
       return;
     }
-    const js: any = doc.createElement('script');
-    js.id = id;
+    const js: HTMLScriptElement = doc.createElement('script');
+    js.id = jssdkId;
     js.async = true;
-    js.src = 'https://connect.facebook.net/en_US/sdk.js#status=1&xfbml=1&version=v3.0&appId=477209839373369&channelUrl=channel.html';
+    js.src =
+      'https://connect.facebook.net/en_US/sdk.js#status=1&xfbml=1&version=v3.0&appId=477209839373369&channelUrl=channel.html';
 
     ref.parentNode.insertBefore(js, ref);
   }
 
   /**
-   * TODO:client removeFbJsSDK method is not used by the moment, it should be either public, or controlled by event emitter.
+   * TODO removeFbJsSDK method is not used by the moment, it should be either public, or controlled by event emitter.
    * Removes facebook sdk, and optionally fb-root (not used for now, see ngOnDestroy hook).
    */
-  private removeFbJsSDK(): void {
-    const id: string = 'facebook-jssdk';
+  public removeFbJsSDK(): void {
     const doc: Document = this.window.document;
-    const ref: any = doc.getElementById('fb-root');
-    const js: any = doc.getElementById('facebook-jssdk');
+    const ref: HTMLElement = doc.getElementById(rootId);
+    const js: HTMLElement = doc.getElementById(jssdkId);
     // removed both script and fb-root
     if (js) {
       ref.parentNode.removeChild(js); // sdk script
@@ -75,10 +78,8 @@ export class FacebookService {
    * Renders facebook widget, without this widget won't initialize after user navigates to another view and then back to a view the widget is placed
    */
   public renderFacebookWidget(): void {
-    const facebookWinKey = 'FB';
-    if (this.window[facebookWinKey]) {
-      this.window[facebookWinKey].XFBML.parse();
+    if (Boolean(this.window[windowSdkKey])) {
+      (this.window[windowSdkKey] as { XFBML: { parse: () => unknown } }).XFBML.parse();
     }
   }
-
 }

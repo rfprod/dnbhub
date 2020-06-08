@@ -1,9 +1,11 @@
-export const LANG_EN_NAME = 'en';
+import { ESUPPORTED_LANGUAGE_KEY, IDictionaryObject } from './translations.interface';
+
+export const LANG_EN_NAME = ESUPPORTED_LANGUAGE_KEY.ENGLISH;
 
 /**
  * English substrings for UI.
  */
-export const LANG_EN_TRANSLATIONS = {
+export const LANG_EN_TRANSLATIONS: IDictionaryObject = {
   title: 'DNBHUB',
   index: 'Index',
   singles: 'Singles',
@@ -18,22 +20,22 @@ export const LANG_EN_TRANSLATIONS = {
   language: {
     title: 'Language',
     en: 'English',
-    ru: 'Russian'
+    ru: 'Russian',
   },
   contact: {
     open: 'Send message',
     title: 'Contact form',
     result: {
       success: 'Your message was successfully sent.',
-      fail: 'Message sending failed. Please, try again later.'
-    }
+      fail: 'Message sending failed. Please, try again later.',
+    },
   },
   subscribe: {
     title: 'Mailing list subscription',
     result: {
       success: 'Provided email address was added to mailing list.',
-      fail: 'Mailing list subscription failed. Please, try again later.'
-    }
+      fail: 'Mailing list subscription failed. Please, try again later.',
+    },
   },
   form: {
     email: 'Email',
@@ -49,7 +51,7 @@ export const LANG_EN_TRANSLATIONS = {
       link: 'Invalid link, format: http(s)://...',
       header: 'Invalid header: 3+ characters',
       message: 'Invalid message: 50+ characters',
-    }
+    },
   },
   action: {
     confirm: 'Confirm',
@@ -60,6 +62,6 @@ export const LANG_EN_TRANSLATIONS = {
     buy: 'Buy',
     select: 'Select',
     resetPassword: 'Reset password',
-    createAccount: 'Create account'
-  }
+    createAccount: 'Create account',
+  },
 };

@@ -21,7 +21,7 @@ if (process.argv[2] === 'prod') {
    * user if user requests dnbhub.com/index by typing it in browser's address bar.
    */
   app.use((req, res) => {
-    res.sendFile(__dirname + '/dist/dnbhub/index.html');
+    res.sendFile(__dirname + '/dist/index.html');
   });
 }
 
@@ -43,13 +43,13 @@ function terminator(sig) {
       /**
        * Resets client environment variables configuration to default.
        */
-      const envResetter = spawn('npm', ['run', 'reset-client-app-env'], {stdio: 'inherit', detached: true});
-      envResetter.on('close', (code) => {
+      const envResetter = spawn('npm', ['run', 'reset-client-app-env'], {
+        stdio: 'inherit',
+        detached: true,
+      });
+      envResetter.on('close', code => {
         console.log('envResetter closed');
         process.exit(0);
-        if (code === 8) {
-          console.log('Error detected, waiting for changes...');
-        }
       });
     } else {
       process.exit(0);
@@ -61,10 +61,23 @@ function terminator(sig) {
  * Termination handlers.
  */
 (() => {
-  process.on('exit', () => { terminator('exit'); });
-  ['SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT',
-    'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM'
-  ].forEach((element) => {
+  process.on('exit', () => {
+    terminator('exit');
+  });
+  [
+    'SIGHUP',
+    'SIGINT',
+    'SIGQUIT',
+    'SIGILL',
+    'SIGTRAP',
+    'SIGABRT',
+    'SIGBUS',
+    'SIGFPE',
+    'SIGUSR1',
+    'SIGSEGV',
+    'SIGUSR2',
+    'SIGTERM',
+  ].forEach(element => {
     process.on(element, () => {
       terminator(element);
     });

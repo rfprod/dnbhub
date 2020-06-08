@@ -1,131 +1,138 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-
 import { APP_BASE_HREF, LocationStrategy, PathLocationStrategy } from '@angular/common';
-
+import { HttpClientModule } from '@angular/common/http';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule, Type } from '@angular/core';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFireAuthModule } from '@angular/fire/auth';
+import { AngularFireDatabaseModule } from '@angular/fire/database';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
-import { FlexLayoutModule } from '@angular/flex-layout';
-
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-
-/*
-*	Some material components rely on hammerjs
-*	CustomMaterialModule loads exact material modules
-*/
-import 'node_modules/hammerjs/hammer.js';
-import { CustomMaterialModuleWithProviders } from 'src/app/modules/material/custom-material.module';
-
-import { AppRoutingModule } from 'src/app/app.routing.module';
-
-import { AppComponent } from 'src/app/app.component';
-import { AppNavComponent } from 'src/app/components/app-nav/app-nav.component';
-import { AppIndexComponent } from 'src/app/components/app-index/app-index.component';
-import { AppSinglesComponent } from 'src/app/components/app-singles/app-singles.component';
-import { AppFreedownloadsComponent } from 'src/app/components/app-freedownloads/app-freedownloads.component';
-import { AppRepostsComponent } from 'src/app/components/app-reposts/app-reposts.component';
-import { AppBlogComponent } from 'src/app/components/app-blog/app-blog.component';
-import { AppAboutComponent } from 'src/app/components/app-about/app-about.component';
-import { AppUserComponent } from 'src/app/components/app-user/app-user.component';
-import { AppAdminComponent } from 'src/app/components/app-admin/app-admin.component';
-
-import { AppContactDialog } from 'src/app/components/app-contact/app-contact.component';
-import { AppLoginDialog } from 'src/app/components/app-login/app-login.component';
-
-import { AnonymousGuard } from 'src/app/services/anonymous-guard/anonymous-guard.service';
-
-import { SoundcloudPlayerComponent } from 'src/app/components/soundcloud-player/soundcloud-player.component';
-
-import { TranslateModule } from 'src/app/modules/translate/index';
-
-import { AngularFireModule } from '@angular/fire';
-import { AngularFireDatabaseModule } from '@angular/fire/database';
-import { AngularFireAuthModule } from '@angular/fire/auth';
-
-import { CustomServiceWorkerService } from 'src/app/services/custom-service-worker/custom-service-worker.service';
-import { CustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
-import { CustomHttpHandlersService } from 'src/app/services/custom-http-handlers/custom-http-handlers.service';
-import { EventEmitterService } from 'src/app/services/event-emitter/event-emitter.service';
-import { UserInterfaceUtilsService } from 'src/app/services/user-interface-utils/user-interface-utils.service';
-import { FirebaseService } from 'src/app/services/firebase/firebase.service';
-import { SendEmailService } from 'src/app/services/send-email/send-email.service';
-import { GoogleApiService } from 'src/app/services/google-api/google-api.service';
-import { SoundcloudService } from 'src/app/services/soundcloud/soundcloud.service';
-import { FacebookService } from 'src/app/services/facebook/facebook.service';
-import { TwitterService } from 'src/app/services/twitter/twitter.service';
-import { RegularExpressionsService } from 'src/app/services/regular-expressions/regular-expressions.service';
-import { EmailSubmissionService } from 'src/app/services/email-submission/email-submission.service';
-import { EmailSubscriptionService } from 'src/app/services/email-subscription/email-subscription.service';
-
-import { IframeContentLoadedDirective } from 'src/app/directives/iframe-content-loaded/iframe-content-loaded.directive';
-import { ImageLoadedDirective } from 'src/app/directives/image-loaded/image-loaded.directive';
-
-import { MapToIterablePipe } from 'src/app/pipes/map-to-iterable/map-to-iterable.pipe';
-
-import { ENV } from 'src/app/app.environment';
-import { BottomSheetTextDetailsComponent } from './components/bottom-sheet-text-details/bottom-sheet-text-details.component';
-
-import { NgxsModule } from '@ngxs/store';
-import { DnbhubStoreState } from './state/dnbhub-store.state';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { NgxsFormPluginModule } from '@ngxs/form-plugin';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
-import { AppSpinnerService } from './services';
+import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
+import { NgxsModule } from '@ngxs/store';
+import { DnbhubRootComponent } from 'src/app/app.component';
+import { DnbhubEnvironmentConfig, ENV } from 'src/app/app.environment';
+import { DnbhubRoutingModule } from 'src/app/app.routing.module';
+import { DnbhubAboutComponent } from 'src/app/components/about/about.component';
+import { DnbhubAdminComponent } from 'src/app/components/admin/admin.component';
+import { DnbhubBlogComponent } from 'src/app/components/blog/blog.component';
+import { DnbhubContactDialogComponent } from 'src/app/components/contact-dialog/contact-dialog.component';
+import { DnbhubFreedownloadsComponent } from 'src/app/components/freedownloads/freedownloads.component';
+import { DnbhubIndexComponent } from 'src/app/components/index/index.component';
+import { DnbhubLoginDialogComponent } from 'src/app/components/login-dialog/login-dialog.component';
+import { DnbhubNavbarComponent } from 'src/app/components/navbar/navbar.component';
+import { DnbhubRepostsComponent } from 'src/app/components/reposts/reposts.component';
+import { DnbhubSinglesComponent } from 'src/app/components/singles/singles.component';
+import { DnbhubSoundcloudPlayerComponent } from 'src/app/components/soundcloud-player/soundcloud-player.component';
+import { DnbhubUserComponent } from 'src/app/components/user/user.component';
+import { DnbhubAuthenticatedGuard } from 'src/app/guards/authenticated/authenticated.guard';
+import { DnbhubMaterialModule } from 'src/app/modules/material/custom-material.module';
+import { DnbhubTranslateModule } from 'src/app/modules/translate/index';
+import { DnbhubMapToIterablePipe } from 'src/app/pipes/map-to-iterable/map-to-iterable.pipe';
+import { DnbhubCustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
+import { DnbhubEmailSubmissionService } from 'src/app/services/email-submission/email-submission.service';
+import { DnbhubFacebookService } from 'src/app/services/facebook/facebook.service';
+import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
+import { DnbhubGoogleApiService } from 'src/app/services/google-api/google-api.service';
+import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
+import { DnbhubRegularExpressionsService } from 'src/app/services/regular-expressions/regular-expressions.service';
+import { SendEmailService } from 'src/app/services/send-email/send-email.service';
+import { DnbhubTwitterService } from 'src/app/services/twitter/twitter.service';
+import { DnbhubSoundcloudApiService } from 'src/app/state/soundcloud/soundcloud-api.service';
+import { environment } from 'src/environments/environment';
+
+import { DnbhubBottomSheetTextDetailsComponent } from './components/bottom-sheet-text-details/bottom-sheet-text-details.component';
+import { DnbhubBrandDialogComponent } from './components/brand-dialog/brand-dialog.component';
+import { DnbhubProgressBarComponent } from './components/progress-bar/progress-bar.component';
+import { DnbhubToolbarComponent } from './components/toolbar/toolbar.component';
+import { DnbhubAboutStoreModule } from './state/about/about.module';
+import { DnbhubAdminStoreModule } from './state/admin/admin.module';
+import { DnbhubBlogStoreModule } from './state/blog/blog.module';
+import { DnbhubHttpProgressStoreModule } from './state/http-progress/http-progress.module';
+import { DnbhubSoundcloudStoreModule } from './state/soundcloud/soundcloud.module';
+import { DnbhubUiStoreModule } from './state/ui/ui.module';
+import { APP_ENV, WINDOW } from './utils';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const entryComponenets: (any[] | Type<any>)[] = [
+  DnbhubContactDialogComponent,
+  DnbhubLoginDialogComponent,
+  DnbhubBottomSheetTextDetailsComponent,
+  DnbhubProgressBarComponent,
+  DnbhubBrandDialogComponent,
+];
 
 /**
  * Main application module.
  */
 @NgModule({
   declarations: [
-    AppComponent,
-    AppNavComponent,
-    AppIndexComponent,
-    AppSinglesComponent,
-    AppFreedownloadsComponent,
-    AppRepostsComponent,
-    AppBlogComponent,
-    AppAboutComponent,
-    AppUserComponent,
-    AppAdminComponent,
-    SoundcloudPlayerComponent,
-    AppContactDialog, AppLoginDialog,
-    IframeContentLoadedDirective, ImageLoadedDirective,
-    MapToIterablePipe,
-    BottomSheetTextDetailsComponent
+    DnbhubRootComponent,
+    DnbhubNavbarComponent,
+    DnbhubToolbarComponent,
+    DnbhubIndexComponent,
+    DnbhubSinglesComponent,
+    DnbhubFreedownloadsComponent,
+    DnbhubRepostsComponent,
+    DnbhubBlogComponent,
+    DnbhubAboutComponent,
+    DnbhubUserComponent,
+    DnbhubAdminComponent,
+    DnbhubSoundcloudPlayerComponent,
+    DnbhubContactDialogComponent,
+    DnbhubBrandDialogComponent,
+    DnbhubLoginDialogComponent,
+    DnbhubMapToIterablePipe,
+    DnbhubBottomSheetTextDetailsComponent,
+    DnbhubProgressBarComponent,
   ],
-  entryComponents: [
-    AppContactDialog, AppLoginDialog,
-    BottomSheetTextDetailsComponent
-  ],
+  entryComponents: [...entryComponenets],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    FlexLayoutModule,
-    CustomMaterialModuleWithProviders,
-    FormsModule, ReactiveFormsModule,
     HttpClientModule,
-    TranslateModule.forRoot(),
-    AngularFireModule.initializeApp(ENV.firebase, 'dnbhub-a5d9c'), AngularFireDatabaseModule, AngularFireAuthModule,
-    NgxsModule.forRoot([
-      DnbhubStoreState
-    ]),
-    NgxsReduxDevtoolsPluginModule.forRoot(),
-    NgxsLoggerPluginModule.forRoot(),
-    AppRoutingModule
+    FormsModule,
+    ReactiveFormsModule,
+    FlexLayoutModule,
+    DnbhubMaterialModule.forRoot(),
+    DnbhubTranslateModule.forRoot(),
+    AngularFireModule.initializeApp(ENV.firebase, 'dnbhub-a5d9c'),
+    AngularFireDatabaseModule,
+    AngularFireAuthModule,
+    NgxsModule.forRoot([], { developmentMode: !environment.production }),
+    NgxsRouterPluginModule.forRoot(),
+    NgxsFormPluginModule.forRoot(),
+    environment.production ? null : NgxsReduxDevtoolsPluginModule.forRoot(),
+    environment.production ? null : NgxsLoggerPluginModule.forRoot(),
+    DnbhubUiStoreModule.forRoot(),
+    DnbhubHttpProgressStoreModule.forRoot(),
+    DnbhubSoundcloudStoreModule.forRoot(),
+    DnbhubBlogStoreModule.forRoot(),
+    DnbhubAboutStoreModule.forRoot(),
+    DnbhubAdminStoreModule.forRoot(),
+    DnbhubRoutingModule,
   ],
   providers: [
     { provide: APP_BASE_HREF, useValue: '/' },
     { provide: LocationStrategy, useClass: PathLocationStrategy },
-    { provide: 'Window', useValue: window },
-    CustomServiceWorkerService, CustomDeferredService, CustomHttpHandlersService,
-    EventEmitterService, UserInterfaceUtilsService,
-    SendEmailService, EmailSubmissionService, EmailSubscriptionService,
-    FirebaseService, GoogleApiService, SoundcloudService, FacebookService, TwitterService,
-    RegularExpressionsService,
-    AppSpinnerService,
-    AnonymousGuard
+    { provide: WINDOW, useValue: window },
+    { provide: APP_ENV, useFactory: () => new DnbhubEnvironmentConfig() },
+    DnbhubCustomDeferredService,
+    DnbhubHttpHandlersService,
+    SendEmailService,
+    DnbhubEmailSubmissionService,
+    DnbhubFirebaseService,
+    DnbhubGoogleApiService,
+    DnbhubSoundcloudApiService,
+    DnbhubFacebookService,
+    DnbhubTwitterService,
+    DnbhubRegularExpressionsService,
+    DnbhubAuthenticatedGuard,
   ],
-  schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
-  bootstrap: [ AppComponent ]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  bootstrap: [DnbhubRootComponent],
 })
-export class AppModule {}
+export class DnbhubModule {}

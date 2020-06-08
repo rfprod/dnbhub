@@ -1,0 +1,121 @@
+<h2 mat-dialog-title>{{ 'login' | translate }}</h2>
+
+<mat-dialog-content>
+
+  <form
+    fxLayout="row wrap"
+    fxLayoutAlign="start stretch"
+    fxLayoutGap="10px"
+    [formGroup]="loginForm"
+    (ngSubmit)="submitForm()"
+    novalidate
+    class="mat-body-2"
+  >
+    <mat-form-field fxFlex="100">
+      <input
+        matInput
+        type="text"
+        name="email"
+        [formControl]="loginForm.controls.email"
+        placeholder="{{ 'form.email' | translate }}"
+      />
+      <mat-error *ngIf="loginForm.controls.email.invalid" class="mat-body-1">
+        {{ 'form.invalid.email' | translate }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field fxFlex="100">
+      <input
+        matInput
+        type="{{ showPassword ? 'text' : 'password' }}"
+        name="password"
+        [formControl]="loginForm.controls.password"
+        placeholder="{{ 'form.password' | translate }}"
+      />
+      <mat-icon
+        matSuffix
+        *ngIf="!showPassword && loginForm.controls.password.value.length"
+        (click)="togglePasswordVisibility()"
+        class="material-icons"
+        >visibility</mat-icon
+      >
+      <mat-icon
+        matSuffix
+        *ngIf="showPassword && loginForm.controls.password.value.length"
+        (click)="togglePasswordVisibility()"
+        class="material-icons"
+        >visibility_off</mat-icon
+      >
+      <mat-error *ngIf="loginForm.controls.password.invalid" class="mat-body-1">
+        {{ 'form.invalid.password' | translate }}
+      </mat-error>
+    </mat-form-field>
+
+    <div>
+      <span fxFlex fxHide="true">
+        <mat-toolbar class="controls" fxLayout.xs="row wrap" fxLayoutAlign="center center">
+          <button
+            mat-button
+            tabindex="-1"
+            type="submit"
+            [disabled]="loginForm.invalid || loginForm.pristine"
+            [attr.aria-label]="'form.submit' | translate"
+            color="accent"
+          >
+            <mat-icon class="metarial-icons">done</mat-icon> {{ 'form.submit' | translate }}
+          </button>
+        </mat-toolbar>
+      </span>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions fxLayoutAlign="center center">
+  <button
+    mat-button
+    tabindex="-1"
+    (click)="resetPassword()"
+    [disabled]="loginForm.controls.email.value"
+    matTooltip="{{ 'action.resetPassword' | translate }}"
+    color="accent"
+    *ngIf="!signupMode"
+  >
+    <mat-icon class="metarial-icons">lock</mat-icon
+    ><span [fxHide.xs]="true"> {{ 'action.resetPassword' | translate }}</span>
+  </button>
+
+  <button
+    mat-button
+    tabindex="-1"
+    (click)="submitForm()"
+    [disabled]="loginForm.invalid || loginForm.pristine"
+    matTooltip="{{ 'action.confirm' | translate }}"
+    color="accent"
+    *ngIf="!signupMode"
+  >
+    <mat-icon class="metarial-icons">done</mat-icon
+    ><span [fxHide.xs]="true"> {{ 'action.confirm' | translate }}</span>
+  </button>
+
+  <button
+    mat-button
+    tabindex="-1"
+    (click)="submitForm()"
+    [disabled]="loginForm.invalid || loginForm.pristine"
+    matTooltip="{{ 'action.confirm' | translate }}"
+    color="accent"
+    *ngIf="signupMode"
+  >
+    <mat-icon class="metarial-icons">person_add</mat-icon
+    ><span [fxHide.xs]="true"> {{ 'action.createAccount' | translate }}</span>
+  </button>
+
+  <button
+    mat-button
+    tabindex="-1"
+    (click)="closeDialog()"
+    matTooltip="{{ 'action.close' | translate }}"
+  >
+    <mat-icon class="metarial-icons">close</mat-icon
+    ><span [fxHide.xs]="true"> {{ 'action.close' | translate }}</span>
+  </button>
+</mat-dialog-actions>

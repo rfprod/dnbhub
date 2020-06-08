@@ -1,9 +1,11 @@
-export const LANG_RU_NAME = 'ru';
+import { ESUPPORTED_LANGUAGE_KEY, IDictionaryObject } from './translations.interface';
+
+export const LANG_RU_NAME = ESUPPORTED_LANGUAGE_KEY.RUSSIAN;
 
 /**
  * Russian substrings for UI.
  */
-export const LANG_RU_TRANSLATIONS = {
+export const LANG_RU_TRANSLATIONS: IDictionaryObject = {
   title: 'DNBHUB',
   index: 'Индекс',
   singles: 'Синглы',
@@ -18,22 +20,22 @@ export const LANG_RU_TRANSLATIONS = {
   language: {
     title: 'Язык',
     en: 'Английский',
-    ru: 'Русский'
+    ru: 'Русский',
   },
   contact: {
     open: 'Отправить сообщение',
     title: 'Контактная форма',
     result: {
       success: 'Ваше сообщение было успешно отправлено.',
-      fail: 'Отправка сообщения не удалась. Пожалуйста, попробуй позже.'
-    }
+      fail: 'Отправка сообщения не удалась. Пожалуйста, попробуй позже.',
+    },
   },
   subscribe: {
     title: 'Подписка на email-рассылку',
     result: {
       success: 'Указанный адрес эл. почты был добавлен в список email-рассылки.',
-      fail: 'Подписка на новостную email-рассылку не удалась. Пожалуйста, попробуйте позже.'
-    }
+      fail: 'Подписка на новостную email-рассылку не удалась. Пожалуйста, попробуйте позже.',
+    },
   },
   form: {
     email: 'Эл. почта',
@@ -49,7 +51,7 @@ export const LANG_RU_TRANSLATIONS = {
       link: 'Неправильная ссылка, формат: http(s)://...',
       header: 'Неправильный заголовок: 3+ знаков',
       message: 'Неправильное сообщеие: 50+ знаков',
-    }
+    },
   },
   action: {
     confirm: 'Подтвердить',
@@ -60,6 +62,6 @@ export const LANG_RU_TRANSLATIONS = {
     buy: 'Купить',
     select: 'Выбрать',
     resetPassword: 'Сбросить пароль',
-    createAccount: 'Создать учётую запись'
-  }
+    createAccount: 'Создать учётую запись',
+  },
 };
