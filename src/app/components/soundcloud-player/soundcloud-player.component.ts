@@ -11,7 +11,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject, combineLatest, of, timer } from 'rxjs';
+import { BehaviorSubject, combineLatest, from, of, timer } from 'rxjs';
 import { concatMap, first, map, takeWhile, tap } from 'rxjs/operators';
 import { IEventTargetWithPosition, IEventWithPosition } from 'src/app/interfaces/index';
 import { ISoundcloudPlayer } from 'src/app/interfaces/soundcloud/soundcloud-player.interface';
@@ -134,12 +134,17 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
     }),
   );
 
-  public get renderTracks$() {
-    return this.mode === 'dnbhub' || this.mode === 'user' ? this.tracks$ : this.playlistTracks$;
-  }
+  private readonly playerMode = new BehaviorSubject<TSoundcloudPlayerMode>(this.mode);
+  public readonly playerMode$ = this.playerMode.asObservable();
 
-  private readonly selectedTrackIndex = new BehaviorSubject<number>(0);
-  public readonly selectedTrackIndex$ = this.selectedTrackIndex.asObservable();
+  public readonly renderTracks$ = this.playerMode$.pipe(
+    concatMap(mode => {
+      return mode === 'dnbhub' || mode === 'user' ? this.tracks$ : this.playlistTracks$;
+    }),
+  );
+
+  private readonly selectedTrack = new BehaviorSubject<SoundcloudTrack>(new SoundcloudTrack());
+  public readonly selectedTrack$ = this.selectedTrack.asObservable();
 
   /**
    * Indicated that there's not more tracks left in the list.
@@ -154,14 +159,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
   /**
    * Waveform progress timer.
    */
-  private readonly waveformProgressTimer$ = timer(0, ETIMEOUT.SHORT);
-
-  /**
-   * Selects a track.
-   */
-  public selectTrack(index: number): void {
-    this.selectedTrackIndex.next(index);
-  }
+  private readonly waveformProgressTimer$ = timer(ETIMEOUT.SHORT, ETIMEOUT.SHORT);
 
   /**
    * Gets link with id from Soundcloud Service (public for template usage).
@@ -217,16 +215,6 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
   }
 
   /**
-   * Returns if playback is in progress, required for UI.
-   */
-  public playbackInProgress(): boolean {
-    if (Boolean(this.player)) {
-      return Boolean(this.player.isActuallyPlaying());
-    }
-    return false;
-  }
-
-  /**
    * Kills player.
    */
   private playerKill(): void {
@@ -238,35 +226,32 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
   /**
    * Triggers player playback/pause.
    * @param track Track object
-   * @param trackIndex Track index in view component array
    */
-  public playTrack(track: SoundcloudTrack, trackIndex: number): void {
-    if (
-      (this.selectedTrackIndex.value !== trackIndex && Boolean(this.player)) ||
-      (this.selectedTrackIndex.value === trackIndex && !Boolean(this.player))
-    ) {
+  public playTrack(track: SoundcloudTrack): void {
+    if (this.selectedTrack.value.id !== track.id) {
       this.playerKill();
-      this.selectTrack(trackIndex);
+      this.selectedTrack.next(track);
 
       this.soundcloud
         .streamTrack(track.id)
         .pipe(
-          tap((player: ISoundcloudPlayer) => {
-            // debug player here
+          concatMap((player: ISoundcloudPlayer) => {
             this.player = player;
-            this.player.play();
+            const promise = this.player.play();
+            return from(promise);
           }),
-          concatMap(() => timer(ETIMEOUT.SHORT).pipe()),
           tap(() => {
             this.reportWaveformProgress().subscribe();
           }),
         )
         .subscribe();
     } else if (Boolean(this.player.isActuallyPlaying())) {
-      this.player.pause();
+      void this.player.pause();
     } else {
-      this.player.play();
-      this.reportWaveformProgress().subscribe();
+      const promise = this.player.play();
+      from(promise)
+        .pipe(concatMap(() => this.reportWaveformProgress()))
+        .subscribe();
     }
   }
 
@@ -276,16 +261,19 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
   public reportWaveformProgress() {
     return this.waveformProgressTimer$.pipe(
       tap(() => {
+        const id = this.selectedTrack.value.id;
         const visibleWaveform: ElementRef = new ElementRef(
-          this.window.document.getElementsByClassName('waveform')[0],
+          this.window.document.getElementsByClassName(`waveform-${id}`)[0],
         );
         const visibleWaveformElement: HTMLElement = visibleWaveform.nativeElement;
-        const dividend = 100;
-        const playbackProgress: number = Math.floor(
-          (this.player.currentTime() * dividend) / this.player.getDuration(),
-        );
-        const nextVal = playbackProgress + 1;
-        visibleWaveformElement.style.background = `linear-gradient(to right, rgba(171,71,188,1) 0%,rgba(171,71,188,1) ${playbackProgress}%, rgba(30,87,153,0) ${nextVal}%, rgba(30,87,153,0) 100%)`;
+        if (visibleWaveformElement) {
+          const dividend = 100;
+          const playbackProgress: number = Math.floor(
+            (this.player.currentTime() * dividend) / this.player.getDuration(),
+          );
+          const nextVal = playbackProgress + 1;
+          visibleWaveformElement.style.background = `linear-gradient(to right, rgba(171,71,188,1) 0%,rgba(171,71,188,1) ${playbackProgress}%, rgba(30,87,153,0) ${nextVal}%, rgba(30,87,153,0) 100%)`;
+        }
       }),
       takeWhile(
         () =>
@@ -300,17 +288,18 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
   /**
    * Waveform client event handler.
    * @param event waveform click event
+   * @param id soundcloud track id
    */
-  public waveformClick(event: IEventWithPosition): void {
-    const srcElement = event.srcElement as IEventTargetWithPosition;
-    const waveformWidth: number = srcElement.clientWidth;
-    const offsetX: number = event.offsetX;
-    const dividend = 100;
-    const percent: number = (offsetX * dividend) / waveformWidth;
-    const newProgress: number = (this.player.getDuration() * percent) / dividend;
-    void this.player.seek(newProgress).then(result => {
-      console.warn('player seek success', result);
-    });
+  public waveformClick(event: IEventWithPosition, id: number): void {
+    if (this.selectedTrack.value.id === id) {
+      const srcElement = event.srcElement as IEventTargetWithPosition;
+      const waveformWidth: number = srcElement.clientWidth;
+      const offsetX: number = event.offsetX;
+      const dividend = 100;
+      const percent: number = (offsetX * dividend) / waveformWidth;
+      const newProgress: number = (this.player.getDuration() * percent) / dividend;
+      void this.player.seek(newProgress);
+    }
   }
 
   /**
@@ -371,6 +360,9 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
   }
 
   public ngOnChanges(changes: ISoundcloudPlayerChanges): void {
+    if (changes.mode) {
+      this.playerMode.next(changes.mode.currentValue);
+    }
     if (changes.mode && !changes.playlistId && !changes.userId) {
       this.modeChangeHandler(changes);
     } else if (changes.userId) {

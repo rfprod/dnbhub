@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { DatabaseReference, DatabaseSnapshotExists } from '@angular/fire/database/interfaces';
+import { DatabaseReference } from '@angular/fire/database/interfaces';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import {
@@ -9,8 +9,8 @@ import {
 } from '@angular/material/bottom-sheet';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { SafeResourceUrl } from '@angular/platform-browser';
-import { take, tap } from 'rxjs/operators';
+import { combineLatest, from } from 'rxjs';
+import { concatMap, filter, map, take, tap } from 'rxjs/operators';
 import { IEmailMessage, IEmailSubmission } from 'src/app/interfaces/admin';
 import { BlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 import { IBrandForm } from 'src/app/interfaces/brand/brand-form.interface';
@@ -21,6 +21,7 @@ import { DnbhubAdminService } from 'src/app/state/admin/admin.service';
 import { DnbhubSoundcloudApiService } from 'src/app/state/soundcloud/soundcloud-api.service';
 import { ETIMEOUT } from 'src/app/utils';
 
+import { SoundcloudPlaylist } from '../../interfaces/soundcloud/soundcloud-playlist.config';
 import { DnbhubBottomSheetTextDetailsComponent } from '../bottom-sheet-text-details/bottom-sheet-text-details.component';
 import { DnbhubBrandDialogComponent } from '../brand-dialog/brand-dialog.component';
 
@@ -40,81 +41,36 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
    */
   private bottomSheetRef: MatBottomSheetRef<DnbhubBottomSheetTextDetailsComponent>;
 
-  public details: {
-    emails: {
-      messages: any;
-      messagesKeys: string[];
-      blogSubmissions: any;
-      blogSubmissionsKeys: string[];
-    };
-    brands: any;
-    brandsKeys: string[];
-    users: any;
-    usersKeys: string[];
-    selected: {
-      brand: {
-        index: number | null;
-        key: string | null;
-        object: any | null;
-      };
-    };
-    edit: {
-      brand: {
-        key: string | null;
-      };
-    };
-    create: {
-      brand: boolean;
-    };
-    preview: {
-      submission: any | null;
-    };
-    blog: {
-      existingIDs: string[] | null;
-    };
-  } = {
-    emails: {
-      messages: {},
-      messagesKeys: [],
-      blogSubmissions: {},
-      blogSubmissionsKeys: [],
-    },
-    brands: {},
-    brandsKeys: [],
-    users: {},
-    usersKeys: [],
-    selected: {
-      brand: {
-        index: null,
-        key: null,
-        object: null,
-      },
-    },
-    edit: {
-      brand: {
-        key: null,
-      },
-    },
-    create: {
-      brand: false,
-    },
-    preview: {
-      submission: null,
-    },
-    blog: {
-      existingIDs: [],
-    },
-  };
-
   public readonly emailMessages$ = this.admin.emailMessages$;
 
   public readonly emailSubmissions$ = this.admin.emailSubmissions$;
 
   public readonly brands$ = this.admin.brands$;
 
+  public readonly matchedBrands$ = this.brands$.pipe(
+    map(brands => {
+      const matchedKeys = brands.filter(item =>
+        new RegExp(this.brandAutocompleteControl.value, 'i').test(item.key),
+      );
+      // console.log('matchedKeys', matchedKeys);
+      return matchedKeys;
+    }),
+  );
+
   public readonly users$ = this.admin.users$;
 
   public readonly blogEntriesIDs$ = this.admin.blogEntriesIDs$;
+
+  public readonly selectedBrand$ = this.admin.selectedBrand$;
+
+  public readonly selectedSubmission$ = this.admin.selectedSubmission$.pipe(
+    filter(submission => Boolean(submission)),
+    map(submission => {
+      const widgetLink = this.soundcloud.widgetLink.playlist(submission.id);
+      const showWidget = widgetLink !== '#' ? true : false;
+      return { submission, widgetLink, showWidget };
+    }),
+  );
 
   /**
    * Brand autocomplete form control.
@@ -198,36 +154,35 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
   /**
    * Deletes email message.
    */
-  public deleteMessage(dbKey: string): Promise<any> {
-    const promise = (this.firebase.getDB(`email/messages/${dbKey}`, true) as DatabaseReference)
-      .remove()
-      .then(() => {
-        console.log(`message id ${dbKey} was successfully deleted`);
-        this.getEmailMessages();
-      })
-      .catch((error: string) => {
-        console.log('deleteMessage, error', error);
-      });
-    return promise;
+  public deleteMessage(dbKey: string) {
+    const promise = (this.firebase.getDB(
+      `email/messages/${dbKey}`,
+      true,
+    ) as DatabaseReference).remove();
+    from(promise)
+      .pipe(
+        tap(() => {
+          this.getEmailMessages();
+        }),
+      )
+      .subscribe();
   }
 
   /**
    * Deletes email blog submission.
    */
-  public deleteEmailBlogSubmission(dbKey: string): Promise<any> {
+  public deleteEmailBlogSubmission(dbKey: string) {
     const promise = (this.firebase.getDB(
       `emails/blogSubmissions/${dbKey}`,
       true,
-    ) as DatabaseReference)
-      .remove()
-      .then(() => {
-        console.log(`blog submission id ${dbKey} was successfully deleted`);
-        this.getEmailBlogSubmissions();
-      })
-      .catch((error: string) => {
-        console.log('deleteBlogSubmission, error', error);
-      });
-    return promise;
+    ) as DatabaseReference).remove();
+    from(promise)
+      .pipe(
+        tap(() => {
+          this.getEmailBlogSubmissions();
+        }),
+      )
+      .subscribe();
   }
 
   /**
@@ -235,144 +190,80 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
    * Resets selection when null is passed as a parameter.
    * @param key brand key from firebase
    */
-  public selectBrand(key: string): void {
-    this.details.selected.brand.key = key;
-    this.details.selected.brand.index = this.details.brandsKeys.indexOf(key);
-    this.details.selected.brand.object = this.getSelectedBrand();
-    if (key === null) {
-      this.details.selected.brand.key = null;
-      this.details.selected.brand.index = null;
-      this.details.selected.brand.object = null;
-    }
+  public selectBrand(key?: string): void {
+    this.admin.selectBrand(key).subscribe();
   }
 
   /**
    * Selects brand from list.
    */
   public selectBrandFromList(event: MatAutocompleteSelectedEvent): void {
-    console.log('selectBrandFromList, event', event);
-    this.details.selected.brand.key = event.option.value;
-    this.details.selected.brand.index = this.details.brandsKeys.indexOf(
-      this.details.selected.brand.key,
-    );
-    this.details.selected.brand.object = this.details.brands[this.details.selected.brand.key];
-    console.log('this.details.selected.brand', this.details.selected.brand);
-  }
-
-  /**
-   * Returns selected brand object.
-   * @param keys indicates if selected brand keys should be returned
-   */
-  public getSelectedBrand(keys?: boolean): Brand {
-    let result = new Brand();
-    if (this.brandIsSelected('', true)) {
-      result = keys
-        ? Object.keys(this.details.selected.brand.object)
-        : this.details.selected.brand.object;
-    }
-    return result;
-  }
-
-  /**
-   * Resolves if any brand is selected.
-   * @param brandKey brand key
-   * @param anyBrand indicates if method should resolve if any brand is selected overriding first parameter
-   */
-  public brandIsSelected(brandKey: string, anyBrand?: boolean): boolean {
-    console.log(
-      'brandIsSelected, brandKey',
-      brandKey,
-      'anyBrand',
-      anyBrand,
-      'selected.brand.key',
-      this.details.selected.brand.key,
-    );
-    let result = false;
-    if (
-      this.details.selected.brand.index >= 0 &&
-      this.details.selected.brand.key &&
-      this.details.selected.brand.object
-    ) {
-      if (this.details.selected.brand.key === brandKey || anyBrand) {
-        result = true;
-      }
-    }
-    return result;
-  }
-
-  /**
-   * Returns matched brands for autocomplete.
-   */
-  public getMatchedBrands(): string[] {
-    const matchedKeys = this.details.brandsKeys.filter((item: string) =>
-      new RegExp(this.brandAutocompleteControl.value, 'i').test(item),
-    );
-    // console.log('matchedKeys', matchedKeys);
-    return matchedKeys;
+    const key = event.option.value;
+    this.admin.selectBrand(key).subscribe();
   }
 
   /**
    * Approves blog submission sent over email.
    * @param index blog post email submission key index
    */
-  public approveEmailSubmission(submission: IEmailSubmission): Promise<any> {
-    console.log('TODO: approve submission', submission);
-    return this.firebase.blogEntryExistsByValue(submission.key).then(result => {
-      console.log('blogEntryExistsByValue', result);
-      if (result) {
-        /*
-         *	entry does exist, call delete submission automatically
-         */
-        return this.deleteEmailSubmission(submission.key);
-      }
-      return this.soundcloud.SC.get(`/resolve?url=${submission.link}`).then(scData => {
-        console.log('scData', scData);
-        /*
-         *	create new records, delete submission record
-         */
-        const valuesObj: BlogPost = new BlogPost();
-        valuesObj.code = `${scData.user.username.replace(
-          /\s/,
-          '',
-        )}${scData.permalink.toUpperCase()}`;
-        valuesObj.links = this.getSelectedBrand();
-        valuesObj.playlistId = scData.id;
-        valuesObj.soundcloudUserId = scData.user.id;
-        console.log('valuesObj', valuesObj);
-        return this.firebase
-          .addBlogPost(valuesObj)
-          .then(() => {
-            console.log('blog entry values set');
-            this.getEmailBlogSubmissions();
-            this.getBlogEntriesIDs();
-            this.selectBrand(null);
+  public approveEmailSubmission(submission: IEmailSubmission) {
+    combineLatest([this.selectedBrand$, this.firebase.blogEntryExistsByValue(submission.key)])
+      .pipe(
+        concatMap(([brand, blogEntry]) => {
+          console.log('blogEntryExistsByValue', blogEntry);
+          if (!blogEntry) {
             return this.deleteEmailSubmission(submission.key);
-          })
-          .catch((error: any) => {
-            console.log('error setting blod entry values', error);
-            this.selectBrand(null);
-          });
-      });
-    });
+          }
+          const promise = this.soundcloud.SC.get(`/resolve?url=${submission.link}`);
+          return from(promise).pipe(
+            concatMap((scData: SoundcloudPlaylist) => {
+              console.log('scData', scData);
+              /*
+               *	create new records, delete submission record
+               */
+              const valuesObj: BlogPost = new BlogPost();
+              valuesObj.code = `${scData.user.username.replace(
+                /\s/,
+                '',
+              )}${scData.permalink.toUpperCase()}`;
+              valuesObj.links = { ...brand };
+              valuesObj.playlistId = scData.id;
+              valuesObj.soundcloudUserId = scData.user.id.toString();
+              console.log('valuesObj', valuesObj);
+              const addBlogPostPromise = this.firebase.addBlogPost(valuesObj);
+              return from(addBlogPostPromise).pipe(
+                tap(
+                  () => {
+                    this.getEmailBlogSubmissions();
+                    this.getBlogEntriesIDs();
+                    this.selectBrand();
+                    this.deleteEmailSubmission(submission.key).subscribe();
+                  },
+                  () => {
+                    this.selectBrand();
+                  },
+                ),
+              );
+            }),
+          );
+        }),
+      )
+      .subscribe();
   }
 
   /**
    * Deletes email submission by key index.
    */
-  public deleteEmailSubmission(dbKey: string): Promise<any> {
+  private deleteEmailSubmission(dbKey: string) {
     const promise = (this.firebase.getDB(
       `emails/blogSubmissions/${dbKey}`,
       true,
-    ) as DatabaseReference)
-      .remove()
-      .then(() => {
-        console.log(`submission id ${dbKey} was successfully deleted`);
+    ) as DatabaseReference).remove();
+    return from(promise).pipe(
+      tap(() => {
         this.getEmailBlogSubmissions();
-      })
-      .catch(error => {
-        console.log('error deleting email submission', error);
-      });
-    return promise;
+      }),
+    );
   }
 
   /**
@@ -397,161 +288,134 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
   /**
    * Shows blog post submission preview.
    */
-  public showSubmissionPreview(submission: IEmailSubmission): Promise<any> {
-    return (this.soundcloud.SC.get(`/resolve?url=${submission.link}`) as Promise<any>).then(
-      data => {
+  public showSubmissionPreview(submission: IEmailSubmission) {
+    const promise = this.soundcloud.SC.get(`/resolve?url=${submission.link}`).then(
+      (data: SoundcloudPlaylist) => {
         console.log('data', data);
-        this.details.preview.submission = data;
-        this.details.preview.submission.description = this.soundcloud.processDescription(
-          this.details.preview.submission.description,
+        const submittedPlaylist = data;
+        submittedPlaylist.description = this.soundcloud.processDescription(
+          submittedPlaylist.description,
         );
+        this.admin.selectSubmission(submittedPlaylist);
         return data;
       },
     );
-  }
-
-  /**
-   * Returns soundcloud widget link.
-   * @param soundcloudPlaylistID soundcloud playlist id
-   */
-  public soundcloudWidgetLink(soundcloudPlaylistID: number): SafeResourceUrl {
-    const link: SafeResourceUrl = this.soundcloud.widgetLink.playlist(soundcloudPlaylistID);
-    return link;
-  }
-
-  /**
-   * Resolves if soundcloud link should be shown.
-   * @param soundcloudPlaylistID soundcloud playlist id
-   */
-  public showSoundcloudWidgetLink(soundcloudPlaylistID: number): SafeResourceUrl {
-    return this.soundcloud.widgetLink.playlist(soundcloudPlaylistID) !== '#' ? true : false;
-  }
-
-  /**
-   * Return user submitted playlist.
-   * @param userKey user key
-   * @param submittedPlaylist submitted playlist key
-   */
-  public getUserSubmittedPlaylistObject(userKey: string, submittedPlaylist: string): any {
-    console.log(
-      'getUserSubmittedPlaylistObject, userKey',
-      userKey,
-      'submittedPlaylist',
-      submittedPlaylist,
-    );
-    const playlist: any = this.details.users[userKey].submittedPlaylists[submittedPlaylist];
-    console.log('playlist', playlist);
-    return playlist;
+    const observable = from(promise);
+    observable.subscribe();
   }
 
   /**
    * Resets blog post submission preview.
    */
   public hideSubmissionPreview(): void {
-    this.details.preview.submission = null;
+    this.admin.selectSubmission(null);
   }
 
   /**
    * Resolves if submission is already added.
    */
-  public submissionAlreadyAdded(key: string): boolean {
-    return this.details.blog.existingIDs.includes(key);
+  public submissionAlreadyAdded$(key: string) {
+    return this.admin.blogEntriesIDs$.pipe(
+      map(existingIDs => {
+        return existingIDs.includes(parseInt(key, 10));
+      }),
+    );
   }
 
-  /**
-   * Resolves if brand is currently editable.
-   * @param dbKey firebase brand key
-   */
-  public isBrandCurrentlyEditable(dbKey: string): boolean {
-    return dbKey === this.details.edit.brand.key;
-  }
-
-  public approveUserSubmission(playlistId: number): Promise<any> {
+  public approveUserSubmission(playlistId: number) {
     const dbKey = playlistId;
-    console.log('TODO: approve post, playlistID/dbkey', dbKey);
+    console.warn('TODO: approve post, playlistID/dbkey', dbKey);
     const selectedSubmission = {
       id: dbKey,
       scData: null,
     };
-    console.log('TODO: approve submission', selectedSubmission);
-    return (this.soundcloud.SC.get(`/playlists/${dbKey}`) as Promise<any>).then(data => {
-      console.log('any data', data);
+    console.warn('TODO: approve submission', selectedSubmission);
+    const promise = this.soundcloud.SC.get(`/playlists/${dbKey}`).then(data => {
+      console.warn('any data', data);
       selectedSubmission.scData = data;
-      return this.checkAndAddUserPlaylist(selectedSubmission);
     });
+    const observable = from(promise).pipe(
+      tap(() => {
+        this.checkAndAddUserPlaylist(selectedSubmission);
+      }),
+    );
+    observable.subscribe();
   }
 
   /**
    * Rejects user submission.
    * @param playlistId playlist id
    */
-  public rejectUserSubmission(playlistId: number): Promise<any> {
-    return this.deleteUserSubmission(playlistId);
+  public rejectUserSubmission(playlistId: number) {
+    this.deleteUserSubmission(playlistId).subscribe();
   }
 
   /**
    * Deletes user submission.
    * @param dbKey user submission database key
    */
-  public deleteUserSubmission(dbKey: number): Promise<any> {
+  public deleteUserSubmission(dbKey: number) {
     const userKey = this.firebase.fire.user.uid;
-    return (this.firebase.getDB(
+    const promise = (this.firebase.getDB(
       `users/${userKey}/submittedPlaylists/${dbKey}`,
       true,
     ) as DatabaseReference)
       .remove()
       .then(() => {
-        console.log(`user ${userKey} submission ${dbKey} was successfully deleted`);
-        delete this.details.users[userKey].submittedPlaylists[dbKey];
+        console.warn(`user ${userKey} submission ${dbKey} was successfully deleted`);
+        this.getUsers();
       })
-      .catch((error: any) => {
-        console.log('error deleting user submission', error);
+      .catch(error => {
+        throw error;
       });
+    const observable = from(promise);
+    return observable;
   }
 
   /**
    * Checks and adds user submission.
    * @param selectedSubmission user submitted playlist
    */
-  private checkAndAddUserPlaylist(selectedSubmission: { id: number; scData: any }): Promise<any> {
-    console.log('checkAndAddUserPlaylist, selectedSubmission', selectedSubmission);
-    return this.firebase
-      .blogEntryExistsByValue(selectedSubmission.id.toString())
-      .then((result: DatabaseSnapshotExists<any>) => {
-        console.log('blogEntryExistsByValue', result);
-        if (result) {
-          /*
-           *	entry does exist, call delete submission automatically
-           */
+  private checkAndAddUserPlaylist(selectedSubmission: { id: number; scData: SoundcloudPlaylist }) {
+    console.warn('checkAndAddUserPlaylist, selectedSubmission', selectedSubmission);
+    combineLatest([
+      this.selectedBrand$,
+      this.firebase.blogEntryExistsByValue(selectedSubmission.id.toString()),
+    ])
+      .pipe(
+        concatMap(([brand, blogEntry]) => {
+          if (blogEntry) {
+            /*
+             *	entry does exist, call delete submission automatically
+             */
 
-          this.getUsers();
-          return this.deleteUserSubmission(selectedSubmission.id);
-        }
-        /*
-         *	create new records, delete submission record
-         */
-        const valuesObj: BlogPost = new BlogPost();
-        valuesObj.code =
-          selectedSubmission.scData.user.username.replace(/\s/, '') +
-          selectedSubmission.scData.permalink.toUpperCase();
-        valuesObj.links = this.getSelectedBrand();
-        valuesObj.playlistId = selectedSubmission.scData.id;
-        valuesObj.soundcloudUserId = selectedSubmission.scData.user.id;
-        console.log(valuesObj);
-        return this.firebase
-          .addBlogPost(valuesObj)
-          .then(() => {
-            console.log('blog entry values set');
+            this.getUsers();
+            return this.deleteUserSubmission(selectedSubmission.id);
+          }
+
+          const valuesObj: BlogPost = new BlogPost();
+          valuesObj.code =
+            selectedSubmission.scData.user.username.replace(/\s/, '') +
+            selectedSubmission.scData.permalink.toUpperCase();
+          valuesObj.links = { ...brand };
+          valuesObj.playlistId = selectedSubmission.scData.id;
+          valuesObj.soundcloudUserId = selectedSubmission.scData.user.id.toString();
+          console.warn(valuesObj);
+          return this.firebase.addBlogPost(valuesObj);
+        }),
+        concatMap(
+          () => {
             this.getUsers();
             this.getBlogEntriesIDs();
-            this.selectBrand(null);
+            this.selectBrand();
             return this.deleteUserSubmission(selectedSubmission.id);
-          })
-          .catch((error: any) => {
-            console.log('error setting blod entry values', error);
-            this.selectBrand(null);
-          });
-      });
+          },
+          () => {
+            this.selectBrand();
+          },
+        ),
+      )
+      .subscribe();
   }
 
   /**

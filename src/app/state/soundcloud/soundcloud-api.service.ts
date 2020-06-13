@@ -21,7 +21,12 @@ import { APP_ENV } from 'src/app/utils/injection-tokens';
 import { soundcloudActions } from './soundcloud.store';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-declare let SC: any;
+declare let SC: {
+  get(path: string, options?: Record<string, any>): Promise<any>;
+  initialize(options: ScInitOptions): void;
+  connect(): Promise<any>;
+  stream(trackUrl: string): Promise<any>;
+};
 
 /**
  * Soundcloud service.

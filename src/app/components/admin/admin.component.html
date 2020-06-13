@@ -32,7 +32,7 @@
     fxFlex="100"
     fxLayoutFill
     fxLayoutAlign="start start"
-    *ngIf="!details.preview.submission"
+    *ngIf="!(selectedSubmission$ | async)"
   >
     <span
       fxFlex="100"
@@ -93,7 +93,7 @@
               <span
                 fxFlex="100"
                 class="mat-body-1"
-                *ngIf="details.selected.brand.key"
+                *ngIf="selectedBrand$ | async as selectedBrand"
                 fxLayout="row wrap"
               >
                 <p fxFlex="100">
@@ -101,20 +101,16 @@
                 </p>
 
                 <span
-                  *ngFor="let key of details.selected.brand.object | mapToIterable"
+                  *ngFor="let key of selectedBrand | mapToIterable"
                   fxFlex="100"
                   fxLayout="row wrap"
                 >
-                  <a
-                    *ngIf="details.selected.brand.object[key]"
-                    href="{{ details.selected.brand.object[key] }}"
-                    target="_blank"
-                  >
+                  <a *ngIf="selectedBrand[key]" href="{{ selectedBrand[key] }}" target="_blank">
                     {{ key }}
                     <mat-icon>link</mat-icon>
                   </a>
 
-                  <span *ngIf="details.selected.brand.object[key] === ''">
+                  <span *ngIf="selectedBrand[key] === ''">
                     {{ key }}
                     <mat-icon>link</mat-icon>
                   </span>
@@ -137,7 +133,7 @@
                       #brandAuto="matAutocomplete"
                       (optionSelected)="selectBrandFromList($event)"
                     >
-                      <mat-option *ngFor="let option of getMatchedBrands()" [value]="option">
+                      <mat-option *ngFor="let option of matchedBrands$ | async" [value]="option">
                         {{ option }}
                       </mat-option>
                     </mat-autocomplete>
@@ -157,7 +153,7 @@
                 </button>
                 <button
                   mat-icon-button
-                  *ngIf="brandIsSelected('', true)"
+                  *ngIf="selectedBrand$ | async"
                   (click)="showSubmissionPreview(emailSubmission)"
                   aria-label="preview submission"
                   title="preview submission"
@@ -166,22 +162,24 @@
                 </button>
                 <button
                   mat-icon-button
-                  [disabled]="submissionAlreadyAdded(emailSubmission.key)"
-                  *ngIf="brandIsSelected('', true)"
+                  [disabled]="submissionAlreadyAdded$(emailSubmission.key) | async"
+                  *ngIf="selectedBrand$ | async"
                   (click)="approveEmailSubmission(emailSubmission)"
                   [attr.aria-label]="
-                    submissionAlreadyAdded(emailSubmission.key)
+                    (submissionAlreadyAdded$(emailSubmission.key) | async)
                       ? 'this playlist was already added'
                       : 'approve email submission'
                   "
                   [attr.title]="
-                    submissionAlreadyAdded(emailSubmission.key)
+                    (submissionAlreadyAdded$(emailSubmission.key) | async)
                       ? 'this playlist was already added'
                       : 'approve email submission'
                   "
                 >
-                  <mat-icon *ngIf="!submissionAlreadyAdded(emailSubmission.key)">check</mat-icon>
-                  <mat-icon *ngIf="submissionAlreadyAdded(emailSubmission.key)">
+                  <mat-icon *ngIf="!(submissionAlreadyAdded$(emailSubmission.key) | async)"
+                    >check</mat-icon
+                  >
+                  <mat-icon *ngIf="submissionAlreadyAdded$(emailSubmission.key) | async">
                     not_interested
                   </mat-icon>
                 </button>
@@ -266,31 +264,17 @@
             fxLayoutFill
             fxLayout="row"
             fxLayoutAlign="center start"
-            *ngIf="(brands$ | async) && !details.create.brand"
+            *ngIf="!(brands$ | async)"
           >
             The're are no brands yet, create one.
           </div>
 
           <div fxFlex="100" fxLayout="row" *ngIf="brands$ | async">
-            <div
-              *ngIf="!details.create.brand"
-              fxFlex="100"
-              fxLayout="row wrap"
-              fxLayoutAlign="space-between start"
-            >
-              <div
-                *ngFor="let brand of brands$ | async"
-                fxFlex.xs="100"
-                [fxFlex]="isBrandCurrentlyEditable(brand.key) ? '100' : 32"
-                fxLayout="row"
-              >
+            <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="space-between start">
+              <div *ngFor="let brand of brands$ | async" fxFlex.xs="100" fxFlex="32" fxLayout="row">
                 <div
                   fxFlex
                   fxLayoutFill
-                  *ngIf="
-                    (details.edit.brand.key && isBrandCurrentlyEditable(brand.key)) ||
-                    !details.edit.brand.key
-                  "
                   fxLayout="row wrap"
                   [ngStyle]="{
                     margin: '2px',
@@ -308,7 +292,7 @@
                     {{ brand.key }}
                   </span>
                   <span fxFlex="100" class="mat-body-1">
-                    <div fxFlex fxLayout="row wrap" *ngIf="!isBrandCurrentlyEditable(brand.key)">
+                    <div fxFlex fxLayout="row wrap">
                       <a
                         mat-button
                         href="{{ brand.bandcamp }}"
@@ -378,7 +362,6 @@
                       <button
                         mat-icon-button
                         type="button"
-                        *ngIf="!isBrandCurrentlyEditable(brand.key)"
                         (click)="editBrand(brand.key)"
                         aria-label="edit brand links"
                         title="edit brand links"
@@ -455,7 +438,10 @@
                           #brandAuto="matAutocomplete"
                           (optionSelected)="selectBrandFromList($event)"
                         >
-                          <mat-option *ngFor="let option of getMatchedBrands()" [value]="option">
+                          <mat-option
+                            *ngFor="let option of matchedBrands$ | async"
+                            [value]="option"
+                          >
                             {{ option }}
                           </mat-option>
                         </mat-autocomplete>
@@ -465,9 +451,9 @@
                         <button
                           mat-button
                           type="button"
-                          [disabled]="submissionAlreadyAdded(submittedPlaylistId)"
+                          [disabled]="submissionAlreadyAdded$(submittedPlaylistId) | async"
                           *ngIf="
-                            !brandIsSelected(brandAutocompleteControl.value) &&
+                            !(selectedBrand$ | async)?.key === brandAutocompleteControl.value &&
                             user.submittedPlaylists[submittedPlaylistId]
                           "
                           (click)="selectBrand(brandAutocompleteControl.value)"
@@ -479,9 +465,9 @@
                         <button
                           mat-button
                           type="button"
-                          [disabled]="submissionAlreadyAdded(submittedPlaylistId)"
+                          [disabled]="submissionAlreadyAdded$(submittedPlaylistId) | async"
                           *ngIf="
-                            brandIsSelected(brandAutocompleteControl.value) &&
+                            !(selectedBrand$ | async)?.key === brandAutocompleteControl.value &&
                             user.submittedPlaylists[submittedPlaylistId]
                           "
                           (click)="approveUserSubmission(submittedPlaylistId)"
@@ -506,26 +492,26 @@
                     <span
                       fxFlex="100"
                       class="mat-body-1"
-                      *ngIf="details.selected.brand.key"
+                      *ngIf="selectedBrand$ | async as selectedBrand"
                       fxLayout="row wrap"
                     >
                       <p fxFlex="100">
                         Selected label links:
                       </p>
                       <span
-                        *ngFor="let key of details.selected.brand.object | mapToIterable"
+                        *ngFor="let key of selectedBrand | mapToIterable"
                         fxFlex="100"
                         fxLayout="row wrap"
                       >
                         <a
-                          *ngIf="details.selected.brand.object[key]"
-                          href="{{ details.selected.brand.object[key] }}"
+                          *ngIf="selectedBrand[key]"
+                          href="{{ selectedBrand[key] }}"
                           target="_blank"
                         >
                           {{ key }}
                           <mat-icon>link</mat-icon>
                         </a>
-                        <span *ngIf="details.selected.brand.object[key] === ''">
+                        <span *ngIf="selectedBrand[key] === ''">
                           {{ key }}
                           <mat-icon>link</mat-icon>
                         </span>
@@ -541,7 +527,12 @@
     </mat-tab-group>
   </div>
 
-  <div fxFlex="100" fxLayout="row" fxLayoutFill *ngIf="details.preview.submission">
+  <div
+    fxFlex="100"
+    fxLayout="row"
+    fxLayoutFill
+    *ngIf="selectedSubmission$ | async as selectedSubmission"
+  >
     <div fxFlex="100" fxLayoutFill fxLayout="column" fxLayoutAlign="start stretch">
       <button mat-button (click)="hideSubmissionPreview()">
         close preview
@@ -568,7 +559,7 @@
 
           <span fxFlex="60" fxLayout="row wrap" fxLayoutAlign="center center">
             <span fxFlex="100">
-              {{ details.preview.submission.title }}
+              {{ selectedSubmission.submission.title }}
             </span>
           </span>
 
@@ -586,14 +577,14 @@
       </div>
 
       <div fxFlex fxLayout="row wrap">
-        <div fxFlex fxFlex.xs="100" fxFlex.sm="100" *ngIf="details.preview.submission">
+        <div fxFlex fxFlex.xs="100" fxFlex.sm="100">
           <iframe
             width="100%"
             height="350"
             scrolling="no"
             frameborder="no"
-            [src]="soundcloudWidgetLink(details.preview.submission.id)"
-            *ngIf="showSoundcloudWidgetLink(details.preview.submission.id)"
+            [src]="selectedSubmission.widgetLink"
+            *ngIf="selectedSubmission.showWidget"
           >
           </iframe>
         </div>
@@ -603,21 +594,21 @@
           fxFlex-xs="100"
           fxFlex-sm="100"
           id="text"
-          *ngIf="details.preview.submission.description"
+          *ngIf="selectedSubmission.submission.description"
           [ngStyle]="{ padding: '0 10px 0 10px' }"
         >
-          <div ng-bind-html="details.preview.submission.description"></div>
+          <div ng-bind-html="submission.description"></div>
 
           <p
             *ngIf="
-              details.preview.submission.release_year &&
-              details.preview.submission.release_month &&
-              details.preview.submission.release_day
+              selectedSubmission.submission.release_year &&
+              selectedSubmission.submission.release_month &&
+              selectedSubmission.submission.release_day
             "
           >
-            Release date: {{ details.preview.submission.release_year }}.{{
-              details.preview.submission.release_month
-            }}.{{ details.preview.submission.release_day }}
+            Release date: {{ selectedSubmission.submission.release_year }}.{{
+              selectedSubmission.submission.release_month
+            }}.{{ selectedSubmission.submission.release_day }}
           </p>
         </div>
       </div>

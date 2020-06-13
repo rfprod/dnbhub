@@ -29,7 +29,7 @@ module.exports = {
 
   rules: {
     '@typescript-eslint/await-thenable': 'error',
-    '@typescript-eslint/ban-ts-ignore': 'warn',
+    '@typescript-eslint/ban-ts-ignore': 'error',
     '@typescript-eslint/ban-types': [
       'error',
       {

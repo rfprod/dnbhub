@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { Brand } from 'src/app/interfaces';
+import { Brand, SoundcloudPlaylist } from 'src/app/interfaces';
 import { IEmailMessage, IEmailSubmission } from 'src/app/interfaces/admin';
 import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
 import { IActionPayload } from 'src/app/utils/ngxs.util';
@@ -11,6 +11,7 @@ export interface IDnbhubAdminStateModel {
   users: IFirebaseUserRecord[];
   blogEntriesIDs: number[];
   selectedBrand: Brand;
+  selectedSubmission: SoundcloudPlaylist;
 }
 
 export type TDnbhubAdminPayload = IActionPayload<Partial<IDnbhubAdminStateModel>>;
@@ -22,4 +23,5 @@ export interface IDnbhubAdminService {
   users$: Observable<IFirebaseUserRecord[]>;
   blogEntriesIDs$: Observable<number[]>;
   selectedBrand$: Observable<Brand>;
+  selectedSubmission$: Observable<SoundcloudPlaylist>;
 }

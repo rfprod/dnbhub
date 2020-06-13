@@ -19,6 +19,7 @@ export const ADMIN_STATE_TOKEN = new StateToken<IDnbhubAdminStateModel>('admin')
     users: [],
     blogEntriesIDs: [],
     selectedBrand: null,
+    selectedSubmission: null,
   },
 })
 @Injectable({
@@ -58,6 +59,11 @@ export class DnbhubAdminState {
   @Selector()
   public static getSelectedBrand(state: IDnbhubAdminStateModel) {
     return state.selectedBrand;
+  }
+
+  @Selector()
+  public static getSelectedSubmission(state: IDnbhubAdminStateModel) {
+    return state.selectedSubmission;
   }
 
   @Action(setDnbhubAdminState)

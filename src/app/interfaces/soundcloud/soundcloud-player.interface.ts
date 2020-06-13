@@ -1,5 +1,5 @@
 export interface ISoundcloudPlayer {
-  bind(e, t, r): unknown;
+  bind(e, t, r): unknown; // TODO: return type
   currentTime(): number;
   getDuration(): number;
   getState(): 'paused' | 'playing' | string;
@@ -10,17 +10,17 @@ export interface ISoundcloudPlayer {
   isDead(): boolean;
   isEnded(): boolean;
   isPlaying(): boolean;
-  kill(): unknown;
-  listenTo(t, r, n): unknown;
-  listenToOnce(t, r, n): unknown;
-  off(e, t, r): unknown;
-  on(e, t, r): unknown;
-  once(e, t, r): unknown;
-  pause(): unknown;
-  play(): unknown;
-  seek(progress: number): Promise<unknown>;
+  kill(): undefined;
+  listenTo(t, r, n): unknown; // TODO: return type
+  listenToOnce(t, r, n): unknown; // TODO: return type
+  off(e, t, r): unknown; // TODO: return type
+  on(e, t, r): unknown; // TODO: return type
+  once(e, t, r): unknown; // TODO: return type
+  pause(): Promise<undefined>;
+  play(): Promise<undefined>;
+  seek(progress: number): Promise<undefined>;
   setVolume(): number;
   stopListening(e, t, r): unknown;
-  trigger(e): unknown;
-  unbind(e, t, r): unknown;
+  trigger(e): unknown; // TODO: return type
+  unbind(e, t, r): unknown; // TODO: return type
 }

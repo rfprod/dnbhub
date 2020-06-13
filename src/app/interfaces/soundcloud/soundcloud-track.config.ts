@@ -59,4 +59,5 @@ export class SoundcloudTrack {
   public favoritings_count: number;
   public comment_count: number;
   public attachments_uri: string;
+  public purchase_title: string;
 }

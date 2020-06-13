@@ -32,7 +32,6 @@ import { DnbhubAuthenticatedGuard } from 'src/app/guards/authenticated/authentic
 import { DnbhubMaterialModule } from 'src/app/modules/material/custom-material.module';
 import { DnbhubTranslateModule } from 'src/app/modules/translate/index';
 import { DnbhubMapToIterablePipe } from 'src/app/pipes/map-to-iterable/map-to-iterable.pipe';
-import { DnbhubCustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
 import { DnbhubEmailSubmissionService } from 'src/app/services/email-submission/email-submission.service';
 import { DnbhubFacebookService } from 'src/app/services/facebook/facebook.service';
 import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
@@ -120,7 +119,6 @@ const entryComponenets: (any[] | Type<any>)[] = [
     { provide: LocationStrategy, useClass: PathLocationStrategy },
     { provide: WINDOW, useValue: window },
     { provide: APP_ENV, useFactory: () => new DnbhubEnvironmentConfig() },
-    DnbhubCustomDeferredService,
     DnbhubHttpHandlersService,
     SendEmailService,
     DnbhubEmailSubmissionService,

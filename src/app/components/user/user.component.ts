@@ -10,6 +10,8 @@ import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.servic
 import { DnbhubSoundcloudService } from 'src/app/state/soundcloud/soundcloud.service';
 import { ETIMEOUT } from 'src/app/utils';
 
+import { IFirebaseUserSubmittedPlaylists } from '../../interfaces/firebase/firebase-user.interface';
+
 /**
  * Application user component.
  */
@@ -230,7 +232,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
    */
   public scConnect(): void {
     void this.soundcloud.connect().then(connectResult => {
-      console.log('SC.connect.then, data:', connectResult);
+      console.warn('SC.connect.then, data:', connectResult);
 
       const urlParams = localStorage.getItem('callback').replace(/^.*\?/, '').split('&');
       const code = urlParams[0].split('=')[1];
@@ -334,7 +336,6 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
         ? true
         : unsubmittable;
     }
-
     return unsubmittable;
   }
 
@@ -348,11 +349,18 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
       this.displayMessage(error);
     } else {
       const playlists = this.userDbRecord.submittedPlaylists;
+      const unsubmitPlaylistId = playlist.id.toString();
 
-      if (playlists.hasOwnProperty(playlist.id) && playlists[playlist.id] === false) {
-        delete playlists[playlist.id];
+      if (playlists.hasOwnProperty(unsubmitPlaylistId) && playlists[unsubmitPlaylistId] === false) {
+        const playListKeys = Object.keys(playlists);
+        const submittedPlaylists: IFirebaseUserSubmittedPlaylists = {};
+        for (const key of playListKeys) {
+          if (key !== unsubmitPlaylistId) {
+            submittedPlaylists[key] = playlists[key];
+          }
+        }
         this.firebase
-          .setDBuserNewValues({ submittedPlaylists: playlists })
+          .setDBuserNewValues({ submittedPlaylists })
           .pipe(
             tap(data => {
               const message = `Your user profile was updated. ${data}`;

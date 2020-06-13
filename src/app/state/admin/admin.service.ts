@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { concatMap, first, map, mapTo, tap } from 'rxjs/operators';
+import { SoundcloudPlaylist } from 'src/app/interfaces';
 
 import { DnbhubAdminApiService } from './admin-api.service';
 import { IDnbhubAdminService } from './admin.interface';
@@ -23,6 +24,8 @@ export class DnbhubAdminService implements IDnbhubAdminService {
   public readonly blogEntriesIDs$ = this.store.select(DnbhubAdminState.getBlogEntriesIDs);
 
   public readonly selectedBrand$ = this.store.select(DnbhubAdminState.getSelectedBrand);
+
+  public readonly selectedSubmission$ = this.store.select(DnbhubAdminState.getSelectedSubmission);
 
   public getEmailSubmissions() {
     return this.api.getEmailSubmissions().pipe(
@@ -74,5 +77,11 @@ export class DnbhubAdminService implements IDnbhubAdminService {
           .pipe(mapTo(selectedBrand)),
       ),
     );
+  }
+
+  public selectSubmission(selectedSubmission?: SoundcloudPlaylist) {
+    return this.store
+      .dispatch(new blogActions.setDnbhubAdminState({ selectedSubmission }))
+      .pipe(mapTo(selectedSubmission));
   }
 }
