@@ -1,12 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { from } from 'rxjs';
 import { Brand, IBrands } from 'src/app/interfaces';
-import {
-  IEmailMessage,
-  IEmailMessages,
-  IEmailSubmission,
-  IEmailSubmissions,
-} from 'src/app/interfaces/admin';
+import { IEmailMessage, IEmailMessages } from 'src/app/interfaces/admin';
 import { IFirebaseUserRecord, IFirebaseUserRecords } from 'src/app/interfaces/firebase';
 import { DnbhubFirebaseService } from 'src/app/services';
 import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
@@ -23,24 +18,7 @@ export class DnbhubAdminApiService implements OnDestroy {
     private readonly firebase: DnbhubFirebaseService,
   ) {}
 
-  public getEmailSubmissions() {
-    const promise = (this.firebase.getDB(
-      'emails/blogSubmissions',
-      true,
-    ) as firebase.database.Reference)
-      .once('value')
-      .then(snapshot => {
-        const response: IEmailSubmissions = snapshot.val();
-        return Object.keys(response).map(key => {
-          const result: IEmailSubmission = { ...response[key] };
-          result.key = key;
-          return result;
-        });
-      });
-    return this.handlers.pipeHttpRequest<IEmailSubmission[]>(from(promise));
-  }
-
-  public getEmailMessages() {
+  public getEmails() {
     const promise = (this.firebase.getDB('emails/messages', true) as firebase.database.Reference)
       .once('value')
       .then(snapshot => {
@@ -93,7 +71,6 @@ export class DnbhubAdminApiService implements OnDestroy {
   }
 
   public ngOnDestroy() {
-    (this.firebase.getDB('emails/blogSubmissions', true) as firebase.database.Reference).off();
     (this.firebase.getDB('emails/messages', true) as firebase.database.Reference).off();
     (this.firebase.getDB('brands', true) as firebase.database.Reference).off();
     (this.firebase.getDB('users', true) as firebase.database.Reference).off();

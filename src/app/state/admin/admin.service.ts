@@ -13,9 +13,7 @@ import { blogActions, DnbhubAdminState } from './admin.store';
 export class DnbhubAdminService implements IDnbhubAdminService {
   constructor(private readonly store: Store, private readonly api: DnbhubAdminApiService) {}
 
-  public readonly emailSubmissions$ = this.store.select(DnbhubAdminState.getEmailSubmissions);
-
-  public readonly emailMessages$ = this.store.select(DnbhubAdminState.getEmailMessages);
+  public readonly emails$ = this.store.select(DnbhubAdminState.getEmails);
 
   public readonly brands$ = this.store.select(DnbhubAdminState.getBrands);
 
@@ -27,18 +25,10 @@ export class DnbhubAdminService implements IDnbhubAdminService {
 
   public readonly selectedSubmission$ = this.store.select(DnbhubAdminState.getSelectedSubmission);
 
-  public getEmailSubmissions() {
-    return this.api.getEmailSubmissions().pipe(
-      tap(emailSubmissions => {
-        this.store.dispatch(new blogActions.setDnbhubAdminState({ emailSubmissions }));
-      }),
-    );
-  }
-
-  public getEmailMessages() {
-    return this.api.getEmailMessages().pipe(
-      tap(emailMessages => {
-        this.store.dispatch(new blogActions.setDnbhubAdminState({ emailMessages }));
+  public getEmails() {
+    return this.api.getEmails().pipe(
+      tap(emails => {
+        this.store.dispatch(new blogActions.setDnbhubAdminState({ emails }));
       }),
     );
   }

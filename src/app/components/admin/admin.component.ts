@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { DatabaseReference } from '@angular/fire/database/interfaces';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -11,7 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { combineLatest, from } from 'rxjs';
 import { concatMap, filter, map, take, tap } from 'rxjs/operators';
-import { IEmailMessage, IEmailSubmission } from 'src/app/interfaces/admin';
+import { IEmailMessage } from 'src/app/interfaces/admin';
 import { BlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 import { IBrandForm } from 'src/app/interfaces/brand/brand-form.interface';
 import { Brand } from 'src/app/interfaces/brand/brand.interface';
@@ -32,6 +32,7 @@ import { DnbhubBrandDialogComponent } from '../brand-dialog/brand-dialog.compone
   selector: 'dnbhub-admin',
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DnbhubAdminComponent implements OnInit, OnDestroy {
   public readonly anonUser$ = this.firebase.anonUser$;
@@ -41,9 +42,7 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
    */
   private bottomSheetRef: MatBottomSheetRef<DnbhubBottomSheetTextDetailsComponent>;
 
-  public readonly emailMessages$ = this.admin.emailMessages$;
-
-  public readonly emailSubmissions$ = this.admin.emailSubmissions$;
+  public readonly emails$ = this.admin.emails$;
 
   public readonly brands$ = this.admin.brands$;
 
@@ -98,12 +97,8 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
     });
   }
 
-  private getEmailMessages() {
-    this.admin.getEmailMessages().subscribe();
-  }
-
-  private getEmailBlogSubmissions() {
-    this.admin.getEmailSubmissions().subscribe();
+  private getEmails() {
+    this.admin.getEmails().subscribe();
   }
 
   private getBrands() {
@@ -162,24 +157,7 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
     from(promise)
       .pipe(
         tap(() => {
-          this.getEmailMessages();
-        }),
-      )
-      .subscribe();
-  }
-
-  /**
-   * Deletes email blog submission.
-   */
-  public deleteEmailBlogSubmission(dbKey: string) {
-    const promise = (this.firebase.getDB(
-      `emails/blogSubmissions/${dbKey}`,
-      true,
-    ) as DatabaseReference).remove();
-    from(promise)
-      .pipe(
-        tap(() => {
-          this.getEmailBlogSubmissions();
+          this.getEmails();
         }),
       )
       .subscribe();
@@ -203,70 +181,6 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Approves blog submission sent over email.
-   * @param index blog post email submission key index
-   */
-  public approveEmailSubmission(submission: IEmailSubmission) {
-    combineLatest([this.selectedBrand$, this.firebase.blogEntryExistsByValue(submission.key)])
-      .pipe(
-        concatMap(([brand, blogEntry]) => {
-          console.log('blogEntryExistsByValue', blogEntry);
-          if (!blogEntry) {
-            return this.deleteEmailSubmission(submission.key);
-          }
-          const promise = this.soundcloud.SC.get(`/resolve?url=${submission.link}`);
-          return from(promise).pipe(
-            concatMap((scData: SoundcloudPlaylist) => {
-              console.log('scData', scData);
-              /*
-               *	create new records, delete submission record
-               */
-              const valuesObj: BlogPost = new BlogPost();
-              valuesObj.code = `${scData.user.username.replace(
-                /\s/,
-                '',
-              )}${scData.permalink.toUpperCase()}`;
-              valuesObj.links = { ...brand };
-              valuesObj.playlistId = scData.id;
-              valuesObj.soundcloudUserId = scData.user.id.toString();
-              console.log('valuesObj', valuesObj);
-              const addBlogPostPromise = this.firebase.addBlogPost(valuesObj);
-              return from(addBlogPostPromise).pipe(
-                tap(
-                  () => {
-                    this.getEmailBlogSubmissions();
-                    this.getBlogEntriesIDs();
-                    this.selectBrand();
-                    this.deleteEmailSubmission(submission.key).subscribe();
-                  },
-                  () => {
-                    this.selectBrand();
-                  },
-                ),
-              );
-            }),
-          );
-        }),
-      )
-      .subscribe();
-  }
-
-  /**
-   * Deletes email submission by key index.
-   */
-  private deleteEmailSubmission(dbKey: string) {
-    const promise = (this.firebase.getDB(
-      `emails/blogSubmissions/${dbKey}`,
-      true,
-    ) as DatabaseReference).remove();
-    return from(promise).pipe(
-      tap(() => {
-        this.getEmailBlogSubmissions();
-      }),
-    );
-  }
-
-  /**
    * Shows email message text.
    * @param emailMessage email message
    */
@@ -287,9 +201,10 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
 
   /**
    * Shows blog post submission preview.
+   * TODO: check if this method is currently used and use it if it is not.
    */
-  public showSubmissionPreview(submission: IEmailSubmission) {
-    const promise = this.soundcloud.SC.get(`/resolve?url=${submission.link}`).then(
+  public showSubmissionPreview(playlistId: number) {
+    const promise = this.soundcloud.SC.get(`/playlists/${playlistId}`).then(
       (data: SoundcloudPlaylist) => {
         console.log('data', data);
         const submittedPlaylist = data;
@@ -422,8 +337,7 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
    * Lifecycle hook called on component initialization.
    */
   public ngOnInit(): void {
-    this.getEmailMessages();
-    this.getEmailBlogSubmissions();
+    this.getEmails();
     this.getBrands();
     this.getUsers();
     this.getBlogEntriesIDs();
@@ -434,7 +348,6 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
    */
   public ngOnDestroy(): void {
     (this.firebase.getDB('emails/messages', true) as DatabaseReference).off();
-    (this.firebase.getDB('emails/blogSubmissions', true) as DatabaseReference).off();
     (this.firebase.getDB('blogEntriesIDs', true) as DatabaseReference).off();
     (this.firebase.getDB('brands', true) as DatabaseReference).off();
     (this.firebase.getDB('users', true) as DatabaseReference).off();

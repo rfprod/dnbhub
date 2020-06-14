@@ -13,8 +13,7 @@ export const ADMIN_STATE_TOKEN = new StateToken<IDnbhubAdminStateModel>('admin')
 @State<IDnbhubAdminStateModel>({
   name: ADMIN_STATE_TOKEN,
   defaults: {
-    emailSubmissions: [],
-    emailMessages: [],
+    emails: [],
     brands: [],
     users: [],
     blogEntriesIDs: [],
@@ -32,13 +31,8 @@ export class DnbhubAdminState {
   }
 
   @Selector()
-  public static getEmailSubmissions(state: IDnbhubAdminStateModel) {
-    return state.emailSubmissions;
-  }
-
-  @Selector()
-  public static getEmailMessages(state: IDnbhubAdminStateModel) {
-    return state.emailMessages;
+  public static getEmails(state: IDnbhubAdminStateModel) {
+    return state.emails;
   }
 
   @Selector()
