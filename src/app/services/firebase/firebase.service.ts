@@ -44,7 +44,7 @@ export class DnbhubFirebaseService {
   } = {
     db: this.fireDb.database,
     auth: this.fireAuth,
-    user: null, // TODO remove this static reference of authenticated firebase user eventually
+    user: null, // TODO remove this static reference to authenticated firebase user eventually
   };
 
   public readonly user$: Observable<firebase.User> = this.fireAuth.user;
@@ -81,7 +81,6 @@ export class DnbhubFirebaseService {
     const db: Promise<DataSnapshot> | DatabaseReference = !refOnly
       ? this.fireDb.database.ref('/' + collection).once('value')
       : this.fireDb.database.ref('/' + collection);
-    // console.warn('firebaseService, getDB', db);
     return db;
   }
 
@@ -197,29 +196,33 @@ export class DnbhubFirebaseService {
     this.authErrorCheck();
     const checkRecord = (this.getDB('users/' + this.fire.user.uid) as Promise<DataSnapshot>)
       .then((snapshot: DataSnapshot) => {
-        console.warn('checking user db profile');
+        console.warn('checking user db profile', snapshot.val());
         return { exists: Boolean(snapshot.val()), created: false };
       })
       .catch(error => {
         throw error;
       });
-    const createRecord = (this.getDB('users/' + this.fire.user.uid, true) as DatabaseReference)
-      .set({
-        created: new Date().getTime(),
-      })
-      .then(() => {
-        console.warn('created user db profile');
-        return { exists: false, created: true };
-      })
-      .catch(error => {
-        throw error;
-      });
+
     const checkRecordObservable = from(checkRecord);
-    const createRecordObservable = from(createRecord);
     return checkRecordObservable.pipe(
       concatMap(result => {
         if (!result.exists) {
-          return createRecordObservable;
+          const createRecord = (this.getDB(
+            'users/' + this.fire.user.uid,
+            true,
+          ) as DatabaseReference)
+            .set({
+              created: new Date().getTime(),
+            })
+            .then(() => {
+              console.warn('created user db profile');
+              return { exists: false, created: true };
+            })
+            .catch(error => {
+              throw error;
+            });
+
+          return from(createRecord);
         }
         return of(result);
       }),
@@ -231,16 +234,13 @@ export class DnbhubFirebaseService {
    * @param valuesObj new values object
    */
   public setDBuserNewValues(valuesObj: Partial<IFirebaseUserRecord>) {
-    this.authErrorCheck();
-    const promise = (this.getDB('users/' + this.fire.user.uid, true) as DatabaseReference)
-      .update(valuesObj)
-      .then(() => {
-        console.warn('user db profile values set');
-        return { valuesSet: true };
-      });
     const observable = this.checkDBuserUID().pipe(
       concatMap(result => {
         console.warn('checkDBuserUID', result);
+        const promise = (this.getDB(
+          'users/' + this.fire.user.uid,
+          true,
+        ) as DatabaseReference).update(valuesObj);
         return from(promise);
       }),
     );
@@ -291,36 +291,32 @@ export class DnbhubFirebaseService {
    * @param valuesObj blog post model
    */
   public addBlogPost(valuesObj: BlogPost) {
-    /*
-     *	create new records, delete submission record
-     */
-    this.authErrorCheck();
-    const promise = (this.getDB('blogEntriesIDs', true) as DatabaseReference)
-      .orderByValue()
-      .once('value', (snapshot: DataSnapshot) => {
-        const idsArray: [number[]] = snapshot.val();
-        console.warn('idsArray', idsArray);
-        idsArray[0].push(valuesObj.playlistId);
-        (this.getDB('blogEntriesIDs', true) as DatabaseReference)
-          .set(idsArray) // update blog entries ids
-          .then(() => {
-            const newRecord = (this.getDB('blog', true) as DatabaseReference).push(); // update blog
-            newRecord
-              .set(valuesObj)
+    const observable = this.checkDBuserUID().pipe(
+      concatMap(result => {
+        const promise = (this.getDB('blogEntriesIDs', true) as DatabaseReference)
+          .orderByValue()
+          .once('value', (snapshot: DataSnapshot) => {
+            const idsArray: [number[]] = snapshot.val();
+            console.warn('idsArray', idsArray);
+            idsArray[0].push(valuesObj.playlistId);
+            (this.getDB('blogEntriesIDs', true) as DatabaseReference)
+              .set(idsArray) // update blog entries ids
               .then(() => {
-                console.warn('blog post added');
-                return { valuesSet: true };
+                const newRecord = (this.getDB('blog', true) as DatabaseReference).push(); // update blog
+                newRecord
+                  .set(valuesObj)
+                  .then(() => {
+                    console.warn('blog post added');
+                    return { valuesSet: true };
+                  })
+                  .catch(error => {
+                    throw error;
+                  });
               })
               .catch(error => {
                 throw error;
               });
-          })
-          .catch(error => {
-            throw error;
           });
-      });
-    const observable = this.checkDBuserUID().pipe(
-      concatMap(result => {
         return from(promise);
       }),
     );

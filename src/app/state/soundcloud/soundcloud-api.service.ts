@@ -160,7 +160,7 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
     const promise: Promise<SoundcloudMe> = SC.get(
       Boolean(userScId) ? `users/${userScId}` : 'me',
     ).then((me: SoundcloudMe) => {
-      console.warn('SC.me.then, me', me);
+      // console.warn('SC.me.then, me', me);
       if (Boolean(me.description)) {
         me.description = this.processDescription(me.description);
       }
