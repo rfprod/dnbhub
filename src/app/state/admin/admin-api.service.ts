@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { from } from 'rxjs';
-import { Brand, IBrands } from 'src/app/interfaces';
+import { DnbhubBrand, IBrands } from 'src/app/interfaces';
 import { IEmailMessage, IEmailMessages } from 'src/app/interfaces/admin';
 import { IFirebaseUserRecord, IFirebaseUserRecords } from 'src/app/interfaces/firebase';
 import { DnbhubFirebaseService } from 'src/app/services';
@@ -38,12 +38,12 @@ export class DnbhubAdminApiService implements OnDestroy {
       .then(snapshot => {
         const response: IBrands = snapshot.val();
         return Object.keys(response).map(key => {
-          const result: Brand = { ...response[key] };
-          result.key = key;
+          const input = { ...response[key], key } as DnbhubBrand;
+          const result = new DnbhubBrand(input);
           return result;
         });
       });
-    return this.handlers.pipeHttpRequest<Brand[]>(from(promise));
+    return this.handlers.pipeHttpRequest<DnbhubBrand[]>(from(promise));
   }
 
   public getUsers() {

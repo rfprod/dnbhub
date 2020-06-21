@@ -1,18 +1,18 @@
 import { Observable } from 'rxjs';
-import { BlogPost } from 'src/app/interfaces/blog/blog-post.interface';
+import { DnbhubBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 import { IActionPayload } from 'src/app/utils/ngxs.util';
 
 export interface IDnbhubBlogStateModel {
-  posts: BlogPost[];
+  posts: DnbhubBlogPost[];
   selectedPostId: number;
-  selectedPost: BlogPost;
+  selectedPost: DnbhubBlogPost;
 }
 
 export type TDnbhubBlogPayload = IActionPayload<Partial<IDnbhubBlogStateModel>>;
 
 export interface IDnbhubBlogService {
-  posts$: Observable<BlogPost[]>;
-  selectedPost$: Observable<BlogPost>;
+  posts$: Observable<DnbhubBlogPost[]>;
+  selectedPost$: Observable<DnbhubBlogPost>;
 }
 
 export type TDnbhubSelectBlogPostPayload = IActionPayload<{ code: string }>;

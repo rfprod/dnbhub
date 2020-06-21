@@ -130,7 +130,9 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
     this.renderPlaylistTracks$,
   ]).pipe(
     map(([playlist, renderPlaylistTracks]) => {
+      console.warn('playlist, renderPlaylistTracks', playlist, renderPlaylistTracks);
       const tracks = Boolean(playlist) ? [...playlist.tracks].slice(0, renderPlaylistTracks) : [];
+      console.warn('tracks', tracks);
       return tracks;
     }),
   );
@@ -359,6 +361,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
     if (this.mode === 'playlist' && Boolean(changes.playlistId.currentValue)) {
       this.resetPlayer();
       this.playlistId = changes.playlistId.currentValue;
+      console.warn('playlistIdChangeHandler');
       this.loadMoreTracks();
     }
   }

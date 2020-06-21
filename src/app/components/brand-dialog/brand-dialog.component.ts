@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { IBrandForm } from 'src/app/interfaces';
 import { DnbhubFirebaseService } from 'src/app/services';
 
-import { Brand } from '../../interfaces/brand/brand.interface';
+import { DnbhubBrand } from '../../interfaces/brand/brand.interface';
 import { IRegExpPatterns } from '../../services/regular-expressions/regular-expressions.service';
 
 /**
@@ -21,7 +21,7 @@ import { IRegExpPatterns } from '../../services/regular-expressions/regular-expr
 export class DnbhubBrandDialogComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA)
-    public data: { brand: Brand; regexp: IRegExpPatterns['links']; minNameLength: number },
+    public data: { brand: DnbhubBrand; regexp: IRegExpPatterns['links']; minNameLength: number },
     private readonly dialogRef: MatDialogRef<DnbhubBrandDialogComponent>,
     private readonly fb: FormBuilder,
     private readonly firebase: DnbhubFirebaseService,
@@ -79,7 +79,7 @@ export class DnbhubBrandDialogComponent {
     if (this.form.valid && !this.form.pristine) {
       // TODO: send update request
       const dbKey = this.data.brand.key;
-      const newBrandValues: Brand = this.form.value;
+      const newBrandValues: DnbhubBrand = this.form.value;
       return (this.firebase.getDB(`brands/${dbKey}`, true) as DatabaseReference)
         .update(newBrandValues)
         .then(() => {

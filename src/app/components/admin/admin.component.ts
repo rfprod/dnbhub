@@ -12,9 +12,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { combineLatest, from } from 'rxjs';
 import { concatMap, filter, map, take, tap } from 'rxjs/operators';
 import { IEmailMessage } from 'src/app/interfaces/admin';
-import { BlogPost } from 'src/app/interfaces/blog/blog-post.interface';
+import { DnbhubBlogPost, DnbhubBlogPostLinks } from 'src/app/interfaces/blog/blog-post.interface';
 import { IBrandForm } from 'src/app/interfaces/brand/brand-form.interface';
-import { Brand } from 'src/app/interfaces/brand/brand.interface';
+import { DnbhubBrand } from 'src/app/interfaces/brand/brand.interface';
 import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
 import { DnbhubRegularExpressionsService } from 'src/app/services/regular-expressions/regular-expressions.service';
 import { DnbhubAdminService } from 'src/app/state/admin/admin.service';
@@ -56,7 +56,11 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
     }),
   );
 
-  public readonly users$ = this.admin.users$;
+  public readonly users$ = this.admin.users$.pipe(
+    tap(data => {
+      console.warn('users', data);
+    }),
+  );
 
   public readonly blogEntriesIDs$ = this.admin.blogEntriesIDs$;
 
@@ -125,11 +129,11 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
   }
 
   public createBrand(): void {
-    const brand = new Brand();
+    const brand = new DnbhubBrand();
     this.showBrandDialog(brand);
   }
 
-  public showBrandDialog(brand: Brand): void {
+  public showBrandDialog(brand: DnbhubBrand): void {
     const minNameLength = 5;
     this.dialog.open(DnbhubBrandDialogComponent, {
       height: '85vh',
@@ -308,13 +312,15 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
             return this.deleteUserSubmission(selectedSubmission.id);
           }
 
-          const valuesObj: BlogPost = new BlogPost();
-          valuesObj.code =
+          const code =
             selectedSubmission.scData.user.username.replace(/\s/, '') +
             selectedSubmission.scData.permalink.toUpperCase();
-          valuesObj.links = { ...brand };
-          valuesObj.playlistId = selectedSubmission.scData.id;
-          valuesObj.soundcloudUserId = selectedSubmission.scData.user.id.toString();
+          const links = new DnbhubBlogPostLinks({ ...brand });
+          const playlistId = selectedSubmission.scData.id;
+          const soundcloudUserId = selectedSubmission.scData.user.id.toString();
+          const data = { code, links, playlistId, soundcloudUserId } as DnbhubBlogPost;
+
+          const valuesObj = new DnbhubBlogPost(data);
           console.warn(valuesObj);
           return this.firebase.addBlogPost(valuesObj);
         }),
