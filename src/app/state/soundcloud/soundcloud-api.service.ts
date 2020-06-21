@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-/* eslint-disable @typescript-eslint/camelcase */
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -118,6 +117,7 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
   public getLinkWithId(href: string): string {
     return `${href}?client_id=${this.options.client_id}`;
   }
+
   /**
    * Resets Soundcloud service stored data.
    * May be useful later, for now is not used.
@@ -295,6 +295,6 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
   public ngOnDestroy(): void {
     const tracks = new SoundcloudTracksLinkedPartitioning();
     const playlist = new SoundcloudPlaylist();
-    this.store.dispatch(new soundcloudActions.setDnbhubSoundcloudState({ tracks, playlist }));
+    void this.store.dispatch(new soundcloudActions.setDnbhubSoundcloudState({ tracks, playlist }));
   }
 }

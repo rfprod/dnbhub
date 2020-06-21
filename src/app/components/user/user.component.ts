@@ -108,14 +108,14 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
     this.profileForm = this.fb.group({
       email: [
         {
-          value: user ? user.email : '',
+          value: Boolean(user) ? user.email : '',
           disabled: !this.mode.edit || !this.mode.updateEmail ? true : false,
         },
         Validators.compose([Validators.required, Validators.email]),
       ],
       name: [
         {
-          value: user ? user.name : '',
+          value: Boolean(user) ? user.name : '',
           disabled: !this.mode.edit ? true : false,
         },
       ],
@@ -130,7 +130,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
    * Sets validators dynamically depending on new form value.
    */
   private formValueChangesSubscription(): void {
-    this.profileForm.valueChanges
+    void this.profileForm.valueChanges
       .pipe(
         take(1),
         tap((changes: IUserProfile) => {
@@ -213,7 +213,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
       const error = 'You must provide a password in order to delete your account';
       this.displayMessage(error);
     } else {
-      this.firebase
+      void this.firebase
         .delete(this.profileForm.controls.email.value, this.profileForm.controls.password.value)
         .pipe(
           tap(success => {
@@ -221,7 +221,8 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
             this.displayMessage(message);
             void this.router.navigate(['']);
           }),
-        );
+        )
+        .subscribe();
     }
   }
 
@@ -246,11 +247,13 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
       const oauthToken = urlParams[1].split('#')[1].split('=')[1];
       localStorage.removeItem('callback');
 
-      this.firebase
+      void this.firebase
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         .setDBuserNewValues({ sc_code: code, sc_oauth_token: oauthToken })
         .pipe(
           concatMap(() => this.getUserData()),
           concatMap(me =>
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             this.firebase.setDBuserNewValues({ sc_id: me.id }).pipe(
               tap(data => {
                 const message = `${data}: Your user profile was updated.`;
@@ -308,7 +311,11 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
    * Tobbles blog post preview.
    */
   public toggleBlogPostPreview(playlist?: SoundcloudPlaylist): void {
-    this.submissionPreview = this.submissionPreview ? null : playlist ? playlist : null;
+    this.submissionPreview = Boolean(this.submissionPreview)
+      ? null
+      : Boolean(playlist)
+      ? playlist
+      : null;
   }
 
   /**
@@ -316,7 +323,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
    */
   public alreadyAdded(playlist: SoundcloudPlaylist): boolean {
     let added = false;
-    if (!this.existingBlogEntriesIDs) {
+    if (!Boolean(this.existingBlogEntriesIDs)) {
       const message = 'Unable to add blog posts, there was an error getting existing blog entries';
       this.displayMessage(message);
       added = true;
@@ -359,7 +366,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
    * @param index playlist array index
    */
   public unsubmitBlogPost(playlist: SoundcloudPlaylist): void {
-    if (!this.userDbRecord.value.submittedPlaylists) {
+    if (!Boolean(this.userDbRecord.value.submittedPlaylists)) {
       const message = 'No playlists to unsubmit';
       this.displayMessage(message);
     } else {
@@ -377,7 +384,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
         }
         userDbRecord.submittedPlaylists = { ...submittedPlaylists };
         this.userDbRecord.next(userDbRecord);
-        this.firebase
+        void this.firebase
           .setDBuserNewValues({ submittedPlaylists })
           .pipe(
             tap(() => {
@@ -395,7 +402,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
    * @param index playlist array index
    */
   public submitBlogPost(playlist: SoundcloudPlaylist): void {
-    if (!this.existingBlogEntriesIDs) {
+    if (!Boolean(this.existingBlogEntriesIDs)) {
       const message = 'Unable to add a blog post, there was an error getting existing blog entries';
       this.displayMessage(message);
     } else {
@@ -406,7 +413,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
        */
       userDbRecord.submittedPlaylists[playlist.id] = false;
       this.userDbRecord.next(userDbRecord);
-      this.firebase
+      void this.firebase
         .setDBuserNewValues({ submittedPlaylists: userDbRecord.submittedPlaylists })
         .pipe(
           tap(() => {
@@ -424,7 +431,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
       name: this.firebase.fire.user.displayName,
     };
     this.resetForm(user);
-    this.getUserDbRecord().subscribe();
+    void this.getUserDbRecord().subscribe();
     this.getExistingBlogEntriesIDs();
   }
 

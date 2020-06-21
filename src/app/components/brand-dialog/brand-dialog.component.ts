@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { DatabaseReference } from '@angular/fire/database/interfaces';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -16,6 +16,7 @@ import { IRegExpPatterns } from '../../services/regular-expressions/regular-expr
   selector: 'dnbhub-brand-dialog',
   templateUrl: './brand-dialog.component.html',
   styleUrls: ['./brand-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DnbhubBrandDialogComponent {
   constructor(
@@ -82,11 +83,11 @@ export class DnbhubBrandDialogComponent {
       return (this.firebase.getDB(`brands/${dbKey}`, true) as DatabaseReference)
         .update(newBrandValues)
         .then(() => {
-          console.log(`brand id ${dbKey} was successfully deleted`);
+          console.warn(`brand id ${dbKey} was successfully deleted`);
           this.closeDialog();
         })
         .catch((error: string) => {
-          console.log('updateBrand, error', error);
+          console.warn('updateBrand, error', error);
         });
     }
   }
@@ -101,7 +102,7 @@ export class DnbhubBrandDialogComponent {
         .child(this.form.controls.name.value)
         .set(formData)
         .then(() => {
-          console.log('brand values set');
+          console.warn('brand values set');
           this.closeDialog();
         })
         .catch(error => error);
@@ -117,11 +118,11 @@ export class DnbhubBrandDialogComponent {
       return (this.firebase.getDB(`brands/${dbKey}`, true) as DatabaseReference)
         .remove()
         .then(() => {
-          console.log(`brand id ${dbKey} was successfully deleted`);
+          console.warn(`brand id ${dbKey} was successfully deleted`);
           this.closeDialog();
         })
         .catch((error: string) => {
-          console.log('deleteBrand, error', error);
+          console.warn('deleteBrand, error', error);
         });
     }
   }

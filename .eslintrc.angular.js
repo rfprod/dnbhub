@@ -15,7 +15,7 @@ module.exports = {
     '@angular-eslint/contextual-lifecycle': 'error',
     '@angular-eslint/use-lifecycle-interface': 'error',
     '@angular-eslint/use-injectable-provided-in': 'error',
-    '@angular-eslint/prefer-on-push-component-change-detection': 'warn', // TODO: refactor sources, and switch to error
+    '@angular-eslint/prefer-on-push-component-change-detection': 'error',
     '@angular-eslint/no-output-native': 'error',
     '@angular-eslint/no-lifecycle-call': 'error',
     '@angular-eslint/no-conflicting-lifecycle': 'error',
@@ -29,7 +29,10 @@ module.exports = {
     '@angular-eslint/use-component-view-encapsulation': 'error',
     '@angular-eslint/use-pipe-decorator': 'error',
     '@angular-eslint/use-pipe-transform-interface': 'error',
-    '@angular-eslint/component-class-suffix': ['error', { suffixes: ['Component'] }],
+    '@angular-eslint/component-class-suffix': [
+      'error',
+      { suffixes: ['Component', 'Page', 'Modal'] },
+    ],
     '@angular-eslint/directive-class-suffix': ['error', { suffixes: ['Directive', 'ViewAdapter'] }],
     '@angular-eslint/no-host-metadata-property': 'error',
     '@angular-eslint/no-inputs-metadata-property': 'error',

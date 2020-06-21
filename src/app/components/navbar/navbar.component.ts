@@ -14,6 +14,7 @@ import { DnbhubUiService } from 'src/app/state/ui/ui.service';
 /**
  * Application navigation component.
  */
+// eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
 @Component({
   selector: 'dnbhub-nav',
   templateUrl: './navbar.component.html',
@@ -40,7 +41,7 @@ export class DnbhubNavbarComponent {
    * Selects language.
    */
   public selectLanguage(key: ESUPPORTED_LANGUAGE_KEY): void {
-    this.ui.selectLanguage(key).subscribe();
+    void this.ui.selectLanguage(key).subscribe();
   }
 
   /**
@@ -54,7 +55,7 @@ export class DnbhubNavbarComponent {
    * Signs user out.
    */
   public logout(): void {
-    this.firebase
+    void this.firebase
       .signout()
       .pipe(
         tap(() => {

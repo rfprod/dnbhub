@@ -13,10 +13,10 @@ export type NewTestBedMetadata = (metadata?: TestModuleMetadata) => TestModuleMe
  */
 export const newTestBedMetadata: NewTestBedMetadata = (metadata?: TestModuleMetadata) =>
   new Object({
-    imports: !metadata ? [] : !metadata.imports ? [] : [...metadata.imports],
-    declarations: !metadata ? [] : !metadata.declarations ? [] : [...metadata.declarations],
-    providers: !metadata ? [] : !metadata.providers ? [] : [...metadata.providers],
-    schemas: !metadata ? [] : !metadata.schemas ? [] : [...metadata.schemas],
+    imports: !Boolean(metadata?.imports) ? [] : [...metadata.imports],
+    declarations: !Boolean(metadata?.declarations) ? [] : [...metadata.declarations],
+    providers: !Boolean(metadata?.providers) ? [] : [...metadata.providers],
+    schemas: !Boolean(metadata?.schemas) ? [] : [...metadata.schemas],
   });
 
 /**

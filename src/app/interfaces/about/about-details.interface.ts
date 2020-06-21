@@ -3,20 +3,28 @@
  */
 export class AboutLinks {
   constructor(input?: AboutLinks) {
-    if (input) {
+    if (Boolean(input)) {
       const keys = Object.keys(input);
       for (const key of keys) {
         this[key] = input[key];
       }
     }
   }
+
   public bandcamp = '';
+
   public facebook = '';
+
   public instagram = '';
+
   public mixcloud = '';
+
   public soundcloud = '';
+
   public twitter = '';
+
   public rss = '';
+
   public youtube = '';
 }
 
@@ -29,7 +37,9 @@ export class PoweredBy {
       }
     }
   }
+
   public name = '';
+
   public logo = '';
 }
 
@@ -45,10 +55,16 @@ export class AboutDetails {
       }
     }
   }
+
   public links: AboutLinks = new AboutLinks();
+
   public soundcloudUserId: string = null;
+
   public text: string = null;
+
   public title: string = null;
+
   public widgetLink: string = null;
+
   public poweredBy: PoweredBy[] = [new PoweredBy()];
 }

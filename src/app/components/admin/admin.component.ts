@@ -98,23 +98,23 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
   }
 
   private getEmails() {
-    this.admin.getEmails().subscribe();
+    void this.admin.getEmails().subscribe();
   }
 
   private getBrands() {
-    this.admin.getBrands().subscribe();
+    void this.admin.getBrands().subscribe();
   }
 
   private getUsers() {
-    this.admin.getUsers().subscribe();
+    void this.admin.getUsers().subscribe();
   }
 
   public getBlogEntriesIDs() {
-    this.admin.getBlogEntriesIDs().subscribe();
+    void this.admin.getBlogEntriesIDs().subscribe();
   }
 
   public editBrand(key?: string): void {
-    this.admin
+    void this.admin
       .selectBrand(key)
       .pipe(
         tap(brand => {
@@ -154,7 +154,7 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
       `email/messages/${dbKey}`,
       true,
     ) as DatabaseReference).remove();
-    from(promise)
+    void from(promise)
       .pipe(
         tap(() => {
           this.getEmails();
@@ -169,7 +169,7 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
    * @param key brand key from firebase
    */
   public selectBrand(key?: string): void {
-    this.admin.selectBrand(key).subscribe();
+    void this.admin.selectBrand(key).subscribe();
   }
 
   /**
@@ -177,7 +177,7 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
    */
   public selectBrandFromList(event: MatAutocompleteSelectedEvent): void {
     const key = event.option.value;
-    this.admin.selectBrand(key).subscribe();
+    void this.admin.selectBrand(key).subscribe();
   }
 
   /**
@@ -191,7 +191,7 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
       },
     } as MatBottomSheetConfig);
 
-    this.bottomSheetRef
+    void this.bottomSheetRef
       .afterDismissed()
       .pipe(take(1))
       .subscribe(() => {
@@ -206,24 +206,24 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
   public showSubmissionPreview(playlistId: number) {
     const promise = this.soundcloud.SC.get(`/playlists/${playlistId}`).then(
       (data: SoundcloudPlaylist) => {
-        console.log('data', data);
+        console.warn('data', data);
         const submittedPlaylist = data;
         submittedPlaylist.description = this.soundcloud.processDescription(
           submittedPlaylist.description,
         );
-        this.admin.selectSubmission(submittedPlaylist);
+        void this.admin.selectSubmission(submittedPlaylist);
         return data;
       },
     );
     const observable = from(promise);
-    observable.subscribe();
+    void observable.subscribe();
   }
 
   /**
    * Resets blog post submission preview.
    */
   public hideSubmissionPreview(): void {
-    this.admin.selectSubmission(null);
+    void this.admin.selectSubmission(null);
   }
 
   /**
@@ -254,7 +254,7 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
         this.checkAndAddUserPlaylist(selectedSubmission);
       }),
     );
-    observable.subscribe();
+    void observable.subscribe();
   }
 
   /**
@@ -262,7 +262,7 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
    * @param playlistId playlist id
    */
   public rejectUserSubmission(playlistId: number) {
-    this.deleteUserSubmission(playlistId).subscribe();
+    void this.deleteUserSubmission(playlistId).subscribe();
   }
 
   /**
@@ -293,13 +293,13 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
    */
   private checkAndAddUserPlaylist(selectedSubmission: { id: number; scData: SoundcloudPlaylist }) {
     console.warn('checkAndAddUserPlaylist, selectedSubmission', selectedSubmission);
-    combineLatest([
+    void combineLatest([
       this.selectedBrand$,
       this.firebase.blogEntryExistsByValue(selectedSubmission.id.toString()),
     ])
       .pipe(
         concatMap(([brand, blogEntry]) => {
-          if (blogEntry) {
+          if (Boolean(blogEntry)) {
             /*
              *	entry does exist, call delete submission automatically
              */

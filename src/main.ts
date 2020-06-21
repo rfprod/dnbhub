@@ -10,4 +10,6 @@ if (environment.production) {
 
 platformBrowserDynamic()
   .bootstrapModule(DnbhubModule)
-  .catch(err => console.error(err));
+  .catch(err => {
+    console.error(err);
+  });

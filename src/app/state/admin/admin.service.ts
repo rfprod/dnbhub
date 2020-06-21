@@ -28,7 +28,7 @@ export class DnbhubAdminService implements IDnbhubAdminService {
   public getEmails() {
     return this.api.getEmails().pipe(
       tap(emails => {
-        this.store.dispatch(new blogActions.setDnbhubAdminState({ emails }));
+        void this.store.dispatch(new blogActions.setDnbhubAdminState({ emails }));
       }),
     );
   }
@@ -36,7 +36,7 @@ export class DnbhubAdminService implements IDnbhubAdminService {
   public getBrands() {
     return this.api.getBrands().pipe(
       tap(brands => {
-        this.store.dispatch(new blogActions.setDnbhubAdminState({ brands }));
+        void this.store.dispatch(new blogActions.setDnbhubAdminState({ brands }));
       }),
     );
   }
@@ -44,7 +44,7 @@ export class DnbhubAdminService implements IDnbhubAdminService {
   public getUsers() {
     return this.api.getUsers().pipe(
       tap(users => {
-        this.store.dispatch(new blogActions.setDnbhubAdminState({ users }));
+        void this.store.dispatch(new blogActions.setDnbhubAdminState({ users }));
       }),
     );
   }
@@ -52,7 +52,7 @@ export class DnbhubAdminService implements IDnbhubAdminService {
   public getBlogEntriesIDs() {
     return this.api.getBlogEntriesIDs().pipe(
       tap(blogEntriesIDs => {
-        this.store.dispatch(new blogActions.setDnbhubAdminState({ blogEntriesIDs }));
+        void this.store.dispatch(new blogActions.setDnbhubAdminState({ blogEntriesIDs }));
       }),
     );
   }

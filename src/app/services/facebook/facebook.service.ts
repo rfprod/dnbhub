@@ -25,7 +25,7 @@ export class DnbhubFacebookService {
   private createFbRoot(): HTMLElement {
     const doc: Document = this.window.document;
     let ref: HTMLElement = doc.getElementById(rootId); // try getting it first
-    if (!ref) {
+    if (!Boolean(ref)) {
       // create 'fb-root' if it does not exist
       ref = doc.createElement('div');
       ref.id = rootId;
@@ -47,7 +47,7 @@ export class DnbhubFacebookService {
     const ref = this.createFbRoot();
     console.warn('ref', ref);
     // return if script is already included
-    if (doc.getElementById(jssdkId)) {
+    if (Boolean(doc.getElementById(jssdkId))) {
       return;
     }
     const js: HTMLScriptElement = doc.createElement('script');
@@ -68,17 +68,19 @@ export class DnbhubFacebookService {
     const ref: HTMLElement = doc.getElementById(rootId);
     const js: HTMLElement = doc.getElementById(jssdkId);
     // removed both script and fb-root
-    if (js) {
+    if (Boolean(js)) {
       ref.parentNode.removeChild(js); // sdk script
       ref.parentNode.removeChild(ref); // fb-root
     }
   }
 
   /**
-   * Renders facebook widget, without this widget won't initialize after user navigates to another view and then back to a view the widget is placed
+   * Renders facebook widget, without this widget won't initialize after user navigates
+   * to another view and then back to a view the widget is placed.
    */
   public renderFacebookWidget(): void {
     if (Boolean(this.window[windowSdkKey])) {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       (this.window[windowSdkKey] as { XFBML: { parse: () => unknown } }).XFBML.parse();
     }
   }

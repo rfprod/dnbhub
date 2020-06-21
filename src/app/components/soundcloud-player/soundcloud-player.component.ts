@@ -82,22 +82,22 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
   /**
    * Soundcloud player mode.
    */
-  @Input('mode') public mode: TSoundcloudPlayerMode = 'dnbhub';
+  @Input() public mode: TSoundcloudPlayerMode = 'dnbhub';
 
   /**
    * Indicates if description should be shown.
    */
-  @Input('displayDescription') public displayDescription = false;
+  @Input() public displayDescription = false;
 
   /**
    * Soundcloud user id.
    */
-  @Input('userId') private userId: number = this.defaultConfig.user.dnbhub;
+  @Input() private userId: number = this.defaultConfig.user.dnbhub;
 
   /**
    * Soundcloud playlist id.
    */
-  @Input('playlistId') private playlistId: number = this.defaultConfig.playlist.everything;
+  @Input() private playlistId: number = this.defaultConfig.playlist.everything;
 
   private readonly loading$ = this.store.select(DnbhubHttpProgressState.mainViewProgress);
 
@@ -108,6 +108,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
   ) {}
 
   private readonly renderPlaylistTracks = new BehaviorSubject<number>(renderPlaylistTracksDefault);
+
   public readonly renderPlaylistTracks$ = this.renderPlaylistTracks.asObservable();
 
   /**
@@ -129,12 +130,13 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
     this.renderPlaylistTracks$,
   ]).pipe(
     map(([playlist, renderPlaylistTracks]) => {
-      const tracks = playlist ? [...playlist.tracks].slice(0, renderPlaylistTracks) : [];
+      const tracks = Boolean(playlist) ? [...playlist.tracks].slice(0, renderPlaylistTracks) : [];
       return tracks;
     }),
   );
 
   private readonly playerMode = new BehaviorSubject<TSoundcloudPlayerMode>(this.mode);
+
   public readonly playerMode$ = this.playerMode.asObservable();
 
   public readonly renderTracks$ = this.playerMode$.pipe(
@@ -144,6 +146,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
   );
 
   private readonly selectedTrack = new BehaviorSubject<SoundcloudTrack>(new SoundcloudTrack());
+
   public readonly selectedTrack$ = this.selectedTrack.asObservable();
 
   /**
@@ -172,7 +175,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
    * Loads more soundcloud tracks.
    */
   private loadMoreTracks() {
-    this.loading$
+    void this.loading$
       .pipe(
         first(),
         concatMap(loading => {
@@ -232,7 +235,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
       this.playerKill();
       this.selectedTrack.next(track);
 
-      this.soundcloud
+      void this.soundcloud
         .streamTrack(track.id)
         .pipe(
           concatMap((player: ISoundcloudPlayer) => {
@@ -241,7 +244,8 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
             return from(promise);
           }),
           tap(() => {
-            this.reportWaveformProgress().subscribe();
+            // eslint-disable-next-line rxjs/no-nested-subscribe
+            void this.reportWaveformProgress().subscribe();
           }),
         )
         .subscribe();
@@ -249,7 +253,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
       void this.player.pause();
     } else {
       const promise = this.player.play();
-      from(promise)
+      void from(promise)
         .pipe(concatMap(() => this.reportWaveformProgress()))
         .subscribe();
     }
@@ -266,7 +270,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
           this.window.document.getElementsByClassName(`waveform-${id}`)[0],
         );
         const visibleWaveformElement: HTMLElement = visibleWaveform.nativeElement;
-        if (visibleWaveformElement) {
+        if (Boolean(visibleWaveformElement)) {
           const dividend = 100;
           const playbackProgress: number = Math.floor(
             (this.player.currentTime() * dividend) / this.player.getDuration(),
@@ -277,7 +281,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
       }),
       takeWhile(
         () =>
-          this.player &&
+          Boolean(this.player) &&
           this.player.isActuallyPlaying() &&
           !this.player.isDead() &&
           !this.player.isEnded(),
@@ -326,7 +330,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
       this.resetPlayer();
       this.userId = this.defaultConfig.user.dnbhub;
       this.loadMoreTracks();
-    } else if (/pl\-/.test(changes.mode.currentValue)) {
+    } else if (Boolean((changes.mode.currentValue as string).includes('pl-'))) {
       this.resetPlayer();
       const prefixLength = 3;
       const playlistKey = (changes.mode.currentValue as TSoundcloudPlayerMode).slice(prefixLength);
@@ -360,14 +364,14 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
   }
 
   public ngOnChanges(changes: ISoundcloudPlayerChanges): void {
-    if (changes.mode) {
+    if (Boolean(changes.mode)) {
       this.playerMode.next(changes.mode.currentValue);
     }
-    if (changes.mode && !changes.playlistId && !changes.userId) {
+    if (Boolean(changes.mode) && !Boolean(changes.playlistId) && !Boolean(changes.userId)) {
       this.modeChangeHandler(changes);
-    } else if (changes.userId) {
+    } else if (Boolean(changes.userId)) {
       this.userIdChangeHandler(changes);
-    } else if (changes.playlistId) {
+    } else if (Boolean(changes.playlistId)) {
       this.playlistIdChangeHandler(changes);
     }
   }

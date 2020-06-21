@@ -28,19 +28,9 @@ import { DnbhubRepostsComponent } from 'src/app/components/reposts/reposts.compo
 import { DnbhubSinglesComponent } from 'src/app/components/singles/singles.component';
 import { DnbhubSoundcloudPlayerComponent } from 'src/app/components/soundcloud-player/soundcloud-player.component';
 import { DnbhubUserComponent } from 'src/app/components/user/user.component';
-import { DnbhubAuthenticatedGuard } from 'src/app/guards/authenticated/authenticated.guard';
 import { DnbhubMaterialModule } from 'src/app/modules/material/custom-material.module';
 import { DnbhubTranslateModule } from 'src/app/modules/translate/index';
 import { DnbhubMapToIterablePipe } from 'src/app/pipes/map-to-iterable/map-to-iterable.pipe';
-import { DnbhubEmailSubmissionService } from 'src/app/services/email-submission/email-submission.service';
-import { DnbhubFacebookService } from 'src/app/services/facebook/facebook.service';
-import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
-import { DnbhubGoogleApiService } from 'src/app/services/google-api/google-api.service';
-import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
-import { DnbhubRegularExpressionsService } from 'src/app/services/regular-expressions/regular-expressions.service';
-import { SendEmailService } from 'src/app/services/send-email/send-email.service';
-import { DnbhubTwitterService } from 'src/app/services/twitter/twitter.service';
-import { DnbhubSoundcloudApiService } from 'src/app/state/soundcloud/soundcloud-api.service';
 import { environment } from 'src/environments/environment';
 
 import { DnbhubBottomSheetTextDetailsComponent } from './components/bottom-sheet-text-details/bottom-sheet-text-details.component';
@@ -119,16 +109,6 @@ const entryComponenets: (any[] | Type<any>)[] = [
     { provide: LocationStrategy, useClass: PathLocationStrategy },
     { provide: WINDOW, useValue: window },
     { provide: APP_ENV, useFactory: () => new DnbhubEnvironmentConfig() },
-    DnbhubHttpHandlersService,
-    SendEmailService,
-    DnbhubEmailSubmissionService,
-    DnbhubFirebaseService,
-    DnbhubGoogleApiService,
-    DnbhubSoundcloudApiService,
-    DnbhubFacebookService,
-    DnbhubTwitterService,
-    DnbhubRegularExpressionsService,
-    DnbhubAuthenticatedGuard,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [DnbhubRootComponent],

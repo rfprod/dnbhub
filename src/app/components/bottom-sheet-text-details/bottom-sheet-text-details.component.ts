@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { BottomSheetTextDetailsData } from 'src/app/interfaces';
 
@@ -9,6 +9,7 @@ import { BottomSheetTextDetailsData } from 'src/app/interfaces';
   selector: 'dnbhub-bottom-sheet-text-details',
   templateUrl: './bottom-sheet-text-details.component.html',
   styleUrls: ['./bottom-sheet-text-details.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DnbhubBottomSheetTextDetailsComponent {
   /**

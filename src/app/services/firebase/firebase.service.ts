@@ -123,7 +123,7 @@ export class DnbhubFirebaseService {
    * privilegedAccess$ should be used instead.
    */
   public privilegedAccess(): boolean {
-    return !this.fire.user
+    return !Boolean(this.fire.user)
       ? false
       : this.fire.user.uid !== this.config.privilegedAccessUID
       ? false
@@ -182,9 +182,9 @@ export class DnbhubFirebaseService {
     const typeError = new TypeError(
       'firebaseService, user DB record action error: there seems to be no authenticated users',
     );
-    if (!this.fireAuth.user) {
+    if (!Boolean(this.fireAuth.user)) {
       throw typeError;
-    } else if (this.fireAuth.user && !Boolean(this.fire.user.uid)) {
+    } else if (Boolean(this.fireAuth.user) && !Boolean(this.fire.user.uid)) {
       throw typeError;
     }
   }

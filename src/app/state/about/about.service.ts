@@ -17,7 +17,7 @@ export class DnbhubAboutService implements IDnbhubAboutService {
   public getDetails() {
     return this.api.getDetails().pipe(
       tap(details => {
-        this.store.dispatch(new aboutActions.setDnbhubAboutState({ details }));
+        void this.store.dispatch(new aboutActions.setDnbhubAboutState({ details }));
       }),
     );
   }

@@ -30,7 +30,7 @@ export class DnbhubAboutApiService implements OnDestroy {
       });
     return this.handlers.pipeHttpRequest(from(promise)).pipe(
       tap(details => {
-        this.store.dispatch(new aboutActions.setDnbhubAboutState({ details }));
+        void this.store.dispatch(new aboutActions.setDnbhubAboutState({ details }));
       }),
     );
   }
