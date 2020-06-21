@@ -19,7 +19,7 @@ export class DnbhubBlogService implements IDnbhubBlogService {
   public getPosts() {
     return this.api.getPosts().pipe(
       tap(posts => {
-        this.store.dispatch(new blogActions.setDnbhubBlogState({ posts }));
+        void this.store.dispatch(new blogActions.setDnbhubBlogState({ posts }));
       }),
     );
   }

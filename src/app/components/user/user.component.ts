@@ -1,14 +1,20 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { DatabaseReference, DataSnapshot } from '@angular/fire/database/interfaces';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { concatMap, mapTo, take, tap } from 'rxjs/operators';
+import { BehaviorSubject, from, of } from 'rxjs';
+import { catchError, concatMap, mapTo, take, tap } from 'rxjs/operators';
 import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
 import { IUserProfile, IUserProfileForm, SoundcloudPlaylist } from 'src/app/interfaces/index';
 import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
 import { DnbhubSoundcloudService } from 'src/app/state/soundcloud/soundcloud.service';
 import { ETIMEOUT } from 'src/app/utils';
+
+import {
+  defaultFirebaseUserRecord,
+  IFirebaseUserSubmittedPlaylists,
+} from '../../interfaces/firebase/firebase-user.interface';
 
 /**
  * Application user component.
@@ -17,6 +23,7 @@ import { ETIMEOUT } from 'src/app/utils';
   selector: 'dnbhub-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DnbhubUserComponent implements OnInit, OnDestroy {
   public readonly anonUser$ = this.firebase.anonUser$;
@@ -27,7 +34,9 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
 
   public readonly firebaseUser = this.firebase.fire.user;
 
-  private userDbRecord: IFirebaseUserRecord = {} as IFirebaseUserRecord;
+  private readonly userDbRecord = new BehaviorSubject<IFirebaseUserRecord>(
+    defaultFirebaseUserRecord,
+  );
 
   private existingBlogEntriesIDs: number[] = [];
 
@@ -99,14 +108,14 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
     this.profileForm = this.fb.group({
       email: [
         {
-          value: user ? user.email : '',
+          value: Boolean(user) ? user.email : '',
           disabled: !this.mode.edit || !this.mode.updateEmail ? true : false,
         },
         Validators.compose([Validators.required, Validators.email]),
       ],
       name: [
         {
-          value: user ? user.name : '',
+          value: Boolean(user) ? user.name : '',
           disabled: !this.mode.edit ? true : false,
         },
       ],
@@ -121,7 +130,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
    * Sets validators dynamically depending on new form value.
    */
   private formValueChangesSubscription(): void {
-    this.profileForm.valueChanges
+    void this.profileForm.valueChanges
       .pipe(
         take(1),
         tap((changes: IUserProfile) => {
@@ -175,8 +184,8 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
           this.displayMessage(error);
         });
     } else {
-      const error = 'Your email is already verified';
-      this.displayMessage(error);
+      const message = 'Your email is already verified.';
+      this.displayMessage(message);
     }
   }
 
@@ -204,7 +213,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
       const error = 'You must provide a password in order to delete your account';
       this.displayMessage(error);
     } else {
-      this.firebase
+      void this.firebase
         .delete(this.profileForm.controls.email.value, this.profileForm.controls.password.value)
         .pipe(
           tap(success => {
@@ -212,7 +221,8 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
             this.displayMessage(message);
             void this.router.navigate(['']);
           }),
-        );
+        )
+        .subscribe();
     }
   }
 
@@ -230,19 +240,21 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
    */
   public scConnect(): void {
     void this.soundcloud.connect().then(connectResult => {
-      console.log('SC.connect.then, data:', connectResult);
+      console.warn('SC.connect.then, data:', connectResult);
 
       const urlParams = localStorage.getItem('callback').replace(/^.*\?/, '').split('&');
       const code = urlParams[0].split('=')[1];
       const oauthToken = urlParams[1].split('#')[1].split('=')[1];
       localStorage.removeItem('callback');
 
-      this.firebase
-        .setDBuserNewValues({ soundcloudCode: code, soundcloudOauthToken: oauthToken })
+      void this.firebase
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        .setDBuserNewValues({ sc_code: code, sc_oauth_token: oauthToken })
         .pipe(
           concatMap(() => this.getUserData()),
           concatMap(me =>
-            this.firebase.setDBuserNewValues({ soundcloudId: me.id }).pipe(
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            this.firebase.setDBuserNewValues({ sc_id: me.id }).pipe(
               tap(data => {
                 const message = `${data}: Your user profile was updated.`;
                 this.displayMessage(message);
@@ -260,17 +272,25 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
    * Gets user database record.
    * @param [passGetMeMethodCall] indicates if soundcloud 'get me' api call should be passed
    */
-  private getDBuser(passGetMeMethodCall?: boolean): void {
-    (this.firebase.getDB('users/' + this.firebaseUser.uid, false) as Promise<DataSnapshot>)
-      .then(snapshot => {
-        this.userDbRecord = snapshot.val();
-        if (Boolean(this.userDbRecord.soundcloudId) && !passGetMeMethodCall) {
-          this.getUserData(this.userDbRecord.soundcloudId).subscribe();
+  private getUserDbRecord(passGetMeMethodCall?: boolean) {
+    console.warn('getUserDbRecord', this.firebaseUser.uid);
+    const promise = this.firebase.getDB('users/' + this.firebaseUser.uid, false) as Promise<
+      DataSnapshot
+    >;
+    const observable = from(promise).pipe(
+      concatMap((snapshot: DataSnapshot) => {
+        this.userDbRecord.next(snapshot.val());
+        if (Boolean(this.userDbRecord.value.sc_id) && !passGetMeMethodCall) {
+          return this.getUserData(this.userDbRecord.value.sc_id);
         }
-      })
-      .catch(error => {
+        return of(this.userDbRecord);
+      }),
+      catchError((error, caught) => {
         this.displayMessage(error);
-      });
+        return caught;
+      }),
+    );
+    return observable;
   }
 
   /**
@@ -291,7 +311,11 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
    * Tobbles blog post preview.
    */
   public toggleBlogPostPreview(playlist?: SoundcloudPlaylist): void {
-    this.submissionPreview = this.submissionPreview ? null : playlist ? playlist : null;
+    this.submissionPreview = Boolean(this.submissionPreview)
+      ? null
+      : Boolean(playlist)
+      ? playlist
+      : null;
   }
 
   /**
@@ -299,9 +323,9 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
    */
   public alreadyAdded(playlist: SoundcloudPlaylist): boolean {
     let added = false;
-    if (!this.existingBlogEntriesIDs) {
-      const error = 'Unable to add blog posts, there was an error getting existing blog entries';
-      this.displayMessage(error);
+    if (!Boolean(this.existingBlogEntriesIDs)) {
+      const message = 'Unable to add blog posts, there was an error getting existing blog entries';
+      this.displayMessage(message);
       added = true;
     } else {
       added = this.existingBlogEntriesIDs.includes(playlist.id) ? true : added;
@@ -314,8 +338,8 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
    */
   public alreadySubmitted(playlist: SoundcloudPlaylist): boolean {
     let alreadySubmitted = false;
-    if (Boolean(this.userDbRecord.submittedPlaylists)) {
-      alreadySubmitted = this.userDbRecord.submittedPlaylists.hasOwnProperty(playlist.id)
+    if (Boolean(this.userDbRecord.value.submittedPlaylists)) {
+      alreadySubmitted = this.userDbRecord.value.submittedPlaylists.hasOwnProperty(playlist.id)
         ? true
         : alreadySubmitted;
     }
@@ -329,12 +353,11 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
    */
   public unsubmittable(playlist: SoundcloudPlaylist): boolean {
     let unsubmittable = false;
-    if (Boolean(this.userDbRecord.submittedPlaylists)) {
-      unsubmittable = !Boolean(this.userDbRecord.submittedPlaylists[playlist.id])
+    if (Boolean(this.userDbRecord.value.submittedPlaylists)) {
+      unsubmittable = !Boolean(this.userDbRecord.value.submittedPlaylists[playlist.id])
         ? true
         : unsubmittable;
     }
-
     return unsubmittable;
   }
 
@@ -343,21 +366,30 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
    * @param index playlist array index
    */
   public unsubmitBlogPost(playlist: SoundcloudPlaylist): void {
-    if (!this.userDbRecord.submittedPlaylists) {
-      const error = 'No playlists to unsubmit';
-      this.displayMessage(error);
+    if (!Boolean(this.userDbRecord.value.submittedPlaylists)) {
+      const message = 'No playlists to unsubmit';
+      this.displayMessage(message);
     } else {
-      const playlists = this.userDbRecord.submittedPlaylists;
+      const playlists = this.userDbRecord.value.submittedPlaylists;
+      const unsubmitPlaylistId = playlist.id.toString();
 
-      if (playlists.hasOwnProperty(playlist.id) && playlists[playlist.id] === false) {
-        delete playlists[playlist.id];
-        this.firebase
-          .setDBuserNewValues({ submittedPlaylists: playlists })
+      if (playlists.hasOwnProperty(unsubmitPlaylistId) && playlists[unsubmitPlaylistId] === false) {
+        const userDbRecord = this.userDbRecord.value;
+        const playListKeys = Object.keys(playlists);
+        const submittedPlaylists: IFirebaseUserSubmittedPlaylists = {};
+        for (const key of playListKeys) {
+          if (key !== unsubmitPlaylistId) {
+            submittedPlaylists[key] = playlists[key];
+          }
+        }
+        userDbRecord.submittedPlaylists = { ...submittedPlaylists };
+        this.userDbRecord.next(userDbRecord);
+        void this.firebase
+          .setDBuserNewValues({ submittedPlaylists })
           .pipe(
-            tap(data => {
-              const message = `Your user profile was updated. ${data}`;
+            tap(() => {
+              const message = `Playlist ${playlist.title} was successfully unsubmitted.`;
               this.displayMessage(message);
-              this.getDBuser(true);
             }),
           )
           .subscribe();
@@ -370,24 +402,23 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
    * @param index playlist array index
    */
   public submitBlogPost(playlist: SoundcloudPlaylist): void {
-    if (!this.existingBlogEntriesIDs) {
-      const error = 'Unable to add a blog post, there was an error getting existing blog entries';
-      this.displayMessage(error);
+    if (!Boolean(this.existingBlogEntriesIDs)) {
+      const message = 'Unable to add a blog post, there was an error getting existing blog entries';
+      this.displayMessage(message);
     } else {
-      const playlists = this.userDbRecord.submittedPlaylists || {};
-
+      const userDbRecord = this.userDbRecord.value;
       /**
        * false - submitted but not approved by a moderator;
        * true - submitted and approved by a moderator;
        */
-      playlists[playlist.id] = false;
-      this.firebase
-        .setDBuserNewValues({ submittedPlaylists: playlists })
+      userDbRecord.submittedPlaylists[playlist.id] = false;
+      this.userDbRecord.next(userDbRecord);
+      void this.firebase
+        .setDBuserNewValues({ submittedPlaylists: userDbRecord.submittedPlaylists })
         .pipe(
-          tap(data => {
-            const message = `Your user profile was updated. ${data}`;
+          tap(() => {
+            const message = `Playlist ${playlist.title} was successfully submitted.`;
             this.displayMessage(message);
-            this.getDBuser(true);
           }),
         )
         .subscribe();
@@ -400,7 +431,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
       name: this.firebase.fire.user.displayName,
     };
     this.resetForm(user);
-    this.getDBuser();
+    void this.getUserDbRecord().subscribe();
     this.getExistingBlogEntriesIDs();
   }
 

@@ -59,7 +59,6 @@ export const LANG_EN_TRANSLATIONS: IDictionaryObject = {
     close: 'Close',
     play: 'Play',
     download: 'Download',
-    buy: 'Buy',
     select: 'Select',
     resetPassword: 'Reset password',
     createAccount: 'Create account',

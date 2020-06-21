@@ -11,6 +11,7 @@ import { ETIMEOUT } from 'src/app/utils';
 /**
  * Application login dialog.
  */
+// eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
 @Component({
   selector: 'dnbhub-login-dialog',
   templateUrl: './login-dialog.component.html',
@@ -54,7 +55,7 @@ export class DnbhubLoginDialogComponent {
   }
 
   private createUser(formData = this.loginForm.value as ILoginFormValue) {
-    this.firebase
+    void this.firebase
       .create(formData.email, formData.password)
       .pipe(
         tap(() => {
@@ -66,7 +67,7 @@ export class DnbhubLoginDialogComponent {
   }
 
   private authenticateUser(formData = this.loginForm.value as ILoginFormValue) {
-    this.firebase
+    void this.firebase
       .authenticate('email', formData.email, formData.password)
       .pipe(
         tap(
@@ -111,7 +112,7 @@ export class DnbhubLoginDialogComponent {
    * Resets user password.
    */
   public resetPassword() {
-    this.firebase
+    void this.firebase
       .resetUserPassword(this.loginForm.controls.email.value)
       .pipe(
         tap(() => {

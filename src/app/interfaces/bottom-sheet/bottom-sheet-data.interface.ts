@@ -3,7 +3,7 @@
  */
 export class BottomSheetTextDetailsData {
   constructor(input?: BottomSheetTextDetailsData) {
-    if (input) {
+    if (Boolean(input)) {
       this.text = input.text;
     }
   }

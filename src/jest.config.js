@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'portfolio',
+  name: 'dnbhub',
   preset: '../jest.config.js',
   coverageDirectory: '../coverage/src',
   snapshotSerializers: [

@@ -13,8 +13,11 @@ export class DnbhubSoundcloudService implements IDnbhubSoundcloudService {
   constructor(private readonly store: Store, private readonly api: DnbhubSoundcloudApiService) {}
 
   public readonly me$ = this.store.select(DnbhubSoundcloudState.getMe);
+
   public readonly myPlaylists$ = this.store.select(DnbhubSoundcloudState.getMyPlaylists);
+
   public readonly tracks$ = this.store.select(DnbhubSoundcloudState.getTracks);
+
   public readonly playlist$ = this.store.select(DnbhubSoundcloudState.getPlaylist);
 
   /**

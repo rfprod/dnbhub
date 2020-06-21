@@ -14,8 +14,8 @@ export class DnbhubMapToIterablePipe implements PipeTransform {
    * @param value object
    * @param args arguments array
    */
-  public transform(value: object): string[] {
-    if (!value) {
+  public transform(value: Record<string, unknown>): string[] {
+    if (!Boolean(value)) {
       return;
     }
     return Object.keys(value);

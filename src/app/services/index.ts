@@ -1,4 +1,3 @@
-export * from 'src/app/services/custom-deferred/custom-deferred.service';
 export * from 'src/app/services/http-handlers/http-handlers.service';
 export * from 'src/app/services/email-submission/email-submission.service';
 export * from 'src/app/services/facebook/facebook.service';

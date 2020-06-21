@@ -37,6 +37,7 @@ export class DnbhubEnvironmentConfig {
   public soundcloud: ISoundcloudENVInterface = {
     clientId: 'SOUNDCLOUD_CLIENT_ID',
   };
+
   public firebase: IFirebaseENVInterface = {
     apiKey: 'FIREBASE_API_KEY',
     authDomain: 'FIREBASE_AUTH_DOMAIN',
@@ -46,6 +47,7 @@ export class DnbhubEnvironmentConfig {
     messagingSenderId: 'FIREBASE_MESSAGING_SENDER_ID',
     privilegedAccessUID: 'PRIVILEGED_ACCESS_FIREBASE_UID',
   };
+
   public gapi: IGoogleApiENVInterface = {
     browserKey: 'GOOGLE_APIS_BROWSER_KEY',
     channelId: 'UC2HOUBVyZw9mPM3joMShYKQ',

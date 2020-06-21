@@ -25,7 +25,7 @@ export class DnbhubTwitterService {
   private createTwitterRoot(): HTMLElement {
     const doc: Document = this.window.document;
     let ref: HTMLElement = doc.getElementById(rootId); // try getting it first
-    if (!ref) {
+    if (!Boolean(ref)) {
       // create 'fb-root' if it does not exist
       ref = doc.createElement('div');
       ref.id = rootId;
@@ -47,7 +47,7 @@ export class DnbhubTwitterService {
     const ref = this.createTwitterRoot();
     console.warn('ref', ref);
     // return if script is already included
-    if (doc.getElementById(jssdkId)) {
+    if (Boolean(doc.getElementById(jssdkId))) {
       return;
     }
     const js: HTMLScriptElement = doc.createElement('script');
@@ -58,7 +58,7 @@ export class DnbhubTwitterService {
     ref.parentNode.insertBefore(js, ref);
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const t: { _e: unknown[]; ready: Function } = Boolean(this.window[windowSdkKey])
+    const t: { _e: number[]; ready(...args): number } = Boolean(this.window[windowSdkKey])
       ? this.window[windowSdkKey]
       : {};
     t._e = [];
@@ -76,14 +76,15 @@ export class DnbhubTwitterService {
     const ref: HTMLElement = doc.getElementById(rootId);
     const js: HTMLElement = doc.getElementById(jssdkId);
     // removed both script and twttr-root
-    if (js) {
+    if (Boolean(js)) {
       ref.parentNode.removeChild(js); // sdk script
       ref.parentNode.removeChild(ref); // twttr-root
     }
   }
 
   /**
-   * Renders twitter widget, without this widget won't initialize after user navigates to another view and then back to a view the widget is placed
+   * Renders twitter widget, without this widget won't initialize after user navigates to another
+   * view and then back to a view the widget is placed.
    */
   public renderTwitterWidget(): void {
     if (Boolean(this.window[windowSdkKey])) {

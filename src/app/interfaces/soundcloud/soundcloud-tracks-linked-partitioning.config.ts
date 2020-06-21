@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable @typescript-eslint/naming-convention */
 
 import { SoundcloudTrack } from './soundcloud-track.config';
@@ -12,6 +11,8 @@ export class SoundcloudTracksLinkedPartitioning {
     this.collection = collection;
     this.next_href = nextHref;
   }
+
   public collection: SoundcloudTrack[];
+
   public next_href: string;
 }

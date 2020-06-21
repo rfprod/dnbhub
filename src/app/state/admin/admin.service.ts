@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { concatMap, first, map, mapTo, tap } from 'rxjs/operators';
+import { SoundcloudPlaylist } from 'src/app/interfaces';
 
 import { DnbhubAdminApiService } from './admin-api.service';
 import { IDnbhubAdminService } from './admin.interface';
@@ -12,9 +13,7 @@ import { blogActions, DnbhubAdminState } from './admin.store';
 export class DnbhubAdminService implements IDnbhubAdminService {
   constructor(private readonly store: Store, private readonly api: DnbhubAdminApiService) {}
 
-  public readonly emailSubmissions$ = this.store.select(DnbhubAdminState.getEmailSubmissions);
-
-  public readonly emailMessages$ = this.store.select(DnbhubAdminState.getEmailMessages);
+  public readonly emails$ = this.store.select(DnbhubAdminState.getEmails);
 
   public readonly brands$ = this.store.select(DnbhubAdminState.getBrands);
 
@@ -24,18 +23,12 @@ export class DnbhubAdminService implements IDnbhubAdminService {
 
   public readonly selectedBrand$ = this.store.select(DnbhubAdminState.getSelectedBrand);
 
-  public getEmailSubmissions() {
-    return this.api.getEmailSubmissions().pipe(
-      tap(emailSubmissions => {
-        this.store.dispatch(new blogActions.setDnbhubAdminState({ emailSubmissions }));
-      }),
-    );
-  }
+  public readonly selectedSubmission$ = this.store.select(DnbhubAdminState.getSelectedSubmission);
 
-  public getEmailMessages() {
-    return this.api.getEmailMessages().pipe(
-      tap(emailMessages => {
-        this.store.dispatch(new blogActions.setDnbhubAdminState({ emailMessages }));
+  public getEmails() {
+    return this.api.getEmails().pipe(
+      tap(emails => {
+        void this.store.dispatch(new blogActions.setDnbhubAdminState({ emails }));
       }),
     );
   }
@@ -43,7 +36,7 @@ export class DnbhubAdminService implements IDnbhubAdminService {
   public getBrands() {
     return this.api.getBrands().pipe(
       tap(brands => {
-        this.store.dispatch(new blogActions.setDnbhubAdminState({ brands }));
+        void this.store.dispatch(new blogActions.setDnbhubAdminState({ brands }));
       }),
     );
   }
@@ -51,7 +44,7 @@ export class DnbhubAdminService implements IDnbhubAdminService {
   public getUsers() {
     return this.api.getUsers().pipe(
       tap(users => {
-        this.store.dispatch(new blogActions.setDnbhubAdminState({ users }));
+        void this.store.dispatch(new blogActions.setDnbhubAdminState({ users }));
       }),
     );
   }
@@ -59,7 +52,7 @@ export class DnbhubAdminService implements IDnbhubAdminService {
   public getBlogEntriesIDs() {
     return this.api.getBlogEntriesIDs().pipe(
       tap(blogEntriesIDs => {
-        this.store.dispatch(new blogActions.setDnbhubAdminState({ blogEntriesIDs }));
+        void this.store.dispatch(new blogActions.setDnbhubAdminState({ blogEntriesIDs }));
       }),
     );
   }
@@ -74,5 +67,11 @@ export class DnbhubAdminService implements IDnbhubAdminService {
           .pipe(mapTo(selectedBrand)),
       ),
     );
+  }
+
+  public selectSubmission(selectedSubmission?: SoundcloudPlaylist) {
+    return this.store
+      .dispatch(new blogActions.setDnbhubAdminState({ selectedSubmission }))
+      .pipe(mapTo(selectedSubmission));
   }
 }

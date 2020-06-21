@@ -10,6 +10,7 @@ import { DnbhubContactDialogComponent } from '../contact-dialog/contact-dialog.c
 /**
  * Application toolbar component.
  */
+// eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
 @Component({
   selector: 'dnbhub-toolbar',
   templateUrl: './toolbar.component.html',

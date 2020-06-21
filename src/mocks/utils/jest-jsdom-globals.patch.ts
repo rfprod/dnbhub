@@ -27,13 +27,6 @@ export const setupJestJsdomGlobalMocks: () => void = () => {
     return { width, height };
   });
 
-  Object.defineProperty(window, 'customElements', {
-    value: {
-      define: jest.fn(),
-    },
-    writable: false,
-  });
-
   Object.defineProperty(window, 'getComputedStyle', {
     value: () => {
       return {

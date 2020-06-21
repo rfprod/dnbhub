@@ -59,7 +59,6 @@ export const LANG_RU_TRANSLATIONS: IDictionaryObject = {
     close: 'Закрыть',
     play: 'Играть',
     download: 'Скачать',
-    buy: 'Купить',
     select: 'Выбрать',
     resetPassword: 'Сбросить пароль',
     createAccount: 'Создать учётую запись',

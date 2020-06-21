@@ -13,12 +13,12 @@ export const ADMIN_STATE_TOKEN = new StateToken<IDnbhubAdminStateModel>('admin')
 @State<IDnbhubAdminStateModel>({
   name: ADMIN_STATE_TOKEN,
   defaults: {
-    emailSubmissions: [],
-    emailMessages: [],
+    emails: [],
     brands: [],
     users: [],
     blogEntriesIDs: [],
     selectedBrand: null,
+    selectedSubmission: null,
   },
 })
 @Injectable({
@@ -31,13 +31,8 @@ export class DnbhubAdminState {
   }
 
   @Selector()
-  public static getEmailSubmissions(state: IDnbhubAdminStateModel) {
-    return state.emailSubmissions;
-  }
-
-  @Selector()
-  public static getEmailMessages(state: IDnbhubAdminStateModel) {
-    return state.emailMessages;
+  public static getEmails(state: IDnbhubAdminStateModel) {
+    return state.emails;
   }
 
   @Selector()
@@ -58,6 +53,11 @@ export class DnbhubAdminState {
   @Selector()
   public static getSelectedBrand(state: IDnbhubAdminStateModel) {
     return state.selectedBrand;
+  }
+
+  @Selector()
+  public static getSelectedSubmission(state: IDnbhubAdminStateModel) {
+    return state.selectedSubmission;
   }
 
   @Action(setDnbhubAdminState)

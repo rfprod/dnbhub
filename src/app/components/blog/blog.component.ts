@@ -6,6 +6,7 @@ import { concatMap, filter, tap } from 'rxjs/operators';
 import { DnbhubBlogService } from 'src/app/state/blog/blog.service';
 import { DnbhubBlogState } from 'src/app/state/blog/blog.store';
 
+// eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
 @Component({
   selector: 'dnbhub-blog',
   templateUrl: './blog.component.html',
@@ -26,12 +27,12 @@ export class DnbhubBlogComponent {
             let code = this.route.snapshot.queryParams.code;
             if (Boolean(code)) {
               void this.router.navigate(['/blog'], { queryParams: { code } });
-              this.blog.selectBlogPost(code).subscribe();
+              void this.blog.selectBlogPost(code).subscribe();
             } else {
               code = loadedPosts[0].code;
               if (Boolean(code)) {
                 void this.router.navigate(['/blog'], { queryParams: { code } });
-                this.blog.selectBlogPost(code).subscribe();
+                void this.blog.selectBlogPost(code).subscribe();
               }
             }
           }),
@@ -59,13 +60,13 @@ export class DnbhubBlogComponent {
    * Selects next blog post.
    */
   public nextBlogPost(): void {
-    this.blog.selectNextPost().subscribe();
+    void this.blog.selectNextPost().subscribe();
   }
 
   /**
    * Selects previous blog post.
    */
   public previousBlogPost(): void {
-    this.blog.selectPreviousPost().subscribe();
+    void this.blog.selectPreviousPost().subscribe();
   }
 }

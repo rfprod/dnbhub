@@ -7,7 +7,9 @@ import { WINDOW } from 'src/app/utils';
 /**
  * Send email service.
  */
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class SendEmailService {
   constructor(
     private readonly http: HttpClient,

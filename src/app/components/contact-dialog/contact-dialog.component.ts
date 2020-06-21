@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { tap } from 'rxjs/operators';
@@ -14,6 +14,7 @@ import { ETIMEOUT, WINDOW } from 'src/app/utils';
   selector: 'dnbhub-contact-dialog',
   templateUrl: './contact-dialog.component.html',
   styleUrls: ['./contact-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DnbhubContactDialogComponent {
   /**
@@ -49,7 +50,7 @@ export class DnbhubContactDialogComponent {
    */
   public submitForm(): void {
     if (this.emailForm.valid && !this.emailForm.pristine) {
-      this.sendEmail().subscribe();
+      void this.sendEmail().subscribe();
     }
   }
 

@@ -15,6 +15,7 @@ import { WINDOW } from './utils';
  * Application root component.
  */
 @UntilDestroy()
+// eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
 @Component({
   selector: 'dnbhub-root',
   templateUrl: './app.component.html',
@@ -60,7 +61,7 @@ export class DnbhubRootComponent implements OnInit {
       nav.language === 'ru-RU' || nav.language === 'ru' || nav.languages[0] === 'ru'
         ? ESUPPORTED_LANGUAGE_KEY.RUSSIAN
         : ESUPPORTED_LANGUAGE_KEY.ENGLISH;
-    this.ui.selectLanguage(userPreference).subscribe();
+    void this.ui.selectLanguage(userPreference).subscribe();
   }
 
   /**
@@ -119,7 +120,7 @@ export class DnbhubRootComponent implements OnInit {
    * Subscribes to media change events.
    */
   private mediaChangeSubscribe(): void {
-    this.media
+    void this.media
       .asObservable()
       .pipe(untilDestroyed(this))
       .subscribe((event: MediaChange[]) => {

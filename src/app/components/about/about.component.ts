@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
@@ -9,6 +9,7 @@ import { DnbhubAboutService } from 'src/app/state/about/about.service';
   selector: 'dnbhub-about',
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DnbhubAboutComponent {
   public readonly details$ = this.about.details$.pipe(

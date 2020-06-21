@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-/* eslint-disable @typescript-eslint/camelcase */
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -21,7 +20,12 @@ import { APP_ENV } from 'src/app/utils/injection-tokens';
 import { soundcloudActions } from './soundcloud.store';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-declare let SC: any;
+declare let SC: {
+  get(path: string, options?: Record<string, any>): Promise<any>;
+  initialize(options: ScInitOptions): void;
+  connect(): Promise<any>;
+  stream(trackUrl: string): Promise<any>;
+};
 
 /**
  * Soundcloud service.
@@ -113,6 +117,7 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
   public getLinkWithId(href: string): string {
     return `${href}?client_id=${this.options.client_id}`;
   }
+
   /**
    * Resets Soundcloud service stored data.
    * May be useful later, for now is not used.
@@ -155,7 +160,7 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
     const promise: Promise<SoundcloudMe> = SC.get(
       Boolean(userScId) ? `users/${userScId}` : 'me',
     ).then((me: SoundcloudMe) => {
-      console.warn('SC.me.then, me', me);
+      // console.warn('SC.me.then, me', me);
       if (Boolean(me.description)) {
         me.description = this.processDescription(me.description);
       }
@@ -290,6 +295,6 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
   public ngOnDestroy(): void {
     const tracks = new SoundcloudTracksLinkedPartitioning();
     const playlist = new SoundcloudPlaylist();
-    this.store.dispatch(new soundcloudActions.setDnbhubSoundcloudState({ tracks, playlist }));
+    void this.store.dispatch(new soundcloudActions.setDnbhubSoundcloudState({ tracks, playlist }));
   }
 }

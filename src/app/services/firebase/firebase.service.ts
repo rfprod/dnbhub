@@ -13,7 +13,6 @@ import { DnbhubEnvironmentConfig } from 'src/app/app.environment';
 import { IFirebaseENVInterface } from 'src/app/interfaces';
 import { BlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
-import { DnbhubCustomDeferredService } from 'src/app/services/custom-deferred/custom-deferred.service';
 
 import { DnbhubHttpHandlersService } from '../http-handlers/http-handlers.service';
 
@@ -45,7 +44,7 @@ export class DnbhubFirebaseService {
   } = {
     db: this.fireDb.database,
     auth: this.fireAuth,
-    user: null, // TODO remove this static reference of authenticated firebase user eventually
+    user: null, // TODO remove this static reference to authenticated firebase user eventually
   };
 
   public readonly user$: Observable<firebase.User> = this.fireAuth.user;
@@ -82,7 +81,6 @@ export class DnbhubFirebaseService {
     const db: Promise<DataSnapshot> | DatabaseReference = !refOnly
       ? this.fireDb.database.ref('/' + collection).once('value')
       : this.fireDb.database.ref('/' + collection);
-    // console.warn('firebaseService, getDB', db);
     return db;
   }
 
@@ -125,7 +123,7 @@ export class DnbhubFirebaseService {
    * privilegedAccess$ should be used instead.
    */
   public privilegedAccess(): boolean {
-    return !this.fire.user
+    return !Boolean(this.fire.user)
       ? false
       : this.fire.user.uid !== this.config.privilegedAccessUID
       ? false
@@ -184,9 +182,9 @@ export class DnbhubFirebaseService {
     const typeError = new TypeError(
       'firebaseService, user DB record action error: there seems to be no authenticated users',
     );
-    if (!this.fireAuth.user) {
+    if (!Boolean(this.fireAuth.user)) {
       throw typeError;
-    } else if (this.fireAuth.user && !Boolean(this.fire.user.uid)) {
+    } else if (Boolean(this.fireAuth.user) && !Boolean(this.fire.user.uid)) {
       throw typeError;
     }
   }
@@ -194,35 +192,41 @@ export class DnbhubFirebaseService {
   /**
    * Checks database user id.
    */
-  public checkDBuserUID(): Promise<{ exists: boolean; created: boolean }> {
-    const def = new DnbhubCustomDeferredService<any>();
+  public checkDBuserUID(): Observable<{ exists: boolean; created: boolean }> {
     this.authErrorCheck();
-    (this.getDB('users/' + this.fire.user.uid) as Promise<DataSnapshot>)
+    const checkRecord = (this.getDB('users/' + this.fire.user.uid) as Promise<DataSnapshot>)
       .then((snapshot: DataSnapshot) => {
-        console.warn('checking user db profile');
-        if (!Boolean(snapshot.val())) {
-          console.warn('creating user db profile');
-          (this.getDB('users/' + this.fire.user.uid, true) as DatabaseReference)
+        console.warn('checking user db profile', snapshot.val());
+        return { exists: Boolean(snapshot.val()), created: false };
+      })
+      .catch(error => {
+        throw error;
+      });
+
+    const checkRecordObservable = from(checkRecord);
+    return checkRecordObservable.pipe(
+      concatMap(result => {
+        if (!result.exists) {
+          const createRecord = (this.getDB(
+            'users/' + this.fire.user.uid,
+            true,
+          ) as DatabaseReference)
             .set({
               created: new Date().getTime(),
             })
             .then(() => {
               console.warn('created user db profile');
-              def.resolve({ exists: false, created: true });
+              return { exists: false, created: true };
             })
             .catch(error => {
-              console.warn('error creating user db profile', error);
-              def.reject({ exists: false, created: false });
+              throw error;
             });
-        } else {
-          def.resolve({ exists: true, created: false });
+
+          return from(createRecord);
         }
-      })
-      .catch(error => {
-        console.warn('checkDBuserUID, user db profile check:', error);
-        def.reject(error);
-      });
-    return def.promise;
+        return of(result);
+      }),
+    );
   }
 
   /**
@@ -230,17 +234,16 @@ export class DnbhubFirebaseService {
    * @param valuesObj new values object
    */
   public setDBuserNewValues(valuesObj: Partial<IFirebaseUserRecord>) {
-    this.authErrorCheck();
-    const promise = this.checkDBuserUID().then(data => {
-      console.warn('checkDBuserUID', JSON.stringify(data));
-      return (this.getDB('users/' + this.fire.user.uid, true) as DatabaseReference)
-        .update(valuesObj)
-        .then(() => {
-          console.warn('user db profile values set');
-          return { valuesSet: true };
-        });
-    });
-    const observable = from(promise);
+    const observable = this.checkDBuserUID().pipe(
+      concatMap(result => {
+        console.warn('checkDBuserUID', result);
+        const promise = (this.getDB(
+          'users/' + this.fire.user.uid,
+          true,
+        ) as DatabaseReference).update(valuesObj);
+        return from(promise);
+      }),
+    );
     return this.handlers.pipeHttpRequest(observable);
   }
 
@@ -248,18 +251,19 @@ export class DnbhubFirebaseService {
    * Resolves if blog entry exists by value
    * @param dbKey blog entry database key
    */
-  public blogEntryExistsByValue(dbKey: string): Promise<any> {
-    const def = new DnbhubCustomDeferredService();
-    (this.getDB('blogEntriesIDs', true) as DatabaseReference)
-      .orderByValue()
-      .equalTo(dbKey)
-      .on('value', (snapshot: DatabaseSnapshotExists<BlogPost>) => {
-        const response = snapshot.val();
-        console.warn('blogEntryExists, blogEntriesIDs response', response);
-        // null - not found
-        def.resolve(response);
-      });
-    return def.promise;
+  public blogEntryExistsByValue(dbKey: string) {
+    const observable = new Observable<BlogPost>(subscriber => {
+      (this.getDB('blogEntriesIDs', true) as DatabaseReference)
+        .orderByValue()
+        .equalTo(dbKey)
+        .on('value', (snapshot: DatabaseSnapshotExists<BlogPost>) => {
+          const response = snapshot.val();
+          console.warn('blogEntryExists, blogEntriesIDs response', response);
+          // null - not found
+          subscriber.next(response);
+        });
+    });
+    return observable;
   }
 
   /**
@@ -267,34 +271,29 @@ export class DnbhubFirebaseService {
    * @param childKey child key
    * @param value child key value
    */
-  public blogEntryExistsByChildValue(childKey: string, value: any): Promise<any> {
-    const def = new DnbhubCustomDeferredService();
-    (this.getDB('blog', true) as DatabaseReference)
-      .orderByChild(childKey)
-      .equalTo(value)
-      .on('value', (snapshot: DatabaseSnapshotExists<BlogPost>) => {
-        const response = snapshot.val();
-        console.warn('blogEntryExists, blogEntriesIDs response', response);
-        // null - not found
-        def.resolve(response);
-      });
-    return def.promise;
+  public blogEntryExistsByChildValue(childKey: string, value: string | number | boolean) {
+    const observable = new Observable<BlogPost>(subscriber => {
+      (this.getDB('blog', true) as DatabaseReference)
+        .orderByChild(childKey)
+        .equalTo(value)
+        .on('value', (snapshot: DatabaseSnapshotExists<BlogPost>) => {
+          const response = snapshot.val();
+          console.warn('blogEntryExists, blogEntriesIDs response', response);
+          // null - not found
+          subscriber.next(response);
+        });
+      return observable;
+    });
   }
 
   /**
    * Adds blog post to database.
    * @param valuesObj blog post model
    */
-  public addBlogPost(valuesObj: BlogPost): Promise<any> {
-    /*
-     *	create new records, delete submission record
-     */
-    const def = new DnbhubCustomDeferredService();
-    this.authErrorCheck();
-    this.checkDBuserUID()
-      .then(data => {
-        console.warn('checkDBuserUID', JSON.stringify(data));
-        (this.getDB('blogEntriesIDs', true) as DatabaseReference)
+  public addBlogPost(valuesObj: BlogPost) {
+    const observable = this.checkDBuserUID().pipe(
+      concatMap(result => {
+        const promise = (this.getDB('blogEntriesIDs', true) as DatabaseReference)
           .orderByValue()
           .once('value', (snapshot: DataSnapshot) => {
             const idsArray: [number[]] = snapshot.val();
@@ -308,26 +307,19 @@ export class DnbhubFirebaseService {
                   .set(valuesObj)
                   .then(() => {
                     console.warn('blog post added');
-                    def.resolve({ valuesSet: true });
+                    return { valuesSet: true };
                   })
-                  .catch((error: any) => {
-                    console.warn('error adding blog post entry', error);
-                    def.reject({ valuesSet: false });
+                  .catch(error => {
+                    throw error;
                   });
               })
-              .catch((error: any) => {
-                console.warn(
-                  'error adding blog post entry ref to blogEntriesIDs collection',
-                  error,
-                );
-                def.reject({ valuesSet: false });
+              .catch(error => {
+                throw error;
               });
           });
-      })
-      .catch(error => {
-        console.warn('addBlogPost, user db profile check error', error);
-        def.reject(error);
-      });
-    return def.promise;
+        return from(promise);
+      }),
+    );
+    return observable;
   }
 }

@@ -29,8 +29,9 @@ export class DnbhubBlogApiService implements OnDestroy {
       .then(snapshot => {
         const response: BlogPost[] = snapshot.val();
         const blogPosts: BlogPost[] = [];
+        // eslint-disable-next-line @typescript-eslint/no-for-in-array
         for (const key in response) {
-          if (response[key]) {
+          if (Boolean(response[key])) {
             const item = response[key];
             blogPosts.unshift(item);
           }
@@ -39,7 +40,7 @@ export class DnbhubBlogApiService implements OnDestroy {
       });
     return this.handlers.pipeHttpRequest<BlogPost[]>(from(promise)).pipe(
       tap(posts => {
-        this.store.dispatch(new blogActions.setDnbhubBlogState({ posts }));
+        void this.store.dispatch(new blogActions.setDnbhubBlogState({ posts }));
       }),
     );
   }
