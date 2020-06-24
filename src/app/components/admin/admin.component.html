@@ -47,8 +47,8 @@
     </span>
 
     <mat-tab-group fxFlex="100">
-      <mat-tab label="email messages">
-        <mat-tab-body fxLayout="row">
+      <mat-tab #emailsTab label="email messages">
+        <mat-tab-body fxLayout="row" *ngIf="emailsTab.isActive">
           <div
             fxFlex
             fxLayoutFill
@@ -102,8 +102,8 @@
         </mat-tab-body>
       </mat-tab>
 
-      <mat-tab label="brands">
-        <mat-tab-body fxLayout="row wrap">
+      <mat-tab #brandsTab label="brands">
+        <mat-tab-body fxLayout="row wrap" *ngIf="brandsTab.isActive">
           <div fxFlex="100" fxLayout="row" fxLayoutAlign="center center">
             <button
               mat-button
@@ -235,19 +235,25 @@
         </mat-tab-body>
       </mat-tab>
 
-      <mat-tab label="users">
-        <mat-tab-body fxLayout="row wrap">
+      <mat-tab #usersTab label="users">
+        <mat-tab-body fxLayout="row wrap" *ngIf="usersTab.isActive">
           <div fxFlex fxLayout="row wrap" fxLayoutAlign="center stretch">
-            <div
+            <mat-card
               *ngFor="let user of users$ | async"
               fxFlex.lt-lg="100"
               fxFlex="48"
               fxLayout="row wrap"
               fxLayoutAlign="center start"
-              [ngStyle]="{ border: '1px #000000 dotted', 'border-radius': '3px', margin: '5px' }"
             >
-              <span fxFlex="100" class="mat-body-2">{{ user.key }} </span>
-              <span fxFlex="100" class="mat-body-1" fxLayout="row wrap" fxLayoutAlign="start start">
+              <mat-card-header>
+                <mat-card-title fxFlex="100" class="mat-body-2">{{ user.key }} </mat-card-title>
+              </mat-card-header>
+              <mat-card-content
+                fxFlex="100"
+                class="mat-body-1"
+                fxLayout="row wrap"
+                fxLayoutAlign="start start"
+              >
                 <span fxFlex="100" *ngIf="user.created"> Created {{ user.created | date }} </span>
                 <span fxFlex="100" *ngIf="user.sc_id"> Soundcloud ID {{ user.sc_id }} </span>
                 <span fxFlex="100" fxLayout="row wrap" *ngIf="user.submittedPlaylists">
@@ -256,7 +262,7 @@
                   </p>
 
                   <div
-                    fxFlex="50"
+                    fxFlex="49"
                     fxFlex.lt-lg="100"
                     *ngFor="let submittedPlaylistId of user.submittedPlaylists | mapToIterable"
                   >
@@ -273,7 +279,6 @@
                         }"
                       >
                         <dnbhub-soundcloud-player
-                          fxFlex
                           [mode]="'playlist'"
                           [playlistId]="submittedPlaylistId"
                         >
@@ -354,16 +359,19 @@
                       </span>
                     </span>
 
-                    <span
+                    <mat-card
                       fxFlex="100"
                       class="mat-body-1"
                       *ngIf="selectedBrand$ | async as selectedBrand"
                       fxLayout="row wrap"
                     >
-                      <p fxFlex="100">
-                        Selected label links:
-                      </p>
-                      <span
+                      <mat-card-header>
+                        <mat-card-title fxFlex="100">
+                          Selected label links:
+                        </mat-card-title>
+                      </mat-card-header>
+
+                      <mat-card-content
                         *ngFor="let key of selectedBrand | mapToIterable"
                         fxFlex="100"
                         fxLayout="row wrap"
@@ -380,12 +388,12 @@
                           {{ key }}
                           <mat-icon>link</mat-icon>
                         </span>
-                      </span>
-                    </span>
+                      </mat-card-content>
+                    </mat-card>
                   </div>
                 </span>
-              </span>
-            </div>
+              </mat-card-content>
+            </mat-card>
           </div>
         </mat-tab-body>
       </mat-tab>

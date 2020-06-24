@@ -1,42 +1,49 @@
-/**
- * Application blog post links interface.
- */
-export class BlogPostLinks {
-  public bandcamp = '';
+import { DnbhubBrand } from '../brand';
 
-  public facebook = '';
-
-  public instagram = '';
-
-  public soundcloud = '';
-
-  public twitter = '';
-
-  public website = '';
-
-  public youtube = '';
-}
-
-/**
- * Application blog post interface with initialization.
- */
-export class BlogPost {
-  constructor(input?: BlogPost) {
+export class DnbhubBlogPostLinks {
+  constructor(input?: Partial<DnbhubBlogPostLinks | DnbhubBrand>) {
     if (Boolean(input)) {
       const keys = Object.keys(input);
       for (const key of keys) {
-        this[key] = input[key];
+        const value = input[key];
+        this[key] = value ?? this[key];
       }
     }
   }
 
-  public code: string | null = null;
+  public readonly bandcamp = '';
 
-  public links: BlogPostLinks = new BlogPostLinks();
+  public readonly facebook = '';
 
-  public playlistId: number = null;
+  public readonly instagram = '';
 
-  public soundcloudUserId: string | null = null;
+  public readonly soundcloud = '';
 
-  public description: string | null = null;
+  public readonly twitter = '';
+
+  public readonly website = '';
+
+  public readonly youtube = '';
+}
+
+export class DnbhubBlogPost {
+  constructor(input?: DnbhubBlogPost) {
+    if (Boolean(input)) {
+      const keys = Object.keys(input);
+      for (const key of keys) {
+        const value = input[key];
+        this[key] = value ?? this[key];
+      }
+    }
+  }
+
+  public readonly code: string | null = null;
+
+  public readonly links: DnbhubBlogPostLinks = new DnbhubBlogPostLinks();
+
+  public readonly playlistId: number = null;
+
+  public readonly soundcloudUserId: string | null = null;
+
+  public readonly description: string | null = null;
 }

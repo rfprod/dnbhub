@@ -179,7 +179,7 @@
         fxFlex.lt-sm="100"
         fxFlex="47"
         fxFlex.gt-md="31"
-        *ngFor="let playlistObj of myPlaylists; let i = index"
+        *ngFor="let playlistObj of myPlaylists"
       >
         <mat-card-content
           [ngStyle]="{
@@ -312,7 +312,11 @@
       </div>
 
       <div fxFlex fxLayout="row wrap" *ngIf="submissionPreview">
-        <dnbhub-soundcloud-player fxFlex="100" [mode]="'playlist'" [playlistId]="submissionPreview.id">
+        <dnbhub-soundcloud-player
+          fxFlex="100"
+          [mode]="'playlist'"
+          [playlistId]="submissionPreview.id"
+        >
         </dnbhub-soundcloud-player>
 
         <div

@@ -11,7 +11,7 @@ import { from, Observable, of, throwError } from 'rxjs';
 import { concatMap, map, tap } from 'rxjs/operators';
 import { DnbhubEnvironmentConfig } from 'src/app/app.environment';
 import { IFirebaseENVInterface } from 'src/app/interfaces';
-import { BlogPost } from 'src/app/interfaces/blog/blog-post.interface';
+import { DnbhubBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
 
 import { DnbhubHttpHandlersService } from '../http-handlers/http-handlers.service';
@@ -252,11 +252,11 @@ export class DnbhubFirebaseService {
    * @param dbKey blog entry database key
    */
   public blogEntryExistsByValue(dbKey: string) {
-    const observable = new Observable<BlogPost>(subscriber => {
+    const observable = new Observable<DnbhubBlogPost>(subscriber => {
       (this.getDB('blogEntriesIDs', true) as DatabaseReference)
         .orderByValue()
         .equalTo(dbKey)
-        .on('value', (snapshot: DatabaseSnapshotExists<BlogPost>) => {
+        .on('value', (snapshot: DatabaseSnapshotExists<DnbhubBlogPost>) => {
           const response = snapshot.val();
           console.warn('blogEntryExists, blogEntriesIDs response', response);
           // null - not found
@@ -272,11 +272,11 @@ export class DnbhubFirebaseService {
    * @param value child key value
    */
   public blogEntryExistsByChildValue(childKey: string, value: string | number | boolean) {
-    const observable = new Observable<BlogPost>(subscriber => {
+    const observable = new Observable<DnbhubBlogPost>(subscriber => {
       (this.getDB('blog', true) as DatabaseReference)
         .orderByChild(childKey)
         .equalTo(value)
-        .on('value', (snapshot: DatabaseSnapshotExists<BlogPost>) => {
+        .on('value', (snapshot: DatabaseSnapshotExists<DnbhubBlogPost>) => {
           const response = snapshot.val();
           console.warn('blogEntryExists, blogEntriesIDs response', response);
           // null - not found
@@ -290,7 +290,7 @@ export class DnbhubFirebaseService {
    * Adds blog post to database.
    * @param valuesObj blog post model
    */
-  public addBlogPost(valuesObj: BlogPost) {
+  public addBlogPost(valuesObj: DnbhubBlogPost) {
     const observable = this.checkDBuserUID().pipe(
       concatMap(result => {
         const promise = (this.getDB('blogEntriesIDs', true) as DatabaseReference)

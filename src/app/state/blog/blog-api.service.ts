@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { from } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { BlogPost } from 'src/app/interfaces/blog/blog-post.interface';
+import { DnbhubBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 import { DnbhubFirebaseService } from 'src/app/services';
 import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
 import { EPAGE_SIZE } from 'src/app/utils';
@@ -27,8 +27,8 @@ export class DnbhubBlogApiService implements OnDestroy {
       .limitToLast(EPAGE_SIZE.MEDIUM)
       .once('value')
       .then(snapshot => {
-        const response: BlogPost[] = snapshot.val();
-        const blogPosts: BlogPost[] = [];
+        const response: DnbhubBlogPost[] = snapshot.val();
+        const blogPosts: DnbhubBlogPost[] = [];
         // eslint-disable-next-line @typescript-eslint/no-for-in-array
         for (const key in response) {
           if (Boolean(response[key])) {
@@ -38,7 +38,7 @@ export class DnbhubBlogApiService implements OnDestroy {
         }
         return blogPosts;
       });
-    return this.handlers.pipeHttpRequest<BlogPost[]>(from(promise)).pipe(
+    return this.handlers.pipeHttpRequest<DnbhubBlogPost[]>(from(promise)).pipe(
       tap(posts => {
         void this.store.dispatch(new blogActions.setDnbhubBlogState({ posts }));
       }),

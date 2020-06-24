@@ -1,35 +1,33 @@
-/**
- * Brand interface.
- */
-export class Brand {
-  constructor(input?: Brand) {
+export class DnbhubBrand {
+  constructor(input?: DnbhubBrand) {
     if (Boolean(input)) {
       const keys = Object.keys(input);
       for (const key of keys) {
-        this[key] = input[key];
+        const value = input[key];
+        this[key] = value ?? this[key];
       }
     }
   }
 
-  public key?: string;
+  public readonly key?: string;
 
-  public name = '';
+  public readonly name = '';
 
-  public bandcamp = '';
+  public readonly bandcamp = '';
 
-  public facebook = '';
+  public readonly facebook = '';
 
-  public instagram = '';
+  public readonly instagram = '';
 
-  public soundcloud = '';
+  public readonly soundcloud = '';
 
-  public twitter = '';
+  public readonly twitter = '';
 
-  public website = '';
+  public readonly website = '';
 
-  public youtube = '';
+  public readonly youtube = '';
 }
 
 export interface IBrands {
-  [key: string]: Brand;
+  [key: string]: DnbhubBrand;
 }
