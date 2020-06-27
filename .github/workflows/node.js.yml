@@ -25,4 +25,5 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: yarn install --frozen-lockfile
       - run: npm i -g typescript @angular/cli
+      - run: ng lint
       - run: ng test
