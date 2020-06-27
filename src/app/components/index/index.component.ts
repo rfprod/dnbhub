@@ -1,7 +1,5 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { MediaChange, MediaObserver } from '@angular/flex-layout';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { DnbhubFacebookService } from 'src/app/services/facebook/facebook.service';
+import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { DnbhubTwitterService } from 'src/app/services/twitter/twitter.service';
 
 @UntilDestroy()
@@ -11,28 +9,10 @@ import { DnbhubTwitterService } from 'src/app/services/twitter/twitter.service';
   styleUrls: ['./index.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DnbhubIndexComponent implements OnInit, AfterViewInit {
-  constructor(
-    private readonly media: MediaObserver,
-    private readonly facebook: DnbhubFacebookService,
-    private readonly twitter: DnbhubTwitterService,
-  ) {}
-
-  public ngOnInit(): void {
-    let previousMqAlias = '';
-    void this.media
-      .asObservable()
-      .pipe(untilDestroyed(this))
-      .subscribe((event: MediaChange[]) => {
-        if (/(xs|sm)/.test(previousMqAlias) && /!(xs|sm)/.test(event[0].mqAlias)) {
-          this.facebook.renderFacebookWidget();
-        }
-        previousMqAlias = event[0].mqAlias;
-      });
-  }
+export class DnbhubIndexComponent implements AfterViewInit {
+  constructor(private readonly twitter: DnbhubTwitterService) {}
 
   public ngAfterViewInit(): void {
-    this.facebook.renderFacebookWidget();
     this.twitter.renderTwitterWidget();
   }
 }

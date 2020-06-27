@@ -1,10 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
-import {
-  SoundcloudMe,
-  SoundcloudPlaylist,
-  SoundcloudTracksLinkedPartitioning,
-} from 'src/app/interfaces';
+import { Action, createSelector, Selector, State, StateContext, StateToken } from '@ngxs/store';
+import { SoundcloudMe, SoundcloudTracksLinkedPartitioning } from 'src/app/interfaces';
 
 import { setDnbhubSoundcloudState } from './soundcloud.actions';
 import { IDnbhubSoundcloudStateModel, TDnbhubSoundcloudPayload } from './soundcloud.interface';
@@ -21,7 +17,7 @@ export const SOUNDCLOUD_STATE_TOKEN = new StateToken<IDnbhubSoundcloudStateModel
     me: new SoundcloudMe(),
     myPlaylists: [],
     tracks: new SoundcloudTracksLinkedPartitioning(),
-    playlist: new SoundcloudPlaylist(),
+    playlists: [],
   },
 })
 @Injectable({
@@ -49,13 +45,21 @@ export class DnbhubSoundcloudState {
   }
 
   @Selector()
-  public static getPlaylist(state: IDnbhubSoundcloudStateModel) {
-    return state.playlist;
+  public static getPlaylists(state: IDnbhubSoundcloudStateModel) {
+    return state.playlists;
   }
 
   @Selector()
   public static allPlaylists(state: IDnbhubSoundcloudStateModel) {
-    return [...state.myPlaylists, state.playlist];
+    return [...state.myPlaylists, ...state.playlists];
+  }
+
+  public static playlistById(id: number) {
+    return createSelector(
+      [this],
+      (state: IDnbhubSoundcloudStateModel) =>
+        state.myPlaylists.filter(playlist => playlist.id === id)[0],
+    );
   }
 
   @Action(setDnbhubSoundcloudState)

@@ -130,9 +130,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
     this.renderPlaylistTracks$,
   ]).pipe(
     map(([playlist, renderPlaylistTracks]) => {
-      console.warn('playlist, renderPlaylistTracks', playlist, renderPlaylistTracks);
       const tracks = Boolean(playlist) ? [...playlist.tracks].slice(0, renderPlaylistTracks) : [];
-      console.warn('tracks', tracks);
       return tracks;
     }),
   );
@@ -181,7 +179,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
       .pipe(
         first(),
         concatMap(loading => {
-          if (!this.noMoreTracks.value && !loading) {
+          if (!this.noMoreTracks.value) {
             if (/(dnbhub|user)/.test(this.mode)) {
               return this.soundcloud.getTracks(this.userId).pipe(
                 tap(data => {
@@ -361,7 +359,6 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
     if (this.mode === 'playlist' && Boolean(changes.playlistId.currentValue)) {
       this.resetPlayer();
       this.playlistId = changes.playlistId.currentValue;
-      console.warn('playlistIdChangeHandler');
       this.loadMoreTracks();
     }
   }

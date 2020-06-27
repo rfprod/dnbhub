@@ -32,7 +32,7 @@
     fxFlex="100"
     fxLayoutFill
     fxLayoutAlign="start start"
-    *ngIf="!(selectedSubmission$ | async)"
+    *ngIf="!(selectedSubmission$ | async)?.submission"
   >
     <span
       fxFlex="100"
@@ -237,7 +237,26 @@
 
       <mat-tab #usersTab label="users">
         <mat-tab-body fxLayout="row wrap" *ngIf="usersTab.isActive">
-          <div fxFlex fxLayout="row wrap" fxLayoutAlign="center stretch">
+          <mat-form-field fxFlex="100">
+            <input
+              matInput
+              type="text"
+              placeholder="Select brand"
+              aria-label="Select brand"
+              [formControl]="brandAutocompleteControl"
+              [matAutocomplete]="brandAuto"
+            />
+
+            <mat-autocomplete
+              #brandAuto="matAutocomplete"
+              (optionSelected)="selectBrandFromList($event)"
+            >
+              <mat-option *ngFor="let option of matchedBrands$ | async" [value]="option.key">
+                {{ option.key }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center stretch">
             <mat-card
               *ngFor="let user of users$ | async"
               fxFlex.lt-lg="100"
@@ -256,7 +275,7 @@
               >
                 <span fxFlex="100" *ngIf="user.created"> Created {{ user.created | date }} </span>
                 <span fxFlex="100" *ngIf="user.sc_id"> Soundcloud ID {{ user.sc_id }} </span>
-                <span fxFlex="100" fxLayout="row wrap" *ngIf="user.submittedPlaylists">
+                <span fxFlex="100" fxLayout="row wrap">
                   <p fxFlex="100">
                     Submitted Playlists
                   </p>
@@ -265,16 +284,21 @@
                     fxFlex="49"
                     fxFlex.lt-lg="100"
                     *ngFor="let submittedPlaylistId of user.submittedPlaylists | mapToIterable"
+                    fxLayout="row wrap"
                   >
-                    <span fxLayout="row wrap" fxLayoutAlign="start start">
+                    <span
+                      fxFlex="100"
+                      *ngIf="submittedPlaylistId"
+                      fxLayout="row wrap"
+                      fxLayoutAlign="start start"
+                    >
                       <p fxFlex="100">id: {{ submittedPlaylistId }}</p>
 
                       <span
                         fxFlex
                         [ngStyle]="{
                           height: '200px',
-                          'overflow-x': 'hidden',
-                          'overflow-y': 'scroll',
+                          overflow: 'hidden',
                           border: '1px dotted'
                         }"
                       >
@@ -285,61 +309,21 @@
                         </dnbhub-soundcloud-player>
                       </span>
 
-                      <mat-form-field fxFlex="100">
-                        <input
-                          matInput
-                          type="text"
-                          placeholder="Select brand"
-                          aria-label="Select brand"
-                          [formControl]="brandAutocompleteControl"
-                          [matAutocomplete]="brandAuto"
-                        />
-
-                        <mat-autocomplete
-                          #brandAuto="matAutocomplete"
-                          (optionSelected)="selectBrandFromList($event)"
-                        >
-                          <mat-option
-                            *ngFor="let option of matchedBrands$ | async"
-                            [value]="option"
-                          >
-                            {{ option }}
-                          </mat-option>
-                        </mat-autocomplete>
-                      </mat-form-field>
-
                       <span fxFlex="100">
                         <button
-                          mat-button
+                          mat-icon-button
                           type="button"
                           (click)="showSubmissionPreview(submittedPlaylistId)"
                           aria-label="Preview submission"
                           title="Preview submission"
                         >
-                          <mat-icon>preview</mat-icon>
+                          <mat-icon>pageview</mat-icon>
                         </button>
                         <button
-                          mat-button
+                          mat-icon-button
                           type="button"
                           [disabled]="submissionAlreadyAdded$(submittedPlaylistId) | async"
-                          *ngIf="
-                            !(selectedBrand$ | async)?.key === brandAutocompleteControl.value &&
-                            user.submittedPlaylists[submittedPlaylistId]
-                          "
-                          (click)="selectBrand(brandAutocompleteControl.value)"
-                          aria-label="select a brand to approve a submission"
-                          title="select a brand to approve a submission"
-                        >
-                          <mat-icon>contacts</mat-icon>
-                        </button>
-                        <button
-                          mat-button
-                          type="button"
-                          [disabled]="submissionAlreadyAdded$(submittedPlaylistId) | async"
-                          *ngIf="
-                            !(selectedBrand$ | async)?.key === brandAutocompleteControl.value &&
-                            user.submittedPlaylists[submittedPlaylistId]
-                          "
+                          *ngIf="(selectedBrand$ | async)?.key"
                           (click)="approveUserSubmission(submittedPlaylistId)"
                           aria-label="approve post"
                           title="approve post"
@@ -347,9 +331,9 @@
                           <mat-icon>check_circle</mat-icon>
                         </button>
                         <button
-                          mat-button
+                          mat-icon-button
                           type="button"
-                          *ngIf="!user.submittedPlaylists[submittedPlaylistId]"
+                          *ngIf="!(submissionAlreadyAdded$(submittedPlaylistId) | async)"
                           (click)="rejectUserSubmission(submittedPlaylistId)"
                           aria-label="reject post"
                           title="reject post"
@@ -358,38 +342,6 @@
                         </button>
                       </span>
                     </span>
-
-                    <mat-card
-                      fxFlex="100"
-                      class="mat-body-1"
-                      *ngIf="selectedBrand$ | async as selectedBrand"
-                      fxLayout="row wrap"
-                    >
-                      <mat-card-header>
-                        <mat-card-title fxFlex="100">
-                          Selected label links:
-                        </mat-card-title>
-                      </mat-card-header>
-
-                      <mat-card-content
-                        *ngFor="let key of selectedBrand | mapToIterable"
-                        fxFlex="100"
-                        fxLayout="row wrap"
-                      >
-                        <a
-                          *ngIf="selectedBrand[key]"
-                          href="{{ selectedBrand[key] }}"
-                          target="_blank"
-                        >
-                          {{ key }}
-                          <mat-icon>link</mat-icon>
-                        </a>
-                        <span *ngIf="selectedBrand[key] === ''">
-                          {{ key }}
-                          <mat-icon>link</mat-icon>
-                        </span>
-                      </mat-card-content>
-                    </mat-card>
                   </div>
                 </span>
               </mat-card-content>
@@ -401,12 +353,46 @@
   </div>
 
   <div
-    fxFlex="100"
+    [ngStyle]="{ position: 'fixed', top: '1em', width: '100%', 'z-index': 10000 }"
+    *ngIf="selectedBrand$ | async as selectedBrand"
     fxLayout="row"
-    fxLayoutFill
-    *ngIf="selectedSubmission$ | async as selectedSubmission"
+    fxLayoutAlign="center center"
   >
-    <div fxFlex="100" fxLayoutFill fxLayout="column" fxLayoutAlign="start stretch">
+    <mat-card fxFlex="80" class="mat-body-1">
+      <mat-card-header>
+        <mat-card-title>Selected brand</mat-card-title>
+      </mat-card-header>
+      <mat-card-content fxLayout="row wrap">
+        <div fxFlex="0 1 auto" *ngFor="let key of selectedBrand | mapToIterable: ['string']">
+          <a mat-button *ngIf="selectedBrand[key]" href="{{ selectedBrand[key] }}" target="_blank">
+            <mat-icon>link</mat-icon>
+            <span>{{ key }}</span>
+          </a>
+
+          <button mat-button [disabled]="true" *ngIf="selectedBrand[key] === ''">
+            <mat-icon>link</mat-icon>
+            <span>{{ key }}</span>
+          </button>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <span fxFlex="1 1 auto"></span>
+        <button mat-button color="accent" (click)="selectBrand(null)">
+          <mat-icon>remove_circle</mat-icon>
+          Deselect
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <div fxFlex="100" fxLayout="row" fxLayoutFill *ngIf="(selectedSubmission$ | async)?.submission">
+    <div
+      fxFlex="100"
+      fxLayoutFill
+      fxLayout="column"
+      fxLayoutAlign="start stretch"
+      *ngIf="selectedSubmission$ | async as selectedSubmission"
+    >
       <button mat-button (click)="hideSubmissionPreview()">
         close preview
       </button>

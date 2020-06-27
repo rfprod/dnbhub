@@ -10,7 +10,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { combineLatest, from } from 'rxjs';
-import { concatMap, filter, map, take, tap } from 'rxjs/operators';
+import { concatMap, first, map, take, tap } from 'rxjs/operators';
 import { IEmailMessage } from 'src/app/interfaces/admin';
 import { DnbhubBlogPost, DnbhubBlogPostLinks } from 'src/app/interfaces/blog/blog-post.interface';
 import { IBrandForm } from 'src/app/interfaces/brand/brand-form.interface';
@@ -46,44 +46,46 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
 
   public readonly brands$ = this.admin.brands$;
 
-  public readonly matchedBrands$ = this.brands$.pipe(
-    map(brands => {
+  /**
+   * Brand autocomplete form control.
+   */
+  public brandAutocompleteControl: FormControl = new FormControl();
+
+  public readonly matchedBrands$ = this.brandAutocompleteControl.valueChanges.pipe(
+    concatMap(changes =>
+      this.brands$.pipe(
+        first(),
+        map(brands => ({ changes, brands })),
+      ),
+    ),
+    map(({ changes, brands }) => {
       const matchedKeys = brands.filter(item =>
         new RegExp(this.brandAutocompleteControl.value, 'i').test(item.key),
       );
-      // console.log('matchedKeys', matchedKeys);
       return matchedKeys;
     }),
   );
 
-  public readonly users$ = this.admin.users$.pipe(
-    tap(data => {
-      console.warn('users', data);
-    }),
-  );
+  public readonly users$ = this.admin.users$;
+
+  /**
+   * Edit brand form.
+   */
+  public editBrandForm: IBrandForm;
 
   public readonly blogEntriesIDs$ = this.admin.blogEntriesIDs$;
 
   public readonly selectedBrand$ = this.admin.selectedBrand$;
 
   public readonly selectedSubmission$ = this.admin.selectedSubmission$.pipe(
-    filter(submission => Boolean(submission)),
     map(submission => {
-      const widgetLink = this.soundcloud.widgetLink.playlist(submission.id);
+      const widgetLink = Boolean(submission)
+        ? this.soundcloud.widgetLink.playlist(submission.id)
+        : '#';
       const showWidget = widgetLink !== '#' ? true : false;
       return { submission, widgetLink, showWidget };
     }),
   );
-
-  /**
-   * Brand autocomplete form control.
-   */
-  public brandAutocompleteControl: FormControl = new FormControl();
-
-  /**
-   * Edit brand form.
-   */
-  public editBrandForm: IBrandForm;
 
   constructor(
     public readonly firebase: DnbhubFirebaseService,
@@ -180,8 +182,9 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
    * Selects brand from list.
    */
   public selectBrandFromList(event: MatAutocompleteSelectedEvent): void {
+    console.warn('selectBrandFromList', event);
     const key = event.option.value;
-    void this.admin.selectBrand(key).subscribe();
+    void this.selectBrand(key);
   }
 
   /**
@@ -210,7 +213,6 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
   public showSubmissionPreview(playlistId: number) {
     const promise = this.soundcloud.SC.get(`/playlists/${playlistId}`).then(
       (data: SoundcloudPlaylist) => {
-        console.warn('data', data);
         const submittedPlaylist = data;
         submittedPlaylist.description = this.soundcloud.processDescription(
           submittedPlaylist.description,
@@ -321,7 +323,7 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
           const data = { code, links, playlistId, soundcloudUserId } as DnbhubBlogPost;
 
           const valuesObj = new DnbhubBlogPost(data);
-          console.warn(valuesObj);
+          console.warn('valuesObj', valuesObj);
           return this.firebase.addBlogPost(valuesObj);
         }),
         concatMap(

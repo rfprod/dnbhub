@@ -10,12 +10,13 @@ export class DnbhubMapToIterablePipe implements PipeTransform {
   /**
    * Retrieves map keys to iterable array.
    * @param value object
-   * @param args arguments array
    */
-  public transform(value: Record<string, unknown>): string[] {
+  public transform(value: Record<string, unknown>, args: string[] = []): string[] | number[] {
     if (!Boolean(value)) {
       return;
     }
-    return Object.keys(value);
+    return args[0] === 'string'
+      ? Object.keys(value)
+      : Object.keys(value).map(item => parseInt(item, 10));
   }
 }
