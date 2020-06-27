@@ -160,7 +160,6 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
    * @param userScId User Soundcloud id
    */
   public getMe(userScId?: number): Observable<SoundcloudMe> {
-    console.warn('getMe, use has got a token');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const promise: Promise<SoundcloudMe> = SC.get(
       Boolean(userScId) ? `users/${userScId}` : 'me',
@@ -180,11 +179,9 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
    * @param userScId User Soundcloud id
    */
   public getMyPlaylists(userScId: number): Observable<SoundcloudPlaylist[]> {
-    console.warn('getMe, use has got a token');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const promise: Promise<SoundcloudPlaylist[]> = SC.get(`users/${userScId}/playlists`).then(
       (playlists: SoundcloudPlaylist[]) => {
-        console.warn('SC.playlists.then, playlists', playlists);
         return playlists;
       },
     );
@@ -209,7 +206,6 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
         },
       )
         .then((data: SoundcloudTracksLinkedPartitioning) => {
-          console.warn('getUserTracks, data', data);
           this.tracksLinkedPartNextHref = data.next_href;
           const tracks = this.processTracksCollection(data);
           return tracks;
@@ -238,18 +234,18 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
    * @param playlistId Soundcloud playlist id
    */
   public getPlaylist(playlistId: number): Observable<SoundcloudPlaylist> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const promise: Promise<SoundcloudPlaylist> = SC.get(`/playlists/${playlistId}`)
-      .then((playlist: SoundcloudPlaylist) => {
-        playlist.description = this.processDescription(playlist.description);
-        playlist.tracks = playlist.tracks.map((track: SoundcloudTrack) => {
-          track.description = this.processDescription(track.description);
-          return track;
-        });
-        return playlist;
-      })
-      .catch(error => error);
-    const observable = from(promise);
+    const observable = from(
+      SC.get(`/playlists/${playlistId}`)
+        .then((playlist: SoundcloudPlaylist) => {
+          playlist.description = this.processDescription(playlist.description);
+          playlist.tracks = playlist.tracks.map((track: SoundcloudTrack) => {
+            track.description = this.processDescription(track.description);
+            return track;
+          });
+          return playlist;
+        })
+        .catch(error => error),
+    );
     return this.handlers.pipeHttpRequest(observable);
   }
 
@@ -299,7 +295,7 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
 
   public ngOnDestroy(): void {
     const tracks = new SoundcloudTracksLinkedPartitioning();
-    const playlist = new SoundcloudPlaylist();
-    void this.store.dispatch(new soundcloudActions.setDnbhubSoundcloudState({ tracks, playlist }));
+    const playlists = [];
+    void this.store.dispatch(new soundcloudActions.setDnbhubSoundcloudState({ tracks, playlists }));
   }
 }

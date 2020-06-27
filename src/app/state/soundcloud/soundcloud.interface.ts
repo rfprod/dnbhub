@@ -10,7 +10,7 @@ export interface IDnbhubSoundcloudStateModel {
   me: SoundcloudMe;
   myPlaylists: SoundcloudPlaylist[];
   tracks: SoundcloudTracksLinkedPartitioning;
-  playlist: SoundcloudPlaylist;
+  playlists: SoundcloudPlaylist[];
 }
 
 export type TDnbhubSoundcloudPayload = IActionPayload<Partial<IDnbhubSoundcloudStateModel>>;
@@ -19,5 +19,5 @@ export interface IDnbhubSoundcloudService {
   me$: Observable<SoundcloudMe>;
   myPlaylists$: Observable<SoundcloudPlaylist[]>;
   tracks$: Observable<SoundcloudTracksLinkedPartitioning>;
-  playlist$: Observable<SoundcloudPlaylist>;
+  playlists$: Observable<SoundcloudPlaylist[]>;
 }

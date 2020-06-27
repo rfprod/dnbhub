@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { concatMap, mapTo } from 'rxjs/operators';
+import { concatMap, map, mapTo } from 'rxjs/operators';
 
 import { DnbhubSoundcloudApiService } from './soundcloud-api.service';
 import { IDnbhubSoundcloudService } from './soundcloud.interface';
@@ -18,7 +18,7 @@ export class DnbhubSoundcloudService implements IDnbhubSoundcloudService {
 
   public readonly tracks$ = this.store.select(DnbhubSoundcloudState.getTracks);
 
-  public readonly playlist$ = this.store.select(DnbhubSoundcloudState.getPlaylist);
+  public readonly playlists$ = this.store.select(DnbhubSoundcloudState.getPlaylists);
 
   /**
    * TODO: types, and store wiring
@@ -64,15 +64,19 @@ export class DnbhubSoundcloudService implements IDnbhubSoundcloudService {
   }
 
   public getPlaylist(playlistId: number) {
-    return this.api
-      .getPlaylist(playlistId)
-      .pipe(
-        concatMap(playlist =>
-          this.store
-            .dispatch(new soundcloudActions.setDnbhubSoundcloudState({ playlist }))
-            .pipe(mapTo(playlist)),
-        ),
-      );
+    return this.api.getPlaylist(playlistId).pipe(
+      concatMap(playlist =>
+        this.store
+          .selectOnce(DnbhubSoundcloudState.getPlaylists)
+          .pipe(map(existingPlaylists => ({ playlist, existingPlaylists }))),
+      ),
+      concatMap(({ playlist, existingPlaylists }) => {
+        const playlists = [...existingPlaylists, playlist];
+        return this.store
+          .dispatch(new soundcloudActions.setDnbhubSoundcloudState({ playlists }))
+          .pipe(mapTo(playlist));
+      }),
+    );
   }
 
   public streamTrack(trackId: number) {
