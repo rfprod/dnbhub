@@ -10,7 +10,7 @@ import {
 import { from, Observable, of, throwError } from 'rxjs';
 import { concatMap, map, tap } from 'rxjs/operators';
 import { DnbhubEnvironmentConfig } from 'src/app/app.environment';
-import { IFirebaseENVInterface } from 'src/app/interfaces';
+import { IFirebaseEnvInterface } from 'src/app/interfaces';
 import { DnbhubBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
 
@@ -32,7 +32,7 @@ export class DnbhubFirebaseService {
   /**
    * Application environment: Firebase API.
    */
-  private readonly config: IFirebaseENVInterface = new DnbhubEnvironmentConfig().firebase;
+  private readonly config: IFirebaseEnvInterface = new DnbhubEnvironmentConfig().firebase;
 
   /**
    * Angular fire public shortcuts.

@@ -197,16 +197,16 @@ elif [ 19 -eq $# ]; then
   firebaseMessagingSenderId=$7
   firebaseDeployToken=$8
   privilegedAccessFirebaseUid=$9
-  googleApisBrowserKey=$10
-  googleApisClientId=$11
-  mailerHost=$12
-  mailerPort=$13
-  mailerEmail=$14
-  mailerClientId=$15
-  mailerClientSecret=$16
-  mailerRefreshToken=$17
-  mailerAccessToken=$18
-  mailerRecipientEmail=$19
+  googleApisBrowserKey=${10}
+  googleApisClientId=${11}
+  mailerHost=${12}
+  mailerPort=${13}
+  mailerEmail=${14}
+  mailerClientId=${15}
+  mailerClientSecret=${16}
+  mailerRefreshToken=${17}
+  mailerAccessToken=${18}
+  mailerRecipientEmail=${19}
 
   # summary check
   printf "${LIGHT_BLUE} >> You provided the following values:\n

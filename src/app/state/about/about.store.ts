@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
 
-import { AboutDetails } from '../../interfaces/about/about-details.interface';
+import { DnbhubAboutDetails } from '../../interfaces/about/about-details.interface';
 import { setDnbhubAboutState } from './about.actions';
 import { IDnbhubAboutStateModel, TDnbhubAboutPayload } from './about.interface';
 
@@ -14,7 +14,7 @@ export const ABOUT_STATE_TOKEN = new StateToken<IDnbhubAboutStateModel>('about')
 @State<IDnbhubAboutStateModel>({
   name: ABOUT_STATE_TOKEN,
   defaults: {
-    details: new AboutDetails(),
+    details: new DnbhubAboutDetails(),
   },
 })
 @Injectable({

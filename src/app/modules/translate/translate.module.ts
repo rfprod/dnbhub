@@ -11,7 +11,7 @@ import { TRANSLATION_PROVIDERS } from 'src/app/modules/translate/translations';
   exports: [DnbhubTranslatePipe],
 })
 export class DnbhubTranslateModule {
-  public static forRoot(): ModuleWithProviders {
+  public static forRoot(): ModuleWithProviders<DnbhubTranslateModule> {
     return {
       ngModule: DnbhubTranslateModule,
       providers: [TRANSLATION_PROVIDERS, DnbhubTranslateService],
