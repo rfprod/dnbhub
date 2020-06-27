@@ -14,4 +14,4 @@ export const getActionCreator = (actionScope: string) => <
     constructor(public payload: T['payload']) {}
   };
 
-export type EmptyPayload = IActionPayload<null>;
+export type TEmptyPayload = IActionPayload<null>;

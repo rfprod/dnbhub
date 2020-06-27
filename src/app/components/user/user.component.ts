@@ -339,7 +339,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
   public alreadySubmitted(playlist: SoundcloudPlaylist): boolean {
     let alreadySubmitted = false;
     if (Boolean(this.userDbRecord.value.submittedPlaylists)) {
-      alreadySubmitted = this.userDbRecord.value.submittedPlaylists.hasOwnProperty(playlist.id)
+      alreadySubmitted = this.userDbRecord.value.submittedPlaylists[playlist.id]
         ? true
         : alreadySubmitted;
     }
@@ -373,7 +373,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
       const playlists = this.userDbRecord.value.submittedPlaylists;
       const unsubmitPlaylistId = playlist.id.toString();
 
-      if (playlists.hasOwnProperty(unsubmitPlaylistId) && playlists[unsubmitPlaylistId] === false) {
+      if (Boolean(playlists[unsubmitPlaylistId]) && playlists[unsubmitPlaylistId] === false) {
         const userDbRecord = this.userDbRecord.value;
         const playListKeys = Object.keys(playlists);
         const submittedPlaylists: IFirebaseUserSubmittedPlaylists = {};

@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { from } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { AboutDetails } from 'src/app/interfaces/about/about-details.interface';
+import { DnbhubAboutDetails } from 'src/app/interfaces/about/about-details.interface';
 import { DnbhubFirebaseService } from 'src/app/services';
 import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
 
@@ -25,7 +25,7 @@ export class DnbhubAboutApiService implements OnDestroy {
     const promise = (this.firebase.getDB('about', true) as firebase.database.Reference)
       .once('value')
       .then(snapshot => {
-        const response: AboutDetails = snapshot.val();
+        const response: DnbhubAboutDetails = snapshot.val();
         return response;
       });
     return this.handlers.pipeHttpRequest(from(promise)).pipe(

@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { DnbhubEnvironmentConfig } from 'src/app/app.environment';
-import { IGoogleApiENVInterface } from 'src/app/interfaces/index';
+import { IGoogleApiEnvInterface } from 'src/app/interfaces/index';
 import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
 import { APP_ENV } from 'src/app/utils';
 
@@ -30,7 +30,7 @@ export class DnbhubGoogleApiService {
   /**
    * Application environment: Google API (authentication data).
    */
-  private readonly config: IGoogleApiENVInterface = this.env.gapi;
+  private readonly config: IGoogleApiEnvInterface = this.env.gapi;
 
   /**
    * Gets youtube channel data.

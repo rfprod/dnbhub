@@ -10,7 +10,7 @@ import { WINDOW } from 'src/app/utils';
 @Injectable({
   providedIn: 'root',
 })
-export class SendEmailService {
+export class DnbhubSendEmailService {
   constructor(
     private readonly http: HttpClient,
     private readonly handlers: DnbhubHttpHandlersService,

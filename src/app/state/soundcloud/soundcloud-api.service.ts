@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/naming-convention */
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
@@ -7,7 +8,7 @@ import { from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DnbhubEnvironmentConfig } from 'src/app/app.environment';
 import {
-  ISoundcloudENVInterface,
+  ISoundcloudEnvInterface,
   ScInitOptions,
   SoundcloudMe,
   SoundcloudPlaylist,
@@ -19,10 +20,14 @@ import { APP_ENV } from 'src/app/utils/injection-tokens';
 
 import { soundcloudActions } from './soundcloud.store';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/**
+ * TODO: Sounscloud api interface
+ */
 declare let SC: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get(path: string, options?: Record<string, any>): Promise<any>;
   initialize(options: ScInitOptions): void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   connect(): Promise<any>;
   stream(trackUrl: string): Promise<any>;
 };
@@ -84,7 +89,7 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
   /**
    * Application environment: Firebase API.
    */
-  private readonly config: ISoundcloudENVInterface = this.env.soundcloud;
+  private readonly config: ISoundcloudEnvInterface = this.env.soundcloud;
 
   /**
    * Soundcloud client id.

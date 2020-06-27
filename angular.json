@@ -42,7 +42,14 @@
               "node_modules/material-design-icon-fonts/iconfont/material-icons.css",
               "src/styles.scss"
             ],
-            "es5BrowserSupport": true
+            "allowedCommonJsDependencies": [
+              "node_modules/hammerjs/hammer.js",
+              "@firebase/app",
+              "firebase/app",
+              "@firebase/util",
+              "@firebase/component",
+              "@firebase/database"
+            ]
           },
           "configurations": {
             "analyze-bundle": {

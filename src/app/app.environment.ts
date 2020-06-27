@@ -1,7 +1,7 @@
 import {
-  IFirebaseENVInterface,
-  IGoogleApiENVInterface,
-  ISoundcloudENVInterface,
+  IFirebaseEnvInterface,
+  IGoogleApiEnvInterface,
+  ISoundcloudEnvInterface,
 } from 'src/app/interfaces/index';
 
 /**
@@ -34,11 +34,11 @@ export const ENV = {
  * Application environment.
  */
 export class DnbhubEnvironmentConfig {
-  public soundcloud: ISoundcloudENVInterface = {
+  public soundcloud: ISoundcloudEnvInterface = {
     clientId: 'SOUNDCLOUD_CLIENT_ID',
   };
 
-  public firebase: IFirebaseENVInterface = {
+  public firebase: IFirebaseEnvInterface = {
     apiKey: 'FIREBASE_API_KEY',
     authDomain: 'FIREBASE_AUTH_DOMAIN',
     databaseURL: 'FIREBASE_DATABASE_URL',
@@ -48,7 +48,7 @@ export class DnbhubEnvironmentConfig {
     privilegedAccessUID: 'PRIVILEGED_ACCESS_FIREBASE_UID',
   };
 
-  public gapi: IGoogleApiENVInterface = {
+  public gapi: IGoogleApiEnvInterface = {
     browserKey: 'GOOGLE_APIS_BROWSER_KEY',
     channelId: 'UC2HOUBVyZw9mPM3joMShYKQ',
     part:

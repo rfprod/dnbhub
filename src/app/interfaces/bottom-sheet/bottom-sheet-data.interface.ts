@@ -1,8 +1,8 @@
 /**
  * Bottom sheet text details data.
  */
-export class BottomSheetTextDetailsData {
-  constructor(input?: BottomSheetTextDetailsData) {
+export class DnbhubBottomSheetTextDetailsData {
+  constructor(input?: DnbhubBottomSheetTextDetailsData) {
     if (Boolean(input)) {
       this.text = input.text;
     }

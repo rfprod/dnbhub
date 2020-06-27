@@ -1,8 +1,8 @@
-export interface ISoundcloudENVInterface {
+export interface ISoundcloudEnvInterface {
   clientId: string;
 }
 
-export interface IFirebaseENVInterface {
+export interface IFirebaseEnvInterface {
   apiKey: string;
   authDomain: string;
   databaseURL: string;
@@ -12,7 +12,7 @@ export interface IFirebaseENVInterface {
   privilegedAccessUID: string;
 }
 
-export interface IGoogleApiENVInterface {
+export interface IGoogleApiEnvInterface {
   browserKey: string;
   channelId: string;
   part: string;
@@ -21,7 +21,7 @@ export interface IGoogleApiENVInterface {
 }
 
 export interface IEnvironmentInterface {
-  soundcloud: ISoundcloudENVInterface;
-  firebase: IFirebaseENVInterface;
-  gapi: IGoogleApiENVInterface;
+  soundcloud: ISoundcloudEnvInterface;
+  firebase: IFirebaseEnvInterface;
+  gapi: IGoogleApiEnvInterface;
 }

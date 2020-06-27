@@ -1,8 +1,8 @@
 /**
  * Application about links interface with initialization.
  */
-export class AboutLinks {
-  constructor(input?: AboutLinks) {
+export class DnbhubAboutLinks {
+  constructor(input?: DnbhubAboutLinks) {
     if (Boolean(input)) {
       const keys = Object.keys(input);
       for (const key of keys) {
@@ -28,9 +28,9 @@ export class AboutLinks {
   public youtube = '';
 }
 
-export class PoweredBy {
-  constructor(input?: PoweredBy) {
-    if (input) {
+export class DnbhubPoweredBy {
+  constructor(input?: DnbhubPoweredBy) {
+    if (Boolean(input)) {
       const keys = Object.keys(input);
       for (const key of keys) {
         this[key] = input[key];
@@ -46,9 +46,9 @@ export class PoweredBy {
 /**
  * Application about details interface with initialization.
  */
-export class AboutDetails {
-  constructor(input?: AboutDetails) {
-    if (input) {
+export class DnbhubAboutDetails {
+  constructor(input?: DnbhubAboutDetails) {
+    if (Boolean(input)) {
       const keys = Object.keys(input);
       for (const key of keys) {
         this[key] = input[key];
@@ -56,7 +56,7 @@ export class AboutDetails {
     }
   }
 
-  public links: AboutLinks = new AboutLinks();
+  public links: DnbhubAboutLinks = new DnbhubAboutLinks();
 
   public soundcloudUserId: string = null;
 
@@ -66,5 +66,5 @@ export class AboutDetails {
 
   public widgetLink: string = null;
 
-  public poweredBy: PoweredBy[] = [new PoweredBy()];
+  public poweredBy: DnbhubPoweredBy[] = [new DnbhubPoweredBy()];
 }

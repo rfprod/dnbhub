@@ -191,7 +191,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
                 }),
               );
             } else if (
-              /(pl\-everything|pl\-reposts1|pl\-reposts2|pl\-freedownloads|pl\-samplepacks|playlist)/.test(
+              /(pl-everything|pl-reposts1|pl-reposts2|pl-freedownloads|pl-samplepacks|playlist)/.test(
                 this.mode,
               )
             ) {
@@ -201,7 +201,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
                 }),
               );
             }
-          } else if (/(pl\-|playlist)/.test(this.mode)) {
+          } else if (/(pl-|playlist)/.test(this.mode)) {
             this.renderMorePlaylistTracks();
             return of();
           }
