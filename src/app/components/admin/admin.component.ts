@@ -137,7 +137,7 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
 
   public showBrandDialog(brand: DnbhubBrand): void {
     const minNameLength = 5;
-    this.dialog.open(DnbhubBrandDialogComponent, {
+    const dialog = this.dialog.open(DnbhubBrandDialogComponent, {
       height: '85vh',
       width: '95vw',
       maxWidth: '1680',
@@ -150,6 +150,15 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
         minNameLength,
       },
     });
+    void dialog
+      .afterClosed()
+      .pipe(
+        first(),
+        tap(() => {
+          this.selectBrand(null);
+        }),
+      )
+      .subscribe();
   }
 
   /**

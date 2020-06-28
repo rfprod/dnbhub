@@ -34,18 +34,6 @@
     fxLayoutAlign="start start"
     *ngIf="!(selectedSubmission$ | async)?.submission"
   >
-    <span
-      fxFlex="100"
-      fxLayout="row"
-      fxLayoutAlign="start stretch"
-      fxLayoutAlign.xs="center center"
-      class="md-padding"
-    >
-      <div class="mat-body-2">
-        some general data here
-      </div>
-    </span>
-
     <mat-tab-group fxFlex="100">
       <mat-tab #emailsTab label="email messages">
         <mat-tab-body fxLayout="row" *ngIf="emailsTab.isActive">
@@ -127,110 +115,94 @@
             The're are no brands yet, create one.
           </div>
 
-          <div fxFlex="100" fxLayout="row" *ngIf="brands$ | async">
-            <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="space-between start">
-              <div *ngFor="let brand of brands$ | async" fxFlex.xs="100" fxFlex="32" fxLayout="row">
-                <div
-                  fxFlex
-                  fxLayoutFill
-                  fxLayout="row wrap"
-                  [ngStyle]="{
-                    margin: '2px',
-                    padding: '0 10px 0 10px',
-                    'border-radius': '3px',
-                    border: '1px dotted #000000'
-                  }"
-                >
-                  <span
-                    fxFlex="100"
-                    class="mat-body-2"
-                    fxLayout="row"
-                    fxLayoutAlign="center center"
-                  >
-                    {{ brand.key }}
-                  </span>
-                  <span fxFlex="100" class="mat-body-1">
-                    <div fxFlex fxLayout="row wrap">
-                      <a
-                        mat-button
-                        href="{{ brand.bandcamp }}"
-                        target="_blank"
-                        *ngIf="brand.bandcamp"
-                      >
-                        Bandcamp
-                        <mat-icon>open_in_new</mat-icon>
-                      </a>
-                      <a
-                        mat-button
-                        href="{{ brand.facebook }}"
-                        target="_blank"
-                        *ngIf="brand.facebook"
-                      >
-                        Facebook
-                        <mat-icon>open_in_new</mat-icon>
-                      </a>
-                      <a
-                        mat-button
-                        href="{{ brand.instagram }}"
-                        target="_blank"
-                        *ngIf="brand.instagram"
-                      >
-                        Instagram
-                        <mat-icon>open_in_new</mat-icon>
-                      </a>
-                      <a
-                        mat-button
-                        href="{{ brand.soundcloud }}"
-                        target="_blank"
-                        *ngIf="brand.soundcloud"
-                      >
-                        Soundcloud
-                        <mat-icon>open_in_new</mat-icon>
-                      </a>
-                      <a
-                        mat-button
-                        href="{{ brand.twitter }}"
-                        target="_blank"
-                        *ngIf="brand.twitter"
-                      >
-                        Twitter
-                        <mat-icon>open_in_new</mat-icon>
-                      </a>
-                      <a
-                        mat-button
-                        href="{{ brand.website }}"
-                        target="_blank"
-                        *ngIf="brand.website"
-                      >
-                        Website
-                        <mat-icon>open_in_new</mat-icon>
-                      </a>
-                      <a
-                        mat-button
-                        href="{{ brand.youtube }}"
-                        target="_blank"
-                        *ngIf="brand.youtube"
-                      >
-                        Youtube
-                        <mat-icon>open_in_new</mat-icon>
-                      </a>
-                    </div>
+          <div
+            fxFlex="100"
+            fxLayout="row wrap"
+            fxLayoutAlign="space-between start"
+            *ngIf="brands$ | async"
+          >
+            <mat-card
+              *ngFor="let brand of brands$ | async"
+              fxFlex.xs="100"
+              fxFlex="30"
+              [ngStyle]="{
+                margin: '0.5em'
+              }"
+            >
+              <mat-card-header>
+                <mat-card-title>
+                  {{ brand.key }}
+                </mat-card-title>
+              </mat-card-header>
 
-                    <span fxFlex="100" fxLayout="row wrap">
-                      <button
-                        mat-icon-button
-                        type="button"
-                        (click)="editBrand(brand.key)"
-                        aria-label="edit brand links"
-                        title="edit brand links"
-                      >
-                        <mat-icon>edit</mat-icon>
-                      </button>
-                    </span>
-                  </span>
-                </div>
-              </div>
-            </div>
+              <mat-card-content>
+                <span fxFlex="100" class="mat-body-1">
+                  <div fxFlex fxLayout="row wrap">
+                    <a
+                      mat-button
+                      href="{{ brand.bandcamp }}"
+                      target="_blank"
+                      *ngIf="brand.bandcamp"
+                    >
+                      Bandcamp
+                      <mat-icon>open_in_new</mat-icon>
+                    </a>
+                    <a
+                      mat-button
+                      href="{{ brand.facebook }}"
+                      target="_blank"
+                      *ngIf="brand.facebook"
+                    >
+                      Facebook
+                      <mat-icon>open_in_new</mat-icon>
+                    </a>
+                    <a
+                      mat-button
+                      href="{{ brand.instagram }}"
+                      target="_blank"
+                      *ngIf="brand.instagram"
+                    >
+                      Instagram
+                      <mat-icon>open_in_new</mat-icon>
+                    </a>
+                    <a
+                      mat-button
+                      href="{{ brand.soundcloud }}"
+                      target="_blank"
+                      *ngIf="brand.soundcloud"
+                    >
+                      Soundcloud
+                      <mat-icon>open_in_new</mat-icon>
+                    </a>
+                    <a mat-button href="{{ brand.twitter }}" target="_blank" *ngIf="brand.twitter">
+                      Twitter
+                      <mat-icon>open_in_new</mat-icon>
+                    </a>
+                    <a mat-button href="{{ brand.website }}" target="_blank" *ngIf="brand.website">
+                      Website
+                      <mat-icon>open_in_new</mat-icon>
+                    </a>
+                    <a mat-button href="{{ brand.youtube }}" target="_blank" *ngIf="brand.youtube">
+                      Youtube
+                      <mat-icon>open_in_new</mat-icon>
+                    </a>
+                  </div>
+                </span>
+              </mat-card-content>
+
+              <mat-card-actions>
+                <span fxFlex="1 1 auto"></span>
+                <button
+                  mat-icon-button
+                  type="button"
+                  (click)="editBrand(brand.key)"
+                  aria-label="edit brand links"
+                  title="edit brand links"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </mat-card-actions>
+            </mat-card>
           </div>
         </mat-tab-body>
       </mat-tab>
@@ -276,9 +248,9 @@
                 <span fxFlex="100" *ngIf="user.created"> Created {{ user.created | date }} </span>
                 <span fxFlex="100" *ngIf="user.sc_id"> Soundcloud ID {{ user.sc_id }} </span>
                 <span fxFlex="100" fxLayout="row wrap">
-                  <p fxFlex="100">
+                  <h3 fxFlex="100">
                     Submitted Playlists
-                  </p>
+                  </h3>
 
                   <div
                     fxFlex="49"
@@ -292,14 +264,12 @@
                       fxLayout="row wrap"
                       fxLayoutAlign="start start"
                     >
-                      <p fxFlex="100">id: {{ submittedPlaylistId }}</p>
-
                       <span
                         fxFlex
                         [ngStyle]="{
                           height: '200px',
                           overflow: 'hidden',
-                          border: '1px dotted'
+                          border: '1px solid'
                         }"
                       >
                         <dnbhub-soundcloud-player
@@ -309,7 +279,15 @@
                         </dnbhub-soundcloud-player>
                       </span>
 
-                      <span fxFlex="100">
+                      <span fxFlex="100" fxLayout="row" fxLayoutAlign="start center">
+                        <button
+                          mat-icon-button
+                          type="button"
+                          [attr.aria-label]="'Playlist ID: ' + submittedPlaylistId"
+                          matTooltip="Playlist ID: {{ submittedPlaylistId }}"
+                        >
+                          <mat-icon>info</mat-icon>
+                        </button>
                         <button
                           mat-icon-button
                           type="button"
@@ -348,41 +326,46 @@
             </mat-card>
           </div>
         </mat-tab-body>
+
+        <div
+          [ngStyle]="{ position: 'fixed', top: '1em', width: '100%', 'z-index': 10000 }"
+          *ngIf="usersTab.isActive && selectedBrand$ | async as selectedBrand"
+          fxLayout="row"
+          fxLayoutAlign="center center"
+        >
+          <mat-card fxFlex="80" class="mat-body-1">
+            <mat-card-header>
+              <mat-card-title>Selected brand</mat-card-title>
+            </mat-card-header>
+            <mat-card-content fxLayout="row wrap">
+              <div fxFlex="0 1 auto" *ngFor="let key of selectedBrand | mapToIterable: ['string']">
+                <a
+                  mat-button
+                  *ngIf="selectedBrand[key]"
+                  href="{{ selectedBrand[key] }}"
+                  target="_blank"
+                >
+                  <mat-icon>link</mat-icon>
+                  <span>{{ key }}</span>
+                </a>
+
+                <button mat-button [disabled]="true" *ngIf="selectedBrand[key] === ''">
+                  <mat-icon>link</mat-icon>
+                  <span>{{ key }}</span>
+                </button>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+              <span fxFlex="1 1 auto"></span>
+              <button mat-button color="accent" (click)="selectBrand(null)">
+                <mat-icon>remove_circle</mat-icon>
+                Deselect
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
       </mat-tab>
     </mat-tab-group>
-  </div>
-
-  <div
-    [ngStyle]="{ position: 'fixed', top: '1em', width: '100%', 'z-index': 10000 }"
-    *ngIf="selectedBrand$ | async as selectedBrand"
-    fxLayout="row"
-    fxLayoutAlign="center center"
-  >
-    <mat-card fxFlex="80" class="mat-body-1">
-      <mat-card-header>
-        <mat-card-title>Selected brand</mat-card-title>
-      </mat-card-header>
-      <mat-card-content fxLayout="row wrap">
-        <div fxFlex="0 1 auto" *ngFor="let key of selectedBrand | mapToIterable: ['string']">
-          <a mat-button *ngIf="selectedBrand[key]" href="{{ selectedBrand[key] }}" target="_blank">
-            <mat-icon>link</mat-icon>
-            <span>{{ key }}</span>
-          </a>
-
-          <button mat-button [disabled]="true" *ngIf="selectedBrand[key] === ''">
-            <mat-icon>link</mat-icon>
-            <span>{{ key }}</span>
-          </button>
-        </div>
-      </mat-card-content>
-      <mat-card-actions>
-        <span fxFlex="1 1 auto"></span>
-        <button mat-button color="accent" (click)="selectBrand(null)">
-          <mat-icon>remove_circle</mat-icon>
-          Deselect
-        </button>
-      </mat-card-actions>
-    </mat-card>
   </div>
 
   <div fxFlex="100" fxLayout="row" fxLayoutFill *ngIf="(selectedSubmission$ | async)?.submission">
