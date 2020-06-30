@@ -17,6 +17,12 @@
     fxLayoutAlign="start start"
     [ngStyle]="{ padding: '0 10px 0 10px' }"
   >
+    <mat-grid-list [ngStyle]="{ width: '100%', 'font-weight': 'bold' }" cols="1" rowHeight="5:1">
+      <mat-grid-tile [ngStyle]="{ color: '#ff8a80' }">
+        Warning! Database operations may work unstably currently.
+      </mat-grid-tile>
+    </mat-grid-list>
+
     <ng-container *ngIf="me$ | async as me">
       <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center center">
         <form
