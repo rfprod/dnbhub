@@ -1,4 +1,4 @@
-import { APP_BASE_HREF, LocationStrategy, PathLocationStrategy } from '@angular/common';
+import { APP_BASE_HREF, DOCUMENT, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule, Type } from '@angular/core';
 import { AngularFireModule } from '@angular/fire';
@@ -45,6 +45,7 @@ import { DnbhubHttpProgressStoreModule } from './state/http-progress/http-progre
 import { DnbhubSoundcloudStoreModule } from './state/soundcloud/soundcloud.module';
 import { DnbhubUiStoreModule } from './state/ui/ui.module';
 import { APP_ENV, getWindow, WINDOW } from './utils';
+import { getDocument } from './utils/providers';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const entryComponenets: (any[] | Type<any>)[] = [
@@ -95,8 +96,8 @@ const entryComponenets: (any[] | Type<any>)[] = [
     NgxsModule.forRoot([], { developmentMode: !environment.production }),
     NgxsRouterPluginModule.forRoot(),
     NgxsFormPluginModule.forRoot(),
-    environment.production ? null : NgxsReduxDevtoolsPluginModule.forRoot(),
-    environment.production ? null : NgxsLoggerPluginModule.forRoot(),
+    environment.production ? [] : NgxsReduxDevtoolsPluginModule.forRoot(),
+    environment.production ? [] : NgxsLoggerPluginModule.forRoot(),
     DnbhubUiStoreModule.forRoot(),
     DnbhubHttpProgressStoreModule.forRoot(),
     DnbhubSoundcloudStoreModule.forRoot(),
@@ -108,7 +109,8 @@ const entryComponenets: (any[] | Type<any>)[] = [
   providers: [
     { provide: APP_BASE_HREF, useValue: '/' },
     { provide: LocationStrategy, useClass: PathLocationStrategy },
-    { provide: WINDOW, useValue: getWindow },
+    { provide: WINDOW, useFactory: getWindow },
+    { provide: DOCUMENT, useFactory: getDocument },
     { provide: APP_ENV, useFactory: () => new DnbhubEnvironmentConfig() },
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

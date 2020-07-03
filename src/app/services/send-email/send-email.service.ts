@@ -14,10 +14,10 @@ export class DnbhubSendEmailService {
   constructor(
     private readonly http: HttpClient,
     private readonly handlers: DnbhubHttpHandlersService,
-    @Inject(WINDOW) private readonly window: Window,
+    @Inject(WINDOW) private readonly win: Window,
   ) {}
 
-  private readonly endpoint: string = this.window.location.origin + '/sendEmail';
+  private readonly endpoint: string = this.win.location.origin + '/sendEmail';
 
   public sendEmail(formData: IEmailFormValue) {
     return this.handlers.pipeHttpRequest<{ success: string }>(

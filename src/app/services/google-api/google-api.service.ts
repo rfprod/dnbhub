@@ -1,9 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { DnbhubEnvironmentConfig } from 'src/app/app.environment';
-import { IGoogleApiEnvInterface } from 'src/app/interfaces/index';
-import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
-import { APP_ENV } from 'src/app/utils';
+
+import { DnbhubEnvironmentConfig } from '../../app.environment';
+import { IGoogleApiEnvInterface } from '../../interfaces/environment/environment.interface';
+import { APP_ENV } from '../../utils/injection-tokens';
+import { DnbhubHttpHandlersService } from '../http-handlers/http-handlers.service';
 
 /**
  * Google API service.

@@ -13,14 +13,14 @@ const windowSdkKey = 'twttr';
   providedIn: 'root',
 })
 export class DnbhubTwitterService {
-  constructor(@Inject(WINDOW) private window: Window) {}
+  constructor(@Inject(WINDOW) private readonly win: Window) {}
 
   /**
    * Creates Twitter root div.
    * @return Twitter root div reference <div id="fb-root"></div>
    */
   private createTwitterRoot(): HTMLElement {
-    const doc: Document = this.window.document;
+    const doc: Document = this.win.document;
     let ref: HTMLElement = doc.getElementById(rootId); // try getting it first
     if (!Boolean(ref)) {
       // create 'fb-root' if it does not exist
@@ -40,7 +40,7 @@ export class DnbhubTwitterService {
    * - https://developer.twitter.com/en/docs/twitter-for-websites/javascript-api/guides/javascript-api
    */
   public initTwitterJsSDK(): void {
-    const doc: Document = this.window.document;
+    const doc: Document = this.win.document;
     const ref = this.createTwitterRoot();
     console.warn('ref', ref);
     // return if script is already included
@@ -55,13 +55,13 @@ export class DnbhubTwitterService {
     ref.parentNode.insertBefore(js, ref);
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const t: { _e: number[]; ready(...args): number } = Boolean(this.window[windowSdkKey])
-      ? this.window[windowSdkKey]
+    const t: { _e: number[]; ready(...args): number } = Boolean(this.win[windowSdkKey])
+      ? this.win[windowSdkKey]
       : {};
     t._e = [];
     t.ready = f => t._e.push(f);
 
-    this.window[windowSdkKey] = t;
+    this.win[windowSdkKey] = t;
   }
 
   /**
@@ -69,7 +69,7 @@ export class DnbhubTwitterService {
    * Removes twitter sdk (not used for now, see ngOnDestroy hook).
    */
   public removeTwitterJsSDK(): void {
-    const doc: Document = this.window.document;
+    const doc: Document = this.win.document;
     const ref: HTMLElement = doc.getElementById(rootId);
     const js: HTMLElement = doc.getElementById(jssdkId);
     // removed both script and twttr-root
@@ -84,9 +84,9 @@ export class DnbhubTwitterService {
    * view and then back to a view the widget is placed.
    */
   public renderTwitterWidget(): void {
-    if (Boolean(this.window[windowSdkKey])) {
-      console.warn('this.window[twttr]', this.window[windowSdkKey]);
-      // TODO:client this should be differrent from fb probably this.window[windowSdkKey].XFBML.parse();
+    if (Boolean(this.win[windowSdkKey])) {
+      console.warn('this.win[twttr]', this.win[windowSdkKey]);
+      // TODO:client this should be differrent from fb probably this.win[windowSdkKey].XFBML.parse();
     }
   }
 }

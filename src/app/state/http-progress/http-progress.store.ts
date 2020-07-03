@@ -22,9 +22,8 @@ export const HTTP_PROGRESS_STATE_TOKEN = new StateToken<IDnbhubHttpProgressState
     mainView: false,
   },
 })
-@Injectable({
-  providedIn: 'root',
-})
+// eslint-disable-next-line @angular-eslint/use-injectable-provided-in
+@Injectable()
 export class DnbhubHttpProgressState {
   @Selector()
   public static getState(state: IDnbhubHttpProgressStateModel) {

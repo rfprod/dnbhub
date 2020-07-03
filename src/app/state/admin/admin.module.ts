@@ -11,13 +11,11 @@ export const adminStoreModuleProviders: Provider[] = [DnbhubAdminService, Dnbhub
 
 @NgModule({
   imports: [MatSidenavModule, OverlayModule, NgxsModule.forFeature([DnbhubAdminState])],
-  providers: [...adminStoreModuleProviders],
 })
 export class DnbhubAdminStoreModule {
   public static forRoot(): ModuleWithProviders<DnbhubAdminStoreModule> {
     return {
       ngModule: DnbhubAdminStoreModule,
-      providers: [...adminStoreModuleProviders],
     };
   }
 }

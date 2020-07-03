@@ -7,7 +7,6 @@ import { DnbhubHttpProgressState } from './http-progress.store';
 export const httpProgressModuleProviders: Provider[] = [httpProgressServiceProvider];
 
 @NgModule({
-  declarations: [],
   imports: [NgxsModule.forFeature([DnbhubHttpProgressState])],
   providers: [...httpProgressModuleProviders],
 })

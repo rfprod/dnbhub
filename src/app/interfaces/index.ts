@@ -1,6 +1,3 @@
-/**
- * Application interfaces barrel.
- */
 export * from './about/about-details.interface';
 export * from './environment/environment.interface';
 export * from './bottom-sheet/index';

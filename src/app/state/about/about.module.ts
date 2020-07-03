@@ -11,13 +11,11 @@ export const blogStoreModuleProviders: Provider[] = [DnbhubAboutService, DnbhubA
 
 @NgModule({
   imports: [MatSidenavModule, OverlayModule, NgxsModule.forFeature([DnbhubAboutState])],
-  providers: [...blogStoreModuleProviders],
 })
 export class DnbhubAboutStoreModule {
   public static forRoot(): ModuleWithProviders<DnbhubAboutStoreModule> {
     return {
       ngModule: DnbhubAboutStoreModule,
-      providers: [...blogStoreModuleProviders],
     };
   }
 }
