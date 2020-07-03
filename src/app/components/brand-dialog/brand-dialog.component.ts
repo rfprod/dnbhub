@@ -3,7 +3,7 @@ import { DatabaseReference } from '@angular/fire/database/interfaces';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { IBrandForm } from 'src/app/interfaces';
-import { DnbhubFirebaseService } from 'src/app/services';
+import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
 
 import { DnbhubBrand } from '../../interfaces/brand/brand.interface';
 import { IRegExpPatterns } from '../../services/regular-expressions/regular-expressions.service';

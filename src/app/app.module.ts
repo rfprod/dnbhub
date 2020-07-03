@@ -6,7 +6,8 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
+import { MatIconRegistry } from '@angular/material/icon';
+import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsFormPluginModule } from '@ngxs/form-plugin';
@@ -43,7 +44,7 @@ import { DnbhubBlogStoreModule } from './state/blog/blog.module';
 import { DnbhubHttpProgressStoreModule } from './state/http-progress/http-progress.module';
 import { DnbhubSoundcloudStoreModule } from './state/soundcloud/soundcloud.module';
 import { DnbhubUiStoreModule } from './state/ui/ui.module';
-import { APP_ENV, WINDOW } from './utils';
+import { APP_ENV, getWindow, WINDOW } from './utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const entryComponenets: (any[] | Type<any>)[] = [
@@ -107,10 +108,54 @@ const entryComponenets: (any[] | Type<any>)[] = [
   providers: [
     { provide: APP_BASE_HREF, useValue: '/' },
     { provide: LocationStrategy, useClass: PathLocationStrategy },
-    { provide: WINDOW, useValue: window },
+    { provide: WINDOW, useValue: getWindow },
     { provide: APP_ENV, useFactory: () => new DnbhubEnvironmentConfig() },
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [DnbhubRootComponent],
 })
-export class DnbhubModule {}
+export class DnbhubModule {
+  constructor(
+    private readonly matIconRegistry: MatIconRegistry,
+    private readonly domSanitizer: DomSanitizer,
+  ) {
+    this.addIconsToRegistry();
+  }
+
+  /**
+   * Adds icons to material icons registry.
+   * TODO: move this to aseparate service.
+   */
+  private addIconsToRegistry(): void {
+    this.matIconRegistry.addSvgIcon(
+      'angular-logo',
+      this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/Angular_logo.svg'),
+    );
+    this.matIconRegistry.addSvgIcon(
+      'mailchimp-logo',
+      this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/MailChimp_logo.svg'),
+    );
+    this.matIconRegistry.addSvgIcon(
+      'soundcloud-logo',
+      this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/SoundCloud_logo.svg'),
+    );
+    this.matIconRegistry.addSvgIcon(
+      'twitter-logo',
+      this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/TwitterBird_logo.svg'),
+    );
+    this.matIconRegistry.addSvgIcon(
+      'dnbhub-logo-nobg-greyscale',
+      this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/DH_logo-no_bg_greyscale.svg'),
+    );
+    this.matIconRegistry.addSvgIcon(
+      'dnbhub-logo-roundbg',
+      this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/DH_logo-round_bg.svg'),
+    );
+    this.matIconRegistry.addSvgIcon(
+      'dnbhub-logo-roundbg-greyscale',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '/assets/svg/DH_logo-round_bg_greyscale.svg',
+      ),
+    );
+  }
+}

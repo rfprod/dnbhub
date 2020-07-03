@@ -3,7 +3,7 @@ import { Store } from '@ngxs/store';
 import { from } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { DnbhubAboutDetails } from 'src/app/interfaces/about/about-details.interface';
-import { DnbhubFirebaseService } from 'src/app/services';
+import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
 import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
 
 import { aboutActions } from './about.store';
