@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Select } from '@ngxs/store';
@@ -13,11 +13,11 @@ import { WINDOW } from './utils';
  * Application root component.
  */
 @UntilDestroy()
-// eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
 @Component({
   selector: 'dnbhub-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DnbhubRootComponent implements OnInit {
   @Select(DnbhubUiState.getSidenavOpened)
@@ -34,7 +34,7 @@ export class DnbhubRootComponent implements OnInit {
   constructor(
     private readonly media: MediaObserver,
     private readonly ui: DnbhubUiService,
-    @Inject(WINDOW) private readonly window: Window,
+    @Inject(WINDOW) private readonly win: Window,
   ) {}
 
   /**
@@ -52,9 +52,9 @@ export class DnbhubRootComponent implements OnInit {
    * set Russian if it is preferred, else use English
    */
   private setPreferredLanguage(): void {
-    const nav = this.window.navigator;
+    const nav = this.win.navigator;
     const userPreference =
-      nav.language === 'ru-RU' || nav.language === 'ru' || nav.languages[0] === 'ru'
+      nav?.language === 'ru-RU' || nav?.language === 'ru' || nav?.languages[0] === 'ru'
         ? ESUPPORTED_LANGUAGE_KEY.RUSSIAN
         : ESUPPORTED_LANGUAGE_KEY.ENGLISH;
     void this.ui.selectLanguage(userPreference).subscribe();

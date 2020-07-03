@@ -20,9 +20,8 @@ export const SOUNDCLOUD_STATE_TOKEN = new StateToken<IDnbhubSoundcloudStateModel
     playlists: [],
   },
 })
-@Injectable({
-  providedIn: 'root',
-})
+// eslint-disable-next-line @angular-eslint/use-injectable-provided-in
+@Injectable()
 export class DnbhubSoundcloudState {
   @Selector()
   public static getState(state: IDnbhubSoundcloudStateModel) {

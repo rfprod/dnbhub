@@ -14,13 +14,11 @@ export const soundcloudStoreModuleProviders: Provider[] = [
 
 @NgModule({
   imports: [MatSidenavModule, OverlayModule, NgxsModule.forFeature([DnbhubSoundcloudState])],
-  providers: [...soundcloudStoreModuleProviders],
 })
 export class DnbhubSoundcloudStoreModule {
   public static forRoot(): ModuleWithProviders<DnbhubSoundcloudStoreModule> {
     return {
       ngModule: DnbhubSoundcloudStoreModule,
-      providers: [...soundcloudStoreModuleProviders],
     };
   }
 }

@@ -30,9 +30,8 @@ export const BLOG_STATE_TOKEN = new StateToken<IDnbhubBlogStateModel>('blog');
     selectedPost: null,
   },
 })
-@Injectable({
-  providedIn: 'root',
-})
+// eslint-disable-next-line @angular-eslint/use-injectable-provided-in
+@Injectable()
 export class DnbhubBlogState {
   @Selector()
   public static getState(state: IDnbhubBlogStateModel) {

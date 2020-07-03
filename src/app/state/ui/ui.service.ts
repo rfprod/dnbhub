@@ -2,7 +2,7 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 import { Injectable } from '@angular/core';
 import { DateAdapter } from '@angular/material/core';
 import { Store } from '@ngxs/store';
-import { concatMap, tap } from 'rxjs/operators';
+import { concatMap, filter, tap } from 'rxjs/operators';
 import { DnbhubTranslateService, ESUPPORTED_LANGUAGE_KEY } from 'src/app/modules';
 
 import { IDnbhubUiService } from './ui.interface';
@@ -67,6 +67,7 @@ export class DnbhubUiService implements IDnbhubUiService {
 
   public selectLanguage(language: ESUPPORTED_LANGUAGE_KEY) {
     return this.store.selectOnce(DnbhubUiState.getLanguage).pipe(
+      filter(value => Boolean(value)),
       concatMap(() => this.store.dispatch(new uiActions.setDnbhubUiState({ language }))),
       tap(() => {
         this.translate.use(language);

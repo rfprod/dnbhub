@@ -1,7 +1,8 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
-import { WINDOW } from 'src/app/utils';
+
+import { WINDOW } from '../../utils/injection-tokens';
+import { DnbhubHttpHandlersService } from '../http-handlers/http-handlers.service';
 
 /**
  * Email submission service.

@@ -17,9 +17,8 @@ export const ABOUT_STATE_TOKEN = new StateToken<IDnbhubAboutStateModel>('about')
     details: new DnbhubAboutDetails(),
   },
 })
-@Injectable({
-  providedIn: 'root',
-})
+// eslint-disable-next-line @angular-eslint/use-injectable-provided-in
+@Injectable()
 export class DnbhubAboutState {
   @Selector()
   public static getState(state: IDnbhubAboutStateModel) {

@@ -80,11 +80,11 @@
               "buildOptimizer": true,
               "extractCss": true,
               "extractLicenses": true,
-              "namedChunks": false,
+              "namedChunks": true,
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "vendorChunk": false,
+              "vendorChunk": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
