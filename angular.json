@@ -20,8 +20,8 @@
             "aot": true,
             "budgets": [
               {
-                "maximumError": "7mb",
-                "maximumWarning": "5mb",
+                "maximumError": "12mb",
+                "maximumWarning": "6mb",
                 "type": "initial"
               },
               {
@@ -67,8 +67,8 @@
               "aot": true,
               "budgets": [
                 {
-                  "maximumError": "7mb",
-                  "maximumWarning": "5mb",
+                  "maximumError": "12mb",
+                  "maximumWarning": "6mb",
                   "type": "initial"
                 },
                 {
@@ -80,11 +80,11 @@
               "buildOptimizer": true,
               "extractCss": true,
               "extractLicenses": true,
-              "namedChunks": true,
+              "namedChunks": false,
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "vendorChunk": true,
+              "vendorChunk": false,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",

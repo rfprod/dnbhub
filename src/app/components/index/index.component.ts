@@ -13,6 +13,7 @@ export class DnbhubIndexComponent implements AfterViewInit {
   constructor(private readonly twitter: DnbhubTwitterService) {}
 
   public ngAfterViewInit(): void {
+    this.twitter.initTwitterJsSDK();
     this.twitter.renderTwitterWidget();
   }
 }

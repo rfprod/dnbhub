@@ -1,7 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
-import { MatIconRegistry } from '@angular/material/icon';
-import { DomSanitizer } from '@angular/platform-browser';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
@@ -34,8 +32,6 @@ export class DnbhubRootComponent implements OnInit {
   };
 
   constructor(
-    private readonly matIconRegistry: MatIconRegistry,
-    private readonly domSanitizer: DomSanitizer,
     private readonly media: MediaObserver,
     private readonly ui: DnbhubUiService,
     @Inject(WINDOW) private readonly window: Window,
@@ -65,55 +61,11 @@ export class DnbhubRootComponent implements OnInit {
   }
 
   /**
-   * Removes UI initialization object, kind of splashscreen.
-   */
-  private removeUIinit(): void {
-    const initUIobj: HTMLElement = this.window.document.getElementById('init');
-    initUIobj.parentNode.removeChild(initUIobj);
-  }
-
-  /**
    * Sets sidenav config object values.
    */
   private setGridConfig(cols: string, rowHeight?: string): void {
     this.gridConfig.cols = cols;
     this.gridConfig.rowHeight = Boolean(rowHeight) ? rowHeight : this.gridConfig.rowHeight;
-  }
-
-  /**
-   * Adds icons to material icons registry.
-   */
-  private addIconsToRegistry(): void {
-    this.matIconRegistry.addSvgIcon(
-      'angular-logo',
-      this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/Angular_logo.svg'),
-    );
-    this.matIconRegistry.addSvgIcon(
-      'mailchimp-logo',
-      this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/MailChimp_logo.svg'),
-    );
-    this.matIconRegistry.addSvgIcon(
-      'soundcloud-logo',
-      this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/SoundCloud_logo.svg'),
-    );
-    this.matIconRegistry.addSvgIcon(
-      'twitter-logo',
-      this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/TwitterBird_logo.svg'),
-    );
-    this.matIconRegistry.addSvgIcon(
-      'dnbhub-logo-nobg-greyscale',
-      this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/DH_logo-no_bg_greyscale.svg'),
-    );
-    this.matIconRegistry.addSvgIcon(
-      'dnbhub-logo-roundbg',
-      this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/svg/DH_logo-round_bg.svg'),
-    );
-    this.matIconRegistry.addSvgIcon(
-      'dnbhub-logo-roundbg-greyscale',
-      this.domSanitizer.bypassSecurityTrustResourceUrl(
-        '/assets/svg/DH_logo-round_bg_greyscale.svg',
-      ),
-    );
   }
 
   /**
@@ -138,11 +90,7 @@ export class DnbhubRootComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.removeUIinit();
-
     this.setPreferredLanguage();
-
-    this.addIconsToRegistry();
 
     this.mediaChangeSubscribe();
   }

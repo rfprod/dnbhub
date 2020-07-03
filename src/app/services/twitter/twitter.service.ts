@@ -13,10 +13,7 @@ const windowSdkKey = 'twttr';
   providedIn: 'root',
 })
 export class DnbhubTwitterService {
-  constructor(@Inject(WINDOW) private window: Window) {
-    console.warn('DnbhubTwitterService constructor');
-    this.initTwitterJsSDK();
-  }
+  constructor(@Inject(WINDOW) private window: Window) {}
 
   /**
    * Creates Twitter root div.
@@ -42,7 +39,7 @@ export class DnbhubTwitterService {
    * - https://developer.twitter.com/en/docs/twitter-for-websites/javascript-api/guides/set-up-twitter-for-websites
    * - https://developer.twitter.com/en/docs/twitter-for-websites/javascript-api/guides/javascript-api
    */
-  private initTwitterJsSDK(): void {
+  public initTwitterJsSDK(): void {
     const doc: Document = this.window.document;
     const ref = this.createTwitterRoot();
     console.warn('ref', ref);

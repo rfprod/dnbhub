@@ -3,7 +3,7 @@ import { from } from 'rxjs';
 import { DnbhubBrand, IBrands } from 'src/app/interfaces';
 import { IEmailMessage, IEmailMessages } from 'src/app/interfaces/admin';
 import { IFirebaseUserRecord, IFirebaseUserRecords } from 'src/app/interfaces/firebase';
-import { DnbhubFirebaseService } from 'src/app/services';
+import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
 import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
 
 /**
