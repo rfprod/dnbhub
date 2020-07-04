@@ -8,7 +8,7 @@ on:
     branches: [master]
 
 jobs:
-  premerge:
+  build-test:
     runs-on: ubuntu-latest
 
     strategy:
