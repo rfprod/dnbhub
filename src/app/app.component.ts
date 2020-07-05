@@ -76,7 +76,6 @@ export class DnbhubRootComponent implements OnInit {
       .asObservable()
       .pipe(untilDestroyed(this))
       .subscribe((event: MediaChange[]) => {
-        console.warn('flex-layout media change event', event);
         if (/(lg|xl)/.test(event[0].mqAlias)) {
           this.setGridConfig('4', '2:1');
         } else if (/(md)/.test(event[0].mqAlias)) {

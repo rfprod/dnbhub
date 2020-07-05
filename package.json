@@ -13,7 +13,6 @@
     "build": "bash shell/build.sh",
     "build:prod": "bash shell/build.sh prod",
     "e2e": "ng e2e",
-    "preinstall": "rm -rf node_modules/",
     "postinstall": "npx sort-package-json && npm run ngcc",
     "install:global": "bash shell/install.sh global",
     "install:project": "bash shell/install.sh project",

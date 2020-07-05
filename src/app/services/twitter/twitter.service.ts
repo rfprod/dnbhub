@@ -42,7 +42,6 @@ export class DnbhubTwitterService {
   public initTwitterJsSDK(): void {
     const doc: Document = this.win.document;
     const ref = this.createTwitterRoot();
-    console.warn('ref', ref);
     // return if script is already included
     if (Boolean(doc.getElementById(jssdkId))) {
       return;
