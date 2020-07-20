@@ -21,12 +21,9 @@ import { DnbhubAboutComponent } from 'src/app/components/about/about.component';
 import { DnbhubAdminComponent } from 'src/app/components/admin/admin.component';
 import { DnbhubBlogComponent } from 'src/app/components/blog/blog.component';
 import { DnbhubContactDialogComponent } from 'src/app/components/contact-dialog/contact-dialog.component';
-import { DnbhubFreedownloadsComponent } from 'src/app/components/freedownloads/freedownloads.component';
 import { DnbhubIndexComponent } from 'src/app/components/index/index.component';
 import { DnbhubLoginDialogComponent } from 'src/app/components/login-dialog/login-dialog.component';
 import { DnbhubNavbarComponent } from 'src/app/components/navbar/navbar.component';
-import { DnbhubRepostsComponent } from 'src/app/components/reposts/reposts.component';
-import { DnbhubSinglesComponent } from 'src/app/components/singles/singles.component';
 import { DnbhubSoundcloudPlayerComponent } from 'src/app/components/soundcloud-player/soundcloud-player.component';
 import { DnbhubUserComponent } from 'src/app/components/user/user.component';
 import { DnbhubMaterialModule } from 'src/app/modules/material/custom-material.module';
@@ -36,6 +33,7 @@ import { environment } from 'src/environments/environment';
 
 import { DnbhubBottomSheetTextDetailsComponent } from './components/bottom-sheet-text-details/bottom-sheet-text-details.component';
 import { DnbhubBrandDialogComponent } from './components/brand-dialog/brand-dialog.component';
+import { DnbhubPlaylistsComponent } from './components/playlists/playlists.component';
 import { DnbhubProgressBarComponent } from './components/progress-bar/progress-bar.component';
 import { DnbhubToolbarComponent } from './components/toolbar/toolbar.component';
 import { DnbhubAboutStoreModule } from './state/about/about.module';
@@ -65,9 +63,7 @@ const entryComponenets: (any[] | Type<any>)[] = [
     DnbhubNavbarComponent,
     DnbhubToolbarComponent,
     DnbhubIndexComponent,
-    DnbhubSinglesComponent,
-    DnbhubFreedownloadsComponent,
-    DnbhubRepostsComponent,
+    DnbhubPlaylistsComponent,
     DnbhubBlogComponent,
     DnbhubAboutComponent,
     DnbhubUserComponent,

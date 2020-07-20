@@ -8,9 +8,7 @@ export const LANG_RU_NAME = ESUPPORTED_LANGUAGE_KEY.RUSSIAN;
 export const LANG_RU_TRANSLATIONS: IDictionaryObject = {
   title: 'DNBHUB',
   index: 'Индекс',
-  singles: 'Синглы',
-  freedownloads: 'Свободное скачивание',
-  reposts: 'Репосты',
+  playlists: 'Плейлисты',
   blog: 'Блог',
   login: 'Вход',
   logout: 'Выход',
