@@ -10,6 +10,27 @@ import { DnbhubTwitterService } from 'src/app/services/twitter/twitter.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DnbhubIndexComponent implements AfterViewInit {
+  public readonly sections = [
+    {
+      title: 'Playlists',
+      subtitle: 'Playlists collection',
+      description: 'A collection of playlists',
+      link: '/playlists',
+    },
+    {
+      title: 'Blog',
+      subtitle: 'Blog posts',
+      description: 'Featured releases.',
+      link: '/blog',
+    },
+    {
+      title: 'About',
+      subtitle: 'About the project',
+      description: 'Dnbhub project details',
+      link: '/about',
+    },
+  ];
+
   constructor(private readonly twitter: DnbhubTwitterService) {}
 
   public ngAfterViewInit(): void {

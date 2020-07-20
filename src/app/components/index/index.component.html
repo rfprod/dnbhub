@@ -1,5 +1,23 @@
 <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start stretch">
-  <dnbhub-soundcloud-player fxFlex fxShow fxHide.lt-md [mode]="'dnbhub'"></dnbhub-soundcloud-player>
+  <div fxShow fxHide.lt-md fxFlex="1 1 auto" fxLayout="row wrap" fxLayoutAlign="space-around start">
+    <button
+      [ngStyle]="{ width: '17vw', margin: '1em 0' }"
+      *ngFor="let section of sections"
+      fxFlex="0 1 auto"
+      mat-stroked-button
+      [routerLink]="[section.link]"
+    >
+      <div>
+        <p class="mat-h3">{{ section.title }}</p>
+        <p class="mat-caption">{{ section.subtitle }}</p>
+      </div>
+      <div class="mat-body">
+        <p>
+          {{ section.description }}
+        </p>
+      </div>
+    </button>
+  </div>
 
   <div
     fxFlex="35"
