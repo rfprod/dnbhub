@@ -2,6 +2,7 @@
 
 # compiled output
 /dist
+/coverage
 /tmp
 /out-tsc
 # Only exists if Bazel was run
@@ -43,8 +44,6 @@ speed-measure-plugin.json
 # misc
 /.sass-cache
 /connect.lock
-/coverage/*
-!/coverage/.gitkeep
 /libpeerconnection.log
 npm-debug.log
 yarn-error.log

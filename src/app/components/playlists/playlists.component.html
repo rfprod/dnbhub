@@ -1,0 +1,47 @@
+<mat-card [ngStyle]="{ 'max-width': 'min-content' }">
+  <mat-radio-group
+    color="primary"
+    #playlistSelector="matRadioGroup"
+    name="playlistSelector"
+    aria-label="{{ 'action.select' | translate }}"
+    fxLayout="column"
+    fxLayoutGap="10px"
+  >
+    <span faLayout="row wrap">
+      <mat-radio-button checked value="pl-reposts1">
+        <a fxLayout="row" fxLayoutAlign="start center">
+          <mat-icon matTooltip="Reposts 1">library_music</mat-icon>
+          Reposts #1
+        </a>
+      </mat-radio-button>
+      <mat-radio-button value="pl-reposts2">
+        <a fxLayout="row" fxLayoutAlign="start center">
+          <mat-icon matTooltip="Reposts 2">library_music</mat-icon>
+          Reposts #2
+        </a>
+      </mat-radio-button>
+      <mat-radio-button checked value="pl-samplepacks">
+        <a fxLayout="row" fxLayoutAlign="start center">
+          <mat-icon matTooltip="Sample packs">library_music</mat-icon>
+          Sample Packs
+        </a>
+      </mat-radio-button>
+      <mat-radio-button checked value="pl-freedownloads">
+        <a fxLayout="row" fxLayoutAlign="start center">
+          <mat-icon matTooltip="Free downloads">library_music</mat-icon>
+          Freed Downloads
+        </a>
+      </mat-radio-button>
+      <mat-radio-button checked value="pl-everything">
+        <a fxLayout="row" fxLayoutAlign="start center">
+          <mat-icon matTooltip="Singles">library_music</mat-icon>
+          Singles
+        </a>
+      </mat-radio-button>
+    </span>
+  </mat-radio-group>
+</mat-card>
+
+<div fxFlex="100" fxLayout="row">
+  <dnbhub-soundcloud-player fxFlex="100" [mode]="playlistSelector.value"></dnbhub-soundcloud-player>
+</div>

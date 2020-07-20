@@ -28,35 +28,13 @@
       <mat-divider></mat-divider>
       <button
         mat-menu-item
-        [routerLink]="['singles']"
-        routerLinkActive
-        #rlaSingles="routerLinkActive"
-        [disabled]="rlaSingles.isActive"
-      >
-        <mat-icon>library_music</mat-icon>
-        <span>{{ 'singles' | translate }}</span>
-      </button>
-      <mat-divider></mat-divider>
-      <button
-        mat-menu-item
-        [routerLink]="['freedownloads']"
-        routerLinkActive
-        #rlaFreedownloads="routerLinkActive"
-        [disabled]="rlaFreedownloads.isActive"
-      >
-        <mat-icon>library_music</mat-icon>
-        <span>{{ 'freedownloads' | translate }}</span>
-      </button>
-      <mat-divider></mat-divider>
-      <button
-        mat-menu-item
-        [routerLink]="['reposts']"
+        [routerLink]="['playlists']"
         routerLinkActive
         #rlaReports="routerLinkActive"
         [disabled]="rlaReports.isActive"
       >
         <mat-icon>library_music</mat-icon>
-        <span>{{ 'reposts' | translate }}</span>
+        <span>{{ 'playlists' | translate }}</span>
       </button>
       <mat-divider></mat-divider>
       <button
