@@ -46,6 +46,7 @@
               "node_modules/hammerjs/hammer.js",
               "@firebase/app",
               "firebase/app",
+              "@firebase/auth",
               "@firebase/util",
               "@firebase/component",
               "@firebase/database"

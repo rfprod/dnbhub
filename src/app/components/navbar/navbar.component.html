@@ -1,11 +1,17 @@
 <mat-toolbar color="primary">
   <span fxLayout="row" fxLayoutAlign="start stretch">
     <mat-icon
+      *ngIf="!(showBackButton$ | async)"
       svgIcon="dnbhub-logo-roundbg"
       class="material-icons-svg"
       alt="{{ 'title' | translate }}"
       title="{{ 'title' | translate }}"
     ></mat-icon>
+    <button mat-icon-button *ngIf="showBackButton$ | async" (click)="goBack()">
+      <mat-icon alt="{{ 'back' | translate }}" title="{{ 'back' | translate }}">
+        arrow_back
+      </mat-icon>
+    </button>
   </span>
 
   <span fxFlex="1 1 auto"></span>

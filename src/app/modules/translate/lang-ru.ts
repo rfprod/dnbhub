@@ -7,6 +7,7 @@ export const LANG_RU_NAME = ESUPPORTED_LANGUAGE_KEY.RUSSIAN;
  */
 export const LANG_RU_TRANSLATIONS: IDictionaryObject = {
   title: 'DNBHUB',
+  back: 'Назад',
   index: 'Индекс',
   playlists: 'Плейлисты',
   blog: 'Блог',

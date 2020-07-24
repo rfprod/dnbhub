@@ -7,6 +7,7 @@ export const LANG_EN_NAME = ESUPPORTED_LANGUAGE_KEY.ENGLISH;
  */
 export const LANG_EN_TRANSLATIONS: IDictionaryObject = {
   title: 'DNBHUB',
+  back: 'Back',
   index: 'Index',
   playlists: 'Playlists',
   blog: 'Blog',

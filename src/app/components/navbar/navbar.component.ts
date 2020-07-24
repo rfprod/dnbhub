@@ -1,7 +1,10 @@
+import { Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { tap } from 'rxjs/operators';
+import { RouterState } from '@ngxs/router-plugin';
+import { Store } from '@ngxs/store';
+import { map, tap } from 'rxjs/operators';
 import { DnbhubLoginDialogComponent } from 'src/app/components/login-dialog/login-dialog.component';
 import {
   ESUPPORTED_LANGUAGE_KEY,
@@ -10,6 +13,7 @@ import {
 } from 'src/app/modules/translate/index';
 import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
 import { DnbhubUiService } from 'src/app/state/ui/ui.service';
+import { INxgsRouterState } from 'src/app/utils/ngxs.util';
 
 /**
  * Application navigation component.
@@ -25,17 +29,32 @@ export class DnbhubNavbarComponent {
 
   public readonly language$ = this.ui.language$;
 
+  public readonly showBackButton$ = this.store.select<INxgsRouterState>(RouterState).pipe(
+    map(state => {
+      return state.navigationId > 1 && !state.state?.url?.includes('index');
+    }),
+  );
+
   constructor(
+    private readonly store: Store,
     private readonly router: Router,
     private readonly dialog: MatDialog,
     private readonly firebase: DnbhubFirebaseService,
     private readonly ui: DnbhubUiService,
+    private readonly location: Location,
   ) {}
 
   /**
    * Supported languages list.
    */
   public supportedLanguages: ISupportedLanguage[] = [...supportedLanguages];
+
+  /**
+   * Navigates user back.
+   */
+  public goBack(): void {
+    this.location.back();
+  }
 
   /**
    * Selects language.

@@ -1,10 +1,11 @@
+import { RouterStateSnapshot } from '@angular/router';
+
 export interface IActionPayload<T = void> {
   payload: T;
 }
 
 export const getActionCreator = (actionScope: string) => <
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  T extends IActionPayload<any> = { payload: void }
+  T extends IActionPayload<Record<string, unknown>> = { payload: null }
 >(
   actionName: string,
 ) =>
@@ -15,3 +16,9 @@ export const getActionCreator = (actionScope: string) => <
   };
 
 export type TEmptyPayload = IActionPayload<null>;
+
+export interface INxgsRouterState {
+  navigationId: number;
+  state: RouterStateSnapshot;
+  trigger: string;
+}
