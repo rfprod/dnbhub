@@ -17,13 +17,13 @@ export class DnbhubTwitterService {
 
   /**
    * Creates Twitter root div.
-   * @return Twitter root div reference <div id="fb-root"></div>
+   * @return Twitter root div reference <div id="twttr-root"></div>
    */
   private createTwitterRoot(): HTMLElement {
     const doc: Document = this.win.document;
     let ref: HTMLElement = doc.getElementById(rootId); // try getting it first
     if (!Boolean(ref)) {
-      // create 'fb-root' if it does not exist
+      // create 'twttr-root' if it does not exist
       ref = doc.createElement('div');
       ref.id = rootId;
       const firstScriptTag: HTMLScriptElement = doc.getElementsByTagName('script')[0];
@@ -64,8 +64,7 @@ export class DnbhubTwitterService {
   }
 
   /**
-   * TODO:client removeTwitterJsSDK method is not used by the moment, it should be either public, or controlled by event emitter.
-   * Removes twitter sdk (not used for now, see ngOnDestroy hook).
+   * Removes twitter sdk.
    */
   public removeTwitterJsSDK(): void {
     const doc: Document = this.win.document;
@@ -85,7 +84,6 @@ export class DnbhubTwitterService {
   public renderTwitterWidget(): void {
     if (Boolean(this.win[windowSdkKey])) {
       console.warn('this.win[twttr]', this.win[windowSdkKey]);
-      // TODO:client this should be differrent from fb probably this.win[windowSdkKey].XFBML.parse();
     }
   }
 }

@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { DnbhubTwitterService } from 'src/app/services/twitter/twitter.service';
 
@@ -9,7 +9,7 @@ import { DnbhubTwitterService } from 'src/app/services/twitter/twitter.service';
   styleUrls: ['./index.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DnbhubIndexComponent implements AfterViewInit {
+export class DnbhubIndexComponent implements AfterViewInit, OnDestroy {
   public readonly sections = [
     {
       title: 'Playlists',
@@ -36,5 +36,9 @@ export class DnbhubIndexComponent implements AfterViewInit {
   public ngAfterViewInit(): void {
     this.twitter.initTwitterJsSDK();
     this.twitter.renderTwitterWidget();
+  }
+
+  public ngOnDestroy(): void {
+    this.twitter.removeTwitterJsSDK();
   }
 }
