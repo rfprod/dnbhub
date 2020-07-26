@@ -18,8 +18,6 @@
     "install:project": "bash shell/install.sh project",
     "lint": "ng lint",
     "ng": "ng",
-    "ng:build": "ng build",
-    "ng:build:prod": "ng build --prod",
     "ngcc": "ngcc --tsconfig tsconfig.base.json",
     "ngcc:ci": "ngcc --tsconfig tsconfig.base.json --async false",
     "pre-e2e": "npm run update-webdriver",
