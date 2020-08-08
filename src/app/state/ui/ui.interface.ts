@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ESUPPORTED_LANGUAGE_KEY } from 'src/app/modules';
+import { ESUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate/translations.interface';
 import { IActionPayload } from 'src/app/utils/ngxs.util';
 
 export interface IDnbhubUiStateModel {

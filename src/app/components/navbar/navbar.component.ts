@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { RouterState } from '@ngxs/router-plugin';
@@ -15,14 +15,11 @@ import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.servic
 import { DnbhubUiService } from 'src/app/state/ui/ui.service';
 import { INxgsRouterState } from 'src/app/utils/ngxs.util';
 
-/**
- * Application navigation component.
- */
-// eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
 @Component({
   selector: 'dnbhub-nav',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DnbhubNavbarComponent {
   public readonly anonUser$ = this.firebase.anonUser$;

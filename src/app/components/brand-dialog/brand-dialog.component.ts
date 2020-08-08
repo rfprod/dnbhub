@@ -8,10 +8,6 @@ import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.servic
 import { DnbhubBrand } from '../../interfaces/brand/brand.interface';
 import { IRegExpPatterns } from '../../services/regular-expressions/regular-expressions.service';
 
-/**
- * Brand dialog form component.
- * TODO: integrate
- */
 @Component({
   selector: 'dnbhub-brand-dialog',
   templateUrl: './brand-dialog.component.html',

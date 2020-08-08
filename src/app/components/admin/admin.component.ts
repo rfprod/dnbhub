@@ -25,9 +25,6 @@ import { SoundcloudPlaylist } from '../../interfaces/soundcloud/soundcloud-playl
 import { DnbhubBottomSheetTextDetailsComponent } from '../bottom-sheet-text-details/bottom-sheet-text-details.component';
 import { DnbhubBrandDialogComponent } from '../brand-dialog/brand-dialog.component';
 
-/**
- * Application admin component.
- */
 @Component({
   selector: 'dnbhub-admin',
   templateUrl: './admin.component.html',

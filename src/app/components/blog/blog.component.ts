@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select } from '@ngxs/store';
 import { Observable, of } from 'rxjs';
@@ -6,11 +6,11 @@ import { concatMap, filter, tap } from 'rxjs/operators';
 import { DnbhubBlogService } from 'src/app/state/blog/blog.service';
 import { DnbhubBlogState } from 'src/app/state/blog/blog.store';
 
-// eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
 @Component({
   selector: 'dnbhub-blog',
   templateUrl: './blog.component.html',
   styleUrls: ['./blog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DnbhubBlogComponent {
   @Select(DnbhubBlogState.listStartReached)

@@ -12,7 +12,7 @@ import { NgxsFormPluginModule } from '@ngxs/form-plugin';
 import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { DnbhubEnvironmentConfig } from 'src/app/app.environment';
-import { DnbhubMaterialModule } from 'src/app/modules';
+import { DnbhubMaterialModule } from 'src/app/modules/material/custom-material.module';
 import { DnbhubTranslateModule } from 'src/app/modules/translate/translate.module';
 import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
 import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
