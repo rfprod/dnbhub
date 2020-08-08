@@ -16,9 +16,6 @@ import {
   IFirebaseUserSubmittedPlaylists,
 } from '../../interfaces/firebase/firebase-user.interface';
 
-/**
- * Application user component.
- */
 @Component({
   selector: 'dnbhub-user',
   templateUrl: './user.component.html',

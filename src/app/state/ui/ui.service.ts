@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { DateAdapter } from '@angular/material/core';
 import { Store } from '@ngxs/store';
 import { concatMap, filter, tap } from 'rxjs/operators';
-import { DnbhubTranslateService, ESUPPORTED_LANGUAGE_KEY } from 'src/app/modules';
+import { DnbhubTranslateService } from 'src/app/modules/translate/translate.service';
+import { ESUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate/translations.interface';
 
 import { IDnbhubUiService } from './ui.interface';
 import { DnbhubUiState, uiActions } from './ui.store';

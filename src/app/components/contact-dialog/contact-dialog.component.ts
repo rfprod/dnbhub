@@ -7,9 +7,6 @@ import { DnbhubTranslateService } from 'src/app/modules/translate/translate.serv
 import { DnbhubSendEmailService } from 'src/app/services/send-email/send-email.service';
 import { ETIMEOUT, WINDOW } from 'src/app/utils';
 
-/**
- * Contact dialog.
- */
 @Component({
   selector: 'dnbhub-contact-dialog',
   templateUrl: './contact-dialog.component.html',

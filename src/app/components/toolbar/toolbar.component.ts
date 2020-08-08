@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
@@ -7,14 +7,11 @@ import { DnbhubUiState } from 'src/app/state/ui/ui.store';
 
 import { DnbhubContactDialogComponent } from '../contact-dialog/contact-dialog.component';
 
-/**
- * Application toolbar component.
- */
-// eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
 @Component({
   selector: 'dnbhub-toolbar',
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DnbhubToolbarComponent {
   @Select(DnbhubUiState.getSidenavOpened)

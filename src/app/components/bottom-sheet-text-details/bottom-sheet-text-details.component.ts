@@ -2,9 +2,6 @@ import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { DnbhubBottomSheetTextDetailsData } from 'src/app/interfaces';
 
-/**
- * Bottom sheet text details component.
- */
 @Component({
   selector: 'dnbhub-bottom-sheet-text-details',
   templateUrl: './bottom-sheet-text-details.component.html',

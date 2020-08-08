@@ -3,7 +3,7 @@ import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { ESUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate/index';
+import { ESUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate/translations.interface';
 
 import { DnbhubUiService } from './state/ui/ui.service';
 import { DnbhubUiState } from './state/ui/ui.store';

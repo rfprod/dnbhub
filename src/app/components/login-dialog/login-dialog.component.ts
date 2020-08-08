@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -8,14 +8,11 @@ import { ILoginForm, ILoginFormValue } from 'src/app/interfaces';
 import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
 import { ETIMEOUT } from 'src/app/utils';
 
-/**
- * Application login dialog.
- */
-// eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
 @Component({
   selector: 'dnbhub-login-dialog',
   templateUrl: './login-dialog.component.html',
   styleUrls: ['./login-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DnbhubLoginDialogComponent {
   constructor(
