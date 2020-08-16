@@ -4,5 +4,12 @@
     "outDir": "../dist/out-tsc/app"
   },
   "files": ["main.ts", "polyfills.ts"],
-  "exclude": ["test-setup.ts", "set-env.ts", "mocks/**", "**/*.spec.ts", "**/*.patch.ts"]
+  "exclude": [
+    "test-setup.ts",
+    "set-env.ts",
+    "mocks/**",
+    "**/*.mock.ts",
+    "**/*.spec.ts",
+    "**/*.patch.ts"
+  ]
 }

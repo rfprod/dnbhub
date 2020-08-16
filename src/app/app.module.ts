@@ -14,7 +14,6 @@ import { NgxsFormPluginModule } from '@ngxs/form-plugin';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { NgxsModule } from '@ngxs/store';
-import { DnbhubRootComponent } from 'src/app/app.component';
 import { DnbhubEnvironmentConfig, ENV } from 'src/app/app.environment';
 import { DnbhubRoutingModule } from 'src/app/app.routing.module';
 import { DnbhubAboutComponent } from 'src/app/components/about/about.component';
@@ -24,6 +23,7 @@ import { DnbhubContactDialogComponent } from 'src/app/components/contact-dialog/
 import { DnbhubIndexComponent } from 'src/app/components/index/index.component';
 import { DnbhubLoginDialogComponent } from 'src/app/components/login-dialog/login-dialog.component';
 import { DnbhubNavbarComponent } from 'src/app/components/navbar/navbar.component';
+import { DnbhubRootComponent } from 'src/app/components/root/root.component';
 import { DnbhubSoundcloudPlayerComponent } from 'src/app/components/soundcloud-player/soundcloud-player.component';
 import { DnbhubUserComponent } from 'src/app/components/user/user.component';
 import { DnbhubMaterialModule } from 'src/app/modules/material/custom-material.module';

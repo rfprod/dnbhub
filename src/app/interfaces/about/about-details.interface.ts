@@ -28,21 +28,6 @@ export class DnbhubAboutLinks {
   public youtube = '';
 }
 
-export class DnbhubPoweredBy {
-  constructor(input?: DnbhubPoweredBy) {
-    if (Boolean(input)) {
-      const keys = Object.keys(input);
-      for (const key of keys) {
-        this[key] = input[key];
-      }
-    }
-  }
-
-  public name = '';
-
-  public logo = '';
-}
-
 /**
  * Application about details interface with initialization.
  */
@@ -65,6 +50,4 @@ export class DnbhubAboutDetails {
   public title: string = null;
 
   public widgetLink: string = null;
-
-  public poweredBy: DnbhubPoweredBy[] = [new DnbhubPoweredBy()];
 }
