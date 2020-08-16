@@ -1,125 +1,92 @@
-<div fxLayout="row" *ngIf="details$ | async as details">
-  <div fxFlex="75" fxFlex.xs="100" fxLayout="row wrap">
-    <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start start">
-      <h1 fxFlex="100" fxLayout="row" fxLayoutAlign="center center">
-        {{ details.title }}
-      </h1>
-      <div
-        fxFlex="100"
-        fxLayout="row wrap"
-        fxLayoutAlign="space-around center"
-        *ngIf="details.links"
+<div fxLayout="row wrap" *ngIf="details$ | async as details">
+  <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start start">
+    <h1 fxFlex="100" fxLayout="row" fxLayoutAlign="center center">
+      {{ details.title }}
+    </h1>
+    <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="space-around center" *ngIf="details.links">
+      <a
+        mat-icon-button
+        href="{{ details.links.soundcloud }}"
+        title="{{ details.title }} @ soundcloud"
+        target="_blank"
       >
-        <a
-          mat-icon-button
-          href="{{ details.links.soundcloud }}"
-          title="{{ details.title }} @ soundcloud"
-          target="_blank"
-        >
-          <mat-icon>link</mat-icon>
-        </a>
-        <a
-          mat-icon-button
-          href="{{ details.links.rss }}"
-          title="{{ details.title }} rss"
-          target="_blank"
-        >
-          <mat-icon>link</mat-icon>
-        </a>
-        <a
-          mat-icon-button
-          href="{{ details.links.mixcloud }}"
-          title="{{ details.title }} @ mixcloud"
-          target="_blank"
-        >
-          <mat-icon>link</mat-icon>
-        </a>
-        <a
-          mat-icon-button
-          href="{{ details.links.twitter }}"
-          title="{{ details.title }} @ twitter"
-          target="_blank"
-        >
-          <mat-icon>link</mat-icon>
-        </a>
-        <a
-          mat-icon-button
-          href="{{ details.links.facebook }}"
-          title="{{ details.title }} @ facebook"
-          target="_blank"
-        >
-          <mat-icon>link</mat-icon>
-        </a>
-        <a
-          mat-icon-button
-          href="{{ details.links.youtube }}"
-          title="{{ details.title }} @ youtube"
-          target="_blank"
-        >
-          <mat-icon>link</mat-icon>
-        </a>
-        <a
-          mat-icon-button
-          href="{{ details.links.instagram }}"
-          title="{{ details.title }} @ instagram"
-          target="_blank"
-        >
-          <mat-icon>link</mat-icon>
-        </a>
-        <a
-          mat-icon-button
-          href="{{ details.links.bandcamp }}"
-          title="{{ details.title }} @ bandcamp"
-          target="_blank"
-        >
-          <mat-icon>link</mat-icon>
-        </a>
-      </div>
-    </div>
-    <div fxFlex="100" fxLayout="row wrap" class="mat-body-1" [ngStyle]="{ padding: '5px' }">
-      <span fxFlex="100" [innerHtml]="details.text"></span>
-      <mat-toolbar fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center center">
-        <button mat-button (click)="showContactDialog()" title="{{ 'contact.open' | translate }}">
-          <mat-icon>email</mat-icon>
-          {{ 'contact.open' | translate }}
-        </button>
-        <a
-          mat-button
-          type="button"
-          [attr.aria-label]="'form.submit' | translate"
-          href="https://dnbhub.us3.list-manage.com/subscribe/post?u=3eeba7cfe8388b91c662bdf95&id=8cca3229c8"
-          target="_blank"
-        >
-          <mat-icon>text_snippet</mat-icon>
-          {{ 'subscribe.title' | translate }}
-        </a>
-      </mat-toolbar>
+        <mat-icon>link</mat-icon>
+      </a>
+      <a
+        mat-icon-button
+        href="{{ details.links.rss }}"
+        title="{{ details.title }} rss"
+        target="_blank"
+      >
+        <mat-icon>link</mat-icon>
+      </a>
+      <a
+        mat-icon-button
+        href="{{ details.links.mixcloud }}"
+        title="{{ details.title }} @ mixcloud"
+        target="_blank"
+      >
+        <mat-icon>link</mat-icon>
+      </a>
+      <a
+        mat-icon-button
+        href="{{ details.links.twitter }}"
+        title="{{ details.title }} @ twitter"
+        target="_blank"
+      >
+        <mat-icon>link</mat-icon>
+      </a>
+      <a
+        mat-icon-button
+        href="{{ details.links.facebook }}"
+        title="{{ details.title }} @ facebook"
+        target="_blank"
+      >
+        <mat-icon>link</mat-icon>
+      </a>
+      <a
+        mat-icon-button
+        href="{{ details.links.youtube }}"
+        title="{{ details.title }} @ youtube"
+        target="_blank"
+      >
+        <mat-icon>link</mat-icon>
+      </a>
+      <a
+        mat-icon-button
+        href="{{ details.links.instagram }}"
+        title="{{ details.title }} @ instagram"
+        target="_blank"
+      >
+        <mat-icon>link</mat-icon>
+      </a>
+      <a
+        mat-icon-button
+        href="{{ details.links.bandcamp }}"
+        title="{{ details.title }} @ bandcamp"
+        target="_blank"
+      >
+        <mat-icon>link</mat-icon>
+      </a>
     </div>
   </div>
-
-  <div fxFlex="25" fxHide.xs fxLayout="row wrap" fxLayoutAlign="start start">
-    <h2 fxFlex="100" fxLayout="row" fxLayoutAlign="center center">
-      Powered By
-    </h2>
-    <div fxFlex="100" fxLayout="column" fxLayoutAlign="center center">
-      <img
-        fxFlex
-        *ngFor="let item of details.poweredBy"
-        [ngStyle]="{ 'max-width': '275px', width: '90%', 'max-height': '100px' }"
-        title="{{ item.name }}"
-        src="{{ item.logo }}"
-      />
-    </div>
-    <small fxFlex="100">
-      Some icons are made by
-      <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from
-      <a href="https://www.flaticon.com/" title="Flaticon">flaticon.com</a>,<br />licence
+  <div fxFlex="100" fxLayout="row wrap" class="mat-body-1" [ngStyle]="{ padding: '5px' }">
+    <span fxFlex="100" [innerHtml]="details.text"></span>
+    <mat-toolbar fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center center">
+      <button mat-button (click)="showContactDialog()" title="{{ 'contact.open' | translate }}">
+        <mat-icon>email</mat-icon>
+        {{ 'contact.open' | translate }}
+      </button>
       <a
-        href="http://creativecommons.org/licenses/by/3.0/"
-        title="Creative Commons BY 3.0"
+        mat-button
+        type="button"
+        [attr.aria-label]="'form.submit' | translate"
+        href="https://dnbhub.us3.list-manage.com/subscribe/post?u=3eeba7cfe8388b91c662bdf95&id=8cca3229c8"
         target="_blank"
-        >CC 3.0 BY</a
       >
-    </small>
+        <mat-icon>text_snippet</mat-icon>
+        {{ 'subscribe.title' | translate }}
+      </a>
+    </mat-toolbar>
   </div>
 </div>

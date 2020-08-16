@@ -3,20 +3,17 @@ import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { ESUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate/translations.interface';
+import { ESUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate';
 
-import { DnbhubUiService } from './state/ui/ui.service';
-import { DnbhubUiState } from './state/ui/ui.store';
-import { WINDOW } from './utils';
+import { DnbhubUiService } from '../../state/ui/ui.service';
+import { DnbhubUiState } from '../../state/ui/ui.store';
+import { WINDOW } from '../../utils';
 
-/**
- * Application root component.
- */
 @UntilDestroy()
 @Component({
   selector: 'dnbhub-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  templateUrl: './root.component.html',
+  styleUrls: ['./root.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DnbhubRootComponent implements OnInit {
