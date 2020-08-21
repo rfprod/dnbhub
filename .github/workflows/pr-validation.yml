@@ -34,17 +34,18 @@ jobs:
             ${{ steps.get-variables.outputs.yarncachedir }}
             **/node_modules
             /tmp/jest_rs
-          key: ${{ runner.os }}-workspace-${{ steps.get-variables.outputs.commitsha }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-workspace-${{ steps.get-variables.outputs.commitsha }}
           restore-keys: |
-            ${{ runner.os }}-workspace-
+            ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-workspace-
+            ${{ runner.os }}-yarn-
             ${{ runner.os }}-
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: yarn install --frozen-lockfile
       - run: npm i -g typescript @angular/cli
+      - run: yarn install --frozen-lockfile
       - run: ng lint
       - run: ng test --passWithNoTests --coverage=false --watch=false --maxWorkers=2 --ci --updateSnapshot
       - run: ng build
