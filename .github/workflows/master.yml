@@ -87,7 +87,7 @@ jobs:
           MAILER_ACCESS_TOKEN: ${{ secrets.MAILER_ACCESS_TOKEN }}
           MAILER_RECIPIENT_EMAIL: ${{ secrets.MAILER_RECIPIENT_EMAIL }}
 
-      - name: Buld
+      - name: Build
         run: ng build --prod
 
       - name: Deploy

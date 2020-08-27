@@ -61,5 +61,5 @@ jobs:
       - name: Unit test
         run: ng test --passWithNoTests --coverage=false --watch=false --maxWorkers=2 --ci --updateSnapshot
 
-      - name: Buld
+      - name: Build
         run: ng build
