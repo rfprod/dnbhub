@@ -44,8 +44,18 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm i -g typescript @angular/cli
-      - run: yarn install --frozen-lockfile
-      - run: ng lint
-      - run: ng test --passWithNoTests --coverage=false --watch=false --maxWorkers=2 --ci --updateSnapshot
-      - run: ng build
+
+      - name: Install global dependencies
+        run: npm i -g typescript @angular/cli
+
+      - name: Install project dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Lint
+        run: ng lint
+
+      - name: Unit test
+        run: ng test --passWithNoTests --coverage=false --watch=false --maxWorkers=2 --ci --updateSnapshot
+
+      - name: Buld
+        run: ng build
