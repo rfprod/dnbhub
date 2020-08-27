@@ -1,6 +1,8 @@
 # Dnbhub
 
-[![Azure DevOps Build Status](https://rfprod.visualstudio.com/Dnbhub/_apis/build/status/Dnbhub-CI?branchName=master)](https://rfprod.visualstudio.com/Dnbhub/_build/latest?definitionId=12&branchName=master)
+![PR validation](https://github.com/rfprod/dnbhub/workflows/PR%20validation/badge.svg)
+
+![Master](https://github.com/rfprod/dnbhub/workflows/Master/badge.svg)
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.6.
 
@@ -50,7 +52,9 @@ alternatively a script `set-env.sh` can guide you through the process of setting
 ```
 bash ./set-env.sh
 ```
+
 or
+
 ```
 npm run set-env
 ```
@@ -107,12 +111,13 @@ To use Gmail you may need to configure [Allow Less Secure Apps](https://www.goog
 2. `creation of creadentials is optional if you already did it earlier`: being authenticated under gmail address from `step 1` create creadentials via [google developers console](https://console.developers.google.com/apis/credentials), choose `OAuth client ID` when selecting credentials type, use `Client ID` as a value for `MAILER_CLIENT_ID` environment variable;
 3. use `Client Secret` value from created creadentials as a `MAILER_CLIENT_SECRET` variable value;
 4. to get `MAILER_REFRESH_TOKEN` value do the following:
-  * go to [googleoauth 2.0 playground](https://developers.google.com/oauthplayground);
-  * hit cog `settings` button to the right;
-  * check `Use your own credentials`, and fill in `OAuth Client ID`, and `OAuth Client secret`, which were obtained in the previous steps;
-  * `Step 1: Select & authorize APIs`: scroll down to `Gmail API v1`, expand it, select `https://mail.google.com`;
-  * `Step 2: Exchange authorization code for tokens`: hit `Exchange authorization code for tokens`, and use `Refresh token` value as a `MAILER_REFRESH_TOKEN`;
-  * that's all, assign `MAILER_ACCESS_TOKEN` value `empty` like `MAILER_ACCESS_TOKEN=empty`.
+
+- go to [googleoauth 2.0 playground](https://developers.google.com/oauthplayground);
+- hit cog `settings` button to the right;
+- check `Use your own credentials`, and fill in `OAuth Client ID`, and `OAuth Client secret`, which were obtained in the previous steps;
+- `Step 1: Select & authorize APIs`: scroll down to `Gmail API v1`, expand it, select `https://mail.google.com`;
+- `Step 2: Exchange authorization code for tokens`: hit `Exchange authorization code for tokens`, and use `Refresh token` value as a `MAILER_REFRESH_TOKEN`;
+- that's all, assign `MAILER_ACCESS_TOKEN` value `empty` like `MAILER_ACCESS_TOKEN=empty`.
 
 #### Deploy
 
@@ -136,4 +141,4 @@ firebase deploy --only functions
 
 ## Licenses
 
-* [`Dnbhub`](LICENSE)
+- [`Dnbhub`](LICENSE)
