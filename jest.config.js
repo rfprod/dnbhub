@@ -4,12 +4,10 @@ module.exports = {
     'ts-jest': {
       tsConfig: '<rootDir>/src/tsconfig.spec.json',
       stringifyContentPathRegex: '\\.html$',
-      astTransformers: {
-        before: [
-          'jest-preset-angular/build/InlineFilesTransformer',
-          'jest-preset-angular/build/StripStylesTransformer',
-        ],
-      },
+      astTransformers: [
+        'jest-preset-angular/build/InlineFilesTransformer',
+        'jest-preset-angular/build/StripStylesTransformer',
+      ],
     },
   },
   setupFilesAfterEnv: [`${__dirname}/src/test-setup.ts`],
