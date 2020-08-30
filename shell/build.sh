@@ -13,12 +13,12 @@ source shell/colors.sh ''
 
 devModeNgBuild() {
   printf "\n ${LIGHT_BLUE}<< BUILDING APPLICATION DEFINED IN angular.json DEV MODE >>${DEFAULT}\n\n"
-  npm run ng:build
+  npm run ng build
 }
 
 prodModeNgBuild() {
   printf "\n ${LIGHT_BLUE}<< BUILDING APPLICATION DEFINED IN angular.json PROD MODE >>${DEFAULT}\n\n"
-  npm run ng:build:prod
+  npm run ng build --prod
 }
 
 ##
