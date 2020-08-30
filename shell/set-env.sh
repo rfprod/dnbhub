@@ -8,7 +8,7 @@ source shell/colors.sh ''
 # manual mode if no params are provided
 if [ 1 -gt $# ]; then
 
-  totalSteps=25
+  totalSteps=24
 
   printf "${GREEN} > you will be guided through steps needed to create ${YELLOW}.env${GREEN} file with api keys for integration with external services${DEFAULT} \n\n"
   printf "${LIGHT_BLUE}  >> to do it you will be prompted for the current these values:\n - ${YELLOW}SOUNDCLOUD_CLIENT_ID${LIGHT_BLUE}\n - ${YELLOW}FIREBASE_API_KEY${LIGHT_BLUE}\n - ${YELLOW}FIREBASE_AUTH_DOMAIN${LIGHT_BLUE}\n - ${YELLOW}FIREBASE_DATABASE_URL${LIGHT_BLUE}\n - ${YELLOW}FIREBASE_PROJECT_ID${LIGHT_BLUE}\n - ${YELLOW}FIREBASE_STORAGE_BUCKET${LIGHT_BLUE}\n - ${YELLOW}FIREBASE_MESSAGING_SENDER_ID${LIGHT_BLUE}\n - ${YELLOW}PRIVILEGED_ACCESS_FIREBASE_UID${LIGHT_BLUE} \n\n"
@@ -43,24 +43,20 @@ if [ 1 -gt $# ]; then
   printf "${LIGHT_BLUE}  >> step ${YELLOW}7/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}FIREBASE_STORAGE_BUCKET${LIGHT_BLUE} ${DEFAULT} \n"
   read -p "   > input value :" firebaseMessagingSenderId
 
-  # prompt user for variables one by one: FIREBASE_DEPLOY_TOKEN
-  printf "${LIGHT_BLUE}  >> step ${YELLOW}8/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}FIREBASE_DEPLOY_TOKEN${LIGHT_BLUE} ${DEFAULT} \n"
-  read -p "   > input value :" firebaseDeployToken
-
   # prompt user for variables one by one: PRIVILEGED_ACCESS_FIREBASE_UID
-  printf "${LIGHT_BLUE}  >> step ${YELLOW}9/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}PRIVILEGED_ACCESS_FIREBASE_UID${LIGHT_BLUE} ${DEFAULT} \n"
+  printf "${LIGHT_BLUE}  >> step ${YELLOW}8/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}PRIVILEGED_ACCESS_FIREBASE_UID${LIGHT_BLUE} ${DEFAULT} \n"
   read -p "   > input value :" privilegedAccessFirebaseUid
 
   # prompt user for variables one by one: GOOGLE_APIS_BROWSER_KEY
-  printf "${LIGHT_BLUE}  >> step ${YELLOW}10/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}GOOGLE_APIS_BROWSER_KEY${LIGHT_BLUE} ${DEFAULT} \n"
+  printf "${LIGHT_BLUE}  >> step ${YELLOW}9/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}GOOGLE_APIS_BROWSER_KEY${LIGHT_BLUE} ${DEFAULT} \n"
   read -p "   > input value :" googleApisBrowserKey
 
   # prompt user for variables one by one: GOOGLE_APIS_CLIENT_ID
-  printf "${LIGHT_BLUE}  >> step ${YELLOW}11/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}GOOGLE_APIS_CLIENT_ID${LIGHT_BLUE} ${DEFAULT} \n"
+  printf "${LIGHT_BLUE}  >> step ${YELLOW}10/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}GOOGLE_APIS_CLIENT_ID${LIGHT_BLUE} ${DEFAULT} \n"
   read -p "   > input value :" googleApisClientId
 
   # summary check
-  printf "${LIGHT_BLUE}  >> step ${YELLOW}12/${totalSteps} ${LIGHT_BLUE}: You provided the following values:\n
+  printf "${LIGHT_BLUE}  >> step ${YELLOW}11/${totalSteps} ${LIGHT_BLUE}: You provided the following values:\n
     - ${YELLOW}SOUNDCLOUD_CLIENT_ID${LIGHT_BLUE}=${LIGHT_GREEN}${soundcloudClientId}${LIGHT_BLUE}\n
     - ${YELLOW}FIREBASE_API_KEY${LIGHT_BLUE}=${LIGHT_GREEN}${firebaseApiKey}${LIGHT_BLUE}\n
     - ${YELLOW}FIREBASE_AUTH_DOMAIN${LIGHT_BLUE}=${LIGHT_GREEN}${firebaseAuthDomain}${LIGHT_BLUE}\n
@@ -68,17 +64,16 @@ if [ 1 -gt $# ]; then
     - ${YELLOW}FIREBASE_PROJECT_ID${LIGHT_BLUE}=${LIGHT_GREEN}${firebaseProjectId}${LIGHT_BLUE}\n
     - ${YELLOW}FIREBASE_STORAGE_BUCKET${LIGHT_BLUE}=${LIGHT_GREEN}${firebaseStorageBucket}${LIGHT_BLUE}\n
     - ${YELLOW}FIREBASE_MESSAGING_SENDER_ID${LIGHT_BLUE}=${LIGHT_GREEN}${firebaseMessagingSenderId}${LIGHT_BLUE}\n
-    - ${YELLOW}FIREBASE_DEPLOY_TOKEN${LIGHT_BLUE}=${LIGHT_GREEN}${firebaseDeployToken}${LIGHT_BLUE}\n
     - ${YELLOW}PRIVILEGED_ACCESS_FIREBASE_UID${LIGHT_BLUE}=${LIGHT_GREEN}${privilegedAccessFirebaseUid}${LIGHT_BLUE}\n
     - ${YELLOW}GOOGLE_APIS_BROWSER_KEY${LIGHT_BLUE}=${LIGHT_GREEN}${googleApisBrowserKey}${LIGHT_BLUE}\n
     - ${YELLOW}GOOGLE_APIS_CLIENT_ID${LIGHT_BLUE}=${LIGHT_GREEN}${googleApisClientId}${LIGHT_BLUE}\n"
 
   # notify user
-  printf "${LIGHT_BLUE}  >> step ${YELLOW}13/${totalSteps} ${LIGHT_BLUE}: Compare changes with existing ${YELLOW}.env${LIGHT_BLUE} file${DEFAULT} \n\n"
+  printf "${LIGHT_BLUE}  >> step ${YELLOW}12/${totalSteps} ${LIGHT_BLUE}: Compare changes with existing ${YELLOW}.env${LIGHT_BLUE} file${DEFAULT} \n\n"
   cat ./.env
 
   # prompt user whether to continue or not
-  printf "\n${LIGHT_BLUE}  >> step ${YELLOW}14/${totalSteps} ${LIGHT_BLUE}: Continue and create/overwrite ${YELLOW}.env${LIGHT_BLUE} file${DEFAULT} \n"
+  printf "\n${LIGHT_BLUE}  >> step ${YELLOW}13/${totalSteps} ${LIGHT_BLUE}: Continue and create/overwrite ${YELLOW}.env${LIGHT_BLUE} file${DEFAULT} \n"
   read -p "   > continue (y/n) :" userChoice
   case $userChoice in
   y | Y)
@@ -90,7 +85,6 @@ if [ 1 -gt $# ]; then
     echo "FIREBASE_PROJECT_ID=${firebaseProjectId}" >>./.env
     echo "FIREBASE_STORAGE_BUCKET=${firebaseStorageBucket}" >>./.env
     echo "FIREBASE_MESSAGING_SENDER_ID=${firebaseMessagingSenderId}" >>./.env
-    echo "FIREBASE_DEPLOY_TOKEN=${firebaseDeployToken}" >>./.env
     echo "PRIVILEGED_ACCESS_FIREBASE_UID=${privilegedAccessFirebaseUid}" >>./.env
     echo "GOOGLE_APIS_BROWSER_KEY=${googleApisBrowserKey}" >>./.env
     echo "GOOGLE_APIS_CLIENT_ID=${googleApisClientId}" >>./.env
@@ -112,39 +106,39 @@ if [ 1 -gt $# ]; then
   # functions .env
 
   # prompt user for variables one by one: MAILER_HOST
-  printf "${LIGHT_BLUE}  >> step ${YELLOW}15/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}MAILER_HOST${LIGHT_BLUE} ${DEFAULT} \n"
+  printf "${LIGHT_BLUE}  >> step ${YELLOW}14/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}MAILER_HOST${LIGHT_BLUE} ${DEFAULT} \n"
   read -p "   > input value :" mailerHost
 
   # prompt user for variables one by one: MAILER_PORT
-  printf "${LIGHT_BLUE}  >> step ${YELLOW}16/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}MAILER_PORT${LIGHT_BLUE} ${DEFAULT} \n"
+  printf "${LIGHT_BLUE}  >> step ${YELLOW}15/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}MAILER_PORT${LIGHT_BLUE} ${DEFAULT} \n"
   read -p "   > input value :" mailerPort
 
   # prompt user for variables one by one: MAILER_EMAIL
-  printf "${LIGHT_BLUE}  >> step ${YELLOW}17/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}MAILER_EMAIL${LIGHT_BLUE} ${DEFAULT} \n"
+  printf "${LIGHT_BLUE}  >> step ${YELLOW}16/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}MAILER_EMAIL${LIGHT_BLUE} ${DEFAULT} \n"
   read -p "   > input value :" mailerEmail
 
   # prompt user for variables one by one: MAILER_CLIENT_ID
-  printf "${LIGHT_BLUE}  >> step ${YELLOW}18/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}MAILER_CLIENT_ID${LIGHT_BLUE} ${DEFAULT} \n"
+  printf "${LIGHT_BLUE}  >> step ${YELLOW}17/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}MAILER_CLIENT_ID${LIGHT_BLUE} ${DEFAULT} \n"
   read -p "   > input value :" mailerClientId
 
   # prompt user for variables one by one: MAILER_CLIENT_SECRET
-  printf "${LIGHT_BLUE}  >> step ${YELLOW}19/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}MAILER_CLIENT_SECRET${LIGHT_BLUE} ${DEFAULT} \n"
+  printf "${LIGHT_BLUE}  >> step ${YELLOW}18/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}MAILER_CLIENT_SECRET${LIGHT_BLUE} ${DEFAULT} \n"
   read -p "   > input value :" mailerClientSecret
 
   # prompt user for variables one by one: MAILER_REFRESH_TOKEN
-  printf "${LIGHT_BLUE}  >> step ${YELLOW}20/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}MAILER_REFRESH_TOKEN${LIGHT_BLUE} ${DEFAULT} \n"
+  printf "${LIGHT_BLUE}  >> step ${YELLOW}19/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}MAILER_REFRESH_TOKEN${LIGHT_BLUE} ${DEFAULT} \n"
   read -p "   > input value :" mailerRefreshToken
 
   # prompt user for variables one by one: MAILER_ACCESS_TOKEN
-  printf "${LIGHT_BLUE}  >> step ${YELLOW}21/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}MAILER_ACCESS_TOKEN${LIGHT_BLUE} ${DEFAULT} \n"
+  printf "${LIGHT_BLUE}  >> step ${YELLOW}20/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}MAILER_ACCESS_TOKEN${LIGHT_BLUE} ${DEFAULT} \n"
   read -p "   > input value :" mailerAccessToken
 
   # prompt user for variables one by one: MAILER_RECIPIENT_EMAIL
-  printf "${LIGHT_BLUE}  >> step ${YELLOW}22/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}MAILER_RECIPIENT_EMAIL${LIGHT_BLUE} ${DEFAULT} \n"
+  printf "${LIGHT_BLUE}  >> step ${YELLOW}21/${totalSteps} ${LIGHT_BLUE}: Enter ${YELLOW}MAILER_RECIPIENT_EMAIL${LIGHT_BLUE} ${DEFAULT} \n"
   read -p "   > input value :" mailerRecipientEmail
 
   # summary check
-  printf "${LIGHT_BLUE}  >> step ${YELLOW}23/${totalSteps} ${LIGHT_BLUE}: You provided the following values:\n
+  printf "${LIGHT_BLUE}  >> step ${YELLOW}22/${totalSteps} ${LIGHT_BLUE}: You provided the following values:\n
     - ${YELLOW}MAILER_HOST${LIGHT_BLUE}=${LIGHT_GREEN}${mailerHost}${LIGHT_BLUE}\n
     - ${YELLOW}MAILER_PORT${LIGHT_BLUE}=${LIGHT_GREEN}${mailerPort}${LIGHT_BLUE}\n
     - ${YELLOW}MAILER_EMAIL${LIGHT_BLUE}=${LIGHT_GREEN}${mailerEmail}${LIGHT_BLUE}\n
@@ -155,11 +149,11 @@ if [ 1 -gt $# ]; then
     - ${YELLOW}MAILER_RECIPIENT_EMAIL${LIGHT_BLUE}=${LIGHT_GREEN}${mailerRecipientEmail}${LIGHT_BLUE}\n"
 
   # notify user
-  printf "${LIGHT_BLUE}  >> step ${YELLOW}24/${totalSteps} ${LIGHT_BLUE}: Compare changes with existing ${YELLOW}./functions/.env${LIGHT_BLUE} file${DEFAULT} \n\n"
+  printf "${LIGHT_BLUE}  >> step ${YELLOW}23/${totalSteps} ${LIGHT_BLUE}: Compare changes with existing ${YELLOW}./functions/.env${LIGHT_BLUE} file${DEFAULT} \n\n"
   cat ./functions/.env
 
   # prompt user whether to continue or not
-  printf "\n${LIGHT_BLUE}  >> step ${YELLOW}25/${totalSteps} ${LIGHT_BLUE}: Continue and create/overwrite ${YELLOW}.env${LIGHT_BLUE} file${DEFAULT} \n"
+  printf "\n${LIGHT_BLUE}  >> step ${YELLOW}24s/${totalSteps} ${LIGHT_BLUE}: Continue and create/overwrite ${YELLOW}.env${LIGHT_BLUE} file${DEFAULT} \n"
   read -p "   > continue (y/n) :" userChoice
   case $userChoice in
   y | Y)
@@ -186,7 +180,7 @@ if [ 1 -gt $# ]; then
     printf " ${LIGHT_BLUE}  >> invalid value, user choise: ${RED}$userChoice ${DEFAULT} \n"
     ;;
   esac
-elif [ 19 -eq $# ]; then
+elif [ 18 -eq $# ]; then
   # map arguments
   soundcloudClientId=$1
   firebaseApiKey=$2
@@ -195,18 +189,17 @@ elif [ 19 -eq $# ]; then
   firebaseProjectId=$5
   firebaseStorageBucket=$6
   firebaseMessagingSenderId=$7
-  firebaseDeployToken=$8
-  privilegedAccessFirebaseUid=$9
-  googleApisBrowserKey=${10}
-  googleApisClientId=${11}
-  mailerHost=${12}
-  mailerPort=${13}
-  mailerEmail=${14}
-  mailerClientId=${15}
-  mailerClientSecret=${16}
-  mailerRefreshToken=${17}
-  mailerAccessToken=${18}
-  mailerRecipientEmail=${19}
+  privilegedAccessFirebaseUid=$8
+  googleApisBrowserKey=${9}
+  googleApisClientId=${10}
+  mailerHost=${11}
+  mailerPort=${12}
+  mailerEmail=${13}
+  mailerClientId=${14}
+  mailerClientSecret=${15}
+  mailerRefreshToken=${16}
+  mailerAccessToken=${17}
+  mailerRecipientEmail=${18}
 
   # summary check
   printf "${LIGHT_BLUE} >> You provided the following values:\n
@@ -218,7 +211,6 @@ elif [ 19 -eq $# ]; then
     - ${YELLOW}FIREBASE_PROJECT_ID${LIGHT_BLUE}=${LIGHT_GREEN}${firebaseProjectId}${LIGHT_BLUE}\n
     - ${YELLOW}FIREBASE_STORAGE_BUCKET${LIGHT_BLUE}=${LIGHT_GREEN}${firebaseStorageBucket}${LIGHT_BLUE}\n
     - ${YELLOW}FIREBASE_MESSAGING_SENDER_ID${LIGHT_BLUE}=${LIGHT_GREEN}${firebaseMessagingSenderId}${LIGHT_BLUE}\n
-    - ${YELLOW}FIREBASE_DEPLOY_TOKEN${LIGHT_BLUE}=${LIGHT_GREEN}${firebaseDeployToken}${LIGHT_BLUE}\n
     - ${YELLOW}PRIVILEGED_ACCESS_FIREBASE_UID${LIGHT_BLUE}=${LIGHT_GREEN}${privilegedAccessFirebaseUid}${LIGHT_BLUE}\n
     - ${YELLOW}GOOGLE_APIS_BROWSER_KEY${LIGHT_BLUE}=${LIGHT_GREEN}${googleApisBrowserKey}${LIGHT_BLUE}\n
     - ${YELLOW}GOOGLE_APIS_CLIENT_ID${LIGHT_BLUE}=${LIGHT_GREEN}${googleApisClientId}${LIGHT_BLUE}\n
@@ -240,7 +232,6 @@ elif [ 19 -eq $# ]; then
   echo "FIREBASE_PROJECT_ID=${firebaseProjectId}" >>./.env
   echo "FIREBASE_STORAGE_BUCKET=${firebaseStorageBucket}" >>./.env
   echo "FIREBASE_MESSAGING_SENDER_ID=${firebaseMessagingSenderId}" >>./.env
-  echo "FIREBASE_DEPLOY_TOKEN=${firebaseDeployToken}" >>./.env
   echo "PRIVILEGED_ACCESS_FIREBASE_UID=${privilegedAccessFirebaseUid}" >>./.env
   echo "GOOGLE_APIS_BROWSER_KEY=${googleApisBrowserKey}" >>./.env
   echo "GOOGLE_APIS_CLIENT_ID=${googleApisClientId}" >>./.env
@@ -272,7 +263,6 @@ else
     - ${YELLOW}FIREBASE_PROJECT_ID${LIGHT_BLUE}\n
     - ${YELLOW}FIREBASE_STORAGE_BUCKET${LIGHT_BLUE}\n
     - ${YELLOW}FIREBASE_MESSAGING_SENDER_ID${LIGHT_BLUE}\n
-    - ${YELLOW}FIREBASE_DEPLOY_TOKEN${LIGHT_BLUE}\n
     - ${YELLOW}PRIVILEGED_ACCESS_FIREBASE_UID${LIGHT_BLUE}\n
     - ${YELLOW}GOOGLE_APIS_BROWSER_KEY${LIGHT_BLUE}\n
     - ${YELLOW}GOOGLE_APIS_CLIENT_ID${LIGHT_BLUE}\n
