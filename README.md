@@ -1,7 +1,6 @@
 # Dnbhub
 
 ![PR validation](https://github.com/rfprod/dnbhub/workflows/PR%20validation/badge.svg)
-
 ![Master](https://github.com/rfprod/dnbhub/workflows/Master/badge.svg)
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.6.
