@@ -12,12 +12,12 @@ defaults:
     shell: bash
 
 jobs:
-  build-test:
+  test-build-deploy:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [14.x]
 
     steps:
       - name: Checkout sources
