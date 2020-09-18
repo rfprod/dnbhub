@@ -5,7 +5,9 @@ export interface IActionPayload<T = void> {
 }
 
 export const getActionCreator = (actionScope: string) => <
-  T extends IActionPayload<Record<string, unknown>> = { payload: null }
+  T extends IActionPayload<Record<string, unknown> | undefined> = {
+    payload: Record<string, unknown>;
+  }
 >(
   actionName: string,
 ) =>
@@ -15,7 +17,7 @@ export const getActionCreator = (actionScope: string) => <
     constructor(public payload: T['payload']) {}
   };
 
-export type TEmptyPayload = IActionPayload<null>;
+export type TEmptyPayload = IActionPayload<undefined>;
 
 export interface INxgsRouterState {
   navigationId: number;

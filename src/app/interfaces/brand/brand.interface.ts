@@ -1,6 +1,6 @@
 export class DnbhubBrand {
   constructor(input?: DnbhubBrand) {
-    if (Boolean(input)) {
+    if (typeof input !== 'undefined') {
       const keys = Object.keys(input);
       for (const key of keys) {
         const value = input[key];

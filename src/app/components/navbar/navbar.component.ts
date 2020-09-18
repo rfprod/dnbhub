@@ -7,8 +7,8 @@ import { Store } from '@ngxs/store';
 import { map, tap } from 'rxjs/operators';
 import { DnbhubLoginDialogComponent } from 'src/app/components/login-dialog/login-dialog.component';
 import {
-  ESUPPORTED_LANGUAGE_KEY,
   ISupportedLanguage,
+  SUPPORTED_LANGUAGE_KEY,
   supportedLanguages,
 } from 'src/app/modules/translate/index';
 import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
@@ -56,7 +56,9 @@ export class DnbhubNavbarComponent {
   /**
    * Selects language.
    */
-  public selectLanguage(key: ESUPPORTED_LANGUAGE_KEY): void {
+  public selectLanguage(
+    key: SUPPORTED_LANGUAGE_KEY | string = SUPPORTED_LANGUAGE_KEY.ENGLISH,
+  ): void {
     void this.ui.selectLanguage(key).subscribe();
   }
 

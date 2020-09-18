@@ -248,14 +248,14 @@
                 <span fxFlex="100" *ngIf="user.created"> Created {{ user.created | date }} </span>
                 <span fxFlex="100" *ngIf="user.sc_id"> Soundcloud ID {{ user.sc_id }} </span>
                 <span fxFlex="100" fxLayout="row wrap">
-                  <h3 fxFlex="100">
-                    Submitted Playlists
-                  </h3>
+                  <h3 fxFlex="100">Submitted Playlists</h3>
 
                   <div
                     fxFlex="49"
                     fxFlex.lt-lg="100"
-                    *ngFor="let submittedPlaylistId of user.submittedPlaylists | mapToIterable"
+                    *ngFor="
+                      let submittedPlaylistId of $any($any(user.submittedPlaylists) | mapToIterable)
+                    "
                     fxLayout="row wrap"
                   >
                     <span
@@ -329,7 +329,7 @@
 
         <div
           [ngStyle]="{ position: 'fixed', top: '1em', width: '100%', 'z-index': 10000 }"
-          *ngIf="usersTab.isActive && selectedBrand$ | async as selectedBrand"
+          *ngIf="usersTab.isActive && $any(selectedBrand$ | async) as selectedBrand"
           fxLayout="row"
           fxLayoutAlign="center center"
         >
@@ -338,7 +338,10 @@
               <mat-card-title>Selected brand</mat-card-title>
             </mat-card-header>
             <mat-card-content fxLayout="row wrap">
-              <div fxFlex="0 1 auto" *ngFor="let key of selectedBrand | mapToIterable: ['string']">
+              <div
+                fxFlex="0 1 auto"
+                *ngFor="let key of $any(selectedBrand | mapToIterable: ['string'])"
+              >
                 <a
                   mat-button
                   *ngIf="selectedBrand[key]"
@@ -357,7 +360,7 @@
             </mat-card-content>
             <mat-card-actions>
               <span fxFlex="1 1 auto"></span>
-              <button mat-button color="accent" (click)="selectBrand(null)">
+              <button mat-button color="accent" (click)="selectBrand()">
                 <mat-icon>remove_circle</mat-icon>
                 Deselect
               </button>
@@ -376,9 +379,7 @@
       fxLayoutAlign="start stretch"
       *ngIf="selectedSubmission$ | async as selectedSubmission"
     >
-      <button mat-button (click)="hideSubmissionPreview()">
-        close preview
-      </button>
+      <button mat-button (click)="hideSubmissionPreview()">close preview</button>
 
       <div
         fxFlex="15"
@@ -401,7 +402,7 @@
 
           <span fxFlex="60" fxLayout="row wrap" fxLayoutAlign="center center">
             <span fxFlex="100">
-              {{ selectedSubmission.submission.title }}
+              {{ selectedSubmission.submission?.title }}
             </span>
           </span>
 
@@ -436,21 +437,21 @@
           fxFlex-xs="100"
           fxFlex-sm="100"
           id="text"
-          *ngIf="selectedSubmission.submission.description"
+          *ngIf="selectedSubmission.submission?.description"
           [ngStyle]="{ padding: '0 10px 0 10px' }"
         >
-          <div ng-bind-html="submission.description"></div>
+          <div ng-bind-html="submission?.description"></div>
 
           <p
             *ngIf="
-              selectedSubmission.submission.release_year &&
-              selectedSubmission.submission.release_month &&
-              selectedSubmission.submission.release_day
+              selectedSubmission.submission?.release_year &&
+              selectedSubmission.submission?.release_month &&
+              selectedSubmission.submission?.release_day
             "
           >
-            Release date: {{ selectedSubmission.submission.release_year }}.{{
-              selectedSubmission.submission.release_month
-            }}.{{ selectedSubmission.submission.release_day }}
+            Release date: {{ selectedSubmission.submission?.release_year }}.{{
+              selectedSubmission.submission?.release_month
+            }}.{{ selectedSubmission.submission?.release_day }}
           </p>
         </div>
       </div>

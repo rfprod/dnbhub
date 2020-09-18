@@ -2,7 +2,7 @@ import { DnbhubBrand } from '../brand';
 
 export class DnbhubBlogPostLinks {
   constructor(input?: Partial<DnbhubBlogPostLinks | DnbhubBrand>) {
-    if (Boolean(input)) {
+    if (typeof input !== 'undefined') {
       const keys = Object.keys(input);
       for (const key of keys) {
         const value = input[key];
@@ -28,7 +28,7 @@ export class DnbhubBlogPostLinks {
 
 export class DnbhubBlogPost {
   constructor(input?: DnbhubBlogPost) {
-    if (Boolean(input)) {
+    if (typeof input !== 'undefined') {
       const keys = Object.keys(input);
       for (const key of keys) {
         const value = input[key];
@@ -41,7 +41,7 @@ export class DnbhubBlogPost {
 
   public readonly links: DnbhubBlogPostLinks = new DnbhubBlogPostLinks();
 
-  public readonly playlistId: number = null;
+  public readonly playlistId: number | null = null;
 
   public readonly soundcloudUserId: string | null = null;
 

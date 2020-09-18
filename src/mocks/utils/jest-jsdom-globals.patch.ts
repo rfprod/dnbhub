@@ -32,7 +32,7 @@ export const setupJestJsdomGlobalMocks: () => void = () => {
       return {
         display: 'none',
         appearance: ['-webkit-appearance'],
-        getPropertyValue: (): void => null,
+        getPropertyValue: (): null => null,
       };
     },
   });
@@ -80,6 +80,6 @@ export const setupJestJsdomGlobalMocks: () => void = () => {
   /**
    * Override some console methods for testing environment.
    */
-  window.console.log = (): void => null;
-  window.console.group = (): void => null;
+  window.console.log = (): null => null;
+  window.console.group = (): null => null;
 };

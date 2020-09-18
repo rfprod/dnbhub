@@ -8,7 +8,7 @@ import { SoundcloudTrack } from './soundcloud-track.config';
  */
 export class SoundcloudPlaylist {
   constructor(input?: SoundcloudPlaylist) {
-    if (Boolean(input)) {
+    if (typeof input !== 'undefined') {
       const keys = Object.keys(input);
       for (const key of keys) {
         this[key] = input[key];

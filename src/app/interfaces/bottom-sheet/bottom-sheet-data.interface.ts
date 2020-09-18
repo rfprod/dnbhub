@@ -3,7 +3,7 @@
  */
 export class DnbhubBottomSheetTextDetailsData {
   constructor(input?: DnbhubBottomSheetTextDetailsData) {
-    if (Boolean(input)) {
+    if (typeof input !== 'undefined') {
       this.text = input.text;
     }
   }

@@ -18,7 +18,7 @@
         matInput
         type="text"
         name="email"
-        [formControl]="emailForm.controls.email"
+        formControlName="email"
         placeholder="{{ 'form.email' | translate }}"
       />
       <mat-error *ngIf="emailForm.controls.email.invalid">
@@ -31,7 +31,7 @@
         matInput
         type="text"
         name="name"
-        [formControl]="emailForm.controls.name"
+        formControlName="name"
         placeholder="{{ 'form.name' | translate }}"
       />
       <mat-error *ngIf="emailForm.controls.name.invalid">
@@ -44,7 +44,7 @@
         matInput
         type="text"
         name="header"
-        [formControl]="emailForm.controls.header"
+        formControlName="header"
         placeholder="{{ 'form.header' | translate }}"
       />
       <mat-error *ngIf="emailForm.controls.header.invalid">
@@ -58,7 +58,7 @@
         cdkTextareaAutosize
         type="text"
         name="message"
-        [formControl]="emailForm.controls.message"
+        formControlName="message"
         placeholder="{{ 'form.message' | translate }}"
       ></textarea>
       <mat-error *ngIf="emailForm.controls.message.invalid">

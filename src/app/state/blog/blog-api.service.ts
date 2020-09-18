@@ -23,7 +23,8 @@ export class DnbhubBlogApiService implements OnDestroy {
   ) {}
 
   public getPosts() {
-    const promise = (this.firebase.getDB('blog', true) as firebase.database.Reference)
+    const promise = this.firebase
+      .getDB('blog')
       .limitToLast(EPAGE_SIZE.MEDIUM)
       .once('value')
       .then(snapshot => {
@@ -46,6 +47,6 @@ export class DnbhubBlogApiService implements OnDestroy {
   }
 
   public ngOnDestroy() {
-    (this.firebase.getDB('blog', true) as firebase.database.Reference).off();
+    this.firebase.getDB('blog').off();
   }
 }

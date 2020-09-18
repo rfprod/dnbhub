@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { DatabaseReference } from '@angular/fire/database/interfaces';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import {
@@ -19,7 +18,7 @@ import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.servic
 import { DnbhubRegularExpressionsService } from 'src/app/services/regular-expressions/regular-expressions.service';
 import { DnbhubAdminService } from 'src/app/state/admin/admin.service';
 import { DnbhubSoundcloudApiService } from 'src/app/state/soundcloud/soundcloud-api.service';
-import { ETIMEOUT } from 'src/app/utils';
+import { TIMEOUT } from 'src/app/utils';
 
 import { SoundcloudPlaylist } from '../../interfaces/soundcloud/soundcloud-playlist.config';
 import { DnbhubBottomSheetTextDetailsComponent } from '../bottom-sheet-text-details/bottom-sheet-text-details.component';
@@ -37,7 +36,7 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
   /**
    * Bottom sheet text details component reference.
    */
-  private bottomSheetRef: MatBottomSheetRef<DnbhubBottomSheetTextDetailsComponent>;
+  private bottomSheetRef?: MatBottomSheetRef<DnbhubBottomSheetTextDetailsComponent>;
 
   public readonly emails$ = this.admin.emails$;
 
@@ -57,7 +56,7 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
     ),
     map(({ changes, brands }) => {
       const matchedKeys = brands.filter(item =>
-        new RegExp(this.brandAutocompleteControl.value, 'i').test(item.key),
+        new RegExp(this.brandAutocompleteControl.value, 'i').test(item.key ?? ''),
       );
       return matchedKeys;
     }),
@@ -68,7 +67,7 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
   /**
    * Edit brand form.
    */
-  public editBrandForm: IBrandForm;
+  public editBrandForm?: IBrandForm;
 
   public readonly blogEntriesIDs$ = this.admin.blogEntriesIDs$;
 
@@ -76,9 +75,8 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
 
   public readonly selectedSubmission$ = this.admin.selectedSubmission$.pipe(
     map(submission => {
-      const widgetLink = Boolean(submission)
-        ? this.soundcloud.widgetLink.playlist(submission.id)
-        : '#';
+      const widgetLink =
+        submission !== null ? this.soundcloud.widgetLink.playlist(submission.id) : '#';
       const showWidget = widgetLink !== '#' ? true : false;
       return { submission, widgetLink, showWidget };
     }),
@@ -95,8 +93,8 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
   ) {}
 
   public displayMessage(message: string): void {
-    this.snackBar.open(message, null, {
-      duration: ETIMEOUT.SHORT,
+    this.snackBar.open(message, void 0, {
+      duration: TIMEOUT.SHORT,
     });
   }
 
@@ -121,7 +119,9 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
       .selectBrand(key)
       .pipe(
         tap(brand => {
-          this.showBrandDialog(brand);
+          if (typeof brand !== 'undefined') {
+            this.showBrandDialog(brand);
+          }
         }),
       )
       .subscribe();
@@ -152,7 +152,7 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
       .pipe(
         first(),
         tap(() => {
-          this.selectBrand(null);
+          this.selectBrand(void 0);
         }),
       )
       .subscribe();
@@ -161,11 +161,8 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
   /**
    * Deletes email message.
    */
-  public deleteMessage(dbKey: string) {
-    const promise = (this.firebase.getDB(
-      `email/messages/${dbKey}`,
-      true,
-    ) as DatabaseReference).remove();
+  public deleteMessage(dbKey: string = 'dbKey') {
+    const promise = this.firebase.getDB(`email/messages/${dbKey}`).remove();
     void from(promise)
       .pipe(
         tap(() => {
@@ -208,7 +205,7 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
       .afterDismissed()
       .pipe(take(1))
       .subscribe(() => {
-        this.bottomSheetRef = null;
+        this.bottomSheetRef = void 0;
       });
   }
 
@@ -235,7 +232,7 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
    * Resets blog post submission preview.
    */
   public hideSubmissionPreview(): void {
-    void this.admin.selectSubmission(null);
+    void this.admin.selectSubmission(void 0);
   }
 
   /**
@@ -252,9 +249,9 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
   public approveUserSubmission(playlistId: number) {
     const dbKey = playlistId;
     console.warn('TODO: approve post, playlistID/dbkey', dbKey);
-    const selectedSubmission = {
+    const selectedSubmission: { id: number; scData: SoundcloudPlaylist } = {
       id: dbKey,
-      scData: null,
+      scData: new SoundcloudPlaylist(),
     };
     console.warn('TODO: approve submission', selectedSubmission);
     const promise = this.soundcloud.SC.get(`/playlists/${dbKey}`).then(data => {
@@ -282,11 +279,9 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
    * @param dbKey user submission database key
    */
   public deleteUserSubmission(dbKey: number) {
-    const userKey = this.firebase.fire.user.uid;
-    const promise = (this.firebase.getDB(
-      `users/${userKey}/submittedPlaylists/${dbKey}`,
-      true,
-    ) as DatabaseReference)
+    const userKey = this.firebase?.fire?.user?.uid;
+    const promise = this.firebase
+      .getDB(`users/${userKey}/submittedPlaylists/${dbKey}`)
       .remove()
       .then(() => {
         console.warn(`user ${userKey} submission ${dbKey} was successfully deleted`);
@@ -361,9 +356,9 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
    * Lifecycle hook called on component destruction.
    */
   public ngOnDestroy(): void {
-    (this.firebase.getDB('emails/messages', true) as DatabaseReference).off();
-    (this.firebase.getDB('blogEntriesIDs', true) as DatabaseReference).off();
-    (this.firebase.getDB('brands', true) as DatabaseReference).off();
-    (this.firebase.getDB('users', true) as DatabaseReference).off();
+    this.firebase.getDB('emails/messages').off();
+    this.firebase.getDB('blogEntriesIDs').off();
+    this.firebase.getDB('brands').off();
+    this.firebase.getDB('users').off();
   }
 }

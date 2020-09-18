@@ -15,7 +15,7 @@ import { DnbhubContactDialogComponent } from '../contact-dialog/contact-dialog.c
 })
 export class DnbhubToolbarComponent {
   @Select(DnbhubUiState.getSidenavOpened)
-  public readonly sidenavOpened$: Observable<boolean>;
+  public readonly sidenavOpened$!: Observable<boolean>;
 
   constructor(private readonly dialog: MatDialog, private readonly uiService: DnbhubUiService) {}
 

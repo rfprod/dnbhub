@@ -15,7 +15,7 @@ export class DnbhubTranslateService {
   /**
    * Current language.
    */
-  private language: string;
+  private language = 'en';
 
   /**
    * Current language getter.
@@ -44,20 +44,20 @@ export class DnbhubTranslateService {
    */
   private translate(key: string): string {
     if (Boolean(this.translations[this.currentLanguage])) {
-      let translation: string | IDictionaryObject = null;
+      let translation: string | IDictionaryObject | null = null;
       const keys = key.split('.');
       // eslint-disable-next-line no-labels
       searchString: for (const k of keys) {
-        if (!Boolean(translation)) {
+        if (translation !== null) {
           const currentLanguageDictionary = this.translations[this.currentLanguage];
-          if (Boolean(currentLanguageDictionary[k])) {
+          if (Boolean(translation[k])) {
+            translation = translation[k];
+          } else if (Boolean(currentLanguageDictionary[k])) {
             translation = this.translations[this.currentLanguage][k];
           } else {
             // eslint-disable-next-line no-labels
             break searchString;
           }
-        } else if (Boolean(translation[k])) {
-          translation = translation[k];
         } else {
           translation = null;
           // eslint-disable-next-line no-labels

@@ -1,7 +1,6 @@
 <h2 mat-dialog-title>{{ 'login' | translate }}</h2>
 
 <mat-dialog-content>
-
   <form
     fxLayout="row wrap"
     fxLayoutAlign="start stretch"
@@ -16,7 +15,7 @@
         matInput
         type="text"
         name="email"
-        [formControl]="loginForm.controls.email"
+        formControlName="email"
         placeholder="{{ 'form.email' | translate }}"
       />
       <mat-error *ngIf="loginForm.controls.email.invalid" class="mat-body-1">
@@ -29,7 +28,7 @@
         matInput
         type="{{ showPassword ? 'text' : 'password' }}"
         name="password"
-        [formControl]="loginForm.controls.password"
+        formControlName="password"
         placeholder="{{ 'form.password' | translate }}"
       />
       <mat-icon

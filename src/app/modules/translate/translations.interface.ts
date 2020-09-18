@@ -11,7 +11,7 @@ export interface ISupportedLanguage {
   name: string;
 }
 
-export enum ESUPPORTED_LANGUAGE_KEY {
+export enum SUPPORTED_LANGUAGE_KEY {
   RUSSIAN = 'ru',
   ENGLISH = 'en',
 }

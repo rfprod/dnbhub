@@ -4,7 +4,7 @@ import { DateAdapter } from '@angular/material/core';
 import { Store } from '@ngxs/store';
 import { concatMap, filter, tap } from 'rxjs/operators';
 import { DnbhubTranslateService } from 'src/app/modules/translate/translate.service';
-import { ESUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate/translations.interface';
+import { SUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate/translations.interface';
 
 import { IDnbhubUiService } from './ui.interface';
 import { DnbhubUiState, uiActions } from './ui.store';
@@ -66,7 +66,7 @@ export class DnbhubUiService implements IDnbhubUiService {
     );
   }
 
-  public selectLanguage(language: ESUPPORTED_LANGUAGE_KEY) {
+  public selectLanguage(language: SUPPORTED_LANGUAGE_KEY | string) {
     return this.store.selectOnce(DnbhubUiState.getLanguage).pipe(
       filter(value => Boolean(value)),
       concatMap(() => this.store.dispatch(new uiActions.setDnbhubUiState({ language }))),

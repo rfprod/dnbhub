@@ -14,10 +14,10 @@ import { DnbhubBlogState } from 'src/app/state/blog/blog.store';
 })
 export class DnbhubBlogComponent {
   @Select(DnbhubBlogState.listStartReached)
-  public readonly listStartReached$: Observable<boolean>;
+  public readonly listStartReached$!: Observable<boolean>;
 
   @Select(DnbhubBlogState.listEndReached)
-  public readonly listEndReached$: Observable<boolean>;
+  public readonly listEndReached$!: Observable<boolean>;
 
   public readonly posts$ = this.blog.posts$.pipe(
     concatMap(storedPosts => {
@@ -45,7 +45,7 @@ export class DnbhubBlogComponent {
   public readonly selectedBlogPost$ = this.blog.selectedPost$.pipe(
     filter(post => Boolean(post)),
     tap(post => {
-      const code = post.code;
+      const code = post?.code;
       void this.router.navigate(['/blog'], { queryParams: { code } });
     }),
   );

@@ -14,7 +14,13 @@
       "path": "./src/tsconfig.spec.json"
     },
     {
+      "path": "./src/tsconfig.eslint.json"
+    },
+    {
       "path": "./cypress/tsconfig.e2e.json"
+    },
+    {
+      "path": "./cypress/tsconfig.eslint.json"
     }
   ]
 }

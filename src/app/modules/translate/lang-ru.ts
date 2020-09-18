@@ -1,6 +1,6 @@
-import { ESUPPORTED_LANGUAGE_KEY, IDictionaryObject } from './translations.interface';
+import { IDictionaryObject, SUPPORTED_LANGUAGE_KEY } from './translations.interface';
 
-export const LANG_RU_NAME = ESUPPORTED_LANGUAGE_KEY.RUSSIAN;
+export const LANG_RU_NAME = SUPPORTED_LANGUAGE_KEY.RUSSIAN;
 
 /**
  * Russian substrings for UI.

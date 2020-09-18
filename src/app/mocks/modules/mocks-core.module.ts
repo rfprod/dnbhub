@@ -50,10 +50,10 @@ export const mocksCoreModuleProviders: Provider[] = [
       getContainerElement: () => {
         return {
           classList: {
-            add: (): void => null,
-            remove: (): void => null,
+            add: (): null => null,
+            remove: (): null => null,
           },
-          appendChild: (): void => null,
+          appendChild: (): null => null,
         };
       },
     },
@@ -61,7 +61,7 @@ export const mocksCoreModuleProviders: Provider[] = [
   {
     provide: MatSnackBar,
     useValue: {
-      open: (): void => null,
+      open: (): null => null,
     },
   },
 

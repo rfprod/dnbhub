@@ -9,8 +9,8 @@ export interface IDnbhubAdminStateModel {
   brands: DnbhubBrand[];
   users: IFirebaseUserRecord[];
   blogEntriesIDs: number[];
-  selectedBrand: DnbhubBrand;
-  selectedSubmission: SoundcloudPlaylist;
+  selectedBrand: DnbhubBrand | null;
+  selectedSubmission: SoundcloudPlaylist | null;
 }
 
 export type TDnbhubAdminPayload = IActionPayload<Partial<IDnbhubAdminStateModel>>;
@@ -20,6 +20,6 @@ export interface IDnbhubAdminService {
   brands$: Observable<DnbhubBrand[]>;
   users$: Observable<IFirebaseUserRecord[]>;
   blogEntriesIDs$: Observable<number[]>;
-  selectedBrand$: Observable<DnbhubBrand>;
-  selectedSubmission$: Observable<SoundcloudPlaylist>;
+  selectedBrand$: Observable<DnbhubBrand | null>;
+  selectedSubmission$: Observable<SoundcloudPlaylist | null>;
 }

@@ -64,6 +64,7 @@ module.exports = {
       'error',
       { default: ['static-field', 'instance-field', 'static-method', 'instance-method'] },
     ],
+    '@typescript-eslint/no-shadow': 'error',
     '@typescript-eslint/naming-convention': [
       'error', // https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin/docs/rules/naming-convention.md
       {
@@ -286,7 +287,7 @@ module.exports = {
     'no-return-await': 'error',
     'no-self-compare': 'error',
     'no-sequences': 'error',
-    'no-shadow': 'error',
+    'no-shadow': 'off', // handled by typescript-eslint rule
     'no-shadow-restricted-names': 'error',
     'no-template-curly-in-string': 'error',
     'no-throw-literal': 'off', // handled by typescript-eslint rule

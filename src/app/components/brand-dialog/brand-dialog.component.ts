@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { DatabaseReference } from '@angular/fire/database/interfaces';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { IBrandForm } from 'src/app/interfaces';
@@ -76,7 +75,8 @@ export class DnbhubBrandDialogComponent {
       // TODO: send update request
       const dbKey = this.data.brand.key;
       const newBrandValues: DnbhubBrand = this.form.value;
-      return (this.firebase.getDB(`brands/${dbKey}`, true) as DatabaseReference)
+      return this.firebase
+        .getDB(`brands/${dbKey}`)
         .update(newBrandValues)
         .then(() => {
           console.warn(`brand id ${dbKey} was successfully deleted`);
@@ -94,7 +94,8 @@ export class DnbhubBrandDialogComponent {
   public createBrand() {
     if (this.form.valid && !this.form.pristine) {
       const formData = this.form.value;
-      return (this.firebase.getDB('brands', true) as DatabaseReference)
+      return this.firebase
+        .getDB('brands')
         .child(this.form.controls.name.value)
         .set(formData)
         .then(() => {
@@ -111,7 +112,8 @@ export class DnbhubBrandDialogComponent {
   public deleteBrand() {
     if (this.form.valid && !this.form.pristine) {
       const dbKey = this.data.brand.key;
-      return (this.firebase.getDB(`brands/${dbKey}`, true) as DatabaseReference)
+      return this.firebase
+        .getDB(`brands/${dbKey}`)
         .remove()
         .then(() => {
           console.warn(`brand id ${dbKey} was successfully deleted`);

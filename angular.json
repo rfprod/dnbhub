@@ -21,18 +21,6 @@
             },
             "production": {
               "aot": true,
-              "budgets": [
-                {
-                  "maximumError": "12mb",
-                  "maximumWarning": "6mb",
-                  "type": "initial"
-                },
-                {
-                  "maximumError": "10kb",
-                  "maximumWarning": "6kb",
-                  "type": "anyComponentStyle"
-                }
-              ],
               "buildOptimizer": true,
               "extractCss": true,
               "extractLicenses": true,
@@ -64,8 +52,8 @@
             "baseHref": "/",
             "budgets": [
               {
-                "maximumError": "12mb",
-                "maximumWarning": "6mb",
+                "maximumError": "15mb",
+                "maximumWarning": "0mb",
                 "type": "initial"
               },
               {
@@ -126,6 +114,14 @@
             "watch": true
           }
         },
+        "e2e-lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "eslintConfig": "cypress/.eslintrc",
+            "exclude": ["**/node_modules/**", "!cypress/**/*.ts"],
+            "lintFilePatterns": ["cypress/**/*.ts"]
+          }
+        },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
@@ -137,7 +133,7 @@
           "options": {
             "eslintConfig": "src/.eslintrc",
             "exclude": ["**/node_modules/**", "!src/**"],
-            "tsConfig": ["src/tsconfig.app.json", "src/tsconfig.spec.json"]
+            "lintFilePatterns": ["src/**/*.ts"]
           }
         },
         "serve": {

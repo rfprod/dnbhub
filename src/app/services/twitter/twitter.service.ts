@@ -19,15 +19,15 @@ export class DnbhubTwitterService {
    * Creates Twitter root div.
    * @return Twitter root div reference <div id="twttr-root"></div>
    */
-  private createTwitterRoot(): HTMLElement {
-    const doc: Document = this.win.document;
-    let ref: HTMLElement = doc.getElementById(rootId); // try getting it first
-    if (!Boolean(ref)) {
+  private createTwitterRoot() {
+    const doc = this.win.document;
+    let ref = doc.getElementById(rootId); // try getting it first
+    if (ref === null) {
       // create 'twttr-root' if it does not exist
       ref = doc.createElement('div');
       ref.id = rootId;
-      const firstScriptTag: HTMLScriptElement = doc.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(ref, firstScriptTag);
+      const firstScriptTag = doc.getElementsByTagName('script')[0];
+      firstScriptTag?.parentNode?.insertBefore(ref, firstScriptTag);
     }
     return ref;
   }
@@ -40,18 +40,18 @@ export class DnbhubTwitterService {
    * - https://developer.twitter.com/en/docs/twitter-for-websites/javascript-api/guides/javascript-api
    */
   public initTwitterJsSDK(): void {
-    const doc: Document = this.win.document;
+    const doc = this.win.document;
     const ref = this.createTwitterRoot();
     // return if script is already included
-    if (Boolean(doc.getElementById(jssdkId))) {
+    if (doc.getElementById(jssdkId) !== null) {
       return;
     }
-    const js: HTMLScriptElement = doc.createElement('script');
+    const js = doc.createElement('script');
     js.id = jssdkId;
     js.async = true;
     js.src = 'https://platform.twitter.com/widgets.js';
 
-    ref.parentNode.insertBefore(js, ref);
+    ref?.parentNode?.insertBefore(js, ref);
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const t: { _e: number[]; ready(...args): number } = Boolean(this.win[windowSdkKey])
@@ -67,13 +67,13 @@ export class DnbhubTwitterService {
    * Removes twitter sdk.
    */
   public removeTwitterJsSDK(): void {
-    const doc: Document = this.win.document;
-    const ref: HTMLElement = doc.getElementById(rootId);
-    const js: HTMLElement = doc.getElementById(jssdkId);
+    const doc = this.win.document;
+    const ref = doc.getElementById(rootId);
+    const js = doc.getElementById(jssdkId);
     // removed both script and twttr-root
-    if (Boolean(js)) {
-      ref.parentNode.removeChild(js); // sdk script
-      ref.parentNode.removeChild(ref); // twttr-root
+    if (js !== null && ref !== null) {
+      ref.parentNode?.removeChild(js); // sdk script
+      ref.parentNode?.removeChild(ref); // twttr-root
     }
   }
 

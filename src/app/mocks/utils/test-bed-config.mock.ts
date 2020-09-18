@@ -13,10 +13,10 @@ export type NewTestBedMetadata = (metadata?: TestModuleMetadata) => TestModuleMe
  */
 export const newTestBedMetadata: NewTestBedMetadata = (metadata?: TestModuleMetadata) =>
   new Object({
-    imports: !Boolean(metadata?.imports) ? [] : [...metadata.imports],
-    declarations: !Boolean(metadata?.declarations) ? [] : [...metadata.declarations],
-    providers: !Boolean(metadata?.providers) ? [] : [...metadata.providers],
-    schemas: !Boolean(metadata?.schemas) ? [] : [...metadata.schemas],
+    imports: [...(metadata?.imports ?? [])],
+    declarations: [...(metadata?.declarations ?? [])],
+    providers: [...(metadata?.providers ?? [])],
+    schemas: [...(metadata?.schemas ?? [])],
   });
 
 /**
@@ -31,8 +31,8 @@ export const getTestBedConfig: TestBedConfigGetter = (
   metadata: TestModuleMetadata = newTestBedMetadata(),
 ) =>
   new Object({
-    declarations: [...metadata.declarations],
-    imports: [DnbhubMocksCoreModule.forRoot(), ...metadata.imports],
-    providers: [...metadata.providers],
-    schemas: [...metadata.providers],
+    declarations: [...(metadata.declarations ?? [])],
+    imports: [DnbhubMocksCoreModule.forRoot(), ...(metadata.imports ?? [])],
+    providers: [...(metadata.providers ?? [])],
+    schemas: [...(metadata.providers ?? [])],
   });
