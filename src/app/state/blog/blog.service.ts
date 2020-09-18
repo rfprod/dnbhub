@@ -29,10 +29,10 @@ export class DnbhubBlogService implements IDnbhubBlogService {
   }
 
   public selectNextPost() {
-    return this.store.dispatch(new blogActions.selectNextBlogPost(null));
+    return this.store.dispatch(new blogActions.selectNextBlogPost(void 0));
   }
 
   public selectPreviousPost() {
-    return this.store.dispatch(new blogActions.selectPreviousBlogPost(null));
+    return this.store.dispatch(new blogActions.selectPreviousBlogPost(void 0));
   }
 }

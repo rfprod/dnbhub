@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
-import { ESUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate/translations.interface';
+import { SUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate/translations.interface';
 
 import { setDnbhubUiState } from './ui.actions';
 import { IDnbhubUiStateModel, TDnbhubUiPayload } from './ui.interface';
@@ -15,7 +15,7 @@ export const UI_STATE_TOKEN = new StateToken<IDnbhubUiStateModel>('ui');
   name: UI_STATE_TOKEN,
   defaults: {
     darkThemeEnabled: false,
-    language: ESUPPORTED_LANGUAGE_KEY.ENGLISH,
+    language: SUPPORTED_LANGUAGE_KEY.ENGLISH,
     sidenavOpened: false,
   },
 })

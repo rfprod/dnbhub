@@ -22,7 +22,8 @@ export class DnbhubAboutApiService implements OnDestroy {
   ) {}
 
   public getDetails() {
-    const promise = (this.firebase.getDB('about', true) as firebase.database.Reference)
+    const promise = this.firebase
+      .getDB('about')
       .once('value')
       .then(snapshot => {
         const response: DnbhubAboutDetails = snapshot.val();
@@ -36,6 +37,6 @@ export class DnbhubAboutApiService implements OnDestroy {
   }
 
   public ngOnDestroy() {
-    (this.firebase.getDB('about', true) as firebase.database.Reference).off();
+    this.firebase.getDB('about').off();
   }
 }

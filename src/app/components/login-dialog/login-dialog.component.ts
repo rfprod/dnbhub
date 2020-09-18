@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { ILoginForm, ILoginFormValue } from 'src/app/interfaces';
 import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
-import { ETIMEOUT } from 'src/app/utils';
+import { TIMEOUT } from 'src/app/utils';
 
 @Component({
   selector: 'dnbhub-login-dialog',
@@ -39,8 +39,8 @@ export class DnbhubLoginDialogComponent {
   public wrongPassword = false;
 
   private displayFeedback(message: string): void {
-    this.snackBar.open(message, null, {
-      duration: ETIMEOUT.MEDUIM,
+    this.snackBar.open(message, void 0, {
+      duration: TIMEOUT.MEDUIM,
     });
   }
 

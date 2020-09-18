@@ -60,7 +60,10 @@
               "@firebase/database"
             ],
             "aot": true,
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
             "baseHref": "/",
             "budgets": [
               {
@@ -126,6 +129,19 @@
             "watch": true
           }
         },
+        "e2e-lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "eslintConfig": "cypress/.eslintrc",
+            "exclude": [
+              "**/node_modules/**",
+              "!cypress/**/*.ts"
+            ],
+            "lintFilePatterns": [
+              "cypress/**/*.ts"
+            ]
+          }
+        },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
@@ -136,8 +152,13 @@
           "builder": "@angular-eslint/builder:lint",
           "options": {
             "eslintConfig": "src/.eslintrc",
-            "exclude": ["**/node_modules/**", "!src/**"],
-            "tsConfig": ["src/tsconfig.app.json", "src/tsconfig.spec.json"]
+            "exclude": [
+              "**/node_modules/**",
+              "!src/**"
+            ],
+            "lintFilePatterns": [
+              "src/**/*.ts"
+            ]
           }
         },
         "serve": {
@@ -156,7 +177,10 @@
         "test": {
           "builder": "@angular-builders/jest:run",
           "options": {
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
             "collectCoverage": true,
             "jestConfig": "src/jest.config.js",
             "passWithNoTests": true,

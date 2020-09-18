@@ -19,7 +19,8 @@ export class DnbhubAdminApiService implements OnDestroy {
   ) {}
 
   public getEmails() {
-    const promise = (this.firebase.getDB('emails/messages', true) as firebase.database.Reference)
+    const promise = this.firebase
+      .getDB('emails/messages')
       .once('value')
       .then(snapshot => {
         const response: IEmailMessages = snapshot.val();
@@ -33,7 +34,8 @@ export class DnbhubAdminApiService implements OnDestroy {
   }
 
   public getBrands() {
-    const promise = (this.firebase.getDB('brands', true) as firebase.database.Reference)
+    const promise = this.firebase
+      .getDB('brands')
       .once('value')
       .then(snapshot => {
         const response: IBrands = snapshot.val();
@@ -47,7 +49,8 @@ export class DnbhubAdminApiService implements OnDestroy {
   }
 
   public getUsers() {
-    const promise = (this.firebase.getDB('users', true) as firebase.database.Reference)
+    const promise = this.firebase
+      .getDB('users')
       .once('value')
       .then(snapshot => {
         const response: IFirebaseUserRecords = snapshot.val();
@@ -61,7 +64,8 @@ export class DnbhubAdminApiService implements OnDestroy {
   }
 
   public getBlogEntriesIDs() {
-    const promise = (this.firebase.getDB('blogEntriesIDs', true) as firebase.database.Reference)
+    const promise = this.firebase
+      .getDB('blogEntriesIDs')
       .once('value')
       .then(snapshot => {
         const response: [number[]] = snapshot.val();
@@ -71,9 +75,9 @@ export class DnbhubAdminApiService implements OnDestroy {
   }
 
   public ngOnDestroy() {
-    (this.firebase.getDB('emails/messages', true) as firebase.database.Reference).off();
-    (this.firebase.getDB('brands', true) as firebase.database.Reference).off();
-    (this.firebase.getDB('users', true) as firebase.database.Reference).off();
-    (this.firebase.getDB('blogEntriesIDs', true) as firebase.database.Reference).off();
+    this.firebase.getDB('emails/messages').off();
+    this.firebase.getDB('brands').off();
+    this.firebase.getDB('users').off();
+    this.firebase.getDB('blogEntriesIDs').off();
   }
 }

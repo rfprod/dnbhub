@@ -3,7 +3,7 @@
  */
 export class DnbhubAboutLinks {
   constructor(input?: DnbhubAboutLinks) {
-    if (Boolean(input)) {
+    if (typeof input !== 'undefined') {
       const keys = Object.keys(input);
       for (const key of keys) {
         this[key] = input[key];
@@ -33,7 +33,7 @@ export class DnbhubAboutLinks {
  */
 export class DnbhubAboutDetails {
   constructor(input?: DnbhubAboutDetails) {
-    if (Boolean(input)) {
+    if (typeof input !== 'undefined') {
       const keys = Object.keys(input);
       for (const key of keys) {
         this[key] = input[key];
@@ -43,11 +43,11 @@ export class DnbhubAboutDetails {
 
   public links: DnbhubAboutLinks = new DnbhubAboutLinks();
 
-  public soundcloudUserId: string = null;
+  public soundcloudUserId?: string;
 
-  public text: string = null;
+  public text?: string;
 
-  public title: string = null;
+  public title?: string;
 
-  public widgetLink: string = null;
+  public widgetLink?: string;
 }

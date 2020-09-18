@@ -2,8 +2,8 @@
   <div
     fxFlex.lt-md="100"
     fxFlex.gt-sm="50"
-    *ngIf="mode === 'playlist' && displayDescription && playlist$ | async"
-    [innerHTML]="(playlist$ | async).description"
+    *ngIf="mode === 'playlist' && displayDescription && $any(playlist$ | async)"
+    [innerHTML]="(playlist$ | async)?.description"
     [ngStyle]="{ padding: '0 10px 0 10px' }"
   ></div>
 
@@ -45,7 +45,7 @@
             appImageLoaded
             [ngStyle]="{ 'max-width': '100%', 'min-width': '150px', 'min-height': '150px' }"
             src="{{ track.waveform_url }}"
-            [class]="'waveform-' + track.id"
+            [class]="'waveform-' + track.id?.toString()"
             (click)="waveformClick($event, track.id)"
           />
         </div>

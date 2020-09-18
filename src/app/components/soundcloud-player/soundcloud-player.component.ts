@@ -12,13 +12,13 @@ import {
 } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject, combineLatest, from, of, timer } from 'rxjs';
-import { concatMap, first, map, takeWhile, tap } from 'rxjs/operators';
+import { concatMap, first, map, mapTo, takeWhile, tap } from 'rxjs/operators';
 import { IEventTargetWithPosition, IEventWithPosition } from 'src/app/interfaces/index';
 import { ISoundcloudPlayer } from 'src/app/interfaces/soundcloud/soundcloud-player.interface';
 import { SoundcloudTrack } from 'src/app/interfaces/soundcloud/soundcloud-track.config';
 import { DnbhubHttpProgressState } from 'src/app/state/http-progress/http-progress.store';
 import { DnbhubSoundcloudState } from 'src/app/state/soundcloud/soundcloud.store';
-import { ETIMEOUT, WINDOW } from 'src/app/utils';
+import { TIMEOUT, WINDOW } from 'src/app/utils';
 
 import { DnbhubSoundcloudService } from '../../state/soundcloud/soundcloud.service';
 
@@ -130,7 +130,9 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
     this.renderPlaylistTracks$,
   ]).pipe(
     map(([playlist, renderPlaylistTracks]) => {
-      const tracks = Boolean(playlist) ? [...playlist.tracks].slice(0, renderPlaylistTracks) : [];
+      const tracks = Boolean(playlist)
+        ? [...(playlist?.tracks ?? [])].slice(0, renderPlaylistTracks)
+        : [];
       return tracks;
     }),
   );
@@ -157,17 +159,17 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
   /**
    * Current Soundcloud player object.
    */
-  public player: ISoundcloudPlayer;
+  public player?: ISoundcloudPlayer;
 
   /**
    * Waveform progress timer.
    */
-  private readonly waveformProgressTimer$ = timer(ETIMEOUT.SHORT, ETIMEOUT.SHORT);
+  private readonly waveformProgressTimer$ = timer(TIMEOUT.SHORT, TIMEOUT.SHORT);
 
   /**
    * Gets link with id from Soundcloud Service (public for template usage).
    */
-  public getLinkWithId(href: string): string {
+  public getLinkWithId(href: string = ''): string {
     return this.soundcloud.getLinkWithId(href);
   }
 
@@ -221,7 +223,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
    * Kills player.
    */
   private playerKill(): void {
-    if (Boolean(this.player)) {
+    if (typeof this.player !== 'undefined') {
       this.player.kill();
     }
   }
@@ -231,31 +233,33 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
    * @param track Track object
    */
   public playTrack(track: SoundcloudTrack): void {
-    if (this.selectedTrack.value.id !== track.id) {
-      this.playerKill();
-      this.selectedTrack.next(track);
+    if (typeof this.player !== 'undefined') {
+      if (this.selectedTrack.value.id !== track.id) {
+        this.playerKill();
+        this.selectedTrack.next(track);
 
-      void this.soundcloud
-        .streamTrack(track.id)
-        .pipe(
-          concatMap((player: ISoundcloudPlayer) => {
-            this.player = player;
-            const promise = this.player.play();
-            return from(promise);
-          }),
-          tap(() => {
-            // eslint-disable-next-line rxjs/no-nested-subscribe
-            void this.reportWaveformProgress().subscribe();
-          }),
-        )
-        .subscribe();
-    } else if (Boolean(this.player.isActuallyPlaying())) {
-      void this.player.pause();
-    } else {
-      const promise = this.player.play();
-      void from(promise)
-        .pipe(concatMap(() => this.reportWaveformProgress()))
-        .subscribe();
+        void this.soundcloud
+          .streamTrack(track.id ?? 0)
+          .pipe(
+            concatMap((player: ISoundcloudPlayer) => {
+              this.player = player;
+              const promise = this.player.play();
+              return from(promise).pipe(mapTo(player));
+            }),
+            tap(() => {
+              // eslint-disable-next-line rxjs/no-nested-subscribe
+              void this.reportWaveformProgress().subscribe();
+            }),
+          )
+          .subscribe();
+      } else if (Boolean(this.player.isActuallyPlaying())) {
+        void this.player.pause();
+      } else {
+        const promise = this.player.play();
+        void from(promise)
+          .pipe(concatMap(() => this.reportWaveformProgress()))
+          .subscribe();
+      }
     }
   }
 
@@ -270,7 +274,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
           this.window.document.getElementsByClassName(`waveform-${id}`)[0],
         );
         const visibleWaveformElement: HTMLElement = visibleWaveform.nativeElement;
-        if (Boolean(visibleWaveformElement)) {
+        if (Boolean(visibleWaveformElement) && typeof this.player !== 'undefined') {
           const dividend = 100;
           const playbackProgress: number = Math.floor(
             (this.player.currentTime() * dividend) / this.player.getDuration(),
@@ -281,7 +285,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
       }),
       takeWhile(
         () =>
-          Boolean(this.player) &&
+          typeof this.player !== 'undefined' &&
           this.player.isActuallyPlaying() &&
           !this.player.isDead() &&
           !this.player.isEnded(),
@@ -294,8 +298,8 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
    * @param event waveform click event
    * @param id soundcloud track id
    */
-  public waveformClick(event: IEventWithPosition, id: number): void {
-    if (this.selectedTrack.value.id === id) {
+  public waveformClick(event: IEventWithPosition, id: number = 0): void {
+    if (this.selectedTrack.value.id === id && typeof this.player !== 'undefined') {
       const srcElement = event.srcElement as IEventTargetWithPosition;
       const waveformWidth: number = srcElement.clientWidth;
       const offsetX: number = event.offsetX;
@@ -313,7 +317,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
    * @param onlyProgress if only progress interval should be reset
    */
   private resetPlayer(onlyProgress?: boolean): void {
-    if (!onlyProgress) {
+    if (!Boolean(onlyProgress)) {
       this.playerKill();
       this.soundcloud.resetData();
       this.noMoreTracks.next(false);

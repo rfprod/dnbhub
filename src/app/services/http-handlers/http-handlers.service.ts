@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize, take, timeout } from 'rxjs/operators';
 import { DnbhubHttpProgressService } from 'src/app/state/http-progress/http-progress.service';
-import { ETIMEOUT } from 'src/app/utils';
+import { TIMEOUT } from 'src/app/utils';
 
 /**
  * Custom http handlers service.
@@ -21,8 +21,8 @@ export class DnbhubHttpHandlersService {
   ) {}
 
   private displayErrorToast(error: string): void {
-    this.snackBar.open(error, null, {
-      duration: ETIMEOUT.MEDUIM,
+    this.snackBar.open(error, void 0, {
+      duration: TIMEOUT.MEDUIM,
     });
   }
 

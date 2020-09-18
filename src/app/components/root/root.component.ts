@@ -3,7 +3,7 @@ import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { ESUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate';
+import { SUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate';
 
 import { DnbhubUiService } from '../../state/ui/ui.service';
 import { DnbhubUiState } from '../../state/ui/ui.store';
@@ -18,7 +18,7 @@ import { WINDOW } from '../../utils';
 })
 export class DnbhubRootComponent implements OnInit {
   @Select(DnbhubUiState.getSidenavOpened)
-  public readonly sidenavOpened$: Observable<boolean>;
+  public readonly sidenavOpened$!: Observable<boolean>;
 
   /**
    * Sidenav grid configuration object.
@@ -52,8 +52,8 @@ export class DnbhubRootComponent implements OnInit {
     const nav = this.win.navigator;
     const userPreference =
       nav?.language === 'ru-RU' || nav?.language === 'ru' || nav?.languages[0] === 'ru'
-        ? ESUPPORTED_LANGUAGE_KEY.RUSSIAN
-        : ESUPPORTED_LANGUAGE_KEY.ENGLISH;
+        ? SUPPORTED_LANGUAGE_KEY.RUSSIAN
+        : SUPPORTED_LANGUAGE_KEY.ENGLISH;
     void this.ui.selectLanguage(userPreference).subscribe();
   }
 
@@ -62,7 +62,8 @@ export class DnbhubRootComponent implements OnInit {
    */
   private setGridConfig(cols: string, rowHeight?: string): void {
     this.gridConfig.cols = cols;
-    this.gridConfig.rowHeight = Boolean(rowHeight) ? rowHeight : this.gridConfig.rowHeight;
+    this.gridConfig.rowHeight =
+      typeof rowHeight !== 'undefined' ? rowHeight : this.gridConfig.rowHeight;
   }
 
   /**

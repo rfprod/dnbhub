@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { DatabaseReference, DataSnapshot } from '@angular/fire/database/interfaces';
+import { DataSnapshot } from '@angular/fire/database/interfaces';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -9,7 +9,7 @@ import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
 import { IUserProfile, IUserProfileForm, SoundcloudPlaylist } from 'src/app/interfaces/index';
 import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
 import { DnbhubSoundcloudService } from 'src/app/state/soundcloud/soundcloud.service';
-import { ETIMEOUT } from 'src/app/utils';
+import { TIMEOUT } from 'src/app/utils';
 
 import {
   defaultFirebaseUserRecord,
@@ -37,7 +37,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
 
   private existingBlogEntriesIDs: number[] = [];
 
-  public submissionPreview: SoundcloudPlaylist = null;
+  public submissionPreview: SoundcloudPlaylist | null = null;
 
   /**
    * User profile mode:
@@ -55,7 +55,22 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
   /**
    * User profile form.
    */
-  public profileForm: IUserProfileForm;
+  public profileForm: IUserProfileForm = this.fb.group({
+    email: [
+      {
+        value: '',
+        disabled: !this.mode.edit || !this.mode.updateEmail ? true : false,
+      },
+      Validators.compose([Validators.required, Validators.email]),
+    ],
+    name: [
+      {
+        value: '',
+        disabled: !this.mode.edit ? true : false,
+      },
+    ],
+    password: [''],
+  }) as IUserProfileForm;
 
   /**
    * Idivates if password should be visible to a user.
@@ -78,8 +93,8 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
   }
 
   public displayMessage(message: string): void {
-    this.snackBar.open(message, null, {
-      duration: ETIMEOUT.SHORT,
+    this.snackBar.open(message, void 0, {
+      duration: TIMEOUT.SHORT,
     });
   }
 
@@ -90,8 +105,8 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
         email: string;
         name: string;
       } = {
-        email: this.firebaseUser.email,
-        name: this.firebaseUser.displayName,
+        email: this.firebaseUser?.email ?? '',
+        name: this.firebaseUser?.displayName ?? '',
       };
       this.resetForm(user);
     }
@@ -105,14 +120,14 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
     this.profileForm = this.fb.group({
       email: [
         {
-          value: Boolean(user) ? user.email : '',
+          value: typeof user !== 'undefined' ? user.email : '',
           disabled: !this.mode.edit || !this.mode.updateEmail ? true : false,
         },
         Validators.compose([Validators.required, Validators.email]),
       ],
       name: [
         {
-          value: Boolean(user) ? user.name : '',
+          value: typeof user !== 'undefined' ? user.name : '',
           disabled: !this.mode.edit ? true : false,
         },
       ],
@@ -156,7 +171,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
    */
   public resetPassword(): void {
     this.firebase.fire.auth
-      .sendPasswordResetEmail(this.firebaseUser.email)
+      .sendPasswordResetEmail(this.firebaseUser?.email ?? '')
       .then(() => {
         const message = 'Password reset link was sent to you over email.';
         this.displayMessage(message);
@@ -170,9 +185,9 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
    * Resends verifications email to user.
    */
   public resendVerificationEmail(): void {
-    if (!this.firebaseUser.emailVerified) {
-      this.firebase.fire.user
-        .sendEmailVerification()
+    if (!Boolean(this.firebaseUser?.emailVerified)) {
+      this.firebase.fire?.user
+        ?.sendEmailVerification()
         .then(() => {
           const message = 'Check your email for an email with a verification link.';
           this.displayMessage(message);
@@ -191,7 +206,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
    */
   public updateProfile(): void {
     this.firebaseUser
-      .updateProfile({ displayName: this.profileForm.controls.name.value })
+      ?.updateProfile({ displayName: this.profileForm.controls.name.value })
       .then(() => {
         const message = 'Your profile was updated.';
         this.displayMessage(message);
@@ -229,7 +244,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
   private getUserData(userScId?: number) {
     return this.soundcloud
       .getMe(userScId)
-      .pipe(concatMap(me => this.soundcloud.getMyPlaylists(me.id).pipe(mapTo(me))));
+      .pipe(concatMap(me => this.soundcloud.getMyPlaylists(me.id ?? 0).pipe(mapTo(me))));
   }
 
   /**
@@ -239,7 +254,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
     void this.soundcloud.connect().then(connectResult => {
       console.warn('SC.connect.then, data:', connectResult);
 
-      const urlParams = localStorage.getItem('callback').replace(/^.*\?/, '').split('&');
+      const urlParams = localStorage.getItem('callback')?.replace(/^.*\?/, '').split('&') ?? [];
       const code = urlParams[0].split('=')[1];
       const oauthToken = urlParams[1].split('#')[1].split('=')[1];
       localStorage.removeItem('callback');
@@ -270,14 +285,12 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
    * @param [passGetMeMethodCall] indicates if soundcloud 'get me' api call should be passed
    */
   private getUserDbRecord(passGetMeMethodCall?: boolean) {
-    console.warn('getUserDbRecord', this.firebaseUser.uid);
-    const promise = this.firebase.getDB('users/' + this.firebaseUser.uid, false) as Promise<
-      DataSnapshot
-    >;
+    console.warn('getUserDbRecord', this.firebaseUser?.uid);
+    const promise = this.firebase.getDB('users/' + (this.firebaseUser?.uid ?? '')).once('value');
     const observable = from(promise).pipe(
       concatMap((snapshot: DataSnapshot) => {
         this.userDbRecord.next(snapshot.val());
-        if (Boolean(this.userDbRecord.value.sc_id) && !passGetMeMethodCall) {
+        if (Boolean(this.userDbRecord.value.sc_id) && !Boolean(passGetMeMethodCall)) {
           return this.getUserData(this.userDbRecord.value.sc_id);
         }
         return of(this.userDbRecord);
@@ -294,7 +307,9 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
    * Gets existing blog entries ids.
    */
   public getExistingBlogEntriesIDs(): void {
-    (this.firebase.getDB('blogEntriesIDs') as Promise<DataSnapshot>)
+    this.firebase
+      .getDB('blogEntriesIDs')
+      .once('value')
       .then(snapshot => {
         const response: [number[]] = snapshot.val();
         this.existingBlogEntriesIDs = [...response[0]];
@@ -310,7 +325,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
   public toggleBlogPostPreview(playlist?: SoundcloudPlaylist): void {
     this.submissionPreview = Boolean(this.submissionPreview)
       ? null
-      : Boolean(playlist)
+      : typeof playlist !== 'undefined'
       ? playlist
       : null;
   }
@@ -424,8 +439,8 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     const user = {
-      email: this.firebase.fire.user.email,
-      name: this.firebase.fire.user.displayName,
+      email: this.firebase.fire?.user?.email ?? '',
+      name: this.firebase.fire?.user?.displayName ?? '',
     };
     this.resetForm(user);
     void this.getUserDbRecord().subscribe();
@@ -433,7 +448,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    (this.firebase.getDB('blogEntriesIDs', true) as DatabaseReference).off();
-    (this.firebase.getDB('users/' + this.firebaseUser.uid, true) as DatabaseReference).off();
+    this.firebase.getDB('blogEntriesIDs').off();
+    this.firebase.getDB('users/' + (this.firebaseUser?.uid ?? '')).off();
   }
 }

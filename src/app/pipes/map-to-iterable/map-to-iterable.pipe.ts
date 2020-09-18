@@ -11,9 +11,12 @@ export class DnbhubMapToIterablePipe implements PipeTransform {
    * Retrieves map keys to iterable array.
    * @param value object
    */
-  public transform(value: Record<string, unknown>, args: string[] = []): string[] | number[] {
-    if (!Boolean(value)) {
-      return;
+  public transform(
+    value: Record<string, unknown> | null,
+    args: string[] = [],
+  ): string[] | number[] {
+    if (value === null) {
+      return [];
     }
     return args[0] === 'string'
       ? Object.keys(value)

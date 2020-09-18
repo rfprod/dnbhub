@@ -18,6 +18,7 @@ import {
 import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
 import { APP_ENV } from 'src/app/utils/injection-tokens';
 
+import { ISoundcloudPlayer } from '../../interfaces/soundcloud/soundcloud-player.interface';
 import { soundcloudActions } from './soundcloud.store';
 
 /**
@@ -99,7 +100,7 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
     'http://dnbhub.com/callback.html',
   );
 
-  private tracksLinkedPartNextHref: string = null;
+  private tracksLinkedPartNextHref: string | null = null;
 
   /**
    * Soundcloud initialization.
@@ -224,7 +225,7 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
   public getTracksNextHref(): Observable<SoundcloudTracksLinkedPartitioning> {
     return this.handlers
       .pipeHttpRequest<SoundcloudTracksLinkedPartitioning>(
-        this.http.get<SoundcloudTracksLinkedPartitioning>(this.tracksLinkedPartNextHref),
+        this.http.get<SoundcloudTracksLinkedPartitioning>(this.tracksLinkedPartNextHref ?? ''),
       )
       .pipe(map(tracksLinkedPart => this.processTracksCollection(tracksLinkedPart)));
   }
@@ -256,7 +257,7 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
    * - links to anchors
    * @param raw unprovessed blog post description
    */
-  public processDescription(raw: string): string {
+  public processDescription(raw: string = ''): string {
     if (!Boolean(raw)) {
       return raw;
     }
@@ -286,8 +287,9 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
    * Returns resolved soundcloud track stream object.
    * @param trackId Soundcloud track id
    */
-  public streamTrack(trackId: number): Observable<unknown> {
+  public streamTrack(trackId: number): Observable<ISoundcloudPlayer> {
     // TODO type
+    // TODO: existing explicit type may be incorrect
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const promise = SC.stream(`/tracks/${trackId}`);
     return from(promise);

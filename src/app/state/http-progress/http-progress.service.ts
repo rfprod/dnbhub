@@ -57,14 +57,14 @@ export class DnbhubHttpProgressService implements IDnbhubHttpProgressService {
   }
 
   private startProgress(payload: Partial<IDnbhubHttpProgressStateModel>) {
-    if (payload.mainView) {
+    if (typeof payload.mainView !== 'undefined') {
       this.attachIndicator();
     }
     return this.store.dispatch(new httpProgressActions.startProgress(payload));
   }
 
   private stopProgress(payload: Partial<IDnbhubHttpProgressStateModel>) {
-    if (!payload.mainView) {
+    if (typeof payload.mainView !== 'undefined') {
       this.detachIndicator();
     }
     return this.store.dispatch(new httpProgressActions.stopProgress(payload));

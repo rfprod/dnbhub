@@ -5,7 +5,7 @@ import { tap } from 'rxjs/operators';
 import { IEmailForm, IEmailFormValue } from 'src/app/interfaces/forms/email-form.interface';
 import { DnbhubTranslateService } from 'src/app/modules/translate/translate.service';
 import { DnbhubSendEmailService } from 'src/app/services/send-email/send-email.service';
-import { ETIMEOUT, WINDOW } from 'src/app/utils';
+import { TIMEOUT, WINDOW } from 'src/app/utils';
 
 @Component({
   selector: 'dnbhub-contact-dialog',
@@ -17,7 +17,7 @@ export class DnbhubContactDialogComponent {
   /**
    * UI feedback for user actions.
    */
-  public feedback: string;
+  public feedback?: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: IEmailFormValue,
@@ -60,7 +60,7 @@ export class DnbhubContactDialogComponent {
         this.feedback = this.translateService.instant('contact.result.success');
         setTimeout(() => {
           this.closeDialog();
-        }, ETIMEOUT.SHORT);
+        }, TIMEOUT.SHORT);
       }),
     );
   }
