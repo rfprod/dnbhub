@@ -7,7 +7,7 @@ export interface IUiDictionary {
 }
 
 export interface ISupportedLanguage {
-  key: string;
+  key: SUPPORTED_LANGUAGE_KEY;
   name: string;
 }
 

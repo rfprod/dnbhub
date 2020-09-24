@@ -18,7 +18,7 @@ export const dictionary: IUiDictionary = {
 /**
  * Translation dictionaries provider.
  */
-export const TRANSLATION_PROVIDERS = [{ provide: TRANSLATIONS, useValue: dictionary }];
+export const translationProviders = [{ provide: TRANSLATIONS, useValue: dictionary }];
 
 export const supportedLanguages: ISupportedLanguage[] = [
   { key: SUPPORTED_LANGUAGE_KEY.ENGLISH, name: 'English' },

@@ -9,13 +9,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconRegistry } from '@angular/material/icon';
 import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsFormPluginModule } from '@ngxs/form-plugin';
-import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
+import { NgxsLoggerPluginModule, NgxsLoggerPluginOptions } from '@ngxs/logger-plugin';
 import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { NgxsModule } from '@ngxs/store';
+import { DnbhubRoutingModule } from 'src/app/app-routing.module';
 import { DnbhubEnvironmentConfig, ENV } from 'src/app/app.environment';
-import { DnbhubRoutingModule } from 'src/app/app.routing.module';
 import { DnbhubAboutComponent } from 'src/app/components/about/about.component';
 import { DnbhubAdminComponent } from 'src/app/components/admin/admin.component';
 import { DnbhubBlogComponent } from 'src/app/components/blog/blog.component';
@@ -53,6 +52,11 @@ const entryComponenets: (any[] | Type<any>)[] = [
   DnbhubProgressBarComponent,
   DnbhubBrandDialogComponent,
 ];
+
+const ngxsLoggerPluginOptions: NgxsLoggerPluginOptions = {
+  collapsed: true,
+  disabled: environment.production,
+};
 
 /**
  * Main application module.
@@ -92,14 +96,13 @@ const entryComponenets: (any[] | Type<any>)[] = [
     NgxsModule.forRoot([], { developmentMode: !environment.production }),
     NgxsRouterPluginModule.forRoot(),
     NgxsFormPluginModule.forRoot(),
-    environment.production ? [] : NgxsReduxDevtoolsPluginModule.forRoot(),
-    environment.production ? [] : NgxsLoggerPluginModule.forRoot(),
-    DnbhubUiStoreModule.forRoot(),
+    NgxsLoggerPluginModule.forRoot(ngxsLoggerPluginOptions),
+    DnbhubUiStoreModule,
     DnbhubHttpProgressStoreModule.forRoot(),
-    DnbhubSoundcloudStoreModule.forRoot(),
-    DnbhubBlogStoreModule.forRoot(),
-    DnbhubAboutStoreModule.forRoot(),
-    DnbhubAdminStoreModule.forRoot(),
+    DnbhubSoundcloudStoreModule,
+    DnbhubBlogStoreModule,
+    DnbhubAboutStoreModule,
+    DnbhubAdminStoreModule,
     DnbhubRoutingModule,
   ],
   providers: [

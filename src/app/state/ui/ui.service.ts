@@ -66,7 +66,7 @@ export class DnbhubUiService implements IDnbhubUiService {
     );
   }
 
-  public selectLanguage(language: SUPPORTED_LANGUAGE_KEY | string) {
+  public selectLanguage(language: SUPPORTED_LANGUAGE_KEY) {
     return this.store.selectOnce(DnbhubUiState.getLanguage).pipe(
       filter(value => Boolean(value)),
       concatMap(() => this.store.dispatch(new uiActions.setDnbhubUiState({ language }))),
