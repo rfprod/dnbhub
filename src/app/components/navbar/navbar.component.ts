@@ -56,9 +56,7 @@ export class DnbhubNavbarComponent {
   /**
    * Selects language.
    */
-  public selectLanguage(
-    key: SUPPORTED_LANGUAGE_KEY | string = SUPPORTED_LANGUAGE_KEY.ENGLISH,
-  ): void {
+  public selectLanguage(key: SUPPORTED_LANGUAGE_KEY = SUPPORTED_LANGUAGE_KEY.ENGLISH): void {
     void this.ui.selectLanguage(key).subscribe();
   }
 

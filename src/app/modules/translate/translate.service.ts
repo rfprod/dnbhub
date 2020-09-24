@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 
 import { TRANSLATIONS } from './translations';
-import { IDictionaryObject, IUiDictionary } from './translations.interface';
+import { IDictionaryObject, IUiDictionary, SUPPORTED_LANGUAGE_KEY } from './translations.interface';
 
 /**
  * Translate service for UI.
@@ -15,19 +15,19 @@ export class DnbhubTranslateService {
   /**
    * Current language.
    */
-  private language = 'en';
+  private language: SUPPORTED_LANGUAGE_KEY = SUPPORTED_LANGUAGE_KEY.ENGLISH;
 
   /**
    * Current language getter.
    */
-  public get currentLanguage(): string {
+  public get currentLanguage() {
     return this.language;
   }
 
   /**
    * Current language setter.
    */
-  public use(key: string): void {
+  public use(key: SUPPORTED_LANGUAGE_KEY): void {
     this.language = key;
   }
 
@@ -43,31 +43,26 @@ export class DnbhubTranslateService {
    * @param key dictionary key
    */
   private translate(key: string): string {
-    if (Boolean(this.translations[this.currentLanguage])) {
-      let translation: string | IDictionaryObject | null = null;
-      const keys = key.split('.');
-      // eslint-disable-next-line no-labels
-      searchString: for (const k of keys) {
-        if (translation !== null) {
-          const currentLanguageDictionary = this.translations[this.currentLanguage];
-          if (Boolean(translation[k])) {
-            translation = translation[k];
-          } else if (Boolean(currentLanguageDictionary[k])) {
-            translation = this.translations[this.currentLanguage][k];
-          } else {
-            // eslint-disable-next-line no-labels
-            break searchString;
-          }
-        } else {
-          translation = null;
-          // eslint-disable-next-line no-labels
-          break searchString;
-        }
+    const dictionary = this.translations[this.language];
+
+    const keys = key.split('.');
+
+    let dictionaryTree = { ...dictionary };
+    let translation: string | IDictionaryObject | undefined;
+
+    for (const k of keys) {
+      if (typeof dictionaryTree[k] === 'undefined') {
+        translation = key;
+      } else if (typeof dictionaryTree[k] === 'string') {
+        translation = dictionaryTree[k];
+      } else {
+        dictionaryTree = dictionaryTree[k] as IDictionaryObject;
       }
-      translation = !Boolean(translation) || typeof translation !== 'string' ? key : translation;
-      return translation;
     }
-    return key;
+
+    translation = typeof translation !== 'string' ? key : translation;
+
+    return translation;
   }
 
   /**

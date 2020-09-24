@@ -1,5 +1,5 @@
 import { OverlayModule } from '@angular/cdk/overlay';
-import { ModuleWithProviders, NgModule, Provider } from '@angular/core';
+import { NgModule, Provider } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { NgxsModule } from '@ngxs/store';
 
@@ -15,10 +15,4 @@ export const soundcloudStoreModuleProviders: Provider[] = [
 @NgModule({
   imports: [MatSidenavModule, OverlayModule, NgxsModule.forFeature([DnbhubSoundcloudState])],
 })
-export class DnbhubSoundcloudStoreModule {
-  public static forRoot(): ModuleWithProviders<DnbhubSoundcloudStoreModule> {
-    return {
-      ngModule: DnbhubSoundcloudStoreModule,
-    };
-  }
-}
+export class DnbhubSoundcloudStoreModule {}

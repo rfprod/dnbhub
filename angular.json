@@ -118,7 +118,6 @@
           "builder": "@angular-eslint/builder:lint",
           "options": {
             "eslintConfig": "cypress/.eslintrc",
-            "exclude": ["**/node_modules/**", "!cypress/**/*.ts"],
             "lintFilePatterns": ["cypress/**/*.ts"]
           }
         },
@@ -132,7 +131,6 @@
           "builder": "@angular-eslint/builder:lint",
           "options": {
             "eslintConfig": "src/.eslintrc",
-            "exclude": ["**/node_modules/**", "!src/**"],
             "lintFilePatterns": ["src/**/*.ts"]
           }
         },

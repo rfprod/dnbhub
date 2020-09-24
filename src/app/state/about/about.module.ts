@@ -1,5 +1,5 @@
 import { OverlayModule } from '@angular/cdk/overlay';
-import { ModuleWithProviders, NgModule, Provider } from '@angular/core';
+import { NgModule, Provider } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { NgxsModule } from '@ngxs/store';
 
@@ -12,10 +12,4 @@ export const blogStoreModuleProviders: Provider[] = [DnbhubAboutService, DnbhubA
 @NgModule({
   imports: [MatSidenavModule, OverlayModule, NgxsModule.forFeature([DnbhubAboutState])],
 })
-export class DnbhubAboutStoreModule {
-  public static forRoot(): ModuleWithProviders<DnbhubAboutStoreModule> {
-    return {
-      ngModule: DnbhubAboutStoreModule,
-    };
-  }
-}
+export class DnbhubAboutStoreModule {}
