@@ -1,6 +1,4 @@
-import { OverlayModule } from '@angular/cdk/overlay';
 import { NgModule, Provider } from '@angular/core';
-import { MatSidenavModule } from '@angular/material/sidenav';
 import { NgxsModule } from '@ngxs/store';
 
 import { DnbhubSoundcloudApiService } from './soundcloud-api.service';
@@ -13,6 +11,6 @@ export const soundcloudStoreModuleProviders: Provider[] = [
 ];
 
 @NgModule({
-  imports: [MatSidenavModule, OverlayModule, NgxsModule.forFeature([DnbhubSoundcloudState])],
+  imports: [NgxsModule.forFeature([DnbhubSoundcloudState])],
 })
 export class DnbhubSoundcloudStoreModule {}
