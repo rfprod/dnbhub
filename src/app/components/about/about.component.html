@@ -1,4 +1,8 @@
-<div fxLayout="row wrap" *ngIf="details$ | async as details">
+<div
+  [ngStyle]="{ width: 'auto!important' }"
+  fxLayout="row wrap"
+  *ngIf="details$ | async as details"
+>
   <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start start">
     <h1 fxFlex="100" fxLayout="row" fxLayoutAlign="center center">
       {{ details.title }}
@@ -74,7 +78,7 @@
     <span fxFlex="100" [innerHtml]="details.text"></span>
     <mat-toolbar fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center center">
       <button mat-button (click)="showContactDialog()" title="{{ 'contact.open' | translate }}">
-        <mat-icon>email</mat-icon>
+        <mat-icon>send</mat-icon>
         {{ 'contact.open' | translate }}
       </button>
       <a
@@ -84,7 +88,7 @@
         href="https://dnbhub.us3.list-manage.com/subscribe/post?u=3eeba7cfe8388b91c662bdf95&id=8cca3229c8"
         target="_blank"
       >
-        <mat-icon>text_snippet</mat-icon>
+        <mat-icon>email</mat-icon>
         {{ 'subscribe.title' | translate }}
       </a>
     </mat-toolbar>

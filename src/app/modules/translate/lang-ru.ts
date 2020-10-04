@@ -30,7 +30,7 @@ export const LANG_RU_TRANSLATIONS: IDictionaryObject = {
     },
   },
   subscribe: {
-    title: 'Подписка на email-рассылку',
+    title: 'Email-рассылка',
     result: {
       success: 'Указанный адрес эл. почты был добавлен в список email-рассылки.',
       fail: 'Подписка на новостную email-рассылку не удалась. Пожалуйста, попробуйте позже.',

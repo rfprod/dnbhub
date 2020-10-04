@@ -30,7 +30,7 @@ export const LANG_EN_TRANSLATIONS: IDictionaryObject = {
     },
   },
   subscribe: {
-    title: 'Mailing list subscription',
+    title: 'Mailing list',
     result: {
       success: 'Provided email address was added to mailing list.',
       fail: 'Mailing list subscription failed. Please, try again later.',

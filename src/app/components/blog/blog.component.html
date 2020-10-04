@@ -29,8 +29,9 @@
     </button>
   </mat-toolbar>
 
-  <mat-toolbar
-    fxFlex="0 1 auto"
+  <div
+    [ngStyle]="{ padding: '10px 0' }"
+    fxFlex="1 1 auto"
     fxLayout="row wrap"
     fxLayoutAlign="center center"
     fxLayoutGap="26px"
@@ -105,7 +106,7 @@
     >
       Bandcamp
     </a>
-  </mat-toolbar>
+  </div>
 
   <dnbhub-soundcloud-player
     fxFlex="0 1 auto"
