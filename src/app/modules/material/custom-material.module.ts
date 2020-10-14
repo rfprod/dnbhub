@@ -1,5 +1,3 @@
-import '../../../../node_modules/hammerjs/hammer.js';
-
 import { OverlayConfig, OverlayModule } from '@angular/cdk/overlay';
 import { PortalModule } from '@angular/cdk/portal';
 import { ScrollingModule } from '@angular/cdk/scrolling';
@@ -53,6 +51,9 @@ import {
   MatTooltipModule,
 } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
+import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
+
+import { DnbhubHammerGestureConfig } from './hammerjs-gesture.config';
 
 /**
  * Returns mat tooltip options.
@@ -105,6 +106,7 @@ export const customMaterialModuleProviders: Provider[] = [
     useFactory: matMomentDateAdapterOptionsFactory,
   },
   { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS },
+  { provide: HAMMER_GESTURE_CONFIG, useClass: DnbhubHammerGestureConfig },
   {
     provide: OverlayConfig,
     useFactory: () =>

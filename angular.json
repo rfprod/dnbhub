@@ -39,7 +39,7 @@
           },
           "options": {
             "allowedCommonJsDependencies": [
-              "node_modules/hammerjs/hammer.js",
+              "hammerjs",
               "@firebase/app",
               "firebase/app",
               "@firebase/auth",
