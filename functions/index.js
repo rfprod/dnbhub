@@ -2,29 +2,14 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const nodemailer = require('nodemailer');
 
-/*
- *	Create and Deploy Cloud Functions
- *	https://firebase.google.com/docs/functions/write-firebase-functions
- *
- *	basic usage example
- *
- * exports.helloWorld = functions.https.onRequest((request, response) => {
- *		response.send('Hello from Firebase!');
- *	});
- */
-
-/*
- *	load .env variables
+/**
+ *  Load .env variables.
  */
 require('dotenv').config();
 
-/*
- *	initialize admin SDK to access Firebase Realtime Database
- */
-admin.initializeApp(functions.config().firebase);
-
-/*
- * nodemailer usage notice:
+/**
+ * @note Nodemailer usage
+ *
  * To use Gmail you may need to configure "Allow Less Secure Apps" (https://www.google.com/settings/security/lesssecureapps)
  * in your Gmail account unless you are using 2FA
  * in which case you would have to create an Application Specific password (https://security.google.com/settings/security/apppasswords).
@@ -44,8 +29,9 @@ const smtpConfig = {
     accessToken: 'empty',
   },
 };
-/*
- *	reusable transporter object using the default SMTP transport
+
+/**
+ * Mail transporter.
  */
 const mailTransporter = nodemailer.createTransport(smtpConfig);
 mailTransporter.verify((err, success) => {
@@ -57,147 +43,32 @@ mailTransporter.verify((err, success) => {
 });
 
 /**
- * Fallback function if mail transporter returns an error on sendEmail
+ *  Initialize admin SDK to access Firebase Realtime Database.
  */
-function saveEmailToDB(name, email, header, message, domain, res) {
-  const entry = {
-    name: name,
-    email: email,
-    header: header,
-    message: message,
-    domain: domain,
-  };
-  admin
-    .database()
-    .ref('/emails/messages')
-    .push(entry)
-    .then(snapshot => {
-      res.status(200).json({ success: 'Your message was successfully sent' });
-    })
-    .catch(error => {
-      res.status(500).send('Error: try again later, please');
-    });
-}
+admin.initializeApp(functions.config().firebase);
 
 /**
- * Send email message using nodemailer
+ * Create and Deploy Cloud Functions.
+ * https://firebase.google.com/docs/functions/write-firebase-functions
+ *
+ * Basic usage example.
+ *
+ *  exports.helloWorld = functions.https.onRequest((request, response) => {
+ *    response.send('Hello from Firebase!');
+ *  });
  */
-function sendEmail(name, email, header, message, domain, res) {
-  const mailOptions = {
-    from: '"DNBHUB 👥" <' + process.env.MAILER_EMAIL + '>',
-    to: process.env.MAILER_RECIPIENT_EMAIL,
-    subject: `DNBHUB: ${header} ✔`,
-    text: `${message}\n\nMessage was sent from domain: ${domain}`,
-    html: `<h3>${header}</h3><p>${message}</p><p>From: ${name} ${email}</p><p>Message was sent from domain: ${domain}</p>`,
-  };
-  mailTransporter.sendMail(mailOptions, (err, info) => {
-    if (err) {
-      // console.log('Mail transporter error:', err);
-      /*
-       *	do not report error to user yet
-       *	try recording message to DB first
-       */
-      // res.status(500).send('Mail transporter error');
-      saveEmailToDB(name, email, header, message, domain, res);
-    } else {
-      // console.log('Message sent: ' + info.response);
-      res.status(200).json({ success: 'Your message was successfully sent' });
-    }
-  });
-}
 
 /**
- * actual send email message cloud function
+ * Send an email.
  */
-exports.sendEmail = functions.https.onRequest((req, res) => {
-  if (req.method !== 'POST') {
-    res.status(403).json({ error: 'Forbidden method' });
-  }
-  const name = req.body.name || '';
-  const email = req.body.email || '';
-  const header = req.body.header || '';
-  const message = req.body.message || '';
-  const domain = req.body.domain || '';
-  if (
-    name.length >= 2 &&
-    /\w{2,}@\w{2,}(\.)?\w{2,}/.test(email) &&
-    header.length >= 5 &&
-    message.length >= 75 &&
-    domain.length >= 4
-  ) {
-    // res.status(200).json({'success': 'Your message was successfully sent.'});
-    sendEmail(name, email, header, message, domain, res);
-  } else {
-    res.status(400).send('Missing mandatory request parameters or invalid values');
-  }
-});
+const sendEmailHandler = require('./handlers/email').handler(admin, mailTransporter);
+exports.sendEmail = functions.https.onRequest(sendEmailHandler);
 
 /**
- * Fallback function if mail transporter returns an error on submitBlogPostOverEmail
+ * Submit a blog post.
  */
-function saveBlogPostOverEmailToDB(email, link, domain, res) {
-  const entry = {
-    email: email,
-    link: link,
-    domain: domain,
-  };
-  admin
-    .database()
-    .ref('/emails/blogSubmissions')
-    .push(entry)
-    .then(snapshot => {
-      res.status(200).json({ success: 'Your message was successfully sent' });
-    })
-    .catch(error => {
-      res.status(500).send('Error: try again later, please');
-    });
-}
-
-/**
- * Submit a blog post anonimously over email using nodemailer
- */
-function submitBlogPostOverEmail(email, link, domain, res) {
-  const mailOptions = {
-    from: '"DNBHUB 👥" <' + process.env.MAILER_EMAIL + '>',
-    to: process.env.MAILER_RECIPIENT_EMAIL,
-    subject: `DNBHUB: blod submission ✔`,
-    text: `Soundclou playlist link: ${link}\n\nFrom: ${email}\n\nMessage was sent from domain: ${domain}`,
-    html: `<p>Soundcloud playlist link: ${link}</p><p>From: ${email}</p><p>Message was sent from domain: ${domain}</p>`,
-  };
-  mailTransporter.sendMail(mailOptions, (err, info) => {
-    if (err) {
-      // console.log('Mail transporter error:', err);
-      /*
-       *	do not report error to user yet
-       *	try recording message to DB first
-       */
-      // res.status(500).send('Mail transporter error');
-      saveBlogPostOverEmailToDB(email, link, domain, res);
-    } else {
-      // console.log('Message sent: ' + info.response);
-      res.status(200).json({ success: 'Your message was successfully sent' });
-    }
-  });
-}
-
-/**
- * actual submit a blog post anonimously over email cloud function
- */
-exports.submitBlogPostOverEmail = functions.https.onRequest((req, res) => {
-  if (req.method !== 'POST') {
-    res.status(403).json({ error: 'Forbidden method' });
-  }
-  const email = req.body.email || '';
-  const link = req.body.link || '';
-  const domain = req.body.domain || '';
-  if (
-    /\w{2,}@\w{2,}(\.)?\w{2,}/.test(email) &&
-    /https:\/\/soundcloud\.com\/\w+[^/]*\/sets\/\w+[^/]*/.test(link) &&
-    domain.length >= 4
-  ) {
-    // res.status(200).json({'success': 'Your message was successfully sent.'});
-    submitBlogPostOverEmail(email, link, domain, res);
-  } else {
-    res.status(400).send('Missing mandatory request parameters or invalid values');
-  }
-});
+const submitBlogPostOverEmailHandler = require('./handlers/blog-post').handler(
+  admin,
+  mailTransporter,
+);
+exports.submitBlogPostOverEmail = functions.https.onRequest(submitBlogPostOverEmailHandler);
