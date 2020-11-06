@@ -4,13 +4,23 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFireDatabase } from '@angular/fire/database';
 import { DataSnapshot } from '@angular/fire/database/interfaces';
 import { from, Observable, of, throwError } from 'rxjs';
-import { concatMap, map, tap } from 'rxjs/operators';
+import { concatMap, first, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { DnbhubEnvironmentConfig } from 'src/app/app.environment';
 import { IFirebaseEnvInterface } from 'src/app/interfaces';
 import { DnbhubBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
 
 import { DnbhubHttpHandlersService } from '../http-handlers/http-handlers.service';
+
+type TFirebaseDbCollection =
+  | 'about'
+  | 'blog'
+  | 'blogEntriesIDs'
+  | 'brands'
+  | 'emails'
+  | 'freedownloads'
+  | 'users'
+  | string;
 
 /**
  * Firebase service, uses Angular Fire.
@@ -34,16 +44,16 @@ export class DnbhubFirebaseService {
    * Angular fire public shortcuts.
    */
   public fire: {
-    db: firebase.database.Database;
+    db: AngularFireDatabase['database'];
     auth: AngularFireAuth;
-    user: firebase.User | null;
+    user: firebase.default.User | null;
   } = {
     db: this.fireDb.database,
     auth: this.fireAuth,
     user: null, // TODO remove this static reference to authenticated firebase user eventually
   };
 
-  public readonly user$ = this.fireAuth.user;
+  public readonly user$: Observable<firebase.default.User | null> = this.fireAuth.user;
 
   public readonly anonUser$: Observable<boolean> = this.fireAuth.authState.pipe(
     tap(user => {
@@ -52,8 +62,8 @@ export class DnbhubFirebaseService {
     map(user => !Boolean(user)),
   );
 
-  public readonly privilegedAccess$: Observable<boolean> = this.fireAuth.user.pipe(
-    map(user => user?.uid !== this.config.privilegedAccessUID),
+  public readonly privilegedAccess$: Observable<boolean> = this.user$.pipe(
+    map(user => user !== null && user.uid !== this.config.privilegedAccessUID),
   );
 
   /**
@@ -62,17 +72,15 @@ export class DnbhubFirebaseService {
    * @param refOnly indicates if db reference only should be returned
    */
   public getDB(
-    collection:
-      | 'about'
-      | 'blog'
-      | 'blogEntriesIDs'
-      | 'brands'
-      | 'emails'
-      | 'freedownloads'
-      | 'users'
-      | string,
-  ) {
-    return this.fireDb.database.ref('/' + collection);
+    collection: TFirebaseDbCollection,
+    refOnly?: boolean,
+  ): Promise<firebase.default.database.DataSnapshot> | firebase.default.database.ThenableReference {
+    const db:
+      | Promise<firebase.default.database.DataSnapshot>
+      | firebase.default.database.ThenableReference = !Boolean(refOnly)
+      ? (this.getDB('/' + collection) as firebase.default.database.ThenableReference).once('value')
+      : (this.getDB('/' + collection, true) as firebase.default.database.ThenableReference);
+    return db;
   }
 
   /**
@@ -129,7 +137,7 @@ export class DnbhubFirebaseService {
   public create(email: string, password: string) {
     const promise = this.fireAuth.createUserWithEmailAndPassword(email, password);
     const observable = from(promise);
-    return this.handlers.pipeHttpRequest<firebase.auth.UserCredential>(observable);
+    return this.handlers.pipeHttpRequest<firebase.default.auth.UserCredential>(observable);
   }
 
   /**
@@ -148,43 +156,54 @@ export class DnbhubFirebaseService {
    * @param password user password
    */
   public delete(email: string, password: string) {
-    const promise = this.fireAuth
-      .signInWithEmailAndPassword(email, password)
-      .then(credential => {
-        const cred = (credential as unknown) as firebase.auth.AuthCredential;
-        return this.fire.user?.reauthenticateAndRetrieveDataWithCredential(cred);
-      })
-
-      .then(() => {
-        // console.warn('successfully reauthenticated');
-        return this.getDB('users/' + (this.fire.user?.uid ?? '')).remove(); // delete user db profile also
-      })
-      .then(() => {
-        return this.fire.user?.delete();
-      });
-    const observable = from(promise);
-    return this.handlers.pipeHttpRequest(observable);
+    const observable = from(this.fireAuth.signInWithEmailAndPassword(email, password));
+    return this.handlers.pipeHttpRequest(observable).pipe(
+      switchMap((credential: firebase.default.auth.UserCredential) =>
+        this.user$.pipe(map(user => ({ credential, user }))),
+      ),
+      switchMap(({ credential, user }) => {
+        return user !== null && credential.credential !== null
+          ? from(user.reauthenticateWithCredential(credential.credential)).pipe(mapTo(user))
+          : throwError(new Error('Firebase user is undefined or auth credential is null.'));
+      }),
+      switchMap(user =>
+        from(
+          (this.getDB(
+            `users/${user.uid}`,
+            true,
+          ) as firebase.default.database.ThenableReference).remove(),
+        ).pipe(mapTo(user)),
+      ),
+      switchMap(user => {
+        return typeof user !== 'undefined' ? from(user.delete()) : of(null);
+      }),
+    );
   }
 
   /**
    * Checks authentication for errors.
    */
-  public authErrorCheck(): void {
+  public authErrorCheck() {
     const typeError = new TypeError(
       'firebaseService, user DB record action error: there seems to be no authenticated users',
     );
-    if (!Boolean(this.fireAuth.user)) {
-      throw typeError;
-    } else if (Boolean(this.fireAuth.user) && !Boolean(this.fire.user?.uid)) {
-      throw typeError;
-    }
+    return this.user$.pipe(
+      first(),
+      tap(user => {
+        if (user === null) {
+          throw typeError;
+        } else if (Boolean(this.fireAuth.user) && !Boolean(this.fire.user?.uid)) {
+          throw typeError;
+        }
+      }),
+    );
   }
 
   /**
    * Checks database user id.
    */
   public checkDBuserUID(): Observable<{ exists: boolean; created: boolean }> {
-    this.authErrorCheck();
+    void this.authErrorCheck().subscribe();
     const checkRecord = this.getDB('users/' + (this.fire.user?.uid ?? ''))
       .once('value')
       .then((snapshot: DataSnapshot) => {

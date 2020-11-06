@@ -26,7 +26,7 @@ export class DnbhubHttpHandlersService {
     });
   }
 
-  public getErrorMessage(error: HttpErrorResponse & firebase.FirebaseError): string {
+  public getErrorMessage(error: HttpErrorResponse & firebase.default.FirebaseError): string {
     const msg: string = Boolean(error.message)
       ? error.message
       : Boolean(error.code)
@@ -44,7 +44,7 @@ export class DnbhubHttpHandlersService {
    * Handles error.
    * @param error error object
    */
-  public handleError(error: HttpErrorResponse & firebase.FirebaseError): Observable<never> {
+  public handleError(error: HttpErrorResponse & firebase.default.FirebaseError): Observable<never> {
     const errorMessage = this.getErrorMessage(error);
     this.displayErrorToast(errorMessage);
     return throwError(errorMessage);
