@@ -229,15 +229,17 @@ export class DnbhubFirebaseService {
       }),
       concatMap(result => {
         if (!result.exists) {
-          this.getList<IFirebaseUserRecord>(`users/${this.fire.user?.uid ?? ''}`).push({
-            sc_code: '',
-            sc_oauth_token: '',
-            sc_id: 0,
-            submittedPlaylists: [],
-            created: new Date().getTime(),
-          });
+          const observable = from(
+            this.getList<IFirebaseUserRecord>(`users/${this.fire.user?.uid ?? ''}`).push({
+              sc_code: '',
+              sc_oauth_token: '',
+              sc_id: 0,
+              submittedPlaylists: [],
+              created: new Date().getTime(),
+            }),
+          ).pipe(mapTo({ exists: false, created: true }));
 
-          return of({ exists: false, created: true });
+          return observable;
         }
         return of(result);
       }),
@@ -252,10 +254,13 @@ export class DnbhubFirebaseService {
     const observable = this.checkDBuserUID().pipe(
       concatMap(result => {
         console.warn('checkDBuserUID', result);
-        const promise = this.getList<IFirebaseUserRecord>(
-          `users/${this.fire.user?.uid ?? ''}`,
-        ).update(this.fire.user?.uid ?? '', valuesObj);
-        return from(promise);
+        const observable1 = from(
+          this.getList<IFirebaseUserRecord>(`users/${this.fire.user?.uid ?? ''}`).update(
+            this.fire.user?.uid ?? '',
+            valuesObj,
+          ),
+        );
+        return observable1;
       }),
     );
     return this.handlers.pipeHttpRequest(observable);
@@ -270,8 +275,10 @@ export class DnbhubFirebaseService {
       filter(result => result.exists),
       concatMap(result => {
         if (!result.exists) {
-          this.getList<DnbhubBlogPost>('blog').push(valuesObj); // update blog
-          return of({ valuesSet: true });
+          const observable1 = from(this.getList<DnbhubBlogPost>('blog').push(valuesObj)).pipe(
+            mapTo({ valuesSet: true }),
+          ); // update blog
+          return observable1;
         }
         return of(null);
       }),

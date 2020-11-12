@@ -16,7 +16,7 @@ module.exports = {
   },
   transformIgnorePatterns: ['node_modules/(?!@ngrx|@ngxs)'],
   moduleFileExtensions: ['ts', 'html', 'js', 'json'],
-  coverageReporters: ['html'],
+  coverageReporters: ['html-spa'],
   collectCoverage: true,
   cacheDirectory: '/tmp/jest_rs/dnbhub',
   noStackTrace: true,

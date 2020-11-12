@@ -28,7 +28,6 @@ jobs:
 
       - name: Get yarn cache directory path and commit hash
         id: get-variables
-        shell: bash
         run: echo "::set-output name=yarncachedir::$(yarn cache dir)"; echo "::set-output name=commitsha::$(echo ${GITHUB_SHA})"
 
       - name: Yarn/npm + Jest cache

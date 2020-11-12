@@ -77,7 +77,7 @@ export class DnbhubBrandDialogComponent {
       const newBrandValues: DnbhubBrand = this.form.value;
       return this.firebase
         .getList<DnbhubBrand>('brands')
-        .update(dbKey, newBrandValues)
+        .update(dbKey ?? '', newBrandValues)
         .then(() => {
           console.warn(`brand id ${dbKey} was successfully deleted`);
           this.closeDialog();
