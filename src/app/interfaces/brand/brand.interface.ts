@@ -27,7 +27,3 @@ export class DnbhubBrand {
 
   public readonly youtube = '';
 }
-
-export interface IBrands {
-  [key: string]: DnbhubBrand;
-}

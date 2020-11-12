@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { AngularFireDatabase } from '@angular/fire/database';
-import { DataSnapshot } from '@angular/fire/database/interfaces';
+import { AngularFireDatabase, QueryFn } from '@angular/fire/database';
+import { QueryReference } from '@angular/fire/database/interfaces';
 import { from, Observable, of, throwError } from 'rxjs';
-import { concatMap, first, map, mapTo, switchMap, tap } from 'rxjs/operators';
+import { concatMap, filter, first, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { DnbhubEnvironmentConfig } from 'src/app/app.environment';
 import { IFirebaseEnvInterface } from 'src/app/interfaces';
 import { DnbhubBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
 
 import { DnbhubHttpHandlersService } from '../http-handlers/http-handlers.service';
+import { queries } from './firebase.queries';
 
 type TFirebaseDbCollection =
   | 'about'
@@ -44,11 +45,9 @@ export class DnbhubFirebaseService {
    * Angular fire public shortcuts.
    */
   public fire: {
-    db: AngularFireDatabase['database'];
     auth: AngularFireAuth;
     user: firebase.default.User | null;
   } = {
-    db: this.fireDb.database,
     auth: this.fireAuth,
     user: null, // TODO remove this static reference to authenticated firebase user eventually
   };
@@ -66,21 +65,43 @@ export class DnbhubFirebaseService {
     map(user => user !== null && user.uid !== this.config.privilegedAccessUID),
   );
 
-  /**
-   * Gets firebase database
-   * @param collection firebase collection name
-   * @param refOnly indicates if db reference only should be returned
-   */
-  public getDB(
-    collection: TFirebaseDbCollection,
-    refOnly?: boolean,
-  ): Promise<firebase.default.database.DataSnapshot> | firebase.default.database.ThenableReference {
-    const db:
-      | Promise<firebase.default.database.DataSnapshot>
-      | firebase.default.database.ThenableReference = !Boolean(refOnly)
-      ? (this.getDB('/' + collection) as firebase.default.database.ThenableReference).once('value')
-      : (this.getDB('/' + collection, true) as firebase.default.database.ThenableReference);
-    return db;
+  public getListStream<T = unknown>(collection: TFirebaseDbCollection, query?: QueryFn) {
+    return this.fireDb.list<T>('/' + collection, query).valueChanges();
+  }
+
+  public getList<T = unknown>(collection: TFirebaseDbCollection, query?: QueryFn) {
+    return this.fireDb.list<T>('/' + collection, query);
+  }
+
+  public getListItem<T = unknown>(path: QueryReference | string) {
+    return this.fireDb.object<T>(`/${path}`);
+  }
+
+  public blogEntryExistsByValue(childKey: string) {
+    const query: QueryFn = queries.orderByValueEqChildKey(childKey);
+    return this.getList<DnbhubBlogPost>('blog', query)
+      .valueChanges()
+      .pipe(
+        map(items => {
+          const result: DnbhubBlogPost = items[0];
+          console.warn('blogEntryExistsByValue', result);
+          return Boolean(result);
+        }),
+      );
+  }
+
+  public blogEntryExistsByChildValue(childKey: string, value: string | number | boolean) {
+    const query: QueryFn = (ref: firebase.default.database.Reference) =>
+      ref.orderByChild(childKey).equalTo(value);
+    return this.getList<DnbhubBlogPost>('blog', query)
+      .valueChanges()
+      .pipe(
+        map(items => {
+          const result: DnbhubBlogPost = items[0];
+          console.warn('blogEntryExistsByChildValue', result);
+          return Boolean(result);
+        }),
+      );
   }
 
   /**
@@ -166,14 +187,7 @@ export class DnbhubFirebaseService {
           ? from(user.reauthenticateWithCredential(credential.credential)).pipe(mapTo(user))
           : throwError(new Error('Firebase user is undefined or auth credential is null.'));
       }),
-      switchMap(user =>
-        from(
-          (this.getDB(
-            `users/${user.uid}`,
-            true,
-          ) as firebase.default.database.ThenableReference).remove(),
-        ).pipe(mapTo(user)),
-      ),
+      switchMap(user => from(this.getList(`users/${user.uid}`).remove()).pipe(mapTo(user))),
       switchMap(user => {
         return typeof user !== 'undefined' ? from(user.delete()) : of(null);
       }),
@@ -202,35 +216,28 @@ export class DnbhubFirebaseService {
   /**
    * Checks database user id.
    */
-  public checkDBuserUID(): Observable<{ exists: boolean; created: boolean }> {
+  public checkDBuserUID() {
     void this.authErrorCheck().subscribe();
-    const checkRecord = this.getDB('users/' + (this.fire.user?.uid ?? ''))
-      .once('value')
-      .then((snapshot: DataSnapshot) => {
-        console.warn('checking user db profile', snapshot.val());
-        return { exists: Boolean(snapshot.val()), created: false };
-      })
-      .catch(error => {
-        throw error;
-      });
-
-    const checkRecordObservable = from(checkRecord);
-    return checkRecordObservable.pipe(
+    const checkRecord = this.getListStream<{ [key: string]: IFirebaseUserRecord }>(
+      `users/${this.fire.user?.uid ?? ''}`,
+    );
+    return checkRecord.pipe(
+      first(),
+      map(user => {
+        console.warn('checking user db profile', user);
+        return { exists: typeof user !== 'undefined', created: false };
+      }),
       concatMap(result => {
         if (!result.exists) {
-          const createRecord = this.getDB('users/' + (this.fire.user?.uid ?? ''))
-            .set({
-              created: new Date().getTime(),
-            })
-            .then(() => {
-              console.warn('created user db profile');
-              return { exists: false, created: true };
-            })
-            .catch(error => {
-              throw error;
-            });
+          this.getList<IFirebaseUserRecord>(`users/${this.fire.user?.uid ?? ''}`).push({
+            sc_code: '',
+            sc_oauth_token: '',
+            sc_id: 0,
+            submittedPlaylists: [],
+            created: new Date().getTime(),
+          });
 
-          return from(createRecord);
+          return of({ exists: false, created: true });
         }
         return of(result);
       }),
@@ -245,50 +252,13 @@ export class DnbhubFirebaseService {
     const observable = this.checkDBuserUID().pipe(
       concatMap(result => {
         console.warn('checkDBuserUID', result);
-        const promise = this.getDB('users/' + (this.fire.user?.uid ?? '')).update(valuesObj);
+        const promise = this.getList<IFirebaseUserRecord>(
+          `users/${this.fire.user?.uid ?? ''}`,
+        ).update(this.fire.user?.uid ?? '', valuesObj);
         return from(promise);
       }),
     );
     return this.handlers.pipeHttpRequest(observable);
-  }
-
-  /**
-   * Resolves if blog entry exists by value
-   * @param dbKey blog entry database key
-   */
-  public blogEntryExistsByValue(dbKey: string) {
-    const observable = new Observable<DnbhubBlogPost>(subscriber => {
-      this.getDB('blogEntriesIDs')
-        .orderByValue()
-        .equalTo(dbKey)
-        .on('value', snapshot => {
-          const response: DnbhubBlogPost = snapshot.val();
-          console.warn('blogEntryExists, blogEntriesIDs response', response);
-          // null - not found
-          subscriber.next(response);
-        });
-    });
-    return observable;
-  }
-
-  /**
-   * Resolves if blog entry exists by child value
-   * @param childKey child key
-   * @param value child key value
-   */
-  public blogEntryExistsByChildValue(childKey: string, value: string | number | boolean) {
-    const observable = new Observable<DnbhubBlogPost>(subscriber => {
-      this.getDB('blog')
-        .orderByChild(childKey)
-        .equalTo(value)
-        .on('value', snapshot => {
-          const response: DnbhubBlogPost = snapshot.val();
-          console.warn('blogEntryExists, blogEntriesIDs response', response);
-          // null - not found
-          subscriber.next(response);
-        });
-      return observable;
-    });
   }
 
   /**
@@ -297,32 +267,13 @@ export class DnbhubFirebaseService {
    */
   public addBlogPost(valuesObj: DnbhubBlogPost) {
     const observable = this.checkDBuserUID().pipe(
+      filter(result => result.exists),
       concatMap(result => {
-        const promise = this.getDB('blogEntriesIDs')
-          .orderByValue()
-          .once('value', (snapshot: DataSnapshot) => {
-            const idsArray: [number[]] = snapshot.val();
-            console.warn('idsArray', idsArray);
-            idsArray[0].push(valuesObj.playlistId ?? 0);
-            this.getDB('blogEntriesIDs')
-              .set(idsArray) // update blog entries ids
-              .then(() => {
-                const newRecord = this.getDB('blog').push(); // update blog
-                newRecord
-                  .set(valuesObj)
-                  .then(() => {
-                    console.warn('blog post added');
-                    return { valuesSet: true };
-                  })
-                  .catch(error => {
-                    throw error;
-                  });
-              })
-              .catch(error => {
-                throw error;
-              });
-          });
-        return from(promise);
+        if (!result.exists) {
+          this.getList<DnbhubBlogPost>('blog').push(valuesObj); // update blog
+          return of({ valuesSet: true });
+        }
+        return of(null);
       }),
     );
     return observable;

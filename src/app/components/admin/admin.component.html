@@ -70,7 +70,7 @@
               <span fxFlex fxLayout="row wrap" fxLayoutAlign="start center">
                 <button
                   mat-icon-button
-                  (click)="deleteMessage(emailMessage.key)"
+                  (click)="deleteMessage($any(emailMessage.key))"
                   aria-label="delete message"
                   title="delete message"
                 >

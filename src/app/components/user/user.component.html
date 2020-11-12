@@ -199,23 +199,27 @@
             <button
               mat-icon-button
               color="primary"
-              [disabled]="alreadyAdded(playlistObj)"
+              [disabled]="alreadyAdded$(playlistObj) | async"
               (click)="submitBlogPost(playlistObj)"
               aria-label="Submit to blog"
             >
-              <mat-icon *ngIf="!alreadyAdded(playlistObj)" matTooltip="Submit to blog">
+              <mat-icon *ngIf="!(alreadyAdded$(playlistObj) | async)" matTooltip="Submit to blog">
                 library_add
               </mat-icon>
 
               <mat-icon
-                *ngIf="alreadyAdded(playlistObj) && unsubmittable(playlistObj)"
+                *ngIf="
+                  (alreadyAdded$(playlistObj) | async) && (unsubmittable$(playlistObj) | async)
+                "
                 matTooltip="Submission is under review"
               >
                 timelapse
               </mat-icon>
 
               <mat-icon
-                *ngIf="alreadyAdded(playlistObj) && !unsubmittable(playlistObj)"
+                *ngIf="
+                  (alreadyAdded$(playlistObj) | async) && !(unsubmittable$(playlistObj) | async)
+                "
                 matTooltip="Submitted to blog"
               >
                 check_circle
@@ -225,7 +229,9 @@
             <button
               mat-icon-button
               color="warn"
-              *ngIf="alreadySubmitted(playlistObj) && unsubmittable(playlistObj)"
+              *ngIf="
+                (alreadySubmitted$(playlistObj) | async) && (unsubmittable$(playlistObj) | async)
+              "
               (click)="unsubmitBlogPost(playlistObj)"
               aria-label="Unsubmit playlist: available only before moderation happens"
               matTooltip="Unsubmit playlist: available only before moderation happens"
@@ -235,8 +241,8 @@
 
             <button
               mat-icon-button
-              [disabled]="alreadyAdded(playlistObj)"
-              *ngIf="unsubmittable(playlistObj)"
+              [disabled]="alreadyAdded$(playlistObj) | async"
+              *ngIf="unsubmittable$(playlistObj) | async"
               (click)="toggleBlogPostPreview(playlistObj)"
               aria-label="Preview blog post"
               matTooltip="Preview blog post"
@@ -246,7 +252,7 @@
 
             <button
               mat-icon-button
-              *ngIf="alreadyAdded(playlistObj) && !unsubmittable(playlistObj)"
+              *ngIf="(alreadyAdded$(playlistObj) | async) && !(unsubmittable$(playlistObj) | async)"
               (click)="toggleBlogPostPreview(playlistObj)"
               aria-label="Go to blog entry"
               matTooltip="Go to blog entry"

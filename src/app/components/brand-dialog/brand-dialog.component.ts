@@ -76,8 +76,8 @@ export class DnbhubBrandDialogComponent {
       const dbKey = this.data.brand.key;
       const newBrandValues: DnbhubBrand = this.form.value;
       return this.firebase
-        .getDB(`brands/${dbKey}`)
-        .update(newBrandValues)
+        .getList<DnbhubBrand>('brands')
+        .update(dbKey, newBrandValues)
         .then(() => {
           console.warn(`brand id ${dbKey} was successfully deleted`);
           this.closeDialog();
@@ -95,9 +95,8 @@ export class DnbhubBrandDialogComponent {
     if (this.form.valid && !this.form.pristine) {
       const formData = this.form.value;
       return this.firebase
-        .getDB('brands')
-        .child(this.form.controls.name.value)
-        .set(formData)
+        .getList<DnbhubBrand>('brands')
+        .set(this.form.controls.name.value, formData)
         .then(() => {
           console.warn('brand values set');
           this.closeDialog();
@@ -113,7 +112,7 @@ export class DnbhubBrandDialogComponent {
     if (this.form.valid && !this.form.pristine) {
       const dbKey = this.data.brand.key;
       return this.firebase
-        .getDB(`brands/${dbKey}`)
+        .getListItem<DnbhubBrand>(`brands/${dbKey}`)
         .remove()
         .then(() => {
           console.warn(`brand id ${dbKey} was successfully deleted`);

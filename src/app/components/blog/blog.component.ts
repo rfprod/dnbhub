@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select } from '@ngxs/store';
 import { Observable, of } from 'rxjs';
-import { concatMap, filter, tap } from 'rxjs/operators';
+import { concatMap, filter, first, tap } from 'rxjs/operators';
 import { DnbhubBlogService } from 'src/app/state/blog/blog.service';
 import { DnbhubBlogState } from 'src/app/state/blog/blog.store';
 
@@ -22,7 +22,8 @@ export class DnbhubBlogComponent {
   public readonly posts$ = this.blog.posts$.pipe(
     concatMap(storedPosts => {
       if (!Boolean(storedPosts.length)) {
-        return this.blog.getPosts().pipe(
+        return this.blog.getPosts$.pipe(
+          first(),
           tap(loadedPosts => {
             let code = this.route.snapshot.queryParams.code;
             if (Boolean(code)) {

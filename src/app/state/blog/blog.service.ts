@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { tap } from 'rxjs/operators';
 
 import { DnbhubBlogApiService } from './blog-api.service';
 import { IDnbhubBlogService } from './blog.interface';
@@ -16,13 +15,7 @@ export class DnbhubBlogService implements IDnbhubBlogService {
 
   public readonly selectedPost$ = this.store.select(DnbhubBlogState.getSelectedPost);
 
-  public getPosts() {
-    return this.api.getPosts().pipe(
-      tap(posts => {
-        void this.store.dispatch(new blogActions.setDnbhubBlogState({ posts }));
-      }),
-    );
-  }
+  public readonly getPosts$ = this.api.getPosts$;
 
   public selectBlogPost(code: string) {
     return this.store.dispatch(new blogActions.selectBlogPost({ code }));

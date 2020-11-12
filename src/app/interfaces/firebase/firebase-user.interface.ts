@@ -12,6 +12,9 @@ export interface IFirebaseUserRecord {
   submittedPlaylists: IFirebaseUserSubmittedPlaylists;
 }
 
+/**
+ * @deprecated remove it.
+ */
 export const defaultFirebaseUserRecord = {
   key: '',
   created: 0,
@@ -20,7 +23,3 @@ export const defaultFirebaseUserRecord = {
   sc_oauth_token: '',
   submittedPlaylists: {},
 };
-
-export interface IFirebaseUserRecords {
-  [key: string]: IFirebaseUserRecord;
-}
