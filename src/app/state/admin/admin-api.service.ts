@@ -1,8 +1,8 @@
-import { Injectable, OnDestroy } from '@angular/core';
-import { from } from 'rxjs';
-import { DnbhubBrand, IBrands } from 'src/app/interfaces';
-import { IEmailMessage, IEmailMessages } from 'src/app/interfaces/admin';
-import { IFirebaseUserRecord, IFirebaseUserRecords } from 'src/app/interfaces/firebase';
+import { Injectable } from '@angular/core';
+import { first, map, tap } from 'rxjs/operators';
+import { DnbhubBrand } from 'src/app/interfaces';
+import { IEmailMessage } from 'src/app/interfaces/admin';
+import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
 import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
 import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
 
@@ -12,72 +12,77 @@ import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-h
 @Injectable({
   providedIn: 'root',
 })
-export class DnbhubAdminApiService implements OnDestroy {
+export class DnbhubAdminApiService {
   constructor(
     private readonly handlers: DnbhubHttpHandlersService,
     private readonly firebase: DnbhubFirebaseService,
   ) {}
 
   public getEmails() {
-    const promise = this.firebase
-      .getDB('emails/messages')
-      .once('value')
-      .then(snapshot => {
-        const response: IEmailMessages = snapshot.val();
-        return Object.keys(response).map(key => {
-          const result: IEmailMessage = { ...response[key] };
-          result.key = key;
-          return result;
-        });
-      });
-    return this.handlers.pipeHttpRequest<IEmailMessage[]>(from(promise));
+    const observable = this.firebase
+      .getList<IEmailMessage>('emails/messages')
+      .valueChanges()
+      .pipe(
+        first(),
+        tap(items => {
+          const response: IEmailMessage[] = [...items];
+          return Object.keys(response).map(key => {
+            const result: IEmailMessage = { ...response[key] };
+            result.key = key;
+            return result;
+          });
+        }),
+      );
+    return this.handlers.pipeHttpRequest<IEmailMessage[]>(observable);
   }
 
   public getBrands() {
-    const promise = this.firebase
-      .getDB('brands')
-      .once('value')
-      .then(snapshot => {
-        const response: IBrands = snapshot.val();
-        return Object.keys(response).map(key => {
-          const input = { ...response[key], key } as DnbhubBrand;
-          const result = new DnbhubBrand(input);
-          return result;
-        });
-      });
-    return this.handlers.pipeHttpRequest<DnbhubBrand[]>(from(promise));
+    const observable = this.firebase
+      .getList<DnbhubBrand>('brands')
+      .valueChanges()
+      .pipe(
+        first(),
+        tap(items => {
+          const response: DnbhubBrand[] = [...items];
+          return Object.keys(response).map(key => {
+            const input = { ...response[key], key } as DnbhubBrand;
+            const result = new DnbhubBrand(input);
+            return result;
+          });
+        }),
+      );
+    return this.handlers.pipeHttpRequest<DnbhubBrand[]>(observable);
   }
 
   public getUsers() {
-    const promise = this.firebase
-      .getDB('users')
-      .once('value')
-      .then(snapshot => {
-        const response: IFirebaseUserRecords = snapshot.val();
-        return Object.keys(response).map(key => {
-          const result: IFirebaseUserRecord = { ...response[key] };
-          result.key = key;
-          return result;
-        });
-      });
-    return this.handlers.pipeHttpRequest<IFirebaseUserRecord[]>(from(promise));
+    const observable = this.firebase
+      .getList<IFirebaseUserRecord>('users')
+      .valueChanges()
+      .pipe(
+        first(),
+        tap(items => {
+          const response: IFirebaseUserRecord[] = [...items];
+          return Object.keys(response).map(key => {
+            const result: IFirebaseUserRecord = { ...response[key] };
+            result.key = key;
+            return result;
+          });
+        }),
+      );
+    return this.handlers.pipeHttpRequest<IFirebaseUserRecord[]>(observable);
   }
 
   public getBlogEntriesIDs() {
-    const promise = this.firebase
-      .getDB('blogEntriesIDs')
-      .once('value')
-      .then(snapshot => {
-        const response: [number[]] = snapshot.val();
-        return response[0];
-      });
-    return this.handlers.pipeHttpRequest<number[]>(from(promise));
-  }
-
-  public ngOnDestroy() {
-    this.firebase.getDB('emails/messages').off();
-    this.firebase.getDB('brands').off();
-    this.firebase.getDB('users').off();
-    this.firebase.getDB('blogEntriesIDs').off();
+    const observable = this.firebase
+      .getList<number[]>('blogEntriesIDs')
+      .valueChanges()
+      .pipe(
+        first(),
+        map(items => {
+          const response = items[0];
+          return response;
+        }),
+      );
+    return this.handlers.pipeHttpRequest<number[]>(observable);
   }
 }

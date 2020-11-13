@@ -297,7 +297,7 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
 
   public ngOnDestroy(): void {
     const tracks = new SoundcloudTracksLinkedPartitioning();
-    const playlists = [];
+    const playlists: SoundcloudPlaylist[] = [];
     void this.store.dispatch(new soundcloudActions.setDnbhubSoundcloudState({ tracks, playlists }));
   }
 }

@@ -24,7 +24,6 @@ jobs:
 
       - name: Get variables (yarn cache directory path, commit hash)
         id: get-variables
-        shell: bash
         run: echo "::set-output name=yarncachedir::$(yarn cache dir)"; echo "::set-output name=commitsha::$(echo ${GITHUB_SHA})"
 
       - name: Workspace cache (npm, yarn, jest)
@@ -53,7 +52,7 @@ jobs:
         run: npm i -g typescript @angular/cli
 
       - name: Install project dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile --ignore-scripts && yarn ngcc
 
       - name: Lint
         run: ng lint

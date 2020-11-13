@@ -11,7 +11,6 @@
             "analyze-bundle": {
               "aot": true,
               "buildOptimizer": true,
-              "extractCss": true,
               "extractLicenses": true,
               "namedChunks": true,
               "optimization": true,
@@ -22,7 +21,6 @@
             "production": {
               "aot": true,
               "buildOptimizer": true,
-              "extractCss": true,
               "extractLicenses": true,
               "fileReplacements": [
                 {
@@ -39,7 +37,6 @@
           },
           "options": {
             "allowedCommonJsDependencies": [
-              "hammerjs",
               "@firebase/app",
               "firebase/app",
               "@firebase/auth",

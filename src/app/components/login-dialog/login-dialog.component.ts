@@ -76,7 +76,7 @@ export class DnbhubLoginDialogComponent {
               void this.router.navigate(['/user']);
             }
           },
-          (error: firebase.FirebaseError) => {
+          (error: firebase.default.FirebaseError) => {
             if (error.code === 'auth/user-not-found') {
               this.signupMode = true;
               this.wrongPassword = false;

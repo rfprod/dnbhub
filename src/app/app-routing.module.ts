@@ -23,7 +23,7 @@ export const APP_ROUTES: Routes = [
  * Application routing module.
  */
 @NgModule({
-  imports: [RouterModule.forRoot(APP_ROUTES)],
+  imports: [RouterModule.forRoot(APP_ROUTES, { relativeLinkResolution: 'legacy' })],
   exports: [RouterModule],
 })
 export class DnbhubRoutingModule {}

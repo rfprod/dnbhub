@@ -1,20 +1,16 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { DataSnapshot } from '@angular/fire/database/interfaces';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { BehaviorSubject, from, of } from 'rxjs';
-import { catchError, concatMap, mapTo, take, tap } from 'rxjs/operators';
+import { of, throwError } from 'rxjs';
+import { concatMap, first, map, mapTo, switchMap, take, tap } from 'rxjs/operators';
 import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
 import { IUserProfile, IUserProfileForm, SoundcloudPlaylist } from 'src/app/interfaces/index';
 import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
 import { DnbhubSoundcloudService } from 'src/app/state/soundcloud/soundcloud.service';
 import { TIMEOUT } from 'src/app/utils';
 
-import {
-  defaultFirebaseUserRecord,
-  IFirebaseUserSubmittedPlaylists,
-} from '../../interfaces/firebase/firebase-user.interface';
+import { IFirebaseUserSubmittedPlaylists } from '../../interfaces/firebase/firebase-user.interface';
 
 @Component({
   selector: 'dnbhub-user',
@@ -22,7 +18,7 @@ import {
   styleUrls: ['./user.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DnbhubUserComponent implements OnInit, OnDestroy {
+export class DnbhubUserComponent implements OnInit {
   public readonly anonUser$ = this.firebase.anonUser$;
 
   public readonly me$ = this.soundcloud.me$;
@@ -31,11 +27,19 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
 
   public readonly firebaseUser = this.firebase.fire.user;
 
-  private readonly userDbRecord = new BehaviorSubject<IFirebaseUserRecord>(
-    defaultFirebaseUserRecord,
-  );
+  public readonly userDbRecord$ = this.firebase
+    .getListItem<IFirebaseUserRecord>(`users/${this.firebaseUser?.uid ?? ''}`)
+    .valueChanges()
+    .pipe(
+      concatMap(userRecord => {
+        if (userRecord !== null) {
+          return this.getUserData(userRecord.sc_id).pipe(mapTo(userRecord));
+        }
+        return of(userRecord);
+      }),
+    );
 
-  private existingBlogEntriesIDs: number[] = [];
+  private readonly existingBlogEntriesIDs: number[] = [];
 
   public submissionPreview: SoundcloudPlaylist | null = null;
 
@@ -281,45 +285,6 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Gets user database record.
-   * @param [passGetMeMethodCall] indicates if soundcloud 'get me' api call should be passed
-   */
-  private getUserDbRecord(passGetMeMethodCall?: boolean) {
-    console.warn('getUserDbRecord', this.firebaseUser?.uid);
-    const promise = this.firebase.getDB('users/' + (this.firebaseUser?.uid ?? '')).once('value');
-    const observable = from(promise).pipe(
-      concatMap((snapshot: DataSnapshot) => {
-        this.userDbRecord.next(snapshot.val());
-        if (Boolean(this.userDbRecord.value.sc_id) && !Boolean(passGetMeMethodCall)) {
-          return this.getUserData(this.userDbRecord.value.sc_id);
-        }
-        return of(this.userDbRecord);
-      }),
-      catchError((error, caught) => {
-        this.displayMessage(error);
-        return caught;
-      }),
-    );
-    return observable;
-  }
-
-  /**
-   * Gets existing blog entries ids.
-   */
-  public getExistingBlogEntriesIDs(): void {
-    this.firebase
-      .getDB('blogEntriesIDs')
-      .once('value')
-      .then(snapshot => {
-        const response: [number[]] = snapshot.val();
-        this.existingBlogEntriesIDs = [...response[0]];
-      })
-      .catch(error => {
-        this.displayMessage(error);
-      });
-  }
-
-  /**
    * Tobbles blog post preview.
    */
   public toggleBlogPostPreview(playlist?: SoundcloudPlaylist): void {
@@ -333,7 +298,7 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
   /**
    * Resolves if a playlist is already added.
    */
-  public alreadyAdded(playlist: SoundcloudPlaylist): boolean {
+  public readonly alreadyAdded$ = (playlist: SoundcloudPlaylist) => {
     let added = false;
     if (!Boolean(this.existingBlogEntriesIDs)) {
       const message = 'Unable to add blog posts, there was an error getting existing blog entries';
@@ -342,71 +307,91 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
     } else {
       added = this.existingBlogEntriesIDs.includes(playlist.id) ? true : added;
     }
-    return added || this.alreadySubmitted(playlist);
-  }
+    return added ? of(added) : this.alreadySubmitted$(playlist);
+  };
 
   /**
    * Resolves if a playlist is already submitted.
    */
-  public alreadySubmitted(playlist: SoundcloudPlaylist): boolean {
-    let alreadySubmitted = false;
-    if (Boolean(this.userDbRecord.value.submittedPlaylists)) {
-      alreadySubmitted = this.userDbRecord.value.submittedPlaylists[playlist.id]
-        ? true
-        : alreadySubmitted;
-    }
-
-    return alreadySubmitted;
-  }
+  public readonly alreadySubmitted$ = (playlist: SoundcloudPlaylist) =>
+    this.firebase
+      .getListItem<IFirebaseUserRecord>(`users/${this.firebaseUser?.uid ?? ''}`)
+      .valueChanges()
+      .pipe(
+        map(userRecord => {
+          if (userRecord !== null) {
+            if (Boolean(userRecord.submittedPlaylists)) {
+              return userRecord.submittedPlaylists[playlist.id] ? true : false;
+            }
+          }
+          return false;
+        }),
+      );
 
   /**
    * Resolves if track is unsubmittable.
    * @param index playlist array index
    */
-  public unsubmittable(playlist: SoundcloudPlaylist): boolean {
-    let unsubmittable = false;
-    if (Boolean(this.userDbRecord.value.submittedPlaylists)) {
-      unsubmittable = !Boolean(this.userDbRecord.value.submittedPlaylists[playlist.id])
-        ? true
-        : unsubmittable;
-    }
-    return unsubmittable;
-  }
+  public readonly unsubmittable$ = (playlist: SoundcloudPlaylist) =>
+    this.firebase
+      .getListItem<IFirebaseUserRecord>(`users/${this.firebaseUser?.uid ?? ''}`)
+      .valueChanges()
+      .pipe(
+        map(userRecord => {
+          if (userRecord !== null) {
+            if (Boolean(userRecord.submittedPlaylists)) {
+              return !Boolean(userRecord.submittedPlaylists[playlist.id]) ? true : false;
+            }
+          }
+          return false;
+        }),
+      );
 
   /**
    * Unsubmits blog post.
    * @param index playlist array index
    */
   public unsubmitBlogPost(playlist: SoundcloudPlaylist): void {
-    if (!Boolean(this.userDbRecord.value.submittedPlaylists)) {
-      const message = 'No playlists to unsubmit';
-      this.displayMessage(message);
-    } else {
-      const playlists = this.userDbRecord.value.submittedPlaylists;
-      const unsubmitPlaylistId = playlist.id.toString();
+    void this.firebase
+      .getListItem<IFirebaseUserRecord>(`users/${this.firebaseUser?.uid ?? ''}`)
+      .valueChanges()
+      .pipe(
+        first(),
+        switchMap(userRecord => {
+          if (userRecord !== null) {
+            const playlists = userRecord.submittedPlaylists;
+            const unsubmitPlaylistId = playlist.id.toString();
 
-      if (Boolean(playlists[unsubmitPlaylistId]) && playlists[unsubmitPlaylistId] === false) {
-        const userDbRecord = this.userDbRecord.value;
-        const playListKeys = Object.keys(playlists);
-        const submittedPlaylists: IFirebaseUserSubmittedPlaylists = {};
-        for (const key of playListKeys) {
-          if (key !== unsubmitPlaylistId) {
-            submittedPlaylists[key] = playlists[key];
-          }
-        }
-        userDbRecord.submittedPlaylists = { ...submittedPlaylists };
-        this.userDbRecord.next(userDbRecord);
-        void this.firebase
-          .setDBuserNewValues({ submittedPlaylists })
-          .pipe(
-            tap(() => {
-              const message = `Playlist ${playlist.title} was successfully unsubmitted.`;
+            if (!Boolean(playlists)) {
+              const message = 'No playlists to unsubmit.';
               this.displayMessage(message);
-            }),
-          )
-          .subscribe();
-      }
-    }
+              return throwError(new Error(message));
+            } else if (playlists[unsubmitPlaylistId] === false) {
+              const userDbRecord = userRecord;
+              const playListKeys = Object.keys(playlists);
+              const submittedPlaylists: IFirebaseUserSubmittedPlaylists = {};
+
+              for (const key of playListKeys) {
+                if (key !== unsubmitPlaylistId) {
+                  submittedPlaylists[key] = playlists[key];
+                }
+              }
+              userDbRecord.submittedPlaylists = { ...submittedPlaylists };
+
+              return this.firebase.setDBuserNewValues({ submittedPlaylists }).pipe(
+                tap(() => {
+                  const message = `Playlist ${playlist.title} was successfully unsubmitted.`;
+                  this.displayMessage(message);
+                }),
+              );
+            }
+
+            return throwError(new Error('Playlist is no unsubmittable.'));
+          }
+          return throwError(new Error('User does not exist.'));
+        }),
+      )
+      .subscribe();
   }
 
   /**
@@ -418,19 +403,28 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
       const message = 'Unable to add a blog post, there was an error getting existing blog entries';
       this.displayMessage(message);
     } else {
-      const userDbRecord = this.userDbRecord.value;
-      /**
-       * false - submitted but not approved by a moderator;
-       * true - submitted and approved by a moderator;
-       */
-      userDbRecord.submittedPlaylists[playlist.id] = false;
-      this.userDbRecord.next(userDbRecord);
       void this.firebase
-        .setDBuserNewValues({ submittedPlaylists: userDbRecord.submittedPlaylists })
+        .getListItem<IFirebaseUserRecord>(`users/${this.firebaseUser?.uid ?? ''}`)
+        .valueChanges()
         .pipe(
-          tap(() => {
-            const message = `Playlist ${playlist.title} was successfully submitted.`;
-            this.displayMessage(message);
+          first(),
+          switchMap(userDbRecord => {
+            if (userDbRecord !== null) {
+              /**
+               * false - submitted but not approved by a moderator;
+               * true - submitted and approved by a moderator;
+               */
+              userDbRecord.submittedPlaylists[playlist.id] = false;
+              return this.firebase
+                .setDBuserNewValues({ submittedPlaylists: userDbRecord.submittedPlaylists })
+                .pipe(
+                  tap(() => {
+                    const message = `Playlist ${playlist.title} was successfully submitted.`;
+                    this.displayMessage(message);
+                  }),
+                );
+            }
+            return of(null);
           }),
         )
         .subscribe();
@@ -443,12 +437,5 @@ export class DnbhubUserComponent implements OnInit, OnDestroy {
       name: this.firebase.fire?.user?.displayName ?? '',
     };
     this.resetForm(user);
-    void this.getUserDbRecord().subscribe();
-    this.getExistingBlogEntriesIDs();
-  }
-
-  public ngOnDestroy(): void {
-    this.firebase.getDB('blogEntriesIDs').off();
-    this.firebase.getDB('users/' + (this.firebaseUser?.uid ?? '')).off();
   }
 }

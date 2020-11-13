@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import {
@@ -30,7 +30,7 @@ import { DnbhubBrandDialogComponent } from '../brand-dialog/brand-dialog.compone
   styleUrls: ['./admin.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DnbhubAdminComponent implements OnInit, OnDestroy {
+export class DnbhubAdminComponent implements OnInit {
   public readonly anonUser$ = this.firebase.anonUser$;
 
   /**
@@ -161,8 +161,8 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
   /**
    * Deletes email message.
    */
-  public deleteMessage(dbKey: string = 'dbKey') {
-    const promise = this.firebase.getDB(`email/messages/${dbKey}`).remove();
+  public deleteMessage(dbKey: string) {
+    const promise = this.firebase.getList(`email/messages/${dbKey}`).remove();
     void from(promise)
       .pipe(
         tap(() => {
@@ -280,8 +280,9 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
    */
   public deleteUserSubmission(dbKey: number) {
     const userKey = this.firebase?.fire?.user?.uid;
+
     const promise = this.firebase
-      .getDB(`users/${userKey}/submittedPlaylists/${dbKey}`)
+      .getList(`users/${userKey}/submittedPlaylists/${dbKey}`)
       .remove()
       .then(() => {
         console.warn(`user ${userKey} submission ${dbKey} was successfully deleted`);
@@ -350,15 +351,5 @@ export class DnbhubAdminComponent implements OnInit, OnDestroy {
     this.getBrands();
     this.getUsers();
     this.getBlogEntriesIDs();
-  }
-
-  /**
-   * Lifecycle hook called on component destruction.
-   */
-  public ngOnDestroy(): void {
-    this.firebase.getDB('emails/messages').off();
-    this.firebase.getDB('blogEntriesIDs').off();
-    this.firebase.getDB('brands').off();
-    this.firebase.getDB('users').off();
   }
 }
