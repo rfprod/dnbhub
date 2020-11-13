@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HammerGestureConfig } from '@angular/platform-browser';
-import * as Hammer from 'hammerjs';
 
 /**
  * HammerJS Gesture Config.
