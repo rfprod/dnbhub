@@ -56,7 +56,7 @@ jobs:
         run: npm i -g typescript @angular/cli firebase-tools @compodoc/ngd-cli
 
       - name: Install project dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile --ignore-scripts && yarn ngcc
 
       - name: Lint
         run: ng lint
