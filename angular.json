@@ -147,12 +147,10 @@
         "test": {
           "builder": "@angular-builders/jest:run",
           "options": {
-            "assets": ["src/favicon.ico", "src/assets"],
             "collectCoverage": true,
             "jestConfig": "src/jest.config.js",
             "passWithNoTests": true,
             "polyfills": "src/polyfills.ts",
-            "scripts": [],
             "setupFile": "src/test-setup.ts",
             "styles": [
               "node_modules/roboto-fontface/css/roboto/roboto-fontface.css",
