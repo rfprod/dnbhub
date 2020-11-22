@@ -3,9 +3,9 @@ import { Store } from '@ngxs/store';
 import { concatMap, first, map, mapTo, tap } from 'rxjs/operators';
 import { SoundcloudPlaylist } from 'src/app/interfaces';
 
-import { DnbhubAdminApiService } from './admin-api.service';
 import { IDnbhubAdminService } from './admin.interface';
 import { blogActions, DnbhubAdminState } from './admin.store';
+import { DnbhubAdminApiService } from './admin-api.service';
 
 @Injectable({
   providedIn: 'root',
