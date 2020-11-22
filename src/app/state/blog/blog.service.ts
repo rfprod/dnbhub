@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 
-import { DnbhubBlogApiService } from './blog-api.service';
 import { IDnbhubBlogService } from './blog.interface';
 import { blogActions, DnbhubBlogState } from './blog.store';
+import { DnbhubBlogApiService } from './blog-api.service';
 
 @Injectable({
   providedIn: 'root',

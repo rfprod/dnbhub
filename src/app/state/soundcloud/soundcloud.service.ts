@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { concatMap, map, mapTo } from 'rxjs/operators';
 
-import { DnbhubSoundcloudApiService } from './soundcloud-api.service';
 import { IDnbhubSoundcloudService } from './soundcloud.interface';
 import { DnbhubSoundcloudState, soundcloudActions } from './soundcloud.store';
+import { DnbhubSoundcloudApiService } from './soundcloud-api.service';
 
 @Injectable({
   providedIn: 'root',

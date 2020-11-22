@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { tap } from 'rxjs/operators';
 
-import { DnbhubAboutApiService } from './about-api.service';
 import { IDnbhubAboutService } from './about.interface';
 import { aboutActions, DnbhubAboutState } from './about.store';
+import { DnbhubAboutApiService } from './about-api.service';
 
 @Injectable({
   providedIn: 'root',

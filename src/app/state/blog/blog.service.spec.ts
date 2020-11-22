@@ -3,8 +3,8 @@ import { Store } from '@ngxs/store';
 import { of } from 'rxjs';
 import { getTestBedConfig, newTestBedMetadata } from 'src/app/mocks/utils/test-bed-config.mock';
 
-import { DnbhubBlogApiService } from './blog-api.service';
 import { DnbhubBlogService } from './blog.service';
+import { DnbhubBlogApiService } from './blog-api.service';
 
 describe('DnbhubBlogService', () => {
   let service: DnbhubBlogService;
