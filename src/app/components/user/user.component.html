@@ -70,7 +70,7 @@
           <span fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="15px">
             <button
               mat-button
-              *ngIf="!mode.edit"
+              *ngIf="!(editMode$ | async)"
               (click)="resetPassword()"
               aria-label="reset password"
             >
@@ -78,14 +78,14 @@
             </button>
 
             <button mat-button (click)="toggleEditMode()" aria-label="toggle edit mode">
-              <span *ngIf="!mode.edit">edit profile</span>
-              <span *ngIf="mode.edit">cancel</span>
+              <span *ngIf="!(editMode$ | async)">edit profile</span>
+              <span *ngIf="editMode$ | async">cancel</span>
             </button>
 
             <button
               mat-button
               type="submit"
-              *ngIf="mode.edit"
+              *ngIf="editMode$ | async"
               [disabled]="profileForm.invalid"
               (click)="updateProfile()"
               aria-label="update profile"
@@ -96,7 +96,7 @@
             <button
               mat-button
               type="submit"
-              *ngIf="mode.edit"
+              *ngIf="editMode$ | async"
               [disabled]="!profileForm.controls.password.value.trim()"
               (click)="deleteProfile()"
               color="warn"
@@ -105,10 +105,10 @@
               delete
             </button>
 
-            <mat-form-field *ngIf="mode.edit">
+            <mat-form-field *ngIf="editMode$ | async">
               <input
                 matInput
-                type="{{ showPassword ? 'text' : 'password' }}"
+                type="{{ (showPassword$ | async) ? 'text' : 'password' }}"
                 formControlName="password"
                 name="password"
                 placeholder="provide a password to DELETE your account"
@@ -117,7 +117,7 @@
               <mat-icon
                 matSuffix
                 class="material-icons"
-                *ngIf="!showPassword"
+                *ngIf="!(showPassword$ | async)"
                 (click)="togglePasswordVisibility()"
               >
                 visibility
@@ -126,7 +126,7 @@
               <mat-icon
                 matSuffix
                 class="material-icons"
-                *ngIf="showPassword"
+                *ngIf="showPassword$ | async"
                 (click)="togglePasswordVisibility()"
               >
                 visibility_off
@@ -135,7 +135,7 @@
 
             <button
               mat-button
-              *ngIf="!mode.edit && !me"
+              *ngIf="!(editMode$ | async) && !me"
               color="warn"
               (click)="scConnect()"
               aria-label="connect with Soundcloud"
@@ -146,7 +146,7 @@
 
             <button
               mat-button
-              *ngIf="!mode.edit && me"
+              *ngIf="!(editMode$ | async) && me"
               color="primary"
               (click)="scConnect()"
               aria-label="reconnect with Soundcloud or connect another account"

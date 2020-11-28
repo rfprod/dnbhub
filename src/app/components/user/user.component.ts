@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngxs/store';
-import { combineLatest, of, throwError } from 'rxjs';
+import { BehaviorSubject, combineLatest, of, throwError } from 'rxjs';
 import { concatMap, filter, first, map, mapTo, switchMap, take, tap } from 'rxjs/operators';
 import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
 import { IUserProfile, IUserProfileForm, SoundcloudPlaylist } from 'src/app/interfaces/index';
@@ -57,18 +57,17 @@ export class DnbhubUserComponent {
 
   public submissionPreview: SoundcloudPlaylist | null = null;
 
-  /**
-   * User profile mode:
-   * - edit user
-   * - update email
-   */
-  public mode: {
-    edit: boolean;
-    updateEmail: boolean;
-  } = {
-    edit: false,
-    updateEmail: false,
-  };
+  private readonly editMode = new BehaviorSubject<boolean>(false);
+
+  public readonly editMode$ = this.editMode.asObservable();
+
+  private readonly updateEmailMode = new BehaviorSubject<boolean>(false);
+
+  public readonly updateEmailMode$ = this.updateEmailMode.asObservable();
+
+  private readonly showPassword = new BehaviorSubject<boolean>(false);
+
+  public readonly showPassword$ = this.showPassword.asObservable();
 
   /**
    * User profile form.
@@ -77,23 +76,18 @@ export class DnbhubUserComponent {
     email: [
       {
         value: '',
-        disabled: !this.mode.edit || !this.mode.updateEmail ? true : false,
+        disabled: !this.editMode.value || !this.updateEmailMode.value ? true : false,
       },
       Validators.compose([Validators.required, Validators.email]),
     ],
     name: [
       {
         value: '',
-        disabled: !this.mode.edit ? true : false,
+        disabled: !this.editMode.value,
       },
     ],
     password: [''],
   }) as IUserProfileForm;
-
-  /**
-   * Idivates if password should be visible to a user.
-   */
-  public showPassword = false;
 
   constructor(
     private readonly store: Store,
@@ -110,7 +104,7 @@ export class DnbhubUserComponent {
    * Toggles password visibility.
    */
   public togglePasswordVisibility(): void {
-    this.showPassword = !this.showPassword;
+    this.showPassword.next(!this.showPassword.value);
   }
 
   public displayMessage(message: string): void {
@@ -120,8 +114,8 @@ export class DnbhubUserComponent {
   }
 
   public toggleEditMode(): void {
-    this.mode.edit = this.mode.edit ? false : true;
-    if (this.mode.edit) {
+    this.editMode.next(!this.editMode.value);
+    if (this.editMode.value) {
       const user: {
         email: string;
         name: string;
@@ -142,14 +136,14 @@ export class DnbhubUserComponent {
       email: [
         {
           value: typeof user !== 'undefined' ? user.email : '',
-          disabled: !this.mode.edit || !this.mode.updateEmail ? true : false,
+          disabled: !this.editMode.value || !this.updateEmailMode.value ? true : false,
         },
         Validators.compose([Validators.required, Validators.email]),
       ],
       name: [
         {
           value: typeof user !== 'undefined' ? user.name : '',
-          disabled: !this.mode.edit ? true : false,
+          disabled: !this.updateEmailMode.value,
         },
       ],
       password: [''],
@@ -170,14 +164,14 @@ export class DnbhubUserComponent {
           this.profileForm.patchValue({
             email: {
               value: changes.email,
-              disabled: !this.mode.edit || !this.mode.updateEmail,
+              disabled: !this.editMode.value || !this.updateEmailMode.value,
             },
           });
           this.profileForm.controls.email.updateValueAndValidity();
           this.profileForm.patchValue({
             name: {
               value: changes.name,
-              disabled: !this.mode.edit,
+              disabled: !this.editMode.value,
             },
           });
           this.profileForm.controls.email.updateValueAndValidity();
