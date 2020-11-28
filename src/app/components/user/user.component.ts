@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { of, throwError } from 'rxjs';
-import { concatMap, first, map, mapTo, switchMap, take, tap } from 'rxjs/operators';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngxs/store';
+import { BehaviorSubject, combineLatest, of, throwError } from 'rxjs';
+import { concatMap, filter, first, map, mapTo, switchMap, take, tap } from 'rxjs/operators';
 import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
 import { IUserProfile, IUserProfileForm, SoundcloudPlaylist } from 'src/app/interfaces/index';
 import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
@@ -11,14 +13,16 @@ import { DnbhubSoundcloudService } from 'src/app/state/soundcloud/soundcloud.ser
 import { TIMEOUT } from 'src/app/utils';
 
 import { IFirebaseUserSubmittedPlaylists } from '../../interfaces/firebase/firebase-user.interface';
+import { DnbhubUserState, userActions } from '../../state/user/user.store';
 
+@UntilDestroy()
 @Component({
   selector: 'dnbhub-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DnbhubUserComponent implements OnInit {
+export class DnbhubUserComponent {
   public readonly anonUser$ = this.firebase.anonUser$;
 
   public readonly me$ = this.soundcloud.me$;
@@ -27,34 +31,43 @@ export class DnbhubUserComponent implements OnInit {
 
   public readonly firebaseUser = this.firebase.fire.user;
 
-  public readonly userDbRecord$ = this.firebase
-    .getListItem<IFirebaseUserRecord>(`users/${this.firebaseUser?.uid ?? ''}`)
-    .valueChanges()
-    .pipe(
-      concatMap(userRecord => {
-        if (userRecord !== null) {
-          return this.getUserData(userRecord.sc_id).pipe(mapTo(userRecord));
-        }
-        return of(userRecord);
-      }),
-    );
+  public readonly firebaseUser$ = this.firebase.user$.pipe(
+    untilDestroyed(this),
+    tap(user => {
+      this.resetForm({
+        email: user?.email ?? '',
+        name: user?.displayName ?? '',
+      });
+    }),
+    switchMap(user => this.store.dispatch(new userActions.getUserRecord({ id: user?.uid ?? '' }))),
+  );
+
+  public readonly userDbRecord$ = this.store.select(DnbhubUserState.firebaseUser).pipe(
+    untilDestroyed(this),
+    filter(user => user !== null && typeof user !== 'undefined'),
+    concatMap(userRecord => {
+      if (userRecord !== null && typeof userRecord !== 'undefined') {
+        return this.getUserData(userRecord.sc_id).pipe(mapTo(userRecord));
+      }
+      return of(userRecord);
+    }),
+  );
 
   private readonly existingBlogEntriesIDs: number[] = [];
 
   public submissionPreview: SoundcloudPlaylist | null = null;
 
-  /**
-   * User profile mode:
-   * - edit user
-   * - update email
-   */
-  public mode: {
-    edit: boolean;
-    updateEmail: boolean;
-  } = {
-    edit: false,
-    updateEmail: false,
-  };
+  private readonly editMode = new BehaviorSubject<boolean>(false);
+
+  public readonly editMode$ = this.editMode.asObservable();
+
+  private readonly updateEmailMode = new BehaviorSubject<boolean>(false);
+
+  public readonly updateEmailMode$ = this.updateEmailMode.asObservable();
+
+  private readonly showPassword = new BehaviorSubject<boolean>(false);
+
+  public readonly showPassword$ = this.showPassword.asObservable();
 
   /**
    * User profile form.
@@ -63,37 +76,35 @@ export class DnbhubUserComponent implements OnInit {
     email: [
       {
         value: '',
-        disabled: !this.mode.edit || !this.mode.updateEmail ? true : false,
+        disabled: !this.editMode.value || !this.updateEmailMode.value ? true : false,
       },
       Validators.compose([Validators.required, Validators.email]),
     ],
     name: [
       {
         value: '',
-        disabled: !this.mode.edit ? true : false,
+        disabled: !this.editMode.value,
       },
     ],
     password: [''],
   }) as IUserProfileForm;
 
-  /**
-   * Idivates if password should be visible to a user.
-   */
-  public showPassword = false;
-
   constructor(
+    private readonly store: Store,
     private readonly fb: FormBuilder,
     private readonly router: Router,
     private readonly firebase: DnbhubFirebaseService,
     private readonly soundcloud: DnbhubSoundcloudService,
     private readonly snackBar: MatSnackBar,
-  ) {}
+  ) {
+    void combineLatest([this.firebaseUser$, this.userDbRecord$]).subscribe();
+  }
 
   /**
    * Toggles password visibility.
    */
   public togglePasswordVisibility(): void {
-    this.showPassword = !this.showPassword;
+    this.showPassword.next(!this.showPassword.value);
   }
 
   public displayMessage(message: string): void {
@@ -103,8 +114,8 @@ export class DnbhubUserComponent implements OnInit {
   }
 
   public toggleEditMode(): void {
-    this.mode.edit = this.mode.edit ? false : true;
-    if (this.mode.edit) {
+    this.editMode.next(!this.editMode.value);
+    if (this.editMode.value) {
       const user: {
         email: string;
         name: string;
@@ -125,14 +136,14 @@ export class DnbhubUserComponent implements OnInit {
       email: [
         {
           value: typeof user !== 'undefined' ? user.email : '',
-          disabled: !this.mode.edit || !this.mode.updateEmail ? true : false,
+          disabled: !this.editMode.value || !this.updateEmailMode.value ? true : false,
         },
         Validators.compose([Validators.required, Validators.email]),
       ],
       name: [
         {
           value: typeof user !== 'undefined' ? user.name : '',
-          disabled: !this.mode.edit ? true : false,
+          disabled: !this.updateEmailMode.value,
         },
       ],
       password: [''],
@@ -153,14 +164,14 @@ export class DnbhubUserComponent implements OnInit {
           this.profileForm.patchValue({
             email: {
               value: changes.email,
-              disabled: !this.mode.edit || !this.mode.updateEmail,
+              disabled: !this.editMode.value || !this.updateEmailMode.value,
             },
           });
           this.profileForm.controls.email.updateValueAndValidity();
           this.profileForm.patchValue({
             name: {
               value: changes.name,
-              disabled: !this.mode.edit,
+              disabled: !this.editMode.value,
             },
           });
           this.profileForm.controls.email.updateValueAndValidity();
@@ -429,13 +440,5 @@ export class DnbhubUserComponent implements OnInit {
         )
         .subscribe();
     }
-  }
-
-  public ngOnInit(): void {
-    const user = {
-      email: this.firebase.fire?.user?.email ?? '',
-      name: this.firebase.fire?.user?.displayName ?? '',
-    };
-    this.resetForm(user);
   }
 }
