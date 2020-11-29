@@ -1,13 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject, combineLatest, of, throwError } from 'rxjs';
-import { concatMap, filter, first, map, mapTo, switchMap, take, tap } from 'rxjs/operators';
+import { combineLatest, of, throwError } from 'rxjs';
+import { concatMap, filter, first, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
-import { IUserProfile, IUserProfileForm, SoundcloudPlaylist } from 'src/app/interfaces/index';
+import { SoundcloudPlaylist } from 'src/app/interfaces/index';
 import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
 import { DnbhubSoundcloudService } from 'src/app/state/soundcloud/soundcloud.service';
 import { TIMEOUT } from 'src/app/utils';
@@ -31,14 +29,8 @@ export class DnbhubUserComponent {
 
   public readonly firebaseUser = this.firebase.fire.user;
 
-  public readonly firebaseUser$ = this.firebase.user$.pipe(
+  private readonly firebaseUser$ = this.firebase.user$.pipe(
     untilDestroyed(this),
-    tap(user => {
-      this.resetForm({
-        email: user?.email ?? '',
-        name: user?.displayName ?? '',
-      });
-    }),
     switchMap(user => this.store.dispatch(new userActions.getUserRecord({ id: user?.uid ?? '' }))),
   );
 
@@ -53,46 +45,10 @@ export class DnbhubUserComponent {
     }),
   );
 
-  private readonly existingBlogEntriesIDs: number[] = [];
-
   public submissionPreview: SoundcloudPlaylist | null = null;
-
-  private readonly editMode = new BehaviorSubject<boolean>(false);
-
-  public readonly editMode$ = this.editMode.asObservable();
-
-  private readonly updateEmailMode = new BehaviorSubject<boolean>(false);
-
-  public readonly updateEmailMode$ = this.updateEmailMode.asObservable();
-
-  private readonly showPassword = new BehaviorSubject<boolean>(false);
-
-  public readonly showPassword$ = this.showPassword.asObservable();
-
-  /**
-   * User profile form.
-   */
-  public profileForm: IUserProfileForm = this.fb.group({
-    email: [
-      {
-        value: '',
-        disabled: !this.editMode.value || !this.updateEmailMode.value ? true : false,
-      },
-      Validators.compose([Validators.required, Validators.email]),
-    ],
-    name: [
-      {
-        value: '',
-        disabled: !this.editMode.value,
-      },
-    ],
-    password: [''],
-  }) as IUserProfileForm;
 
   constructor(
     private readonly store: Store,
-    private readonly fb: FormBuilder,
-    private readonly router: Router,
     private readonly firebase: DnbhubFirebaseService,
     private readonly soundcloud: DnbhubSoundcloudService,
     private readonly snackBar: MatSnackBar,
@@ -100,157 +56,10 @@ export class DnbhubUserComponent {
     void combineLatest([this.firebaseUser$, this.userDbRecord$]).subscribe();
   }
 
-  /**
-   * Toggles password visibility.
-   */
-  public togglePasswordVisibility(): void {
-    this.showPassword.next(!this.showPassword.value);
-  }
-
-  public displayMessage(message: string): void {
+  private displayMessage(message: string): void {
     this.snackBar.open(message, void 0, {
       duration: TIMEOUT.SHORT,
     });
-  }
-
-  public toggleEditMode(): void {
-    this.editMode.next(!this.editMode.value);
-    if (this.editMode.value) {
-      const user: {
-        email: string;
-        name: string;
-      } = {
-        email: this.firebaseUser?.email ?? '',
-        name: this.firebaseUser?.displayName ?? '',
-      };
-      this.resetForm(user);
-    }
-  }
-
-  /**
-   * Resets user profile form.
-   * @param user user data: email, name
-   */
-  private resetForm(user?: { email: string; name: string }): void {
-    this.profileForm = this.fb.group({
-      email: [
-        {
-          value: typeof user !== 'undefined' ? user.email : '',
-          disabled: !this.editMode.value || !this.updateEmailMode.value ? true : false,
-        },
-        Validators.compose([Validators.required, Validators.email]),
-      ],
-      name: [
-        {
-          value: typeof user !== 'undefined' ? user.name : '',
-          disabled: !this.updateEmailMode.value,
-        },
-      ],
-      password: [''],
-    }) as IUserProfileForm;
-
-    this.formValueChangesSubscription();
-  }
-
-  /**
-   * Form value changes scubscription.
-   * Sets validators dynamically depending on new form value.
-   */
-  private formValueChangesSubscription(): void {
-    void this.profileForm.valueChanges
-      .pipe(
-        take(1),
-        tap((changes: IUserProfile) => {
-          this.profileForm.patchValue({
-            email: {
-              value: changes.email,
-              disabled: !this.editMode.value || !this.updateEmailMode.value,
-            },
-          });
-          this.profileForm.controls.email.updateValueAndValidity();
-          this.profileForm.patchValue({
-            name: {
-              value: changes.name,
-              disabled: !this.editMode.value,
-            },
-          });
-          this.profileForm.controls.email.updateValueAndValidity();
-          this.formValueChangesSubscription();
-        }),
-      )
-      .subscribe();
-  }
-
-  /**
-   * Starts password reset procedure.
-   */
-  public resetPassword(): void {
-    this.firebase.fire.auth
-      .sendPasswordResetEmail(this.firebaseUser?.email ?? '')
-      .then(() => {
-        const message = 'Password reset link was sent to you over email.';
-        this.displayMessage(message);
-      })
-      .catch(error => {
-        this.displayMessage(error);
-      });
-  }
-
-  /**
-   * Resends verifications email to user.
-   */
-  public resendVerificationEmail(): void {
-    if (!Boolean(this.firebaseUser?.emailVerified)) {
-      this.firebase.fire?.user
-        ?.sendEmailVerification()
-        .then(() => {
-          const message = 'Check your email for an email with a verification link.';
-          this.displayMessage(message);
-        })
-        .catch(error => {
-          this.displayMessage(error);
-        });
-    } else {
-      const message = 'Your email is already verified.';
-      this.displayMessage(message);
-    }
-  }
-
-  /**
-   * Updates user profile.
-   */
-  public updateProfile(): void {
-    this.firebaseUser
-      ?.updateProfile({ displayName: this.profileForm.controls.name.value })
-      .then(() => {
-        const message = 'Your profile was updated.';
-        this.displayMessage(message);
-        this.toggleEditMode();
-      })
-      .catch(error => {
-        this.displayMessage(error);
-      });
-  }
-
-  /**
-   * Deletes user account.
-   */
-  public deleteProfile(): void {
-    if (!Boolean(this.profileForm.controls.password.value)) {
-      const error = 'You must provide a password in order to delete your account';
-      this.displayMessage(error);
-    } else {
-      void this.firebase
-        .delete(this.profileForm.controls.email.value, this.profileForm.controls.password.value)
-        .pipe(
-          tap(success => {
-            const message = `Your profile was deleted. ${success}`;
-            this.displayMessage(message);
-            void this.router.navigate(['']);
-          }),
-        )
-        .subscribe();
-    }
   }
 
   /**
@@ -260,39 +69,6 @@ export class DnbhubUserComponent {
     return this.soundcloud
       .getMe(userScId)
       .pipe(concatMap(me => this.soundcloud.getMyPlaylists(me.id ?? 0).pipe(mapTo(me))));
-  }
-
-  /**
-   * Connect user account with soundcloud account.
-   */
-  public scConnect(): void {
-    void this.soundcloud.connect().then(connectResult => {
-      console.warn('SC.connect.then, data:', connectResult);
-
-      const urlParams = localStorage.getItem('callback')?.replace(/^.*\?/, '').split('&') ?? [];
-      const code = urlParams[0].split('=')[1];
-      const oauthToken = urlParams[1].split('#')[1].split('=')[1];
-      localStorage.removeItem('callback');
-
-      void this.firebase
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        .setDBuserNewValues({ sc_code: code, sc_oauth_token: oauthToken })
-        .pipe(
-          concatMap(() => this.getUserData()),
-          concatMap(me =>
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            this.firebase.setDBuserNewValues({ sc_id: me.id }).pipe(
-              tap(data => {
-                const message = `${data}: Your user profile was updated.`;
-                this.displayMessage(message);
-              }),
-            ),
-          ),
-        )
-        .subscribe();
-
-      return connectResult;
-    });
   }
 
   /**
@@ -310,34 +86,22 @@ export class DnbhubUserComponent {
    * Resolves if a playlist is already added.
    */
   public readonly alreadyAdded$ = (playlist: SoundcloudPlaylist) => {
-    let added = false;
-    if (!Boolean(this.existingBlogEntriesIDs)) {
-      const message = 'Unable to add blog posts, there was an error getting existing blog entries';
-      this.displayMessage(message);
-      added = true;
-    } else {
-      added = this.existingBlogEntriesIDs.includes(playlist.id) ? true : added;
-    }
-    return added ? of(added) : this.alreadySubmitted$(playlist);
+    return this.store.selectOnce(DnbhubUserState.getState).pipe(
+      map(user => {
+        return typeof user.firebaseUser?.submittedPlaylists[playlist.id] === 'boolean';
+      }),
+    );
   };
 
   /**
    * Resolves if a playlist is already submitted.
    */
   public readonly alreadySubmitted$ = (playlist: SoundcloudPlaylist) =>
-    this.firebase
-      .getListItem<IFirebaseUserRecord>(`users/${this.firebaseUser?.uid ?? ''}`)
-      .valueChanges()
-      .pipe(
-        map(userRecord => {
-          if (userRecord !== null) {
-            if (Boolean(userRecord.submittedPlaylists)) {
-              return userRecord.submittedPlaylists[playlist.id] ? true : false;
-            }
-          }
-          return false;
-        }),
-      );
+    this.store.selectOnce(DnbhubUserState.getState).pipe(
+      map(user => {
+        return (user.firebaseUser?.submittedPlaylists ?? {})[playlist.id] ? true : false;
+      }),
+    );
 
   /**
    * Resolves if track is unsubmittable.
@@ -410,35 +174,30 @@ export class DnbhubUserComponent {
    * @param index playlist array index
    */
   public submitBlogPost(playlist: SoundcloudPlaylist): void {
-    if (!Boolean(this.existingBlogEntriesIDs)) {
-      const message = 'Unable to add a blog post, there was an error getting existing blog entries';
-      this.displayMessage(message);
-    } else {
-      void this.firebase
-        .getListItem<IFirebaseUserRecord>(`users/${this.firebaseUser?.uid ?? ''}`)
-        .valueChanges()
-        .pipe(
-          first(),
-          switchMap(userDbRecord => {
-            if (userDbRecord !== null) {
-              /**
-               * false - submitted but not approved by a moderator;
-               * true - submitted and approved by a moderator;
-               */
-              userDbRecord.submittedPlaylists[playlist.id] = false;
-              return this.firebase
-                .setDBuserNewValues({ submittedPlaylists: userDbRecord.submittedPlaylists })
-                .pipe(
-                  tap(() => {
-                    const message = `Playlist ${playlist.title} was successfully submitted.`;
-                    this.displayMessage(message);
-                  }),
-                );
-            }
-            return of(null);
-          }),
-        )
-        .subscribe();
-    }
+    void this.firebase
+      .getListItem<IFirebaseUserRecord>(`users/${this.firebaseUser?.uid ?? ''}`)
+      .valueChanges()
+      .pipe(
+        first(),
+        switchMap(userDbRecord => {
+          if (userDbRecord !== null) {
+            /**
+             * false - submitted but not approved by a moderator;
+             * true - submitted and approved by a moderator;
+             */
+            userDbRecord.submittedPlaylists[playlist.id] = false;
+            return this.firebase
+              .setDBuserNewValues({ submittedPlaylists: userDbRecord.submittedPlaylists })
+              .pipe(
+                tap(() => {
+                  const message = `Playlist ${playlist.title} was successfully submitted.`;
+                  this.displayMessage(message);
+                }),
+              );
+          }
+          return of(null);
+        }),
+      )
+      .subscribe();
   }
 }

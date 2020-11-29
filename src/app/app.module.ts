@@ -35,6 +35,7 @@ import { DnbhubBrandDialogComponent } from './components/brand-dialog/brand-dial
 import { DnbhubPlaylistsComponent } from './components/playlists/playlists.component';
 import { DnbhubProgressBarComponent } from './components/progress-bar/progress-bar.component';
 import { DnbhubToolbarComponent } from './components/toolbar/toolbar.component';
+import { DnbhubUserMeComponent } from './components/user-me/user-me.component';
 import { DnbhubAboutStoreModule } from './state/about/about.module';
 import { DnbhubAdminStoreModule } from './state/admin/admin.module';
 import { DnbhubBlogStoreModule } from './state/blog/blog.module';
@@ -72,6 +73,7 @@ const ngxsLoggerPluginOptions: NgxsLoggerPluginOptions = {
     DnbhubBlogComponent,
     DnbhubAboutComponent,
     DnbhubUserComponent,
+    DnbhubUserMeComponent,
     DnbhubAdminComponent,
     DnbhubSoundcloudPlayerComponent,
     DnbhubContactDialogComponent,
