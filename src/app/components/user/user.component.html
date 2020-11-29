@@ -22,152 +22,7 @@
       </mat-grid-tile>
     </mat-grid-list>
 
-    <ng-container *ngIf="me$ | async as me">
-      <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center center">
-        <form
-          fxFlex="100"
-          fxLayout="row wrap"
-          fxLayoustAlign="start stretch"
-          [formGroup]="profileForm"
-        >
-          <span fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="15px">
-            <mat-form-field>
-              <mat-icon
-                matPrefix
-                *ngIf="!firebaseUser?.emailVerified"
-                title="your email is not verified, click here to request a verification link"
-                (click)="resendVerificationEmail()"
-              >
-                send
-              </mat-icon>
-              <mat-icon
-                matPrefix
-                class="material-icons"
-                *ngIf="firebaseUser?.emailVerified"
-                matTooltip="your email is verified"
-              >
-                check
-              </mat-icon>
-              <input
-                matInput
-                type="email"
-                formControlName="email"
-                placeholder="your_email@domain.tld"
-              />
-              <mat-icon matSuffix class="material-icons"> email </mat-icon>
-              <mat-error *ngIf="profileForm.controls.email.invalid">
-                This field is required, and it should be an email
-              </mat-error>
-            </mat-form-field>
-
-            <mat-form-field>
-              <input matInput type="text" formControlName="name" placeholder="your display name" />
-
-              <mat-icon matSuffix class="material-icons"> account_circle </mat-icon>
-            </mat-form-field>
-          </span>
-
-          <span fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="15px">
-            <button
-              mat-button
-              *ngIf="!(editMode$ | async)"
-              (click)="resetPassword()"
-              aria-label="reset password"
-            >
-              reset password
-            </button>
-
-            <button mat-button (click)="toggleEditMode()" aria-label="toggle edit mode">
-              <span *ngIf="!(editMode$ | async)">edit profile</span>
-              <span *ngIf="editMode$ | async">cancel</span>
-            </button>
-
-            <button
-              mat-button
-              type="submit"
-              *ngIf="editMode$ | async"
-              [disabled]="profileForm.invalid"
-              (click)="updateProfile()"
-              aria-label="update profile"
-            >
-              update
-            </button>
-
-            <button
-              mat-button
-              type="submit"
-              *ngIf="editMode$ | async"
-              [disabled]="!profileForm.controls.password.value.trim()"
-              (click)="deleteProfile()"
-              color="warn"
-              aria-label="delete profile"
-            >
-              delete
-            </button>
-
-            <mat-form-field *ngIf="editMode$ | async">
-              <input
-                matInput
-                type="{{ (showPassword$ | async) ? 'text' : 'password' }}"
-                formControlName="password"
-                name="password"
-                placeholder="provide a password to DELETE your account"
-              />
-
-              <mat-icon
-                matSuffix
-                class="material-icons"
-                *ngIf="!(showPassword$ | async)"
-                (click)="togglePasswordVisibility()"
-              >
-                visibility
-              </mat-icon>
-
-              <mat-icon
-                matSuffix
-                class="material-icons"
-                *ngIf="showPassword$ | async"
-                (click)="togglePasswordVisibility()"
-              >
-                visibility_off
-              </mat-icon>
-            </mat-form-field>
-
-            <button
-              mat-button
-              *ngIf="!(editMode$ | async) && !me"
-              color="warn"
-              (click)="scConnect()"
-              aria-label="connect with Soundcloud"
-              title="Connect with Soundcloud"
-            >
-              connect with soundcloud
-            </button>
-
-            <button
-              mat-button
-              *ngIf="!(editMode$ | async) && me"
-              color="primary"
-              (click)="scConnect()"
-              aria-label="reconnect with Soundcloud or connect another account"
-              title="Reconnect with Soundcloud or connect another account"
-            >
-              reconnect with soundcloud
-            </button>
-          </span>
-        </form>
-      </div>
-
-      <div fxFlex="100" fxLayout="row wrap">
-        <span fxFlex="100"> Username: {{ me.username }} </span>
-
-        <span fxFlex="100"> Full name: {{ me.full_name }} </span>
-
-        <span fxFlex="100"> Playlists: {{ me.playlist_count }} </span>
-
-        <span fxFlex="100" fxShow fxHide.lt-md [innerHtml]="me.description"></span>
-      </div>
-    </ng-container>
+    <dnbhub-user-me fxFlex="100" [me]="me$ | async" [firebaseUser]="firebaseUser"></dnbhub-user-me>
 
     <div
       fxFlex="100"
@@ -289,7 +144,7 @@
 
           <span fxFlex="60" fxLayout="row wrap" fxLayoutAlign="center center">
             <span fxFlex="100">
-              {{ submissionPreview.title }}
+              {{ submissionPreview?.title }}
             </span>
           </span>
 
@@ -310,7 +165,7 @@
         <dnbhub-soundcloud-player
           fxFlex="100"
           [mode]="'playlist'"
-          [playlistId]="submissionPreview.id"
+          [playlistId]="$any(submissionPreview?.id)"
         >
         </dnbhub-soundcloud-player>
 
@@ -318,21 +173,21 @@
           fxFlex="50"
           fxFlex.lt-md="100"
           id="text"
-          *ngIf="submissionPreview.description"
+          *ngIf="submissionPreview?.description"
           [ngStyle]="{ padding: '0 10px 0 10px' }"
         >
-          <div [innerHtml]="submissionPreview.description"></div>
+          <div [innerHtml]="submissionPreview?.description"></div>
 
           <p
             *ngIf="
-              submissionPreview.release_year &&
-              submissionPreview.release_month &&
-              submissionPreview.release_day
+              submissionPreview?.release_year &&
+              submissionPreview?.release_month &&
+              submissionPreview?.release_day
             "
           >
-            Release date: {{ submissionPreview.release_year }}.{{
-              submissionPreview.release_month
-            }}.{{ submissionPreview.release_day }}
+            Release date: {{ submissionPreview?.release_year }}.{{
+              submissionPreview?.release_month
+            }}.{{ submissionPreview?.release_day }}
           </p>
         </div>
       </div>
