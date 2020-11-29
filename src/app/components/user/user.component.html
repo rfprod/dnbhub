@@ -8,189 +8,24 @@
   You must me authenticated to access admin controls
 </div>
 
-<ng-container *ngIf="!(anonUser$ | async)">
-  <div
-    *ngIf="!submissionPreview"
+<div
+  fxFlex="100"
+  fxLayout="row wrap"
+  fxLayoutAlign="start start"
+  [ngStyle]="{ padding: '0 10px 0 10px' }"
+  *ngIf="!(anonUser$ | async)"
+>
+  <mat-grid-list [ngStyle]="{ width: '100%', 'font-weight': 'bold' }" cols="1" rowHeight="5:1">
+    <mat-grid-tile [ngStyle]="{ color: '#ff8a80' }">
+      Warning! Database operations may work unstably currently.
+    </mat-grid-tile>
+  </mat-grid-list>
+
+  <dnbhub-user-me fxFlex="100" [me]="me$ | async" [firebaseUser]="firebaseUser"></dnbhub-user-me>
+
+  <dnbhub-user-playlists
     fxFlex="100"
-    fxLayout="row wrap"
-    fxLayoutAlign="start start"
-    [ngStyle]="{ padding: '0 10px 0 10px' }"
-  >
-    <mat-grid-list [ngStyle]="{ width: '100%', 'font-weight': 'bold' }" cols="1" rowHeight="5:1">
-      <mat-grid-tile [ngStyle]="{ color: '#ff8a80' }">
-        Warning! Database operations may work unstably currently.
-      </mat-grid-tile>
-    </mat-grid-list>
-
-    <dnbhub-user-me fxFlex="100" [me]="me$ | async" [firebaseUser]="firebaseUser"></dnbhub-user-me>
-
-    <div
-      fxFlex="100"
-      fxLayout="row wrap"
-      fxLayoutAlign="space-between start"
-      *ngIf="myPlaylists$ | async as myPlaylists"
-    >
-      <mat-card
-        [ngStyle]="{ margin: '0.5em' }"
-        fxFlex.lt-sm="100"
-        fxFlex="47"
-        fxFlex.gt-md="31"
-        *ngFor="let playlistObj of myPlaylists"
-      >
-        <mat-card-content
-          [ngStyle]="{
-            height: '200px',
-            'overflow-x': 'hidden',
-            'overflow-y': 'auto'
-          }"
-        >
-          <dnbhub-soundcloud-player [mode]="'playlist'" [playlistId]="playlistObj.id">
-          </dnbhub-soundcloud-player>
-        </mat-card-content>
-
-        <mat-card-actions>
-          <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start center">
-            <button
-              mat-icon-button
-              color="primary"
-              [disabled]="alreadyAdded$(playlistObj) | async"
-              (click)="submitBlogPost(playlistObj)"
-              aria-label="Submit to blog"
-            >
-              <mat-icon *ngIf="!(alreadyAdded$(playlistObj) | async)" matTooltip="Submit to blog">
-                library_add
-              </mat-icon>
-
-              <mat-icon
-                *ngIf="
-                  (alreadyAdded$(playlistObj) | async) && (unsubmittable$(playlistObj) | async)
-                "
-                matTooltip="Submission is under review"
-              >
-                timelapse
-              </mat-icon>
-
-              <mat-icon
-                *ngIf="
-                  (alreadyAdded$(playlistObj) | async) && !(unsubmittable$(playlistObj) | async)
-                "
-                matTooltip="Submitted to blog"
-              >
-                check_circle
-              </mat-icon>
-            </button>
-
-            <button
-              mat-icon-button
-              color="warn"
-              *ngIf="
-                (alreadySubmitted$(playlistObj) | async) && (unsubmittable$(playlistObj) | async)
-              "
-              (click)="unsubmitBlogPost(playlistObj)"
-              aria-label="Unsubmit playlist: available only before moderation happens"
-              matTooltip="Unsubmit playlist: available only before moderation happens"
-            >
-              <mat-icon> remove_circle </mat-icon>
-            </button>
-
-            <button
-              mat-icon-button
-              [disabled]="alreadyAdded$(playlistObj) | async"
-              *ngIf="unsubmittable$(playlistObj) | async"
-              (click)="toggleBlogPostPreview(playlistObj)"
-              aria-label="Preview blog post"
-              matTooltip="Preview blog post"
-            >
-              <mat-icon> pagepreview </mat-icon>
-            </button>
-
-            <button
-              mat-icon-button
-              *ngIf="(alreadyAdded$(playlistObj) | async) && !(unsubmittable$(playlistObj) | async)"
-              (click)="toggleBlogPostPreview(playlistObj)"
-              aria-label="Go to blog entry"
-              matTooltip="Go to blog entry"
-            >
-              <mat-icon> pagepreview </mat-icon>
-            </button>
-          </div>
-        </mat-card-actions>
-      </mat-card>
-    </div>
-  </div>
-
-  <div fxFlex="100" fxLayoutFill fxLayout="row" *ngIf="submissionPreview">
-    <div fxFlex="100" fxLayoutFill fxLayout="column" fxLayoutAlign="start stretch">
-      <button mat-button (click)="toggleBlogPostPreview()">close preview</button>
-
-      <div
-        fxFlex="15"
-        fxFlex-xs="30"
-        class="heading"
-        fxLayout="row wrap"
-        fxLayoutAlign="start center"
-      >
-        <h4 fxFlex fxFlex.lt-lg="100" fxLayout="row" fxLayoutAlign="center center">
-          <button
-            mat-button
-            color="accent"
-            fxFlex="20"
-            disabled
-            aria-label="previous blog post"
-            matTooltip="previous blog post"
-          >
-            <mat-icon> chevron_left </mat-icon>
-          </button>
-
-          <span fxFlex="60" fxLayout="row wrap" fxLayoutAlign="center center">
-            <span fxFlex="100">
-              {{ submissionPreview?.title }}
-            </span>
-          </span>
-
-          <button
-            mat-button
-            color="accent"
-            fxFlex="20"
-            disabled
-            aria-label="next blog post"
-            matTooltip="next blog post"
-          >
-            <mat-icon> chevron_right </mat-icon>
-          </button>
-        </h4>
-      </div>
-
-      <div fxFlex fxLayout="row wrap" *ngIf="submissionPreview">
-        <dnbhub-soundcloud-player
-          fxFlex="100"
-          [mode]="'playlist'"
-          [playlistId]="$any(submissionPreview?.id)"
-        >
-        </dnbhub-soundcloud-player>
-
-        <div
-          fxFlex="50"
-          fxFlex.lt-md="100"
-          id="text"
-          *ngIf="submissionPreview?.description"
-          [ngStyle]="{ padding: '0 10px 0 10px' }"
-        >
-          <div [innerHtml]="submissionPreview?.description"></div>
-
-          <p
-            *ngIf="
-              submissionPreview?.release_year &&
-              submissionPreview?.release_month &&
-              submissionPreview?.release_day
-            "
-          >
-            Release date: {{ submissionPreview?.release_year }}.{{
-              submissionPreview?.release_month
-            }}.{{ submissionPreview?.release_day }}
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</ng-container>
+    [myPlaylists]="myPlaylists$ | async"
+    [firebaseUser]="firebaseUser"
+  ></dnbhub-user-playlists>
+</div>
