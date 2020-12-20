@@ -20,7 +20,8 @@ jobs:
         node-version: [14.x]
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout sources
+        uses: actions/checkout@v2
 
       - name: Get variables (yarn cache directory path, commit hash)
         id: get-variables
