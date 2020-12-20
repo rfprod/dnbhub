@@ -7,7 +7,14 @@ export function flushHttpRequests<T>(
   httpController: HttpTestingController,
   verify = false,
   matcher: THttpRequestMatcher<T> = (req: HttpRequest<T>): boolean => true,
-  responseData: unknown = {},
+  responseData:
+    | string
+    | number
+    | Record<string, unknown>
+    | ArrayBuffer
+    | Blob
+    | (string | number | Record<string, unknown> | null)[]
+    | null = {},
 ): void {
   httpController.match(matcher).forEach((req: TestRequest) => {
     req.flush(responseData);
