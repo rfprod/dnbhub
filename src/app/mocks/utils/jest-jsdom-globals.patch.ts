@@ -39,7 +39,7 @@ export const setupJestJsdomGlobalMocks: () => void = () => {
       return {
         display: 'none',
         appearance: ['-webkit-appearance'],
-        getPropertyValue: (): void => null,
+        getPropertyValue: (): null => null,
       };
     },
   });
@@ -51,7 +51,7 @@ export const setupJestJsdomGlobalMocks: () => void = () => {
 
   Object.defineProperty(global, 'fetch', {
     value: jest.fn(async () => {
-      const promise: Promise<unknown> = new Promise((resolve: () => void) => {
+      const promise: Promise<void> = new Promise((resolve: () => void) => {
         resolve();
       });
       return promise;
@@ -95,6 +95,6 @@ export const setupJestJsdomGlobalMocks: () => void = () => {
   /**
    * Override some console methods for testing environment.
    */
-  window.console.log = (): void => null;
-  window.console.group = (): void => null;
+  window.console.log = (): null => null;
+  window.console.group = (): null => null;
 };
