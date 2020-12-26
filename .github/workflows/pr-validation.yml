@@ -63,3 +63,9 @@ jobs:
 
       - name: Build
         run: ng build
+
+      - name: Install Cypress
+        run: npx cypress install
+
+      - name: E2E test
+        run: ng e2e --headless --watch=false
