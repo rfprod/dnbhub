@@ -19,6 +19,7 @@ export const ENV = {
     storageBucket: 'FIREBASE_STORAGE_BUCKET',
     messagingSenderId: 'FIREBASE_MESSAGING_SENDER_ID',
     privilegedAccessUID: 'PRIVILEGED_ACCESS_FIREBASE_UID',
+    measurementId: 'FIREBASE_MEASUREMENT_ID',
   },
   gapi: {
     browserKey: 'GOOGLE_APIS_BROWSER_KEY',
@@ -46,6 +47,7 @@ export class DnbhubEnvironmentConfig {
     storageBucket: 'FIREBASE_STORAGE_BUCKET',
     messagingSenderId: 'FIREBASE_MESSAGING_SENDER_ID',
     privilegedAccessUID: 'PRIVILEGED_ACCESS_FIREBASE_UID',
+    measurementId: 'FIREBASE_MEASUREMENT_ID',
   };
 
   public gapi: IGoogleApiEnvInterface = {
