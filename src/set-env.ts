@@ -36,6 +36,7 @@ export const ENV = {
     storageBucket: 'FIREBASE_STORAGE_BUCKET',
     messagingSenderId: 'FIREBASE_MESSAGING_SENDER_ID',
     privilegedAccessUID: 'PRIVILEGED_ACCESS_FIREBASE_UID',
+    measurementId: 'FIREBASE_MEASUREMENT_ID',
   },
   gapi: {
     browserKey: 'GOOGLE_APIS_BROWSER_KEY',
@@ -62,6 +63,7 @@ export class DnbhubEnvironmentConfig {
     storageBucket: 'FIREBASE_STORAGE_BUCKET',
     messagingSenderId: 'FIREBASE_MESSAGING_SENDER_ID',
     privilegedAccessUID: 'PRIVILEGED_ACCESS_FIREBASE_UID',
+    measurementId: 'FIREBASE_MEASUREMENT_ID',
   };
   public gapi: IGoogleApiEnvInterface = {
     browserKey: 'GOOGLE_APIS_BROWSER_KEY',
@@ -111,7 +113,8 @@ export const ENV = {
     projectId: '${process.env.FIREBASE_PROJECT_ID}',
     storageBucket: '${process.env.FIREBASE_STORAGE_BUCKET}',
     messagingSenderId: '${process.env.FIREBASE_MESSAGING_SENDER_ID}',
-    privilegedAccessUID: '${process.env.PRIVILEGED_ACCESS_FIREBASE_UID}'
+    privilegedAccessUID: '${process.env.PRIVILEGED_ACCESS_FIREBASE_UID}',
+    measurementId: '${process.env.FIREBASE_MEASUREMENT_ID}'
   },
   gapi: {
     browserKey: '${process.env.GOOGLE_APIS_BROWSER_KEY}',
@@ -136,7 +139,8 @@ export class DnbhubEnvironmentConfig {
     projectId: '${process.env.FIREBASE_PROJECT_ID}',
     storageBucket: '${process.env.FIREBASE_STORAGE_BUCKET}',
     messagingSenderId: '${process.env.FIREBASE_MESSAGING_SENDER_ID}',
-    privilegedAccessUID: '${process.env.PRIVILEGED_ACCESS_FIREBASE_UID}'
+    privilegedAccessUID: '${process.env.PRIVILEGED_ACCESS_FIREBASE_UID}',
+    measurementId: '${process.env.FIREBASE_MEASUREMENT_ID}'
   };
   public gapi: IGoogleApiEnvInterface = {
     browserKey: '${process.env.GOOGLE_APIS_BROWSER_KEY}',

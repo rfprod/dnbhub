@@ -10,6 +10,7 @@ export interface IFirebaseEnvInterface {
   storageBucket: string;
   messagingSenderId: string;
   privilegedAccessUID: string;
+  measurementId: string;
 }
 
 export interface IGoogleApiEnvInterface {
