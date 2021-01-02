@@ -139,7 +139,6 @@
             }
           },
           "options": {
-            "baseHref": "/",
             "browserTarget": "dnbhub:build",
             "proxyConfig": "proxy.conf.json"
           }
