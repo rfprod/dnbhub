@@ -6,7 +6,7 @@
 source shell/colors.sh ''
 
 # manual mode if no params are provided
-if [ 18 -eq $# ]; then
+if [ 19 -eq $# ]; then
   # map arguments
   soundcloudClientId=$1
   firebaseApiKey=$2
@@ -88,7 +88,7 @@ if [ 18 -eq $# ]; then
 
 else
   TITLE="<< ERROR >>"
-  DETAILS="you should provide 18 arguments"
+  DETAILS="you should provide 19 arguments"
   printf "${LIGHT_RED} %s: ${LIGHT_BLUE}%s:
     - ${YELLOW}SOUNDCLOUD_CLIENT_ID${LIGHT_BLUE}\n
     - ${YELLOW}FIREBASE_API_KEY${LIGHT_BLUE}\n
