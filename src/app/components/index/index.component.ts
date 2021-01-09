@@ -13,7 +13,7 @@ export class DnbhubIndexComponent implements AfterViewInit, OnDestroy {
   public readonly sections = [
     {
       title: 'Playlists',
-      subtitle: 'Playlists collection',
+      subtitle: 'Playlists collection.',
       description: 'A collection of playlists',
       link: '/playlists',
     },
@@ -26,7 +26,7 @@ export class DnbhubIndexComponent implements AfterViewInit, OnDestroy {
     {
       title: 'About',
       subtitle: 'About the project',
-      description: 'Dnbhub project details',
+      description: 'Dnbhub project details.',
       link: '/about',
     },
   ];
