@@ -11,7 +11,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { concatMap, mapTo, take, tap } from 'rxjs/operators';
-import { IUserProfile, IUserProfileForm, SoundcloudMe } from 'src/app/interfaces/index';
+import { setDBuserNewValuesOptions } from 'src/app/interfaces/firebase';
+import { ISoundcloudMe, IUserProfile, IUserProfileForm } from 'src/app/interfaces/index';
 import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
 import { DnbhubSoundcloudService } from 'src/app/state/soundcloud/soundcloud.service';
 import { TIMEOUT } from 'src/app/utils';
@@ -28,7 +29,7 @@ interface IComponentChanges extends SimpleChanges {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DnbhubUserMeComponent implements OnChanges {
-  @Input() public me: SoundcloudMe | null = null;
+  @Input() public me: ISoundcloudMe | null = null;
 
   @Input() public firebaseUser: firebase.default.User | null = null;
 
@@ -243,19 +244,17 @@ export class DnbhubUserMeComponent implements OnChanges {
       const oauthToken = urlParams[1].split('#')[1].split('=')[1];
       localStorage.removeItem('callback');
 
-      void this.firebase
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        .setDBuserNewValues({ sc_code: code, sc_oauth_token: oauthToken })
+      void this.getUserData()
         .pipe(
-          concatMap(() => this.getUserData()),
           concatMap(me =>
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            this.firebase.setDBuserNewValues({ sc_id: me.id }).pipe(
-              tap(data => {
-                const message = `${data}: Your user profile was updated.`;
-                this.displayMessage(message);
-              }),
-            ),
+            this.firebase
+              .setDBuserNewValues(setDBuserNewValuesOptions(me.id, code, oauthToken))
+              .pipe(
+                tap(data => {
+                  const message = `${data}: Your user profile was updated.`;
+                  this.displayMessage(message);
+                }),
+              ),
           ),
         )
         .subscribe();

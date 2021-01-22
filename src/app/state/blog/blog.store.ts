@@ -30,7 +30,6 @@ export const BLOG_STATE_TOKEN = new StateToken<IDnbhubBlogStateModel>('blog');
     selectedPost: null,
   },
 })
-// eslint-disable-next-line @angular-eslint/use-injectable-provided-in
 @Injectable()
 export class DnbhubBlogState {
   @Selector()

@@ -15,7 +15,10 @@ import { BehaviorSubject, combineLatest, from, of, timer } from 'rxjs';
 import { concatMap, first, map, mapTo, takeWhile, tap } from 'rxjs/operators';
 import { IEventTargetWithPosition, IEventWithPosition } from 'src/app/interfaces/index';
 import { ISoundcloudPlayer } from 'src/app/interfaces/soundcloud/soundcloud-player.interface';
-import { SoundcloudTrack } from 'src/app/interfaces/soundcloud/soundcloud-track.config';
+import {
+  ISoundcloudTrack,
+  trackDefaultValues,
+} from 'src/app/interfaces/soundcloud/soundcloud-track.config';
 import { DnbhubHttpProgressState } from 'src/app/state/http-progress/http-progress.store';
 import { DnbhubSoundcloudState } from 'src/app/state/soundcloud/soundcloud.store';
 import { TIMEOUT, WINDOW } from 'src/app/utils';
@@ -147,7 +150,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
     }),
   );
 
-  private readonly selectedTrack = new BehaviorSubject<SoundcloudTrack>(new SoundcloudTrack());
+  private readonly selectedTrack = new BehaviorSubject<ISoundcloudTrack>({ ...trackDefaultValues });
 
   public readonly selectedTrack$ = this.selectedTrack.asObservable();
 
@@ -232,7 +235,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
    * Triggers player playback/pause.
    * @param track Track object
    */
-  public playTrack(track: SoundcloudTrack): void {
+  public playTrack(track: ISoundcloudTrack): void {
     if (typeof this.player !== 'undefined') {
       if (this.selectedTrack.value.id !== track.id) {
         this.playerKill();
@@ -247,7 +250,9 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
               return from(promise).pipe(mapTo(player));
             }),
             tap(() => {
-              // eslint-disable-next-line rxjs/no-nested-subscribe
+              /**
+               * @note TODO: refactor, remove nested subscription, remove rule override for this file in .eslintrc.js
+               */
               void this.reportWaveformProgress().subscribe();
             }),
           )

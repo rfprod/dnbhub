@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 export interface IFirebaseUserSubmittedPlaylists {
-  [key: number]: boolean;
+  [key: string]: boolean;
 }
 
 export interface IFirebaseUserRecord {
@@ -12,14 +11,20 @@ export interface IFirebaseUserRecord {
   submittedPlaylists: IFirebaseUserSubmittedPlaylists;
 }
 
-/**
- * @deprecated remove it.
- */
-export const defaultFirebaseUserRecord = {
-  key: '',
-  created: 0,
+export const newFirebaseUserRecord: IFirebaseUserRecord = {
   sc_code: '',
-  sc_id: 0,
   sc_oauth_token: '',
+  sc_id: 0,
   submittedPlaylists: {},
+  created: new Date().getTime(),
 };
+
+export const setDBuserNewValuesOptions = (
+  id: number | undefined,
+  code: string,
+  oauthToken: string,
+) => ({
+  sc_id: id,
+  sc_code: code,
+  sc_oauth_token: oauthToken,
+});

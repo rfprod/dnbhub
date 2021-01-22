@@ -20,7 +20,10 @@ import { DnbhubAdminService } from 'src/app/state/admin/admin.service';
 import { DnbhubSoundcloudApiService } from 'src/app/state/soundcloud/soundcloud-api.service';
 import { TIMEOUT } from 'src/app/utils';
 
-import { SoundcloudPlaylist } from '../../interfaces/soundcloud/soundcloud-playlist.config';
+import {
+  ISoundcloudPlaylist,
+  playlistDefaultValues,
+} from '../../interfaces/soundcloud/soundcloud-playlist.config';
 import { DnbhubBottomSheetTextDetailsComponent } from '../bottom-sheet-text-details/bottom-sheet-text-details.component';
 import { DnbhubBrandDialogComponent } from '../brand-dialog/brand-dialog.component';
 
@@ -214,16 +217,16 @@ export class DnbhubAdminComponent implements OnInit {
    * TODO: check if this method is currently used and use it if it is not.
    */
   public showSubmissionPreview(playlistId: number) {
-    const promise = this.soundcloud.SC.get(`/playlists/${playlistId}`).then(
-      (data: SoundcloudPlaylist) => {
+    const promise = this.soundcloud.sc
+      .get<ISoundcloudPlaylist>(`/playlists/${playlistId}`)
+      .then(data => {
         const submittedPlaylist = data;
         submittedPlaylist.description = this.soundcloud.processDescription(
           submittedPlaylist.description,
         );
         void this.admin.selectSubmission(submittedPlaylist);
         return data;
-      },
-    );
+      });
     const observable = from(promise);
     void observable.subscribe();
   }
@@ -249,15 +252,17 @@ export class DnbhubAdminComponent implements OnInit {
   public approveUserSubmission(playlistId: number) {
     const dbKey = playlistId;
     console.warn('TODO: approve post, playlistID/dbkey', dbKey);
-    const selectedSubmission: { id: number; scData: SoundcloudPlaylist } = {
+    const selectedSubmission: { id: number; scData: ISoundcloudPlaylist } = {
       id: dbKey,
-      scData: new SoundcloudPlaylist(),
+      scData: { ...playlistDefaultValues },
     };
     console.warn('TODO: approve submission', selectedSubmission);
-    const promise = this.soundcloud.SC.get(`/playlists/${dbKey}`).then(data => {
-      console.warn('any data', data);
-      selectedSubmission.scData = data;
-    });
+    const promise = this.soundcloud.sc
+      .get<ISoundcloudPlaylist>(`/playlists/${dbKey}`)
+      .then(data => {
+        console.warn('any data', data);
+        selectedSubmission.scData = data;
+      });
     const observable = from(promise).pipe(
       tap(() => {
         this.checkAndAddUserPlaylist(selectedSubmission);
@@ -299,7 +304,7 @@ export class DnbhubAdminComponent implements OnInit {
    * Checks and adds user submission.
    * @param selectedSubmission user submitted playlist
    */
-  private checkAndAddUserPlaylist(selectedSubmission: { id: number; scData: SoundcloudPlaylist }) {
+  private checkAndAddUserPlaylist(selectedSubmission: { id: number; scData: ISoundcloudPlaylist }) {
     console.warn('checkAndAddUserPlaylist, selectedSubmission', selectedSubmission);
     void combineLatest([
       this.selectedBrand$,

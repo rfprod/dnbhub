@@ -5,9 +5,7 @@ import { HammerGestureConfig } from '@angular/platform-browser';
  * HammerJS Gesture Config.
  * Documentation reference: https://hammerjs.github.io/
  */
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class DnbhubHammerGestureConfig extends HammerGestureConfig {
   public readonly overrides: {
     [key: string]: Record<string, unknown>;

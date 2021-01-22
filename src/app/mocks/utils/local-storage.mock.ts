@@ -1,4 +1,3 @@
-/* eslint-disable no-undefined */
 /**
  * Local storage mock for unit tests.
  */
@@ -12,7 +11,7 @@ export class LocalStorageMock {
   }
 
   public removeItem(key: string): void {
-    this[key] = undefined;
+    this[key] = void 0;
   }
 }
 

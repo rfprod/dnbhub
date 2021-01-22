@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Action, createSelector, Selector, State, StateContext, StateToken } from '@ngxs/store';
-import { SoundcloudMe, SoundcloudTracksLinkedPartitioning } from 'src/app/interfaces';
 
 import { setDnbhubSoundcloudState } from './soundcloud.actions';
-import { IDnbhubSoundcloudStateModel, TDnbhubSoundcloudPayload } from './soundcloud.interface';
+import {
+  IDnbhubSoundcloudStateModel,
+  soundcloudStoreInitialState,
+  TDnbhubSoundcloudPayload,
+} from './soundcloud.interface';
 
 export const soundcloudActions = {
   setDnbhubSoundcloudState,
@@ -14,13 +17,9 @@ export const SOUNDCLOUD_STATE_TOKEN = new StateToken<IDnbhubSoundcloudStateModel
 @State<IDnbhubSoundcloudStateModel>({
   name: SOUNDCLOUD_STATE_TOKEN,
   defaults: {
-    me: new SoundcloudMe(),
-    myPlaylists: [],
-    tracks: new SoundcloudTracksLinkedPartitioning(),
-    playlists: [],
+    ...soundcloudStoreInitialState,
   },
 })
-// eslint-disable-next-line @angular-eslint/use-injectable-provided-in
 @Injectable()
 export class DnbhubSoundcloudState {
   @Selector()

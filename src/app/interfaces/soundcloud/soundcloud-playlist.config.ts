@@ -1,90 +1,86 @@
-/* eslint-disable @typescript-eslint/naming-convention */
+import { ISoundcloudTrack } from './soundcloud-track.config';
 
-import { SoundcloudTrack } from './soundcloud-track.config';
+export interface ISoundcloudPlaylistUser {
+  id: number;
+  kind: string;
+  permalink: string;
+  username: string;
+  uri: string;
+  permalink_url: string;
+  avatar_url: string;
+}
 
 /**
  * Soundcloud playlist interface.
  * API Documentation https://developers.soundcloud.com/docs/api/reference#playlists
  */
-export class SoundcloudPlaylist {
-  constructor(input?: SoundcloudPlaylist) {
-    if (typeof input !== 'undefined') {
-      const keys = Object.keys(input);
-      for (const key of keys) {
-        this[key] = input[key];
-      }
-    }
-  }
+export interface ISoundcloudPlaylist {
+  kind: string;
+  id: number;
+  created_at: string;
+  user_id: number;
+  duration: number;
+  sharing: string;
+  tag_list: string;
+  permalink: string;
+  track_count: number;
+  streamable: boolean;
+  downloadable: boolean;
+  embeddable_by: string;
+  purchase_url: string | null;
+  label_id: string | null;
+  type: string;
+  playlist_type: string;
+  ean: string;
+  description: string;
+  genre: string;
+  release: string;
+  purchase_title: string | null;
+  label_name: string;
+  title: string;
+  release_year: string | number | null;
+  release_month: string | number | null;
+  release_day: string | number | null;
+  license: string;
+  uri: string;
+  permalink_url: string;
+  artwork_url: string;
+  user: ISoundcloudPlaylistUser;
+  tracks: ISoundcloudTrack[];
+}
 
-  public kind = '';
-
-  public id = 0;
-
-  public created_at = '';
-
-  public user_id = 0;
-
-  public duration = 0;
-
-  public sharing = '';
-
-  public tag_list = '';
-
-  public permalink = '';
-
-  public track_count = 0;
-
-  public streamable = false;
-
-  public downloadable = false;
-
-  public embeddable_by = '';
-
-  public purchase_url: string | null = null;
-
-  public label_id: string | null = null;
-
-  public type = '';
-
-  public playlist_type = '';
-
-  public ean = '';
-
-  public description = '';
-
-  public genre = '';
-
-  public release = '';
-
-  public purchase_title: string | null = null;
-
-  public label_name = '';
-
-  public title = '';
-
-  public release_year: string | number | null = null;
-
-  public release_month: string | number | null = null;
-
-  public release_day: string | number | null = null;
-
-  public license = '';
-
-  public uri = '';
-
-  public permalink_url = '';
-
-  public artwork_url = '';
-
-  public user: {
-    id: number;
-    kind: string;
-    permalink: string;
-    username: string;
-    uri: string;
-    permalink_url: string;
-    avatar_url: string;
-  } = {
+export const playlistDefaultValues: ISoundcloudPlaylist = {
+  kind: '',
+  id: 0,
+  created_at: '',
+  user_id: 0,
+  duration: 0,
+  sharing: '',
+  tag_list: '',
+  permalink: '',
+  track_count: 0,
+  streamable: false,
+  downloadable: false,
+  embeddable_by: '',
+  purchase_url: null,
+  label_id: null,
+  type: '',
+  playlist_type: '',
+  ean: '',
+  description: '',
+  genre: '',
+  release: '',
+  purchase_title: null,
+  label_name: '',
+  title: '',
+  release_year: null,
+  release_month: null,
+  release_day: null,
+  license: '',
+  uri: '',
+  permalink_url: '',
+  artwork_url: '',
+  user: {
     id: 0,
     kind: '',
     permalink: '',
@@ -92,7 +88,6 @@ export class SoundcloudPlaylist {
     uri: '',
     permalink_url: '',
     avatar_url: '',
-  };
-
-  public tracks: SoundcloudTrack[] = [];
-}
+  },
+  tracks: [],
+};

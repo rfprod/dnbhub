@@ -53,7 +53,6 @@ export class DnbhubTwitterService {
 
     ref?.parentNode?.insertBefore(js, ref);
 
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     const t: { _e: number[]; ready(...args: unknown[]): number } = Boolean(this.win[windowSdkKey])
       ? this.win[windowSdkKey]
       : {};

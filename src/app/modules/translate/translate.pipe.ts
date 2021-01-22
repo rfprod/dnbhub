@@ -7,7 +7,6 @@ import { DnbhubTranslateService } from './translate.service';
  */
 @Pipe({
   name: 'translate',
-  // eslint-disable-next-line @angular-eslint/no-pipe-impure
   pure: false,
 })
 export class DnbhubTranslatePipe implements PipeTransform {

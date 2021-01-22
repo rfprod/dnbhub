@@ -21,7 +21,6 @@ export const ADMIN_STATE_TOKEN = new StateToken<IDnbhubAdminStateModel>('admin')
     selectedSubmission: null,
   },
 })
-// eslint-disable-next-line @angular-eslint/use-injectable-provided-in
 @Injectable()
 export class DnbhubAdminState {
   @Selector()
