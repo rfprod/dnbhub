@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFireDatabase, QueryFn } from '@angular/fire/database';
@@ -8,7 +7,7 @@ import { concatMap, filter, first, map, mapTo, switchMap, tap } from 'rxjs/opera
 import { DnbhubEnvironmentConfig } from 'src/app/app.environment';
 import { IFirebaseEnvInterface } from 'src/app/interfaces';
 import { DnbhubBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
-import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
+import { IFirebaseUserRecord, newFirebaseUserRecord } from 'src/app/interfaces/firebase';
 
 import { DnbhubHttpHandlersService } from '../http-handlers/http-handlers.service';
 import { queries } from './firebase.queries';
@@ -230,13 +229,9 @@ export class DnbhubFirebaseService {
       concatMap(result => {
         if (!result.exists) {
           const observable = from(
-            this.getList<IFirebaseUserRecord>(`users/${this.fire.user?.uid ?? ''}`).push({
-              sc_code: '',
-              sc_oauth_token: '',
-              sc_id: 0,
-              submittedPlaylists: [],
-              created: new Date().getTime(),
-            }),
+            this.getList<IFirebaseUserRecord>(`users/${this.fire.user?.uid ?? ''}`).push(
+              newFirebaseUserRecord,
+            ),
           ).pipe(mapTo({ exists: false, created: true }));
 
           return observable;
@@ -255,7 +250,8 @@ export class DnbhubFirebaseService {
       concatMap(result => {
         console.warn('checkDBuserUID', result);
         const observable1 = from(
-          this.getList<IFirebaseUserRecord>(`users/${this.fire.user?.uid ?? ''}`).update(
+          this.getList<IFirebaseUserRecord>('users').update(
+            // this.getList<IFirebaseUserRecord>(`users/${this.fire.user?.uid ?? ''}`).update(
             this.fire.user?.uid ?? '',
             valuesObj,
           ),

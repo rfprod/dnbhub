@@ -4,7 +4,7 @@ import { Store } from '@ngxs/store';
 import { of, throwError } from 'rxjs';
 import { first, map, switchMap, tap } from 'rxjs/operators';
 import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
-import { SoundcloudPlaylist } from 'src/app/interfaces/index';
+import { ISoundcloudPlaylist } from 'src/app/interfaces/index';
 import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
 import { TIMEOUT } from 'src/app/utils';
 
@@ -18,7 +18,7 @@ import { DnbhubUserState } from '../../state/user/user.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DnbhubUserPlaylistsComponent {
-  @Input() public myPlaylists: SoundcloudPlaylist[] | null = null;
+  @Input() public myPlaylists: ISoundcloudPlaylist[] | null = null;
 
   @Input() public firebaseUser: firebase.default.User | null = null;
 
@@ -36,8 +36,9 @@ export class DnbhubUserPlaylistsComponent {
 
   /**
    * Resolves if a playlist is already added.
+   * @note TODO: refactor, such streams do not work as expected
    */
-  public readonly alreadyAdded$ = (playlist: SoundcloudPlaylist) => {
+  public readonly alreadyAdded$ = (playlist: ISoundcloudPlaylist) => {
     return this.store.selectOnce(DnbhubUserState.getState).pipe(
       map(user => {
         return typeof user.firebaseUser?.submittedPlaylists[playlist.id] === 'boolean';
@@ -47,8 +48,9 @@ export class DnbhubUserPlaylistsComponent {
 
   /**
    * Resolves if a playlist is already submitted.
+   * @note TODO: refactor, such streams do not work as expected
    */
-  public readonly alreadySubmitted$ = (playlist: SoundcloudPlaylist) =>
+  public readonly alreadySubmitted$ = (playlist: ISoundcloudPlaylist) =>
     this.store.selectOnce(DnbhubUserState.getState).pipe(
       map(user => {
         return (user.firebaseUser?.submittedPlaylists ?? {})[playlist.id] ? true : false;
@@ -58,8 +60,9 @@ export class DnbhubUserPlaylistsComponent {
   /**
    * Resolves if track is unsubmittable.
    * @param index playlist array index
+   * @note TODO: refactor, such streams do not work as expected
    */
-  public readonly unsubmittable$ = (playlist: SoundcloudPlaylist) =>
+  public readonly unsubmittable$ = (playlist: ISoundcloudPlaylist) =>
     this.firebase
       .getListItem<IFirebaseUserRecord>(`users/${this.firebaseUser?.uid ?? ''}`)
       .valueChanges()
@@ -78,7 +81,7 @@ export class DnbhubUserPlaylistsComponent {
    * Unsubmits blog post.
    * @param index playlist array index
    */
-  public unsubmitBlogPost(playlist: SoundcloudPlaylist): void {
+  public unsubmitBlogPost(playlist: ISoundcloudPlaylist): void {
     void this.firebase
       .getListItem<IFirebaseUserRecord>(`users/${this.firebaseUser?.uid ?? ''}`)
       .valueChanges()
@@ -93,7 +96,7 @@ export class DnbhubUserPlaylistsComponent {
               const message = 'No playlists to unsubmit.';
               this.displayMessage(message);
               return throwError(new Error(message));
-            } else if (playlists[unsubmitPlaylistId] === false) {
+            } else if (!playlists[unsubmitPlaylistId]) {
               const userDbRecord = userRecord;
               const playListKeys = Object.keys(playlists);
               const submittedPlaylists: IFirebaseUserSubmittedPlaylists = {};
@@ -125,7 +128,7 @@ export class DnbhubUserPlaylistsComponent {
    * Submits blog post.
    * @param index playlist array index
    */
-  public submitBlogPost(playlist: SoundcloudPlaylist): void {
+  public submitBlogPost(playlist: ISoundcloudPlaylist): void {
     void this.firebase
       .getListItem<IFirebaseUserRecord>(`users/${this.firebaseUser?.uid ?? ''}`)
       .valueChanges()

@@ -86,8 +86,6 @@ if (!Boolean(reset)) {
   /**
    * Load environment variables.
    */
-  // eslint-disable-next-line max-len
-  // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
   require('dotenv').config();
 
   /**
@@ -158,10 +156,8 @@ export class DnbhubEnvironmentConfig {
  */
 writeFile(targetPath, envConfigFile, function (err) {
   if (Boolean(err)) {
-    // eslint-disable-next-line no-console
     console.log(err);
   }
 
-  // eslint-disable-next-line no-console
   console.log(`Output generated at ${targetPath}`);
 });

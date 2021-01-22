@@ -20,7 +20,6 @@ export const USER_STATE_TOKEN = new StateToken<IDnbhubUserStateModel>('user');
     firebaseUser: null,
   },
 })
-// eslint-disable-next-line @angular-eslint/use-injectable-provided-in
 @Injectable()
 export class DnbhubUserState {
   @Selector()

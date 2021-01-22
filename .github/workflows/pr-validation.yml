@@ -22,6 +22,14 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
 
       - name: Get variables (yarn cache directory path, commit hash)
         id: get-variables
@@ -43,11 +51,6 @@ jobs:
             ${{ runner.os }}-node-${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}-workspace-
             ${{ runner.os }}-node-${{ matrix.node-version }}-yarn-
             ${{ runner.os }}-
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
 
       - name: Install global dependencies
         run: npm i -g typescript @angular/cli

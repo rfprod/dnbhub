@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/naming-convention */
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -8,12 +6,14 @@ import { from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DnbhubEnvironmentConfig } from 'src/app/app.environment';
 import {
+  getTracksOptions,
   ISoundcloudEnvInterface,
-  ScInitOptions,
-  SoundcloudMe,
-  SoundcloudPlaylist,
-  SoundcloudTrack,
-  SoundcloudTracksLinkedPartitioning,
+  ISoundcloudInitOptions,
+  ISoundcloudMe,
+  ISoundcloudPlaylist,
+  ISoundcloudTrack,
+  ISoundcloudTracksLinkedPartitioning,
+  linkedPartitioningDefaultValues,
 } from 'src/app/interfaces/index';
 import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
 import { APP_ENV } from 'src/app/utils/injection-tokens';
@@ -25,12 +25,10 @@ import { soundcloudActions } from './soundcloud.store';
  * TODO: Sounscloud api interface
  */
 declare let SC: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  get(path: string, options?: Record<string, any>): Promise<any>;
-  initialize(options: ScInitOptions): void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  connect(): Promise<any>;
-  stream(trackUrl: string): Promise<any>;
+  get<T = Record<string, unknown>>(path: string, options?: Record<string, unknown>): Promise<T>;
+  initialize(options: ISoundcloudInitOptions): void;
+  connect<T = Record<string, unknown>>(): Promise<T>;
+  stream<T = unknown>(trackUrl: string): Promise<T>;
 };
 
 /**
@@ -95,10 +93,10 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
   /**
    * Soundcloud client id.
    */
-  private readonly options: ScInitOptions = new ScInitOptions(
-    this.config.clientId,
-    'http://dnbhub.com/callback.html',
-  );
+  private readonly options: ISoundcloudInitOptions = {
+    client_id: this.config.clientId,
+    redirect_uri: 'http://dnbhub.com/callback.html',
+  };
 
   private tracksLinkedPartNextHref: string | null = null;
 
@@ -106,14 +104,13 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
    * Soundcloud initialization.
    */
   private init(): void {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return SC.initialize(this.options);
   }
 
   /**
    * Returns original Soundcloud js api.
    */
-  public get SC() {
+  public get sc() {
     return SC;
   }
 
@@ -137,22 +134,21 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
    * Returns full processed collection.
    */
   private processTracksCollection(
-    data: SoundcloudTracksLinkedPartitioning,
-  ): SoundcloudTracksLinkedPartitioning {
-    const collection = data.collection.map((track: SoundcloudTrack) => {
+    data: ISoundcloudTracksLinkedPartitioning,
+  ): ISoundcloudTracksLinkedPartitioning {
+    const collection = data.collection.map((track: ISoundcloudTrack) => {
       track.description = this.processDescription(track.description);
       return track;
     });
     this.tracksLinkedPartNextHref = data.next_href;
-    const processedLinkedPartitioning = new SoundcloudTracksLinkedPartitioning(
+    const processedLinkedPartitioning: ISoundcloudTracksLinkedPartitioning = {
       collection,
-      data.next_href,
-    );
+      next_href: data.next_href,
+    };
     return processedLinkedPartitioning;
   }
 
   public connect(): Promise<unknown> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return SC.connect();
   }
 
@@ -160,11 +156,10 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
    * Gets user details from Sourndcloud.
    * @param userScId User Soundcloud id
    */
-  public getMe(userScId?: number): Observable<SoundcloudMe> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const promise: Promise<SoundcloudMe> = SC.get(
+  public getMe(userScId?: number): Observable<ISoundcloudMe> {
+    const promise: Promise<ISoundcloudMe> = SC.get(
       Boolean(userScId) ? `users/${userScId}` : 'me',
-    ).then((me: SoundcloudMe) => {
+    ).then((me: ISoundcloudMe) => {
       // console.warn('SC.me.then, me', me);
       if (Boolean(me.description)) {
         me.description = this.processDescription(me.description);
@@ -172,22 +167,21 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
       return me;
     });
     const observable = from(promise);
-    return this.handlers.pipeHttpRequest<SoundcloudMe>(observable);
+    return this.handlers.pipeHttpRequest<ISoundcloudMe>(observable);
   }
 
   /**
    * Gets user details from Sourndcloud.
    * @param userScId User Soundcloud id
    */
-  public getMyPlaylists(userScId: number): Observable<SoundcloudPlaylist[]> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const promise: Promise<SoundcloudPlaylist[]> = SC.get(`users/${userScId}/playlists`).then(
-      (playlists: SoundcloudPlaylist[]) => {
-        return playlists;
-      },
-    );
+  public getMyPlaylists(userScId: number): Observable<ISoundcloudPlaylist[]> {
+    const promise: Promise<ISoundcloudPlaylist[]> = SC.get<ISoundcloudPlaylist[]>(
+      `users/${userScId}/playlists`,
+    ).then(playlists => {
+      return playlists;
+    });
     const observable = from(promise);
-    return this.handlers.pipeHttpRequest<SoundcloudPlaylist[]>(observable);
+    return this.handlers.pipeHttpRequest<ISoundcloudPlaylist[]>(observable);
   }
 
   /**
@@ -196,17 +190,14 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
    * Calls getTracksNextHref if data.tracksLinkedPartNextHref is truthy.
    * @param userId Soundcloud user id
    */
-  public getUserTracks(userId: number): Observable<SoundcloudTracksLinkedPartitioning> {
-    let observable = of(new SoundcloudTracksLinkedPartitioning());
+  public getUserTracks(userId: number): Observable<ISoundcloudTracksLinkedPartitioning> {
+    let observable = of({ ...linkedPartitioningDefaultValues });
     if (!Boolean(this.tracksLinkedPartNextHref)) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const promise: Promise<SoundcloudTracksLinkedPartitioning> = SC.get(
+      const promise: Promise<ISoundcloudTracksLinkedPartitioning> = SC.get<ISoundcloudTracksLinkedPartitioning>(
         `/users/${userId}/tracks`,
-        {
-          linked_partitioning: 1,
-        },
+        getTracksOptions,
       )
-        .then((data: SoundcloudTracksLinkedPartitioning) => {
+        .then(data => {
           this.tracksLinkedPartNextHref = data.next_href;
           const tracks = this.processTracksCollection(data);
           return tracks;
@@ -216,16 +207,16 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
     } else {
       observable = this.getTracksNextHref();
     }
-    return this.handlers.pipeHttpRequest<SoundcloudTracksLinkedPartitioning>(observable);
+    return this.handlers.pipeHttpRequest<ISoundcloudTracksLinkedPartitioning>(observable);
   }
 
   /**
    * Gets user tracks when initial request was already made, and next_href is present in this.data.tracks.
    */
-  public getTracksNextHref(): Observable<SoundcloudTracksLinkedPartitioning> {
+  public getTracksNextHref(): Observable<ISoundcloudTracksLinkedPartitioning> {
     return this.handlers
-      .pipeHttpRequest<SoundcloudTracksLinkedPartitioning>(
-        this.http.get<SoundcloudTracksLinkedPartitioning>(this.tracksLinkedPartNextHref ?? ''),
+      .pipeHttpRequest<ISoundcloudTracksLinkedPartitioning>(
+        this.http.get<ISoundcloudTracksLinkedPartitioning>(this.tracksLinkedPartNextHref ?? ''),
       )
       .pipe(map(tracksLinkedPart => this.processTracksCollection(tracksLinkedPart)));
   }
@@ -234,12 +225,12 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
    * Gets soundcloud playlist.
    * @param playlistId Soundcloud playlist id
    */
-  public getPlaylist(playlistId: number): Observable<SoundcloudPlaylist> {
+  public getPlaylist(playlistId: number): Observable<ISoundcloudPlaylist> {
     const observable = from(
-      SC.get(`/playlists/${playlistId}`)
-        .then((playlist: SoundcloudPlaylist) => {
+      SC.get<ISoundcloudPlaylist>(`/playlists/${playlistId}`)
+        .then(playlist => {
           playlist.description = this.processDescription(playlist.description);
-          playlist.tracks = playlist.tracks.map((track: SoundcloudTrack) => {
+          playlist.tracks = playlist.tracks.map((track: ISoundcloudTrack) => {
             track.description = this.processDescription(track.description);
             return track;
           });
@@ -288,16 +279,16 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
    * @param trackId Soundcloud track id
    */
   public streamTrack(trackId: number): Observable<ISoundcloudPlayer> {
-    // TODO type
-    // TODO: existing explicit type may be incorrect
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const promise = SC.stream(`/tracks/${trackId}`);
+    /**
+     * @note TODO: type, existing explicit type may be incorrect
+     */
+    const promise = SC.stream<ISoundcloudPlayer>(`/tracks/${trackId}`);
     return from(promise);
   }
 
   public ngOnDestroy(): void {
-    const tracks = new SoundcloudTracksLinkedPartitioning();
-    const playlists: SoundcloudPlaylist[] = [];
+    const tracks = { ...linkedPartitioningDefaultValues };
+    const playlists: ISoundcloudPlaylist[] = [];
     void this.store.dispatch(new soundcloudActions.setDnbhubSoundcloudState({ tracks, playlists }));
   }
 }

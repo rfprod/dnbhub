@@ -1,6 +1,6 @@
 import { APP_BASE_HREF, DOCUMENT, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule, Type } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
@@ -47,15 +47,6 @@ import { DnbhubUserStoreModule } from './state/user/user.module';
 import { APP_ENV, getWindow, WINDOW } from './utils';
 import { getDocument } from './utils/providers';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const entryComponenets: (any[] | Type<any>)[] = [
-  DnbhubContactDialogComponent,
-  DnbhubLoginDialogComponent,
-  DnbhubBottomSheetTextDetailsComponent,
-  DnbhubProgressBarComponent,
-  DnbhubBrandDialogComponent,
-];
-
 const ngxsLoggerPluginOptions: NgxsLoggerPluginOptions = {
   collapsed: true,
   disabled: environment.production,
@@ -85,7 +76,13 @@ const ngxsLoggerPluginOptions: NgxsLoggerPluginOptions = {
     DnbhubBottomSheetTextDetailsComponent,
     DnbhubProgressBarComponent,
   ],
-  entryComponents: [...entryComponenets],
+  entryComponents: [
+    DnbhubContactDialogComponent,
+    DnbhubLoginDialogComponent,
+    DnbhubBottomSheetTextDetailsComponent,
+    DnbhubProgressBarComponent,
+    DnbhubBrandDialogComponent,
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

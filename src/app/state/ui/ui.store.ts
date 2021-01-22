@@ -19,7 +19,6 @@ export const UI_STATE_TOKEN = new StateToken<IDnbhubUiStateModel>('ui');
     sidenavOpened: false,
   },
 })
-// eslint-disable-next-line @angular-eslint/use-injectable-provided-in
 @Injectable()
 export class DnbhubUiState {
   @Selector()
