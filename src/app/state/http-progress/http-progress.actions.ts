@@ -1,8 +1,8 @@
 import { getActionCreator } from 'src/app/utils/ngxs.util';
 
-import { TDnbhubHttpProgressPayload } from './http-progress.interface';
+import { HTTP_PROGRESS_STATE_TOKEN, TDnbhubHttpProgressPayload } from './http-progress.interface';
 
-const createAction = getActionCreator('HttpProgress');
+const createAction = getActionCreator(HTTP_PROGRESS_STATE_TOKEN.toString());
 
 export const startProgress = createAction<TDnbhubHttpProgressPayload>('Start http progress');
 export const stopProgress = createAction<TDnbhubHttpProgressPayload>('Stop http progress');

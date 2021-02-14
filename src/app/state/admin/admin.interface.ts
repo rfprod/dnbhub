@@ -1,3 +1,4 @@
+import { StateToken } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { DnbhubBrand, ISoundcloudPlaylist } from 'src/app/interfaces';
 import { IEmailMessage } from 'src/app/interfaces/admin';
@@ -23,3 +24,5 @@ export interface IDnbhubAdminService {
   selectedBrand$: Observable<DnbhubBrand | null>;
   selectedSubmission$: Observable<ISoundcloudPlaylist | null>;
 }
+
+export const ADMIN_STATE_TOKEN = new StateToken<IDnbhubAdminStateModel>('admin');

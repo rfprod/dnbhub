@@ -1,15 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
+import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { SUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate/translations.interface';
 
 import { setDnbhubUiState } from './ui.actions';
-import { IDnbhubUiStateModel, TDnbhubUiPayload } from './ui.interface';
+import { IDnbhubUiStateModel, TDnbhubUiPayload, UI_STATE_TOKEN } from './ui.interface';
 
 export const uiActions = {
   setDnbhubUiState,
 };
-
-export const UI_STATE_TOKEN = new StateToken<IDnbhubUiStateModel>('ui');
 
 @State<IDnbhubUiStateModel>({
   name: UI_STATE_TOKEN,

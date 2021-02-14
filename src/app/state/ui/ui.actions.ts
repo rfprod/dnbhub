@@ -1,7 +1,7 @@
 import { getActionCreator } from 'src/app/utils/ngxs.util';
 
-import { TDnbhubUiPayload } from './ui.interface';
+import { TDnbhubUiPayload, UI_STATE_TOKEN } from './ui.interface';
 
-const createAction = getActionCreator('UI');
+const createAction = getActionCreator(UI_STATE_TOKEN.toString());
 
-export const setDnbhubUiState = createAction<TDnbhubUiPayload>('Set UI state');
+export const setDnbhubUiState = createAction<TDnbhubUiPayload>('set state');

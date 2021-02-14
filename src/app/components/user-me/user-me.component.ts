@@ -9,6 +9,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { Store } from '@ngxs/store';
 import { BehaviorSubject } from 'rxjs';
 import { concatMap, mapTo, take, tap } from 'rxjs/operators';
 import { setDBuserNewValuesOptions } from 'src/app/interfaces/firebase';
@@ -16,6 +17,8 @@ import { ISoundcloudMe, IUserProfile, IUserProfileForm } from 'src/app/interface
 import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
 import { DnbhubSoundcloudService } from 'src/app/state/soundcloud/soundcloud.service';
 import { TIMEOUT } from 'src/app/utils';
+
+import { userActions } from '../../state/user/user.store';
 
 interface IComponentChanges extends SimpleChanges {
   me: SimpleChange;
@@ -54,6 +57,7 @@ export class DnbhubUserMeComponent implements OnChanges {
   }) as IUserProfileForm;
 
   constructor(
+    private readonly store: Store,
     private readonly fb: FormBuilder,
     private readonly router: Router,
     private readonly firebase: DnbhubFirebaseService,
@@ -85,16 +89,14 @@ export class DnbhubUserMeComponent implements OnChanges {
 
   public toggleEditMode(): void {
     this.editMode.next(!this.editMode.value);
-    if (this.editMode.value) {
-      const user: {
-        email: string;
-        name: string;
-      } = {
-        email: this.firebaseUser?.email ?? '',
-        name: this.firebaseUser?.displayName ?? '',
-      };
-      this.resetForm(user);
-    }
+    const user: {
+      email: string;
+      name: string;
+    } = {
+      email: this.firebaseUser?.email ?? '',
+      name: this.firebaseUser?.displayName ?? '',
+    };
+    this.resetForm(user);
   }
 
   /**
@@ -132,19 +134,15 @@ export class DnbhubUserMeComponent implements OnChanges {
         take(1),
         tap((changes: IUserProfile) => {
           this.profileForm.patchValue({
-            email: {
-              value: changes.email,
-              disabled: true,
-            },
+            email: Boolean(changes.email) ? changes.email : this.profileForm.controls.email.value,
+            name: changes.name,
           });
+          this.profileForm.controls.email.disable();
           this.profileForm.controls.email.updateValueAndValidity();
-          this.profileForm.patchValue({
-            name: {
-              value: changes.name,
-              disabled: !this.editMode.value,
-            },
-          });
-          this.profileForm.controls.email.updateValueAndValidity();
+          if (!this.editMode.value) {
+            this.profileForm.controls.name.disable();
+          }
+          this.profileForm.controls.name.updateValueAndValidity();
           this.formValueChangesSubscription();
         }),
       )
@@ -190,16 +188,9 @@ export class DnbhubUserMeComponent implements OnChanges {
    * Updates user profile.
    */
   public updateProfile(): void {
-    this.firebaseUser
-      ?.updateProfile({ displayName: this.profileForm.controls.name.value })
-      .then(() => {
-        const message = 'Your profile was updated.';
-        this.displayMessage(message);
-        this.toggleEditMode();
-      })
-      .catch(error => {
-        this.displayMessage(error);
-      });
+    void this.store.dispatch(
+      new userActions.updateFirebaseProfile({ displayName: this.profileForm.controls.name.value }),
+    );
   }
 
   /**

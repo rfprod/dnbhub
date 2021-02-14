@@ -1,7 +1,7 @@
 import { getActionCreator } from 'src/app/utils/ngxs.util';
 
-import { TDnbhubAdminPayload } from './admin.interface';
+import { ADMIN_STATE_TOKEN, TDnbhubAdminPayload } from './admin.interface';
 
-const createAction = getActionCreator('Admin');
+const createAction = getActionCreator(ADMIN_STATE_TOKEN.toString());
 
-export const setDnbhubAdminState = createAction<TDnbhubAdminPayload>('Admin: set state');
+export const setDnbhubAdminState = createAction<TDnbhubAdminPayload>('set state');

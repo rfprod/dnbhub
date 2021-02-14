@@ -4,3 +4,13 @@
   height: auto !important;
   overflow-y: auto;
 }
+
+.playlist {
+  margin: 0.5em;
+
+  &__content {
+    height: 210px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+}
