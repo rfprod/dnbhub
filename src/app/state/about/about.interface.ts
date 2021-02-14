@@ -1,3 +1,4 @@
+import { StateToken } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { IActionPayload } from 'src/app/utils/ngxs.util';
 
@@ -12,3 +13,5 @@ export type TDnbhubAboutPayload = IActionPayload<Partial<IDnbhubAboutStateModel>
 export interface IDnbhubAboutService {
   details$: Observable<DnbhubAboutDetails>;
 }
+
+export const ABOUT_STATE_TOKEN = new StateToken<IDnbhubAboutStateModel>('about');

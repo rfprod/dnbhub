@@ -1,3 +1,4 @@
+import { StateToken } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { DnbhubBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 import { IActionPayload } from 'src/app/utils/ngxs.util';
@@ -16,3 +17,5 @@ export interface IDnbhubBlogService {
 }
 
 export type TDnbhubSelectBlogPostPayload = IActionPayload<{ code: string }>;
+
+export const BLOG_STATE_TOKEN = new StateToken<IDnbhubBlogStateModel>('blog');

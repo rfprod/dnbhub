@@ -1,17 +1,22 @@
 import { Injectable } from '@angular/core';
-import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
+import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { tap } from 'rxjs/operators';
 
-import { getUserRecord, setDnbhubUserState } from './user.actions';
-import { IDnbhubUserStateModel, TDnbhubUserPayload, TGetUserPayload } from './user.interface';
+import { getUserRecord, setDnbhubUserState, updateFirebaseProfile } from './user.actions';
+import {
+  IDnbhubUserStateModel,
+  TDnbhubUserPayload,
+  TGetUserPayload,
+  TUpdateFirebaseProfilePayload,
+  USER_STATE_TOKEN,
+} from './user.interface';
 import { DnbhubUserApiService } from './user-api.service';
 
 export const userActions = {
   setDnbhubUserState,
   getUserRecord,
+  updateFirebaseProfile,
 };
-
-export const USER_STATE_TOKEN = new StateToken<IDnbhubUserStateModel>('user');
 
 @State<IDnbhubUserStateModel>({
   name: USER_STATE_TOKEN,
@@ -58,5 +63,13 @@ export class DnbhubUserState {
         }),
       )
       .subscribe();
+  }
+
+  @Action(updateFirebaseProfile)
+  public updateFirebaseProfile(
+    ctx: StateContext<IDnbhubUserStateModel>,
+    { payload }: TUpdateFirebaseProfilePayload,
+  ) {
+    void this.api.updateProfile(payload).subscribe();
   }
 }

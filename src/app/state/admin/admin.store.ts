@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
+import { Action, Selector, State, StateContext } from '@ngxs/store';
 
 import { setDnbhubAdminState } from './admin.actions';
-import { IDnbhubAdminStateModel, TDnbhubAdminPayload } from './admin.interface';
+import { ADMIN_STATE_TOKEN, IDnbhubAdminStateModel, TDnbhubAdminPayload } from './admin.interface';
 
 export const blogActions = {
   setDnbhubAdminState,
 };
-
-export const ADMIN_STATE_TOKEN = new StateToken<IDnbhubAdminStateModel>('admin');
 
 @State<IDnbhubAdminStateModel>({
   name: ADMIN_STATE_TOKEN,

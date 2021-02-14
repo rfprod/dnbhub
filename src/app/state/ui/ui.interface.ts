@@ -1,3 +1,4 @@
+import { StateToken } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { SUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate/translations.interface';
 import { IActionPayload } from 'src/app/utils/ngxs.util';
@@ -15,3 +16,5 @@ export interface IDnbhubUiService {
   language$: Observable<SUPPORTED_LANGUAGE_KEY>;
   sidenavOpened$: Observable<boolean>;
 }
+
+export const UI_STATE_TOKEN = new StateToken<IDnbhubUiStateModel>('ui');

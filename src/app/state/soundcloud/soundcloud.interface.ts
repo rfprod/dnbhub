@@ -1,3 +1,4 @@
+import { StateToken } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import {
   ISoundcloudMe,
@@ -31,3 +32,5 @@ export const soundcloudStoreInitialState: IDnbhubSoundcloudStateModel = {
   tracks: { ...linkedPartitioningDefaultValues },
   playlists: [],
 };
+
+export const SOUNDCLOUD_STATE_TOKEN = new StateToken<IDnbhubSoundcloudStateModel>('soundcloud');
