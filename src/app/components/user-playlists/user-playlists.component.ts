@@ -1,15 +1,14 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Store } from '@ngxs/store';
 import { of, throwError } from 'rxjs';
-import { first, map, switchMap, tap } from 'rxjs/operators';
+import { first, switchMap, tap } from 'rxjs/operators';
 import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
 import { ISoundcloudPlaylist } from 'src/app/interfaces/index';
 import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
 import { TIMEOUT } from 'src/app/utils';
 
 import { IFirebaseUserSubmittedPlaylists } from '../../interfaces/firebase/firebase-user.interface';
-import { DnbhubUserState } from '../../state/user/user.store';
+import { IDnbhubUserStateModel } from '../../state/user/user.interface';
 
 @Component({
   selector: 'dnbhub-user-playlists',
@@ -18,12 +17,13 @@ import { DnbhubUserState } from '../../state/user/user.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DnbhubUserPlaylistsComponent {
-  @Input() public myPlaylists: ISoundcloudPlaylist[] | null = null;
+  @Input() public playlists: ISoundcloudPlaylist[] | null = null;
 
   @Input() public firebaseUser: firebase.default.User | null = null;
 
+  @Input() public dnbhubUser: IDnbhubUserStateModel | null = null;
+
   constructor(
-    private readonly store: Store,
     private readonly firebase: DnbhubFirebaseService,
     private readonly snackBar: MatSnackBar,
   ) {}
@@ -35,53 +35,42 @@ export class DnbhubUserPlaylistsComponent {
   }
 
   /**
-   * Resolves if a playlist is already added.
-   * @note TODO: refactor, such streams do not work as expected
-   */
-  public readonly alreadyAdded$ = (playlist: ISoundcloudPlaylist) => {
-    return this.store.selectOnce(DnbhubUserState.getState).pipe(
-      map(user => {
-        return typeof user.firebaseUser?.submittedPlaylists[playlist.id] === 'boolean';
-      }),
-    );
-  };
-
-  /**
-   * Resolves if a playlist is already submitted.
-   * @note TODO: refactor, such streams do not work as expected
-   */
-  public readonly alreadySubmitted$ = (playlist: ISoundcloudPlaylist) =>
-    this.store.selectOnce(DnbhubUserState.getState).pipe(
-      map(user => {
-        return (user.firebaseUser?.submittedPlaylists ?? {})[playlist.id] ? true : false;
-      }),
-    );
-
-  /**
-   * Resolves if track is unsubmittable.
+   * Submits blog post.
    * @param index playlist array index
-   * @note TODO: refactor, such streams do not work as expected
    */
-  public readonly unsubmittable$ = (playlist: ISoundcloudPlaylist) =>
-    this.firebase
+  public submitPlaylist(playlist: ISoundcloudPlaylist): void {
+    void this.firebase
       .getListItem<IFirebaseUserRecord>(`users/${this.firebaseUser?.uid ?? ''}`)
       .valueChanges()
       .pipe(
-        map(userRecord => {
-          if (userRecord !== null) {
-            if (Boolean(userRecord.submittedPlaylists)) {
-              return !Boolean(userRecord.submittedPlaylists[playlist.id]) ? true : false;
-            }
+        first(),
+        switchMap(userDbRecord => {
+          if (userDbRecord !== null) {
+            /**
+             * false - submitted but not approved by a moderator;
+             * true - submitted and approved by a moderator;
+             */
+            userDbRecord.submittedPlaylists[playlist.id] = false;
+            return this.firebase
+              .setDBuserNewValues({ submittedPlaylists: userDbRecord.submittedPlaylists })
+              .pipe(
+                tap(() => {
+                  const message = `Playlist ${playlist.title} was successfully submitted.`;
+                  this.displayMessage(message);
+                }),
+              );
           }
-          return false;
+          return of(null);
         }),
-      );
+      )
+      .subscribe();
+  }
 
   /**
    * Unsubmits blog post.
    * @param index playlist array index
    */
-  public unsubmitBlogPost(playlist: ISoundcloudPlaylist): void {
+  public unsubmitPlaylist(playlist: ISoundcloudPlaylist): void {
     void this.firebase
       .getListItem<IFirebaseUserRecord>(`users/${this.firebaseUser?.uid ?? ''}`)
       .valueChanges()
@@ -124,35 +113,9 @@ export class DnbhubUserPlaylistsComponent {
       .subscribe();
   }
 
-  /**
-   * Submits blog post.
-   * @param index playlist array index
-   */
-  public submitBlogPost(playlist: ISoundcloudPlaylist): void {
-    void this.firebase
-      .getListItem<IFirebaseUserRecord>(`users/${this.firebaseUser?.uid ?? ''}`)
-      .valueChanges()
-      .pipe(
-        first(),
-        switchMap(userDbRecord => {
-          if (userDbRecord !== null) {
-            /**
-             * false - submitted but not approved by a moderator;
-             * true - submitted and approved by a moderator;
-             */
-            userDbRecord.submittedPlaylists[playlist.id] = false;
-            return this.firebase
-              .setDBuserNewValues({ submittedPlaylists: userDbRecord.submittedPlaylists })
-              .pipe(
-                tap(() => {
-                  const message = `Playlist ${playlist.title} was successfully submitted.`;
-                  this.displayMessage(message);
-                }),
-              );
-          }
-          return of(null);
-        }),
-      )
-      .subscribe();
+  public previewPlaylist(playlist: ISoundcloudPlaylist): void {
+    /**
+     * @note TODO: add preview playlist logic
+     */
   }
 }

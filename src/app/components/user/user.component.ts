@@ -40,6 +40,8 @@ export class DnbhubUserComponent {
     }),
   );
 
+  public readonly dnbhubUser$ = this.store.select(DnbhubUserState.getState);
+
   constructor(
     private readonly store: Store,
     private readonly firebase: DnbhubFirebaseService,
