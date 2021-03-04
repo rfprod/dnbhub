@@ -1,0 +1,36 @@
+<div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start center">
+  <button
+    mat-icon-button
+    color="primary"
+    [disabled]="alreadyAdded"
+    (click)="submit()"
+    aria-label="Submit to blog"
+  >
+    <mat-icon *ngIf="!alreadyAdded" matTooltip="Submit to blog"> library_add </mat-icon>
+
+    <mat-icon *ngIf="alreadyAdded" matTooltip="Submitted to blog"> check_circle </mat-icon>
+  </button>
+
+  <button
+    mat-icon-button
+    color="warn"
+    *ngIf="alreadyAdded && !alreadySubmitted"
+    (click)="unsubmit()"
+    aria-label="Unsubmit playlist"
+    matTooltip="Unsubmit playlist"
+  >
+    <mat-icon> remove_circle </mat-icon>
+  </button>
+
+  <!-- TODO: preview post -->
+  <!--
+    <button
+      mat-icon-button
+      (click)="preview()"
+      aria-label="Preview blog post"
+      matTooltip="Preview blog post"
+    >
+      <mat-icon> pagepreview </mat-icon>
+    </button>
+  -->
+</div>

@@ -1,80 +1,24 @@
-<div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="space-between start" *ngIf="myPlaylists">
+<div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="space-between start" *ngIf="playlists">
   <mat-card
     class="playlist"
     fxFlex.lt-sm="100"
     fxFlex="47"
     fxFlex.gt-md="31"
-    *ngFor="let playlistObj of myPlaylists"
+    *ngFor="let playlist of playlists"
   >
     <mat-card-content class="playlist__content">
-      <dnbhub-soundcloud-player [mode]="'playlist'" [playlistId]="playlistObj.id">
+      <dnbhub-soundcloud-player [mode]="'playlist'" [playlistId]="playlist.id">
       </dnbhub-soundcloud-player>
     </mat-card-content>
 
     <mat-card-actions>
-      <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start center">
-        <button
-          mat-icon-button
-          color="primary"
-          [disabled]="alreadyAdded$(playlistObj) | async"
-          (click)="submitBlogPost(playlistObj)"
-          aria-label="Submit to blog"
-        >
-          <mat-icon *ngIf="!(alreadyAdded$(playlistObj) | async)" matTooltip="Submit to blog">
-            library_add
-          </mat-icon>
-
-          <mat-icon
-            *ngIf="(alreadyAdded$(playlistObj) | async) && (unsubmittable$(playlistObj) | async)"
-            matTooltip="Submission is under review"
-          >
-            timelapse
-          </mat-icon>
-
-          <mat-icon
-            *ngIf="(alreadyAdded$(playlistObj) | async) && !(unsubmittable$(playlistObj) | async)"
-            matTooltip="Submitted to blog"
-          >
-            check_circle
-          </mat-icon>
-        </button>
-
-        <button
-          mat-icon-button
-          color="warn"
-          *ngIf="(alreadySubmitted$(playlistObj) | async) && (unsubmittable$(playlistObj) | async)"
-          (click)="unsubmitBlogPost(playlistObj)"
-          aria-label="Unsubmit playlist: available only before moderation happens"
-          matTooltip="Unsubmit playlist: available only before moderation happens"
-        >
-          <mat-icon> remove_circle </mat-icon>
-        </button>
-
-        <!-- TODO: preview post if submitted -->
-        <!--
-        <button
-          mat-icon-button
-          [disabled]="alreadyAdded$(playlistObj) | async"
-          *ngIf="unsubmittable$(playlistObj) | async"
-          aria-label="Preview blog post"
-          matTooltip="Preview blog post"
-        >
-          <mat-icon> pagepreview </mat-icon>
-        </button>
-        -->
-
-        <!-- TODO: go to blog post if approved -->
-        <!--
-        <button
-          mat-icon-button
-          *ngIf="(alreadyAdded$(playlistObj) | async) && !(unsubmittable$(playlistObj) | async)"
-          aria-label="Go to blog entry"
-          matTooltip="Go to blog entry"
-        >
-          <mat-icon> pagepreview </mat-icon>
-        </button>
-        -->
-      </div>
+      <dnbhub-user-playlist-actions
+        [playlist]="playlist"
+        [dnbhubUser]="dnbhubUser"
+        (submitPlaylist)="submitPlaylist($event)"
+        (unsubmitPlaylist)="unsubmitPlaylist($event)"
+        (previewPlaylist)="previewPlaylist($event)"
+      ></dnbhub-user-playlist-actions>
     </mat-card-actions>
   </mat-card>
 </div>

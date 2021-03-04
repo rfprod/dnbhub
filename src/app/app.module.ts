@@ -36,6 +36,7 @@ import { DnbhubPlaylistsComponent } from './components/playlists/playlists.compo
 import { DnbhubProgressBarComponent } from './components/progress-bar/progress-bar.component';
 import { DnbhubToolbarComponent } from './components/toolbar/toolbar.component';
 import { DnbhubUserMeComponent } from './components/user-me/user-me.component';
+import { DnbhubUserPlaylistActionsComponent } from './components/user-playlist-actions/user-playlist-actions.component';
 import { DnbhubUserPlaylistsComponent } from './components/user-playlists/user-playlists.component';
 import { DnbhubAboutStoreModule } from './state/about/about.module';
 import { DnbhubAdminStoreModule } from './state/admin/admin.module';
@@ -76,6 +77,7 @@ const ngxsLoggerPluginOptions: NgxsLoggerPluginOptions = {
     DnbhubMapToIterablePipe,
     DnbhubBottomSheetTextDetailsComponent,
     DnbhubProgressBarComponent,
+    DnbhubUserPlaylistActionsComponent,
   ],
   entryComponents: [
     DnbhubContactDialogComponent,

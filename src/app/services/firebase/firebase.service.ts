@@ -83,7 +83,7 @@ export class DnbhubFirebaseService {
       .pipe(
         map(items => {
           const result: DnbhubBlogPost = items[0];
-          console.warn('blogEntryExistsByValue', result);
+          // console.warn('blogEntryExistsByValue', result);
           return Boolean(result);
         }),
       );
@@ -97,7 +97,7 @@ export class DnbhubFirebaseService {
       .pipe(
         map(items => {
           const result: DnbhubBlogPost = items[0];
-          console.warn('blogEntryExistsByChildValue', result);
+          // console.warn('blogEntryExistsByChildValue', result);
           return Boolean(result);
         }),
       );
@@ -223,7 +223,7 @@ export class DnbhubFirebaseService {
     return checkRecord.pipe(
       first(),
       map(user => {
-        console.warn('checking user db profile', user);
+        // console.warn('checking user db profile', user);
         return { exists: typeof user !== 'undefined', created: false };
       }),
       concatMap(result => {
@@ -248,7 +248,7 @@ export class DnbhubFirebaseService {
   public setDBuserNewValues(valuesObj: Partial<IFirebaseUserRecord>) {
     const observable = this.checkDBuserUID().pipe(
       concatMap(result => {
-        console.warn('checkDBuserUID', result);
+        // console.warn('checkDBuserUID', result);
         const observable1 = from(
           this.getList<IFirebaseUserRecord>('users').update(
             // this.getList<IFirebaseUserRecord>(`users/${this.fire.user?.uid ?? ''}`).update(

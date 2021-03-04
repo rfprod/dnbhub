@@ -27,7 +27,8 @@
 
   <dnbhub-user-playlists
     fxFlex="100"
-    [myPlaylists]="myPlaylists$ | async"
+    [playlists]="myPlaylists$ | async"
     [firebaseUser]="firebaseUser"
+    [dnbhubUser]="dnbhubUser$ | async"
   ></dnbhub-user-playlists>
 </div>
