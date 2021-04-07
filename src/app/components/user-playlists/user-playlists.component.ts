@@ -4,7 +4,7 @@ import { of, throwError } from 'rxjs';
 import { first, switchMap, tap } from 'rxjs/operators';
 import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
 import { ISoundcloudPlaylist } from 'src/app/interfaces/index';
-import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
+import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
 import { TIMEOUT } from 'src/app/utils';
 
 import { IFirebaseUserSubmittedPlaylists } from '../../interfaces/firebase/firebase-user.interface';
@@ -34,10 +34,6 @@ export class DnbhubUserPlaylistsComponent {
     });
   }
 
-  /**
-   * Submits blog post.
-   * @param index playlist array index
-   */
   public submitPlaylist(playlist: ISoundcloudPlaylist): void {
     void this.firebase
       .getListItem<IFirebaseUserRecord>(`users/${this.firebaseUser?.uid ?? ''}`)
@@ -66,10 +62,6 @@ export class DnbhubUserPlaylistsComponent {
       .subscribe();
   }
 
-  /**
-   * Unsubmits blog post.
-   * @param index playlist array index
-   */
   public unsubmitPlaylist(playlist: ISoundcloudPlaylist): void {
     void this.firebase
       .getListItem<IFirebaseUserRecord>(`users/${this.firebaseUser?.uid ?? ''}`)

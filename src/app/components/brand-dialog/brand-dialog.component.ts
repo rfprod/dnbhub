@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { IBrandForm } from 'src/app/interfaces';
-import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
+import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
+import { IRegExpPatterns } from 'src/app/utils/regexp.util';
 
 import { DnbhubBrand } from '../../interfaces/brand/brand.interface';
-import { IRegExpPatterns } from '../../services/regular-expressions/regular-expressions.service';
 
 @Component({
   selector: 'dnbhub-brand-dialog',

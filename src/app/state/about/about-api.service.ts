@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { first, map, tap } from 'rxjs/operators';
 import { DnbhubAboutDetails } from 'src/app/interfaces/about/about-details.interface';
-import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
 import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
+import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
 
 import { aboutActions } from './about.store';
 

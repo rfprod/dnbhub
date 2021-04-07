@@ -8,17 +8,19 @@ import {
 } from '@angular/material/bottom-sheet';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Store } from '@ngxs/store';
 import { combineLatest, from } from 'rxjs';
-import { concatMap, first, map, take, tap } from 'rxjs/operators';
+import { concatMap, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { IEmailMessage } from 'src/app/interfaces/admin';
 import { DnbhubBlogPost, DnbhubBlogPostLinks } from 'src/app/interfaces/blog/blog-post.interface';
 import { DnbhubBrand } from 'src/app/interfaces/brand/brand.interface';
 import { IBrandForm } from 'src/app/interfaces/brand/brand-form.interface';
-import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
-import { DnbhubRegularExpressionsService } from 'src/app/services/regular-expressions/regular-expressions.service';
 import { DnbhubAdminService } from 'src/app/state/admin/admin.service';
+import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
+import { DnbhubFirebaseState } from 'src/app/state/firebase/firebase.store';
 import { DnbhubSoundcloudApiService } from 'src/app/state/soundcloud/soundcloud-api.service';
 import { TIMEOUT } from 'src/app/utils';
+import { regExpPatterns } from 'src/app/utils/regexp.util';
 
 import {
   ISoundcloudPlaylist,
@@ -34,7 +36,7 @@ import { DnbhubBrandDialogComponent } from '../brand-dialog/brand-dialog.compone
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DnbhubAdminComponent implements OnInit {
-  public readonly anonUser$ = this.firebase.anonUser$;
+  public readonly privilegedAccess$ = this.store.select(DnbhubFirebaseState.privilegedAccess);
 
   /**
    * Bottom sheet text details component reference.
@@ -86,10 +88,10 @@ export class DnbhubAdminComponent implements OnInit {
   );
 
   constructor(
+    private readonly store: Store,
     public readonly firebase: DnbhubFirebaseService,
     private readonly soundcloud: DnbhubSoundcloudApiService,
     private readonly admin: DnbhubAdminService,
-    private readonly regx: DnbhubRegularExpressionsService,
     private readonly bottomSheet: MatBottomSheet,
     private readonly snackBar: MatSnackBar,
     private readonly dialog: MatDialog,
@@ -146,7 +148,7 @@ export class DnbhubAdminComponent implements OnInit {
       disableClose: false,
       data: {
         brand,
-        regexp: this.regx.patterns.links,
+        regexp: regExpPatterns.links,
         minNameLength,
       },
     });
@@ -284,20 +286,22 @@ export class DnbhubAdminComponent implements OnInit {
    * @param dbKey user submission database key
    */
   public deleteUserSubmission(dbKey: number) {
-    const userKey = this.firebase?.fire?.user?.uid;
-
-    const promise = this.firebase
-      .getList(`users/${userKey}/submittedPlaylists/${dbKey}`)
-      .remove()
-      .then(() => {
-        console.warn(`user ${userKey} submission ${dbKey} was successfully deleted`);
-        this.getUsers();
-      })
-      .catch(error => {
-        throw error;
-      });
-    const observable = from(promise);
-    return observable;
+    return this.firebase.fireAuth.user.pipe(
+      map(user => user?.uid ?? ''),
+      switchMap(userKey => {
+        const promise = this.firebase
+          .getList(`users/${userKey}/submittedPlaylists/${dbKey}`)
+          .remove()
+          .then(() => {
+            console.warn(`user ${userKey} submission ${dbKey} was successfully deleted`);
+            this.getUsers();
+          })
+          .catch(error => {
+            throw error;
+          });
+        return from(promise);
+      }),
+    );
   }
 
   /**

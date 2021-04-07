@@ -4,15 +4,6 @@
       <mat-form-field>
         <mat-icon
           matPrefix
-          *ngIf="!firebaseUser?.emailVerified"
-          title="your email is not verified, click here to request a verification link"
-          (click)="resendVerificationEmail()"
-        >
-          send
-        </mat-icon>
-
-        <mat-icon
-          matPrefix
           class="material-icons"
           *ngIf="firebaseUser?.emailVerified"
           matTooltip="your email is verified"

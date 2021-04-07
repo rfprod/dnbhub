@@ -3,8 +3,8 @@ import { Store } from '@ngxs/store';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DnbhubBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
-import { queries } from 'src/app/services/firebase/firebase.queries';
-import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
+import { queries } from 'src/app/state/firebase/firebase.queries';
+import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
 
 import { blogActions } from './blog.store';
 

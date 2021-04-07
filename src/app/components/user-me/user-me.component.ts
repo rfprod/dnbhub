@@ -14,7 +14,7 @@ import { BehaviorSubject } from 'rxjs';
 import { concatMap, mapTo, take, tap } from 'rxjs/operators';
 import { setDBuserNewValuesOptions } from 'src/app/interfaces/firebase';
 import { ISoundcloudMe, IUserProfile, IUserProfileForm } from 'src/app/interfaces/index';
-import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
+import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
 import { DnbhubSoundcloudService } from 'src/app/state/soundcloud/soundcloud.service';
 import { TIMEOUT } from 'src/app/utils';
 
@@ -153,7 +153,7 @@ export class DnbhubUserMeComponent implements OnChanges {
    * Starts password reset procedure.
    */
   public resetPassword(): void {
-    this.firebase.fire.auth
+    this.firebase.fireAuth
       .sendPasswordResetEmail(this.firebaseUser?.email ?? '')
       .then(() => {
         const message = 'Password reset link was sent to you over email.';
@@ -162,26 +162,6 @@ export class DnbhubUserMeComponent implements OnChanges {
       .catch(error => {
         this.displayMessage(error);
       });
-  }
-
-  /**
-   * Resends verifications email to user.
-   */
-  public resendVerificationEmail(): void {
-    if (!Boolean(this.firebaseUser?.emailVerified)) {
-      this.firebase.fire?.user
-        ?.sendEmailVerification()
-        .then(() => {
-          const message = 'Check your email for an email with a verification link.';
-          this.displayMessage(message);
-        })
-        .catch(error => {
-          this.displayMessage(error);
-        });
-    } else {
-      const message = 'Your email is already verified.';
-      this.displayMessage(message);
-    }
   }
 
   /**

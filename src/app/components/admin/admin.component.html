@@ -1,27 +1,11 @@
-<div
-  *ngIf="anonUser$ | async"
-  class="mat-body-2"
-  fxFlex="100"
-  fxLayoutFill
-  fxLayout="row"
-  fxLayoutAlign="center center"
->
-  You must me authenticated to access admin controls
-</div>
+<ng-template #authRequiredTpl>
+  <div class="mat-body-2" fxFlex="100" fxLayoutFill fxLayout="row" fxLayoutAlign="center center">
+    You must be authenticated have privileged access rights to access admin controls
+  </div>
+</ng-template>
 
 <div
-  *ngIf="!firebase.privilegedAccess()"
-  class="mat-body-2"
-  fxFlex="100"
-  fxLayoutFill
-  fxLayout="row"
-  fxLayoutAlign="center center"
->
-  You must have privileged access rights to access admin controls
-</div>
-
-<div
-  *ngIf="!(anonUser$ | async) && firebase.privilegedAccess()"
+  *ngIf="privilegedAccess$ | async; else authRequiredTpl"
   fxFlex="100"
   fxLayoutFill
   fxLayout="row"

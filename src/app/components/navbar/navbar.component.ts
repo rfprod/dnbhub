@@ -11,9 +11,11 @@ import {
   SUPPORTED_LANGUAGE_KEY,
   supportedLanguages,
 } from 'src/app/modules/translate/index';
-import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
+import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
 import { DnbhubUiService } from 'src/app/state/ui/ui.service';
 import { INxgsRouterState } from 'src/app/utils/ngxs.util';
+
+import { DnbhubFirebaseState } from '../../state/firebase/firebase.store';
 
 @Component({
   selector: 'dnbhub-nav',
@@ -22,7 +24,9 @@ import { INxgsRouterState } from 'src/app/utils/ngxs.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DnbhubNavbarComponent {
-  public readonly anonUser$ = this.firebase.anonUser$;
+  public readonly anonUser$ = this.store
+    .select(DnbhubFirebaseState.getState)
+    .pipe(map(state => !Boolean(state.user)));
 
   public readonly language$ = this.ui.language$;
 
@@ -31,6 +35,8 @@ export class DnbhubNavbarComponent {
       return state.navigationId > 1 && !state.state?.url?.includes('index');
     }),
   );
+
+  public readonly privilegedAccess$ = this.store.select(DnbhubFirebaseState.privilegedAccess);
 
   constructor(
     private readonly store: Store,
@@ -79,12 +85,5 @@ export class DnbhubNavbarComponent {
         }),
       )
       .subscribe();
-  }
-
-  /**
-   * Indicates if user had admin role.
-   */
-  public isAdmin(): boolean {
-    return this.firebase.privilegedAccess();
   }
 }

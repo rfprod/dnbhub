@@ -3,8 +3,8 @@ import { first, map, tap } from 'rxjs/operators';
 import { DnbhubBrand } from 'src/app/interfaces';
 import { IEmailMessage } from 'src/app/interfaces/admin';
 import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
-import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
 import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
+import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
 
 /**
  * Admin API service.
