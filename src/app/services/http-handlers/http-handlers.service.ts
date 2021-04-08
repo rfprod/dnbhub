@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import firebase from 'firebase';
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize, take, timeout } from 'rxjs/operators';
 import { DnbhubHttpProgressService } from 'src/app/state/http-progress/http-progress.service';
@@ -19,7 +20,7 @@ export class DnbhubHttpHandlersService {
     private readonly snackBar: MatSnackBar,
   ) {}
 
-  public getErrorMessage(error: HttpErrorResponse & firebase.default.FirebaseError): string {
+  public getErrorMessage(error: HttpErrorResponse & firebase.FirebaseError): string {
     const msg: string = Boolean(error.message)
       ? error.message
       : Boolean(error.code)
@@ -37,7 +38,7 @@ export class DnbhubHttpHandlersService {
    * Handles error.
    * @param error error object
    */
-  public handleError(error: HttpErrorResponse & firebase.default.FirebaseError): Observable<never> {
+  public handleError(error: HttpErrorResponse & firebase.FirebaseError): Observable<never> {
     const errorMessage = this.getErrorMessage(error);
     const duration = 1000;
     this.snackBar.open(errorMessage, void 0, {
