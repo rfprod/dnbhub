@@ -6,8 +6,8 @@ import { filter, first, map, switchMap, tap } from 'rxjs/operators';
 import { IFirebaseUserRecord } from '../../interfaces/firebase';
 import { DnbhubHttpHandlersService } from '../../services/http-handlers/http-handlers.service';
 import { DnbhubFirebaseService } from '../firebase/firebase.service';
-import { httpProgressActions } from '../http-progress/http-progress.store';
-import { toasterActions } from '../toaster/toaster.store';
+import { httpProgressActions } from '../http-progress/http-progress.actions';
+import { toasterActions } from '../toaster/toaster.actions';
 
 @Injectable({
   providedIn: 'root',

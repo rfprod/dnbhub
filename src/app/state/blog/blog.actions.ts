@@ -8,10 +8,17 @@ import {
 
 const createAction = getActionCreator(BLOG_STATE_TOKEN.toString());
 
-export const setDnbhubBlogState = createAction<TDnbhubBlogPayload>('set state');
+const setDnbhubBlogState = createAction<TDnbhubBlogPayload>('set state');
 
-export const selectBlogPost = createAction<TDnbhubSelectBlogPostPayload>('select post');
+const selectBlogPost = createAction<TDnbhubSelectBlogPostPayload>('select post');
 
-export const selectNextBlogPost = createAction<TEmptyPayload>('select next post');
+const selectNextBlogPost = createAction<TEmptyPayload>('select next post');
 
-export const selectPreviousBlogPost = createAction<TEmptyPayload>('select previous post');
+const selectPreviousBlogPost = createAction<TEmptyPayload>('select previous post');
+
+export const blogActions = {
+  setDnbhubBlogState,
+  selectBlogPost,
+  selectNextBlogPost,
+  selectPreviousBlogPost,
+};

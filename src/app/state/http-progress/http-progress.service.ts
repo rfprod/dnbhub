@@ -5,12 +5,13 @@ import { Store } from '@ngxs/store';
 import { tap } from 'rxjs/operators';
 import { DnbhubProgressBarComponent } from 'src/app/components/progress-bar/progress-bar.component';
 
+import { httpProgressActions } from './http-progress.actions';
 import {
   IDnbhubHttpProgressService,
   IDnbhubHttpProgressStateModel,
   IHttpProgressHandlers,
 } from './http-progress.interface';
-import { DnbhubHttpProgressState, httpProgressActions } from './http-progress.store';
+import { DnbhubHttpProgressState } from './http-progress.store';
 
 @Injectable({
   providedIn: 'root',

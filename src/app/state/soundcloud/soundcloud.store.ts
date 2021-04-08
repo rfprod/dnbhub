@@ -1,17 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Action, createSelector, Selector, State, StateContext } from '@ngxs/store';
 
-import { setDnbhubSoundcloudState } from './soundcloud.actions';
+import { soundcloudActions } from './soundcloud.actions';
 import {
   IDnbhubSoundcloudStateModel,
   SOUNDCLOUD_STATE_TOKEN,
   soundcloudStoreInitialState,
   TDnbhubSoundcloudPayload,
 } from './soundcloud.interface';
-
-export const soundcloudActions = {
-  setDnbhubSoundcloudState,
-};
 
 @State<IDnbhubSoundcloudStateModel>({
   name: SOUNDCLOUD_STATE_TOKEN,
@@ -59,7 +55,7 @@ export class DnbhubSoundcloudState {
     );
   }
 
-  @Action(setDnbhubSoundcloudState)
+  @Action(soundcloudActions.setDnbhubSoundcloudState)
   public setDnbhubSoundcloudState(
     ctx: StateContext<IDnbhubSoundcloudStateModel>,
     { payload }: TDnbhubSoundcloudPayload,

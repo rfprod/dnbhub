@@ -4,4 +4,8 @@ import { ADMIN_STATE_TOKEN, TDnbhubAdminPayload } from './admin.interface';
 
 const createAction = getActionCreator(ADMIN_STATE_TOKEN.toString());
 
-export const setDnbhubAdminState = createAction<TDnbhubAdminPayload>('set state');
+const setDnbhubAdminState = createAction<TDnbhubAdminPayload>('set state');
+
+export const adminActions = {
+  setDnbhubAdminState,
+};

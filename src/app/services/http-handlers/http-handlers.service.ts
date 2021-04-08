@@ -4,7 +4,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize, take, timeout } from 'rxjs/operators';
 import { DnbhubHttpProgressService } from 'src/app/state/http-progress/http-progress.service';
-import { TIMEOUT } from 'src/app/utils';
 
 /**
  * Custom http handlers service.
@@ -19,12 +18,6 @@ export class DnbhubHttpHandlersService {
     private readonly httpProgress: DnbhubHttpProgressService,
     private readonly snackBar: MatSnackBar,
   ) {}
-
-  private displayErrorToast(error: string): void {
-    this.snackBar.open(error, void 0, {
-      duration: TIMEOUT.MEDUIM,
-    });
-  }
 
   public getErrorMessage(error: HttpErrorResponse & firebase.default.FirebaseError): string {
     const msg: string = Boolean(error.message)
@@ -46,7 +39,10 @@ export class DnbhubHttpHandlersService {
    */
   public handleError(error: HttpErrorResponse & firebase.default.FirebaseError): Observable<never> {
     const errorMessage = this.getErrorMessage(error);
-    this.displayErrorToast(errorMessage);
+    const duration = 1000;
+    this.snackBar.open(errorMessage, void 0, {
+      duration,
+    });
     return throwError(errorMessage);
   }
 

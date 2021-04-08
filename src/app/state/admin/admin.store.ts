@@ -1,12 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 
-import { setDnbhubAdminState } from './admin.actions';
+import { adminActions } from './admin.actions';
 import { ADMIN_STATE_TOKEN, IDnbhubAdminStateModel, TDnbhubAdminPayload } from './admin.interface';
-
-export const blogActions = {
-  setDnbhubAdminState,
-};
 
 @State<IDnbhubAdminStateModel>({
   name: ADMIN_STATE_TOKEN,
@@ -56,7 +52,7 @@ export class DnbhubAdminState {
     return state.selectedSubmission;
   }
 
-  @Action(setDnbhubAdminState)
+  @Action(adminActions.setDnbhubAdminState)
   public setDnbhubAdminState(
     ctx: StateContext<IDnbhubAdminStateModel>,
     { payload }: TDnbhubAdminPayload,

@@ -4,5 +4,10 @@ import { HTTP_PROGRESS_STATE_TOKEN, TDnbhubHttpProgressPayload } from './http-pr
 
 const createAction = getActionCreator(HTTP_PROGRESS_STATE_TOKEN.toString());
 
-export const startProgress = createAction<TDnbhubHttpProgressPayload>('Start http progress');
-export const stopProgress = createAction<TDnbhubHttpProgressPayload>('Stop http progress');
+const startProgress = createAction<TDnbhubHttpProgressPayload>('Start http progress');
+const stopProgress = createAction<TDnbhubHttpProgressPayload>('Stop http progress');
+
+export const httpProgressActions = {
+  startProgress,
+  stopProgress,
+};

@@ -2,12 +2,8 @@ import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { SUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate/translations.interface';
 
-import { setDnbhubUiState } from './ui.actions';
+import { uiActions } from './ui.actions';
 import { IDnbhubUiStateModel, TDnbhubUiPayload, UI_STATE_TOKEN } from './ui.interface';
-
-export const uiActions = {
-  setDnbhubUiState,
-};
 
 @State<IDnbhubUiStateModel>({
   name: UI_STATE_TOKEN,
@@ -39,7 +35,7 @@ export class DnbhubUiState {
     return state.sidenavOpened;
   }
 
-  @Action(setDnbhubUiState)
+  @Action(uiActions.setDnbhubUiState)
   public setDnbhubUiState(ctx: StateContext<IDnbhubUiStateModel>, { payload }: TDnbhubUiPayload) {
     return ctx.patchState(payload);
   }

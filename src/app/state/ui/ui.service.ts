@@ -6,8 +6,9 @@ import { concatMap, filter, tap } from 'rxjs/operators';
 import { DnbhubTranslateService } from 'src/app/modules/translate/translate.service';
 import { SUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate/translations.interface';
 
+import { uiActions } from './ui.actions';
 import { IDnbhubUiService } from './ui.interface';
-import { DnbhubUiState, uiActions } from './ui.store';
+import { DnbhubUiState } from './ui.store';
 
 @Injectable({
   providedIn: 'root',

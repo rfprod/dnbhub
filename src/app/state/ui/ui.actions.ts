@@ -4,4 +4,8 @@ import { TDnbhubUiPayload, UI_STATE_TOKEN } from './ui.interface';
 
 const createAction = getActionCreator(UI_STATE_TOKEN.toString());
 
-export const setDnbhubUiState = createAction<TDnbhubUiPayload>('set state');
+const setDnbhubUiState = createAction<TDnbhubUiPayload>('set state');
+
+export const uiActions = {
+  setDnbhubUiState,
+};

@@ -6,7 +6,7 @@ import { DnbhubBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
 import { queries } from 'src/app/state/firebase/firebase.queries';
 import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
 
-import { blogActions } from './blog.store';
+import { blogActions } from './blog.actions';
 
 /**
  * Blog API service.
