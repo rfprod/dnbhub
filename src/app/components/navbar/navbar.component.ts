@@ -26,7 +26,7 @@ import { DnbhubFirebaseState } from '../../state/firebase/firebase.store';
 export class DnbhubNavbarComponent {
   public readonly anonUser$ = this.store
     .select(DnbhubFirebaseState.getState)
-    .pipe(map(state => !Boolean(state.user)));
+    .pipe(map(state => state.userInfo === null));
 
   public readonly language$ = this.ui.language$;
 

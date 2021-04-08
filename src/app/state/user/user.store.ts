@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import { tap } from 'rxjs/operators';
 
-import { getUserRecord, setDnbhubUserState, updateFirebaseProfile } from './user.actions';
+import { firebaseActions } from '../firebase/firebase.actions';
+import { userActions } from './user.actions';
 import {
   IDnbhubUserStateModel,
   TDnbhubUserPayload,
@@ -12,29 +14,20 @@ import {
 } from './user.interface';
 import { DnbhubUserApiService } from './user-api.service';
 
-export const userActions = {
-  setDnbhubUserState,
-  getUserRecord,
-  updateFirebaseProfile,
-};
-
+@UntilDestroy()
 @State<IDnbhubUserStateModel>({
   name: USER_STATE_TOKEN,
   defaults: {
-    firebaseId: '',
     firebaseUser: null,
   },
 })
 @Injectable()
 export class DnbhubUserState {
+  constructor(private readonly store: Store, private readonly api: DnbhubUserApiService) {}
+
   @Selector()
   public static getState(state: IDnbhubUserStateModel) {
     return state;
-  }
-
-  @Selector()
-  public static firebaseId(state: IDnbhubUserStateModel) {
-    return state.firebaseId;
   }
 
   @Selector()
@@ -42,9 +35,7 @@ export class DnbhubUserState {
     return state.firebaseUser;
   }
 
-  constructor(private readonly api: DnbhubUserApiService) {}
-
-  @Action(setDnbhubUserState)
+  @Action(userActions.setDnbhubUserState)
   public setDnbhubUserState(
     ctx: StateContext<IDnbhubUserStateModel>,
     { payload }: TDnbhubUserPayload,
@@ -52,20 +43,20 @@ export class DnbhubUserState {
     ctx.patchState(payload);
   }
 
-  @Action(getUserRecord)
+  @Action(userActions.getUserRecord)
   public getUser(ctx: StateContext<IDnbhubUserStateModel>, { payload }: TGetUserPayload) {
-    const firebaseId = payload.id;
     void this.api
-      .getUserRecord(firebaseId)
+      .getUserRecord(payload.userInfo.uid)
       .pipe(
         tap(firebaseUser => {
-          ctx.patchState({ firebaseId, firebaseUser });
+          ctx.patchState({ firebaseUser });
+          void this.store.dispatch(new firebaseActions.setState({ userInfo: payload.userInfo }));
         }),
       )
       .subscribe();
   }
 
-  @Action(updateFirebaseProfile)
+  @Action(userActions.updateFirebaseProfile)
   public updateFirebaseProfile(
     ctx: StateContext<IDnbhubUserStateModel>,
     { payload }: TUpdateFirebaseProfilePayload,

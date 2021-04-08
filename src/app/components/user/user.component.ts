@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngxs/store';
 import { of } from 'rxjs';
-import { concatMap, filter, mapTo, switchMap } from 'rxjs/operators';
-import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
+import { concatMap, filter, mapTo } from 'rxjs/operators';
 import { DnbhubSoundcloudService } from 'src/app/state/soundcloud/soundcloud.service';
 
-import { DnbhubUserState, userActions } from '../../state/user/user.store';
+import { DnbhubFirebaseState } from '../../state/firebase/firebase.store';
+import { DnbhubUserState } from '../../state/user/user.store';
 
 @UntilDestroy()
 @Component({
@@ -20,15 +20,7 @@ export class DnbhubUserComponent {
 
   public readonly myPlaylists$ = this.soundcloud.myPlaylists$;
 
-  public readonly firebaseUser$ = this.firebase.fireAuth.user.pipe(
-    switchMap(user => {
-      return user !== null
-        ? this.store
-            .dispatch(new userActions.getUserRecord({ id: user?.uid ?? '' }))
-            .pipe(mapTo(user))
-        : of(user);
-    }),
-  );
+  public readonly firebaseUser$ = this.store.select(DnbhubFirebaseState.userInfo);
 
   public readonly userDbRecord$ = this.store.select(DnbhubUserState.firebaseUser).pipe(
     untilDestroyed(this),
@@ -49,7 +41,6 @@ export class DnbhubUserComponent {
 
   constructor(
     private readonly store: Store,
-    private readonly firebase: DnbhubFirebaseService,
     private readonly soundcloud: DnbhubSoundcloudService,
   ) {}
 }

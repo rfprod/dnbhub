@@ -13,20 +13,10 @@ import { toasterExtraClasses, TToasterExtraClasses, TToastType } from './toaster
   providedIn: 'root',
 })
 export class DnbhubToasterService {
-  /**
-   * Snackbar reference.
-   */
   private snackBarRef?: MatSnackBarRef<SimpleSnackBar>;
 
-  /**
-   * Default toaster duration value.
-   */
   private readonly defaultDuration = 7000;
 
-  /**
-   * Constructor.
-   * @param snackBar material snackbar
-   */
   constructor(private readonly snackBar: MatSnackBar) {}
 
   /**
@@ -45,9 +35,6 @@ export class DnbhubToasterService {
     });
   }
 
-  /**
-   * Dismisses snackbar.
-   */
   public hideToaster(): void {
     if (typeof this.snackBarRef !== 'undefined') {
       this.snackBarRef.dismiss();

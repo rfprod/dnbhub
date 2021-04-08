@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import firebase from 'firebase';
 import { switchMap, tap } from 'rxjs/operators';
 import { ILoginForm, ILoginFormValue } from 'src/app/interfaces';
+import { firebaseActions } from 'src/app/state/firebase/firebase.actions';
 import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
-import { TIMEOUT } from 'src/app/utils';
 
 import { DnbhubFirebaseState } from '../../state/firebase/firebase.store';
 
@@ -25,7 +24,6 @@ export class DnbhubLoginDialogComponent {
     private readonly fb: FormBuilder,
     private readonly router: Router,
     private readonly fireSrv: DnbhubFirebaseService,
-    private readonly snackBar: MatSnackBar,
     private readonly store: Store,
   ) {}
 
@@ -42,12 +40,6 @@ export class DnbhubLoginDialogComponent {
   public signupMode = false;
 
   public wrongPassword = false;
-
-  private displayFeedback(message: string): void {
-    this.snackBar.open(message, void 0, {
-      duration: TIMEOUT.MEDUIM,
-    });
-  }
 
   /**
    * Toggles password readability via UI,
@@ -115,13 +107,10 @@ export class DnbhubLoginDialogComponent {
    * Resets user password.
    */
   public resetPassword() {
-    void this.fireSrv
-      .resetUserPassword(this.loginForm.controls.email.value)
-      .pipe(
-        tap(() => {
-          const message = `Password reset email was sent to ${this.loginForm.controls.email.value}.
-              It may take some time for the email to be delivered. Request it again if you do not receive it in about 15 minutes.`;
-          this.displayFeedback(message);
+    void this.store
+      .dispatch(
+        new firebaseActions.sendPasswordResetEmail({
+          email: this.loginForm.controls.email.value ?? '',
         }),
       )
       .subscribe();

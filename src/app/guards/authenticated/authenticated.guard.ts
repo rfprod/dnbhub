@@ -18,9 +18,9 @@ export class DnbhubAuthenticatedGuard implements CanActivate {
 
   public canActivate(): Observable<boolean> {
     return this.store.selectOnce(DnbhubFirebaseState.getState).pipe(
-      map(state => Boolean(state.user)),
-      tap(user => {
-        if (!user) {
+      map(state => state.userInfo !== null),
+      tap(activate => {
+        if (!activate) {
           void this.router.navigate(['index']);
         }
       }),

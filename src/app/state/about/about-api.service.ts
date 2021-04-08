@@ -26,10 +26,7 @@ export class DnbhubAboutApiService {
       .valueChanges()
       .pipe(
         first(),
-        map(data => {
-          console.warn('getDetails', data);
-          return data === null ? void 0 : data;
-        }),
+        map(data => (data === null ? void 0 : data)),
       );
     return this.handlers.pipeHttpRequest(observable).pipe(
       tap(details => {

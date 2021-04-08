@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFireDatabase, QueryFn } from '@angular/fire/database';
 import { QueryReference } from '@angular/fire/database/interfaces';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import firebase from 'firebase';
 import { from, of, throwError } from 'rxjs';
 import { concatMap, first, map, mapTo, switchMap } from 'rxjs/operators';
@@ -32,6 +33,7 @@ export class DnbhubFirebaseService {
     public readonly fireDb: AngularFireDatabase,
     public readonly fireAuth: AngularFireAuth,
     private readonly handlers: DnbhubHttpHandlersService,
+    private readonly snackBar: MatSnackBar,
   ) {}
 
   public getListStream<T = unknown>(collection: TFirebaseDbCollection, query?: QueryFn) {
@@ -108,12 +110,17 @@ export class DnbhubFirebaseService {
     return this.handlers.pipeHttpRequest<firebase.auth.UserCredential>(observable);
   }
 
-  /**
-   * Sends password reset link to user's email.
-   * @param email user email
-   */
-  public resetUserPassword(email: string) {
-    const promise = this.fireAuth.sendPasswordResetEmail(email);
+  public sendPasswordResetEmail(email: string) {
+    const duration = 1000;
+    const promise = this.fireAuth
+      .sendPasswordResetEmail(email)
+      .then(() => {
+        const message = `Password reset email was sent to ${email}. It may take some time for the email to be delivered. Request it again if you do not receive it in about 15 minutes.`;
+        this.snackBar.open(message, void 0, { duration });
+      })
+      .catch(error => {
+        this.snackBar.open(error, void 0, { duration });
+      });
     const observable = from(promise);
     return this.handlers.pipeHttpRequest(observable);
   }

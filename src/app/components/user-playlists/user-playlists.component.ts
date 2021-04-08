@@ -8,6 +8,7 @@ import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
 import { TIMEOUT } from 'src/app/utils';
 
 import { IFirebaseUserSubmittedPlaylists } from '../../interfaces/firebase/firebase-user.interface';
+import { TExtendedUserInfo } from '../../state/firebase/firebase.interface';
 import { IDnbhubUserStateModel } from '../../state/user/user.interface';
 
 @Component({
@@ -19,7 +20,7 @@ import { IDnbhubUserStateModel } from '../../state/user/user.interface';
 export class DnbhubUserPlaylistsComponent {
   @Input() public playlists: ISoundcloudPlaylist[] | null = null;
 
-  @Input() public firebaseUser: firebase.default.User | null = null;
+  @Input() public firebaseUser: TExtendedUserInfo | null = null;
 
   @Input() public dnbhubUser: IDnbhubUserStateModel | null = null;
 
