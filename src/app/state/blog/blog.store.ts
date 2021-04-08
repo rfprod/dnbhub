@@ -1,25 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 
-import {
-  selectBlogPost,
-  selectNextBlogPost,
-  selectPreviousBlogPost,
-  setDnbhubBlogState,
-} from './blog.actions';
+import { blogActions } from './blog.actions';
 import {
   BLOG_STATE_TOKEN,
   IDnbhubBlogStateModel,
   TDnbhubBlogPayload,
   TDnbhubSelectBlogPostPayload,
 } from './blog.interface';
-
-export const blogActions = {
-  setDnbhubBlogState,
-  selectBlogPost,
-  selectNextBlogPost,
-  selectPreviousBlogPost,
-};
 
 @State<IDnbhubBlogStateModel>({
   name: BLOG_STATE_TOKEN,
@@ -56,7 +44,7 @@ export class DnbhubBlogState {
     return state.selectedPostId === 0;
   }
 
-  @Action(setDnbhubBlogState)
+  @Action(blogActions.setDnbhubBlogState)
   public setDnbhubBlogState(
     ctx: StateContext<IDnbhubBlogStateModel>,
     { payload }: TDnbhubBlogPayload,
@@ -64,7 +52,7 @@ export class DnbhubBlogState {
     return ctx.patchState(payload);
   }
 
-  @Action(selectBlogPost)
+  @Action(blogActions.selectBlogPost)
   public selectBlogPost(
     ctx: StateContext<IDnbhubBlogStateModel>,
     { payload }: TDnbhubSelectBlogPostPayload,
@@ -75,7 +63,7 @@ export class DnbhubBlogState {
     return ctx.patchState({ selectedPostId, selectedPost });
   }
 
-  @Action(selectNextBlogPost)
+  @Action(blogActions.selectNextBlogPost)
   public selectNextBlogPost(ctx: StateContext<IDnbhubBlogStateModel>) {
     const state = ctx.getState();
     const selectedPostId =
@@ -84,7 +72,7 @@ export class DnbhubBlogState {
     return ctx.patchState({ selectedPostId, selectedPost });
   }
 
-  @Action(selectPreviousBlogPost)
+  @Action(blogActions.selectPreviousBlogPost)
   public selectPreviousBlogPost(ctx: StateContext<IDnbhubBlogStateModel>) {
     const state = ctx.getState();
     const selectedPostId =

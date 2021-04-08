@@ -17,7 +17,7 @@ export class DnbhubTwitterService {
 
   /**
    * Creates Twitter root div.
-   * @return Twitter root div reference <div id="twttr-root"></div>
+   * @returns Twitter root div reference <div id="twttr-root"></div>
    */
   private createTwitterRoot() {
     const doc = this.win.document;
@@ -34,8 +34,7 @@ export class DnbhubTwitterService {
 
   /**
    * Initializes twitter javascript sdk.
-   *
-   * see:
+   * Documentaiton:
    * - https://developer.twitter.com/en/docs/twitter-for-websites/javascript-api/guides/set-up-twitter-for-websites
    * - https://developer.twitter.com/en/docs/twitter-for-websites/javascript-api/guides/javascript-api
    */

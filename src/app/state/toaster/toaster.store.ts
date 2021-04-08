@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 
-import { hideToaster, showToaster } from './toaster.actions';
+import { toasterActions } from './toaster.actions';
 import {
   IDnbhubToasterStateModel,
   TDnbhubToasterPayload,
@@ -9,11 +9,6 @@ import {
   toasterStateDefaultValues,
 } from './toaster.interface';
 import { DnbhubToasterService } from './toaster.service';
-
-export const toasterActions = {
-  hideToaster,
-  showToaster,
-};
 
 @State<IDnbhubToasterStateModel>({
   name: TOASTER_STATE_TOKEN,
@@ -28,7 +23,7 @@ export class DnbhubToasterState {
     return state;
   }
 
-  @Action(showToaster)
+  @Action(toasterActions.showToaster)
   public showToaster(
     ctx: StateContext<IDnbhubToasterStateModel>,
     { payload }: TDnbhubToasterPayload,
@@ -37,7 +32,7 @@ export class DnbhubToasterState {
     return ctx.patchState(payload);
   }
 
-  @Action(hideToaster)
+  @Action(toasterActions.hideToaster)
   public hideToaster(
     ctx: StateContext<IDnbhubToasterStateModel>,
     { payload }: TDnbhubToasterPayload,

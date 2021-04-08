@@ -4,4 +4,8 @@ import { SOUNDCLOUD_STATE_TOKEN, TDnbhubSoundcloudPayload } from './soundcloud.i
 
 const createAction = getActionCreator(SOUNDCLOUD_STATE_TOKEN.toString());
 
-export const setDnbhubSoundcloudState = createAction<TDnbhubSoundcloudPayload>('set state');
+const setDnbhubSoundcloudState = createAction<TDnbhubSoundcloudPayload>('set state');
+
+export const soundcloudActions = {
+  setDnbhubSoundcloudState,
+};

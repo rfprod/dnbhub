@@ -5,7 +5,7 @@ import { DnbhubAboutDetails } from 'src/app/interfaces/about/about-details.inter
 import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
 import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
 
-import { aboutActions } from './about.store';
+import { aboutActions } from './about.actions';
 
 /**
  * About API service.

@@ -3,8 +3,9 @@ import { Store } from '@ngxs/store';
 import { concatMap, first, map, mapTo, tap } from 'rxjs/operators';
 import { ISoundcloudPlaylist } from 'src/app/interfaces';
 
+import { adminActions } from './admin.actions';
 import { IDnbhubAdminService } from './admin.interface';
-import { blogActions, DnbhubAdminState } from './admin.store';
+import { DnbhubAdminState } from './admin.store';
 import { DnbhubAdminApiService } from './admin-api.service';
 
 @Injectable({
@@ -28,7 +29,7 @@ export class DnbhubAdminService implements IDnbhubAdminService {
   public getEmails() {
     return this.api.getEmails().pipe(
       tap(emails => {
-        void this.store.dispatch(new blogActions.setDnbhubAdminState({ emails }));
+        void this.store.dispatch(new adminActions.setDnbhubAdminState({ emails }));
       }),
     );
   }
@@ -36,7 +37,7 @@ export class DnbhubAdminService implements IDnbhubAdminService {
   public getBrands() {
     return this.api.getBrands().pipe(
       tap(brands => {
-        void this.store.dispatch(new blogActions.setDnbhubAdminState({ brands }));
+        void this.store.dispatch(new adminActions.setDnbhubAdminState({ brands }));
       }),
     );
   }
@@ -44,7 +45,7 @@ export class DnbhubAdminService implements IDnbhubAdminService {
   public getUsers() {
     return this.api.getUsers().pipe(
       tap(users => {
-        void this.store.dispatch(new blogActions.setDnbhubAdminState({ users }));
+        void this.store.dispatch(new adminActions.setDnbhubAdminState({ users }));
       }),
     );
   }
@@ -52,7 +53,7 @@ export class DnbhubAdminService implements IDnbhubAdminService {
   public getBlogEntriesIDs() {
     return this.api.getBlogEntriesIDs().pipe(
       tap(blogEntriesIDs => {
-        void this.store.dispatch(new blogActions.setDnbhubAdminState({ blogEntriesIDs }));
+        void this.store.dispatch(new adminActions.setDnbhubAdminState({ blogEntriesIDs }));
       }),
     );
   }
@@ -63,7 +64,7 @@ export class DnbhubAdminService implements IDnbhubAdminService {
       map(brands => brands.find(brand => brand.key === key)),
       concatMap(selectedBrand =>
         this.store
-          .dispatch(new blogActions.setDnbhubAdminState({ selectedBrand }))
+          .dispatch(new adminActions.setDnbhubAdminState({ selectedBrand }))
           .pipe(mapTo(selectedBrand)),
       ),
     );
@@ -71,7 +72,7 @@ export class DnbhubAdminService implements IDnbhubAdminService {
 
   public selectSubmission(selectedSubmission?: ISoundcloudPlaylist) {
     return this.store
-      .dispatch(new blogActions.setDnbhubAdminState({ selectedSubmission }))
+      .dispatch(new adminActions.setDnbhubAdminState({ selectedSubmission }))
       .pipe(mapTo(selectedSubmission));
   }
 }

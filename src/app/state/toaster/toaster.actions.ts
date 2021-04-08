@@ -4,5 +4,10 @@ import { TDnbhubToasterPayload, TOASTER_STATE_TOKEN } from './toaster.interface'
 
 const createAction = getActionCreator(TOASTER_STATE_TOKEN.toString());
 
-export const showToaster = createAction<TDnbhubToasterPayload>('show');
-export const hideToaster = createAction('hide');
+const showToaster = createAction<TDnbhubToasterPayload>('show');
+const hideToaster = createAction('hide');
+
+export const toasterActions = {
+  hideToaster,
+  showToaster,
+};

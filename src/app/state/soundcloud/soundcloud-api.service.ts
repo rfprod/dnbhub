@@ -19,7 +19,7 @@ import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-h
 import { APP_ENV } from 'src/app/utils/injection-tokens';
 
 import { ISoundcloudPlayer } from '../../interfaces/soundcloud/soundcloud-player.interface';
-import { soundcloudActions } from './soundcloud.store';
+import { soundcloudActions } from './soundcloud.actions';
 
 /**
  * TODO: Sounscloud api interface
