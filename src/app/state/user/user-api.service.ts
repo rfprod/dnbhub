@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { from, of } from 'rxjs';
-import { filter, first, map, tap } from 'rxjs/operators';
+import { filter, first, map, switchMap, tap } from 'rxjs/operators';
 
 import { IFirebaseUserRecord } from '../../interfaces/firebase';
-import { DnbhubFirebaseService } from '../../services/firebase/firebase.service';
 import { DnbhubHttpHandlersService } from '../../services/http-handlers/http-handlers.service';
+import { DnbhubFirebaseService } from '../firebase/firebase.service';
 import { httpProgressActions } from '../http-progress/http-progress.store';
 import { toasterActions } from '../toaster/toaster.store';
 
@@ -32,11 +32,17 @@ export class DnbhubUserApiService {
   }
 
   public updateProfile(options: { displayName: string }) {
-    const firebaseUser = this.firebase.fire.user;
+    const firebaseUser = this.firebase.fireAuth.user;
     if (firebaseUser !== null) {
       void this.store.dispatch(new httpProgressActions.startProgress({ mainView: true }));
-      const observable = from(firebaseUser.updateProfile({ displayName: options.displayName }));
-      return this.handlers.pipeHttpRequest<void>(observable).pipe(
+      const observable = firebaseUser.pipe(
+        switchMap(user => {
+          return user !== null
+            ? from(user.updateProfile({ displayName: options.displayName }))
+            : of(null);
+        }),
+      );
+      return this.handlers.pipeHttpRequest<void | null>(observable).pipe(
         tap(
           () => {
             void this.store.dispatch(

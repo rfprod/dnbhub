@@ -4,10 +4,11 @@ import { of, throwError } from 'rxjs';
 import { first, switchMap, tap } from 'rxjs/operators';
 import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
 import { ISoundcloudPlaylist } from 'src/app/interfaces/index';
-import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
+import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
 import { TIMEOUT } from 'src/app/utils';
 
 import { IFirebaseUserSubmittedPlaylists } from '../../interfaces/firebase/firebase-user.interface';
+import { TExtendedUserInfo } from '../../state/firebase/firebase.interface';
 import { IDnbhubUserStateModel } from '../../state/user/user.interface';
 
 @Component({
@@ -19,7 +20,7 @@ import { IDnbhubUserStateModel } from '../../state/user/user.interface';
 export class DnbhubUserPlaylistsComponent {
   @Input() public playlists: ISoundcloudPlaylist[] | null = null;
 
-  @Input() public firebaseUser: firebase.default.User | null = null;
+  @Input() public firebaseUser: TExtendedUserInfo | null = null;
 
   @Input() public dnbhubUser: IDnbhubUserStateModel | null = null;
 
@@ -34,10 +35,6 @@ export class DnbhubUserPlaylistsComponent {
     });
   }
 
-  /**
-   * Submits blog post.
-   * @param index playlist array index
-   */
   public submitPlaylist(playlist: ISoundcloudPlaylist): void {
     void this.firebase
       .getListItem<IFirebaseUserRecord>(`users/${this.firebaseUser?.uid ?? ''}`)
@@ -66,10 +63,6 @@ export class DnbhubUserPlaylistsComponent {
       .subscribe();
   }
 
-  /**
-   * Unsubmits blog post.
-   * @param index playlist array index
-   */
   public unsubmitPlaylist(playlist: ISoundcloudPlaylist): void {
     void this.firebase
       .getListItem<IFirebaseUserRecord>(`users/${this.firebaseUser?.uid ?? ''}`)

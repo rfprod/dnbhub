@@ -1,19 +1,17 @@
-<div
-  *ngIf="anonUser$ | async"
-  class="mat-body-2"
-  fxFlex="100"
-  fxLayout="row"
-  fxLayoutAlign="center center"
->
-  You must me authenticated to access admin controls
-</div>
+<ng-template #authRequiredTpl>
+  <div class="mat-body-2" fxFlex="100" fxLayout="row" fxLayoutAlign="center center">
+    You must be authenticated to access admin controls
+  </div>
+</ng-template>
+
+<ng-container *ngIf="userDbRecord$ | async"></ng-container>
 
 <div
   fxFlex="100"
   fxLayout="row wrap"
   fxLayoutAlign="start start"
   [ngStyle]="{ padding: '0 10px 0 10px' }"
-  *ngIf="!(anonUser$ | async)"
+  *ngIf="firebaseUser$ | async as firebaseUser; else authRequiredTpl"
 >
   <mat-grid-list [ngStyle]="{ width: '100%', 'font-weight': 'bold' }" cols="1" rowHeight="5:1">
     <mat-grid-tile [ngStyle]="{ color: '#ff8a80' }">

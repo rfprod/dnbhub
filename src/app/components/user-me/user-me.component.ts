@@ -14,11 +14,13 @@ import { BehaviorSubject } from 'rxjs';
 import { concatMap, mapTo, take, tap } from 'rxjs/operators';
 import { setDBuserNewValuesOptions } from 'src/app/interfaces/firebase';
 import { ISoundcloudMe, IUserProfile, IUserProfileForm } from 'src/app/interfaces/index';
-import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
+import { firebaseActions } from 'src/app/state/firebase/firebase.actions';
+import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
 import { DnbhubSoundcloudService } from 'src/app/state/soundcloud/soundcloud.service';
 import { TIMEOUT } from 'src/app/utils';
 
-import { userActions } from '../../state/user/user.store';
+import { TExtendedUserInfo } from '../../state/firebase/firebase.interface';
+import { userActions } from '../../state/user/user.actions';
 
 interface IComponentChanges extends SimpleChanges {
   me: SimpleChange;
@@ -34,7 +36,7 @@ interface IComponentChanges extends SimpleChanges {
 export class DnbhubUserMeComponent implements OnChanges {
   @Input() public me: ISoundcloudMe | null = null;
 
-  @Input() public firebaseUser: firebase.default.User | null = null;
+  @Input() public firebaseUser: TExtendedUserInfo | null = null;
 
   private readonly editMode = new BehaviorSubject<boolean>(false);
 
@@ -153,35 +155,11 @@ export class DnbhubUserMeComponent implements OnChanges {
    * Starts password reset procedure.
    */
   public resetPassword(): void {
-    this.firebase.fire.auth
-      .sendPasswordResetEmail(this.firebaseUser?.email ?? '')
-      .then(() => {
-        const message = 'Password reset link was sent to you over email.';
-        this.displayMessage(message);
-      })
-      .catch(error => {
-        this.displayMessage(error);
-      });
-  }
-
-  /**
-   * Resends verifications email to user.
-   */
-  public resendVerificationEmail(): void {
-    if (!Boolean(this.firebaseUser?.emailVerified)) {
-      this.firebase.fire?.user
-        ?.sendEmailVerification()
-        .then(() => {
-          const message = 'Check your email for an email with a verification link.';
-          this.displayMessage(message);
-        })
-        .catch(error => {
-          this.displayMessage(error);
-        });
-    } else {
-      const message = 'Your email is already verified.';
-      this.displayMessage(message);
-    }
+    void this.store
+      .dispatch(
+        new firebaseActions.sendPasswordResetEmail({ email: this.firebaseUser?.email ?? '' }),
+      )
+      .subscribe();
   }
 
   /**

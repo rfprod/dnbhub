@@ -2,14 +2,17 @@ import { StateToken } from '@ngxs/store';
 import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
 import { IActionPayload } from 'src/app/utils/ngxs.util';
 
+import { TExtendedUserInfo } from '../firebase/firebase.interface';
+
 export interface IDnbhubUserStateModel {
-  firebaseId?: string;
   firebaseUser?: IFirebaseUserRecord | null;
 }
 
 export type TDnbhubUserPayload = IActionPayload<Partial<IDnbhubUserStateModel>>;
 
-export type TGetUserPayload = IActionPayload<{ id: string }>;
+export type TGetUserPayload = IActionPayload<{
+  userInfo: TExtendedUserInfo;
+}>;
 
 export type TUpdateFirebaseProfilePayload = IActionPayload<{ displayName: string }>;
 

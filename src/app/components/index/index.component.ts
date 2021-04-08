@@ -35,7 +35,6 @@ export class DnbhubIndexComponent implements AfterViewInit, OnDestroy {
 
   public ngAfterViewInit(): void {
     this.twitter.initTwitterJsSDK();
-    this.twitter.renderTwitterWidget();
   }
 
   public ngOnDestroy(): void {

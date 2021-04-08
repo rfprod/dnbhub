@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
+import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
+
+import { DnbhubFirebaseState } from '../../state/firebase/firebase.store';
 
 /**
  * Authenticated guard.
@@ -12,16 +14,13 @@ import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.servic
   providedIn: 'root',
 })
 export class DnbhubAuthenticatedGuard implements CanActivate {
-  constructor(
-    private readonly firebaseService: DnbhubFirebaseService,
-    private readonly router: Router,
-  ) {}
+  constructor(private readonly router: Router, private readonly store: Store) {}
 
   public canActivate(): Observable<boolean> {
-    return this.firebaseService.anonUser$.pipe(
-      map(anon => !anon),
-      tap(user => {
-        if (!user) {
+    return this.store.selectOnce(DnbhubFirebaseState.getState).pipe(
+      map(state => state.userInfo !== null),
+      tap(activate => {
+        if (!activate) {
           void this.router.navigate(['index']);
         }
       }),

@@ -1,12 +1,15 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { tap } from 'rxjs/operators';
+import { Store } from '@ngxs/store';
+import firebase from 'firebase';
+import { switchMap, tap } from 'rxjs/operators';
 import { ILoginForm, ILoginFormValue } from 'src/app/interfaces';
-import { DnbhubFirebaseService } from 'src/app/services/firebase/firebase.service';
-import { TIMEOUT } from 'src/app/utils';
+import { firebaseActions } from 'src/app/state/firebase/firebase.actions';
+import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
+
+import { DnbhubFirebaseState } from '../../state/firebase/firebase.store';
 
 @Component({
   selector: 'dnbhub-login-dialog',
@@ -20,8 +23,8 @@ export class DnbhubLoginDialogComponent {
     private readonly dialogRef: MatDialogRef<DnbhubLoginDialogComponent>,
     private readonly fb: FormBuilder,
     private readonly router: Router,
-    private readonly firebase: DnbhubFirebaseService,
-    private readonly snackBar: MatSnackBar,
+    private readonly fireSrv: DnbhubFirebaseService,
+    private readonly store: Store,
   ) {}
 
   /**
@@ -38,12 +41,6 @@ export class DnbhubLoginDialogComponent {
 
   public wrongPassword = false;
 
-  private displayFeedback(message: string): void {
-    this.snackBar.open(message, void 0, {
-      duration: TIMEOUT.MEDUIM,
-    });
-  }
-
   /**
    * Toggles password readability via UI,
    */
@@ -52,7 +49,7 @@ export class DnbhubLoginDialogComponent {
   }
 
   private createUser(formData = this.loginForm.value as ILoginFormValue) {
-    void this.firebase
+    void this.fireSrv
       .create(formData.email, formData.password)
       .pipe(
         tap(() => {
@@ -64,19 +61,20 @@ export class DnbhubLoginDialogComponent {
   }
 
   private authenticateUser(formData = this.loginForm.value as ILoginFormValue) {
-    void this.firebase
+    void this.fireSrv
       .authenticate('email', formData.email, formData.password)
       .pipe(
+        switchMap(credential => this.store.selectOnce(DnbhubFirebaseState.privilegedAccess)),
         tap(
-          () => {
+          privilegedAccess => {
             this.closeDialog({ success: true });
-            if (this.firebase.privilegedAccess()) {
+            if (privilegedAccess) {
               void this.router.navigate(['/admin']);
             } else {
               void this.router.navigate(['/user']);
             }
           },
-          (error: firebase.default.FirebaseError) => {
+          (error: firebase.FirebaseError) => {
             if (error.code === 'auth/user-not-found') {
               this.signupMode = true;
               this.wrongPassword = false;
@@ -109,13 +107,10 @@ export class DnbhubLoginDialogComponent {
    * Resets user password.
    */
   public resetPassword() {
-    void this.firebase
-      .resetUserPassword(this.loginForm.controls.email.value)
-      .pipe(
-        tap(() => {
-          const message = `Password reset email was sent to ${this.loginForm.controls.email.value}.
-              It may take some time for the email to be delivered. Request it again if you do not receive it in about 15 minutes.`;
-          this.displayFeedback(message);
+    void this.store
+      .dispatch(
+        new firebaseActions.sendPasswordResetEmail({
+          email: this.loginForm.controls.email.value ?? '',
         }),
       )
       .subscribe();

@@ -41,6 +41,7 @@ import { DnbhubUserPlaylistsComponent } from './components/user-playlists/user-p
 import { DnbhubAboutStoreModule } from './state/about/about.module';
 import { DnbhubAdminStoreModule } from './state/admin/admin.module';
 import { DnbhubBlogStoreModule } from './state/blog/blog.module';
+import { DnbhubFirebaseStoreModule } from './state/firebase/firebase.module';
 import { DnbhubHttpProgressStoreModule } from './state/http-progress/http-progress.module';
 import { DnbhubSoundcloudStoreModule } from './state/soundcloud/soundcloud.module';
 import { DnbhubToasterStoreModule } from './state/toaster/toaster.module';
@@ -110,6 +111,7 @@ const ngxsLoggerPluginOptions: NgxsLoggerPluginOptions = {
     DnbhubAdminStoreModule,
     DnbhubUserStoreModule,
     DnbhubToasterStoreModule,
+    DnbhubFirebaseStoreModule,
     DnbhubRoutingModule,
   ],
   providers: [

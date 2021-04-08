@@ -92,7 +92,7 @@
         routerLinkActive
         #rlaAdmin="routerLinkActive"
         [disabled]="rlaAdmin.isActive"
-        *ngIf="!(anonUser$ | async) && isAdmin()"
+        *ngIf="privilegedAccess$ | async"
       >
         <mat-icon>verified_user</mat-icon>
         <span>{{ 'admin' | translate }}</span>

@@ -75,14 +75,4 @@ export class DnbhubTwitterService {
       ref.parentNode?.removeChild(ref); // twttr-root
     }
   }
-
-  /**
-   * Renders twitter widget, without this widget won't initialize after user navigates to another
-   * view and then back to a view the widget is placed.
-   */
-  public renderTwitterWidget(): void {
-    if (Boolean(this.win[windowSdkKey])) {
-      console.warn('this.win[twttr]', this.win[windowSdkKey]);
-    }
-  }
 }
