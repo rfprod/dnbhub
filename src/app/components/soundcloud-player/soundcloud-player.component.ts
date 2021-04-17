@@ -172,7 +172,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
   /**
    * Gets link with id from Soundcloud Service (public for template usage).
    */
-  public getLinkWithId(href: string = ''): string {
+  public getLinkWithId(href = ''): string {
     return this.soundcloud.getLinkWithId(href);
   }
 
@@ -303,7 +303,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
    * @param event waveform click event
    * @param id soundcloud track id
    */
-  public waveformClick(event: IEventWithPosition, id: number = 0): void {
+  public waveformClick(event: IEventWithPosition, id = 0): void {
     if (this.selectedTrack.value.id === id && typeof this.player !== 'undefined') {
       const srcElement = event.srcElement as IEventTargetWithPosition;
       const waveformWidth: number = srcElement.clientWidth;

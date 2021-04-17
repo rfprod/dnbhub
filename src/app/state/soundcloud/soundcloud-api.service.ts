@@ -248,7 +248,7 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
    * - links to anchors
    * @param raw unprovessed blog post description
    */
-  public processDescription(raw: string = ''): string {
+  public processDescription(raw = ''): string {
     if (!Boolean(raw)) {
       return raw;
     }
