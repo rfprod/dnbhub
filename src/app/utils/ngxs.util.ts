@@ -1,21 +1,31 @@
 import { RouterStateSnapshot } from '@angular/router';
+import { ActionDef } from '@ngxs/store/src/actions/symbols';
 
-export interface IActionPayload<T = void> {
+/**
+ * Action payload interface.
+ */
+export interface IActionPayload<T = unknown> {
   payload: T;
 }
 
+export class DnbhubStoreAction<T extends IActionPayload = { payload: void }> {
+  public static readonly type: string;
+
+  constructor(public payload: T['payload']) {}
+}
+
 export const getActionCreator = (actionScope: string) => <
-  T extends IActionPayload<Record<string, unknown> | undefined> = {
-    payload: Record<string, unknown>;
-  }
+  T extends IActionPayload = { payload: void }
 >(
   actionName: string,
 ) =>
-  class {
+  class extends DnbhubStoreAction<T> {
     public static readonly type: string = `[${actionScope}]: ${actionName}`;
 
-    constructor(public payload: T['payload']) {}
-  };
+    constructor(public payload: T['payload']) {
+      super(payload);
+    }
+  } as ActionDef<T['payload'], DnbhubStoreAction<T>>;
 
 export type TEmptyPayload = IActionPayload<undefined>;
 

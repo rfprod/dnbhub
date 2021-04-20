@@ -87,13 +87,14 @@ export class DnbhubFirebaseService {
     return this.handlers.pipeHttpRequest(observable);
   }
 
-  public signout() {
-    const observable = from(this.fireAuth.currentUser).pipe(
-      concatMap(user => {
+  public signOut() {
+    const observable = this.fireAuth.user.pipe(
+      first(),
+      switchMap(user => {
         if (Boolean(user)) {
           return from(this.fireAuth.signOut());
         }
-        return of<void>();
+        return of(null);
       }),
     );
     return this.handlers.pipeHttpRequest(observable);

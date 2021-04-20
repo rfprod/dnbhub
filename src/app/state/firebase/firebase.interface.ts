@@ -21,4 +21,6 @@ export type TDnbhubFirebasePayload = IActionPayload<Partial<IDnbhubFirebaseState
 
 export type TResetPasswordPayload = IActionPayload<{ email: string }>;
 
+export type TEmailSignInPayload = IActionPayload<{ email: string; password: string }>;
+
 export const FIREBASE_STATE_TOKEN = new StateToken<IDnbhubFirebaseStateModel>('firebase');

@@ -1,20 +1,11 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Navigate } from '@ngxs/router-plugin';
 import { Store } from '@ngxs/store';
-import firebase from 'firebase';
-import { switchMap, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { ILoginForm, ILoginFormValue } from 'src/app/interfaces';
 import { firebaseActions } from 'src/app/state/firebase/firebase.actions';
 import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
-
-import { DnbhubFirebaseState } from '../../state/firebase/firebase.store';
-
-interface ILoginDialogResult {
-  success: boolean;
-  navigationPath: string[];
-}
 
 @Component({
   selector: 'dnbhub-login-dialog',
@@ -25,7 +16,7 @@ interface ILoginDialogResult {
 export class DnbhubLoginDialogComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: ILoginFormValue,
-    private readonly dialogRef: MatDialogRef<DnbhubLoginDialogComponent>,
+    public readonly dialogRef: MatDialogRef<DnbhubLoginDialogComponent>,
     private readonly fb: FormBuilder,
     private readonly fireSrv: DnbhubFirebaseService,
     private readonly store: Store,
@@ -51,36 +42,16 @@ export class DnbhubLoginDialogComponent {
       .create(formData.email, formData.password)
       .pipe(
         tap(() => {
-          this.closeDialog({ success: true, navigationPath: ['/user'] });
+          this.dialogRef.close();
         }),
       )
       .subscribe();
   }
 
   private authenticateUser(formData = this.loginForm.value as ILoginFormValue) {
-    void this.fireSrv
-      .authenticate('email', formData.email, formData.password)
-      .pipe(
-        switchMap(credential => this.store.selectOnce(DnbhubFirebaseState.privilegedAccess)),
-        tap(
-          privilegedAccess => {
-            if (privilegedAccess) {
-              this.closeDialog({ success: true, navigationPath: ['/admin'] });
-            } else {
-              this.closeDialog({ success: true, navigationPath: ['/user'] });
-            }
-          },
-          (error: firebase.FirebaseError) => {
-            if (error.code === 'auth/user-not-found') {
-              this.signupMode = true;
-              this.wrongPassword = false;
-            } else if (error.code === 'auth/wrong-password') {
-              this.wrongPassword = true;
-            }
-          },
-        ),
-      )
-      .subscribe();
+    const email = formData.email;
+    const password = formData.password;
+    void this.store.dispatch(new firebaseActions.emailSignIn({ email, password })).subscribe();
   }
 
   /**
@@ -105,12 +76,5 @@ export class DnbhubLoginDialogComponent {
         }),
       )
       .subscribe();
-  }
-
-  public closeDialog(result?: ILoginDialogResult) {
-    if (typeof result !== 'undefined' && result.success && result.navigationPath.length > 0) {
-      void this.store.dispatch(new Navigate(result.navigationPath));
-    }
-    this.dialogRef.close(result);
   }
 }

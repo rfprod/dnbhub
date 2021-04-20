@@ -1,17 +1,16 @@
 import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { RouterState } from '@ngxs/router-plugin';
 import { Store } from '@ngxs/store';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { DnbhubLoginDialogComponent } from 'src/app/components/login-dialog/login-dialog.component';
 import {
   ISupportedLanguage,
   SUPPORTED_LANGUAGE_KEY,
   supportedLanguages,
 } from 'src/app/modules/translate/index';
-import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
+import { firebaseActions } from 'src/app/state/firebase/firebase.actions';
 import { DnbhubUiService } from 'src/app/state/ui/ui.service';
 import { INxgsRouterState } from 'src/app/utils/ngxs.util';
 
@@ -24,9 +23,9 @@ import { DnbhubFirebaseState } from '../../state/firebase/firebase.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DnbhubNavbarComponent {
-  public readonly anonUser$ = this.store
+  public readonly userInfo$ = this.store
     .select(DnbhubFirebaseState.getState)
-    .pipe(map(state => state.userInfo === null));
+    .pipe(map(state => state.userInfo));
 
   public readonly language$ = this.ui.language$;
 
@@ -40,9 +39,7 @@ export class DnbhubNavbarComponent {
 
   constructor(
     private readonly store: Store,
-    private readonly router: Router,
     private readonly dialog: MatDialog,
-    private readonly firebase: DnbhubFirebaseService,
     private readonly ui: DnbhubUiService,
     private readonly location: Location,
   ) {}
@@ -77,13 +74,6 @@ export class DnbhubNavbarComponent {
    * Signs user out.
    */
   public logout(): void {
-    void this.firebase
-      .signout()
-      .pipe(
-        tap(() => {
-          void this.router.navigate(['/index']);
-        }),
-      )
-      .subscribe();
+    void this.store.dispatch(new firebaseActions.signOut()).subscribe();
   }
 }

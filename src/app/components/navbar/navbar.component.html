@@ -65,11 +65,11 @@
         <span>{{ 'about' | translate }}</span>
       </button>
       <mat-divider></mat-divider>
-      <button mat-menu-item (click)="showAuthDialog()" *ngIf="anonUser$ | async">
+      <button mat-menu-item (click)="showAuthDialog()" *ngIf="!(userInfo$ | async)">
         <mat-icon>lock_open</mat-icon>
         <span>{{ 'login' | translate }}</span>
       </button>
-      <button mat-menu-item (click)="logout()" *ngIf="!(anonUser$ | async)">
+      <button mat-menu-item (click)="logout()" *ngIf="userInfo$ | async">
         <mat-icon>lock</mat-icon>
         {{ 'logout' | translate }}
       </button>
@@ -80,7 +80,7 @@
         routerLinkActive
         #rlaUser="routerLinkActive"
         [disabled]="rlaUser.isActive"
-        *ngIf="!(anonUser$ | async)"
+        *ngIf="userInfo$ | async"
       >
         <mat-icon>person</mat-icon>
         <span>{{ 'user' | translate }}</span>
@@ -92,7 +92,7 @@
         routerLinkActive
         #rlaAdmin="routerLinkActive"
         [disabled]="rlaAdmin.isActive"
-        *ngIf="privilegedAccess$ | async"
+        *ngIf="(userInfo$ | async) && privilegedAccess$ | async"
       >
         <mat-icon>verified_user</mat-icon>
         <span>{{ 'admin' | translate }}</span>

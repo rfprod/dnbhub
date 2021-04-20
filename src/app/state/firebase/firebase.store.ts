@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Navigate } from '@ngxs/router-plugin';
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
-import { of } from 'rxjs';
-import { mapTo, switchMap } from 'rxjs/operators';
+import { mapTo, switchMap, tap } from 'rxjs/operators';
 
 import { userActions } from '../user/user.actions';
 import { firebaseActions } from './firebase.actions';
@@ -12,6 +12,7 @@ import {
   firebaseInitialState,
   IDnbhubFirebaseStateModel,
   TDnbhubFirebasePayload,
+  TEmailSignInPayload,
   TResetPasswordPayload,
 } from './firebase.interface';
 import { DnbhubFirebaseService } from './firebase.service';
@@ -23,7 +24,7 @@ import { DnbhubFirebaseService } from './firebase.service';
 })
 @Injectable()
 export class DnbhubFirebaseState {
-  public readonly user$ = this.fireAuth.authState.pipe(
+  public readonly user$ = this.fireAuth.user.pipe(
     untilDestroyed(this),
     switchMap(user => {
       return user !== null
@@ -41,8 +42,18 @@ export class DnbhubFirebaseState {
                 },
               }),
             )
-            .pipe(mapTo(user))
-        : of(user);
+            .pipe(
+              tap(() => {
+                void this.store.dispatch(new Navigate(['/user']));
+              }),
+              mapTo(user),
+            )
+        : this.store.dispatch(new firebaseActions.setState({ userInfo: null })).pipe(
+            tap(() => {
+              void this.store.dispatch(new Navigate(['/index']));
+            }),
+            mapTo(user),
+          );
     }),
   );
 
@@ -83,5 +94,18 @@ export class DnbhubFirebaseState {
     { payload }: TResetPasswordPayload,
   ) {
     return this.fireSrv.sendPasswordResetEmail(payload.email);
+  }
+
+  @Action(firebaseActions.emailSignIn)
+  public emailSignIn(
+    ctx: StateContext<IDnbhubFirebaseStateModel>,
+    { payload }: TEmailSignInPayload,
+  ) {
+    return this.fireSrv.authenticate('email', payload.email, payload.password);
+  }
+
+  @Action(firebaseActions.signOut)
+  public signOut() {
+    return this.fireSrv.signOut();
   }
 }
