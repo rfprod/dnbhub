@@ -46,9 +46,6 @@ export class DnbhubUserMeComponent implements OnChanges {
 
   public readonly showPassword$ = this.showPassword.asObservable();
 
-  /**
-   * User profile form.
-   */
   public profileForm: IUserProfileForm = this.fb.group({
     email: [
       { value: '', disabled: true },
@@ -76,9 +73,6 @@ export class DnbhubUserMeComponent implements OnChanges {
     }
   }
 
-  /**
-   * Toggles password visibility.
-   */
   public togglePasswordVisibility(): void {
     this.showPassword.next(!this.showPassword.value);
   }
@@ -162,18 +156,12 @@ export class DnbhubUserMeComponent implements OnChanges {
       .subscribe();
   }
 
-  /**
-   * Updates user profile.
-   */
   public updateProfile(): void {
     void this.store.dispatch(
       new userActions.updateFirebaseProfile({ displayName: this.profileForm.controls.name.value }),
     );
   }
 
-  /**
-   * Deletes user account.
-   */
   public deleteProfile(): void {
     if (!Boolean(this.profileForm.controls.password.value)) {
       const error = 'You must provide a password in order to delete your account';

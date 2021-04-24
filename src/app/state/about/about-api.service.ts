@@ -7,9 +7,6 @@ import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
 
 import { aboutActions } from './about.actions';
 
-/**
- * About API service.
- */
 @Injectable({
   providedIn: 'root',
 })

@@ -8,9 +8,6 @@ export interface IEmailFormValue {
   domain: string;
 }
 
-/**
- * Email form interface.
- */
 export interface IEmailForm extends FormGroup {
   controls: {
     email: AbstractControl;

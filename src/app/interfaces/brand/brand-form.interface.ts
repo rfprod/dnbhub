@@ -1,8 +1,5 @@
 import { AbstractControl, FormGroup } from '@angular/forms';
 
-/**
- * Brand form interface.
- */
 export interface IBrandForm extends FormGroup {
   controls: {
     name: AbstractControl;

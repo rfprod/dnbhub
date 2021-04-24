@@ -38,18 +38,12 @@ import { DnbhubBrandDialogComponent } from '../brand-dialog/brand-dialog.compone
 export class DnbhubAdminComponent implements OnInit {
   public readonly privilegedAccess$ = this.store.select(DnbhubFirebaseState.privilegedAccess);
 
-  /**
-   * Bottom sheet text details component reference.
-   */
   private bottomSheetRef?: MatBottomSheetRef<DnbhubBottomSheetTextDetailsComponent>;
 
   public readonly emails$ = this.admin.emails$;
 
   public readonly brands$ = this.admin.brands$;
 
-  /**
-   * Brand autocomplete form control.
-   */
   public brandAutocompleteControl: FormControl = new FormControl();
 
   public readonly matchedBrands$ = this.brandAutocompleteControl.valueChanges.pipe(
@@ -69,9 +63,6 @@ export class DnbhubAdminComponent implements OnInit {
 
   public readonly users$ = this.admin.users$;
 
-  /**
-   * Edit brand form.
-   */
   public editBrandForm?: IBrandForm;
 
   public readonly blogEntriesIDs$ = this.admin.blogEntriesIDs$;
@@ -163,9 +154,6 @@ export class DnbhubAdminComponent implements OnInit {
       .subscribe();
   }
 
-  /**
-   * Deletes email message.
-   */
   public deleteMessage(dbKey: string) {
     const promise = this.firebase.getList(`email/messages/${dbKey}`).remove();
     void from(promise)
@@ -233,16 +221,10 @@ export class DnbhubAdminComponent implements OnInit {
     void observable.subscribe();
   }
 
-  /**
-   * Resets blog post submission preview.
-   */
   public hideSubmissionPreview(): void {
     void this.admin.selectSubmission(void 0);
   }
 
-  /**
-   * Resolves if submission is already added.
-   */
   public submissionAlreadyAdded$(key: string) {
     return this.admin.blogEntriesIDs$.pipe(
       map(existingIDs => {
@@ -273,10 +255,6 @@ export class DnbhubAdminComponent implements OnInit {
     void observable.subscribe();
   }
 
-  /**
-   * Rejects user submission.
-   * @param playlistId playlist id
-   */
   public rejectUserSubmission(playlistId: number) {
     void this.deleteUserSubmission(playlistId).subscribe();
   }
@@ -304,10 +282,6 @@ export class DnbhubAdminComponent implements OnInit {
     );
   }
 
-  /**
-   * Checks and adds user submission.
-   * @param selectedSubmission user submitted playlist
-   */
   private checkAndAddUserPlaylist(selectedSubmission: { id: number; scData: ISoundcloudPlaylist }) {
     console.warn('checkAndAddUserPlaylist, selectedSubmission', selectedSubmission);
     void combineLatest([
@@ -317,10 +291,6 @@ export class DnbhubAdminComponent implements OnInit {
       .pipe(
         concatMap(([brand, blogEntry]) => {
           if (Boolean(blogEntry)) {
-            /*
-             *	entry does exist, call delete submission automatically
-             */
-
             this.getUsers();
             return this.deleteUserSubmission(selectedSubmission.id);
           }
@@ -337,12 +307,12 @@ export class DnbhubAdminComponent implements OnInit {
           console.warn('valuesObj', valuesObj);
           return this.firebase.addBlogPost(valuesObj);
         }),
-        concatMap(
+        tap(
           () => {
             this.getUsers();
             this.getBlogEntriesIDs();
             this.selectBrand();
-            return this.deleteUserSubmission(selectedSubmission.id);
+            void this.deleteUserSubmission(selectedSubmission.id).subscribe();
           },
           () => {
             this.selectBrand();

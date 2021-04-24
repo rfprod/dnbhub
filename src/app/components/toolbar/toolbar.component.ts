@@ -19,16 +19,10 @@ export class DnbhubToolbarComponent {
 
   constructor(private readonly dialog: MatDialog, private readonly uiService: DnbhubUiService) {}
 
-  /**
-   * Updates store when sidebar is closed.
-   */
   public toggleSidebav(): void {
     void this.uiService.toggleSidenav().subscribe();
   }
 
-  /**
-   * Shows contact dialog.
-   */
   public showContactDialog(): void {
     this.dialog.open(DnbhubContactDialogComponent, {
       height: '85vh',

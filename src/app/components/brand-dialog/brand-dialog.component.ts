@@ -67,9 +67,6 @@ export class DnbhubBrandDialogComponent {
     }
   }
 
-  /**
-   * Updates brand.
-   */
   public updateBrand() {
     if (this.form.valid && !this.form.pristine) {
       // TODO: send update request
@@ -88,9 +85,6 @@ export class DnbhubBrandDialogComponent {
     }
   }
 
-  /**
-   * Creates new brand.
-   */
   public createBrand() {
     if (this.form.valid && !this.form.pristine) {
       const formData = this.form.value;
@@ -105,9 +99,6 @@ export class DnbhubBrandDialogComponent {
     }
   }
 
-  /**
-   * Deletes brand.
-   */
   public deleteBrand() {
     if (this.form.valid && !this.form.pristine) {
       const dbKey = this.data.brand.key;
@@ -124,9 +115,6 @@ export class DnbhubBrandDialogComponent {
     }
   }
 
-  /**
-   * Closes dialog.
-   */
   public closeDialog() {
     this.dialogRef.close();
   }

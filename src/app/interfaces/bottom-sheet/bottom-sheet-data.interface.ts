@@ -1,6 +1,3 @@
-/**
- * Bottom sheet text details data.
- */
 export class DnbhubBottomSheetTextDetailsData {
   constructor(input?: DnbhubBottomSheetTextDetailsData) {
     if (typeof input !== 'undefined') {

@@ -44,35 +44,20 @@ export class DnbhubNavbarComponent {
     private readonly location: Location,
   ) {}
 
-  /**
-   * Supported languages list.
-   */
   public supportedLanguages: ISupportedLanguage[] = [...supportedLanguages];
 
-  /**
-   * Navigates user back.
-   */
   public goBack(): void {
     this.location.back();
   }
 
-  /**
-   * Selects language.
-   */
   public selectLanguage(key: SUPPORTED_LANGUAGE_KEY = SUPPORTED_LANGUAGE_KEY.ENGLISH): void {
     void this.ui.selectLanguage(key).subscribe();
   }
 
-  /**
-   * Calls auth dialog.
-   */
   public showAuthDialog(): void {
     this.dialog.open(DnbhubLoginDialogComponent);
   }
 
-  /**
-   * Signs user out.
-   */
   public logout(): void {
     void this.store.dispatch(new firebaseActions.signOut()).subscribe();
   }
