@@ -56,9 +56,6 @@ export type TSoundcloudPlayerMode =
   | 'pl-samplepacks'
   | 'playlist';
 
-/**
- * Soundcloud player component.
- */
 @Component({
   selector: 'dnbhub-soundcloud-player',
   templateUrl: './soundcloud-player.component.html',

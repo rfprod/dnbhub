@@ -6,9 +6,6 @@ import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
 import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
 import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
 
-/**
- * Admin API service.
- */
 @Injectable({
   providedIn: 'root',
 })

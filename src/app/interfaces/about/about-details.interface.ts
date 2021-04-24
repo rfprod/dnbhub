@@ -1,6 +1,3 @@
-/**
- * Application about links interface with initialization.
- */
 export class DnbhubAboutLinks {
   constructor(input?: DnbhubAboutLinks) {
     if (typeof input !== 'undefined') {
@@ -28,9 +25,6 @@ export class DnbhubAboutLinks {
   public youtube = '';
 }
 
-/**
- * Application about details interface with initialization.
- */
 export class DnbhubAboutDetails {
   constructor(input?: DnbhubAboutDetails) {
     if (typeof input !== 'undefined') {

@@ -5,9 +5,6 @@ export interface ILoginFormValue {
   password: string;
 }
 
-/**
- * Login form interface.
- */
 export interface ILoginForm extends FormGroup {
   controls: {
     email: AbstractControl;

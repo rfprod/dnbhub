@@ -8,9 +8,6 @@ import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
 
 import { blogActions } from './blog.actions';
 
-/**
- * Blog API service.
- */
 @Injectable({
   providedIn: 'root',
 })

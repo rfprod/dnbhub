@@ -22,9 +22,6 @@ type TFirebaseDbCollection =
   | 'users'
   | string;
 
-/**
- * Firebase service, uses Angular Fire.
- */
 @Injectable({
   providedIn: 'root',
 })

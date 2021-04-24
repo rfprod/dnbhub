@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import { tap } from 'rxjs/operators';
 
@@ -14,7 +13,6 @@ import {
 } from './user.interface';
 import { DnbhubUserApiService } from './user-api.service';
 
-@UntilDestroy()
 @State<IDnbhubUserStateModel>({
   name: USER_STATE_TOKEN,
   defaults: {
