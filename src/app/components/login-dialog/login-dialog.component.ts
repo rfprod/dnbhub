@@ -1,11 +1,15 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Navigate } from '@ngxs/router-plugin';
 import { Store } from '@ngxs/store';
-import { tap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest } from 'rxjs';
+import { filter, map, tap } from 'rxjs/operators';
 import { ILoginForm, ILoginFormValue } from 'src/app/interfaces';
 import { firebaseActions } from 'src/app/state/firebase/firebase.actions';
 import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
+
+import { DnbhubFirebaseState } from '../../state/firebase/firebase.store';
 
 @Component({
   selector: 'dnbhub-login-dialog',
@@ -27,14 +31,26 @@ export class DnbhubLoginDialogComponent {
     password: ['', Validators.compose([Validators.required, Validators.pattern(/\w{8,}/)])],
   }) as ILoginForm;
 
-  public showPassword = false;
+  private readonly showPasswordSubject = new BehaviorSubject<boolean>(false);
 
-  public signupMode = false;
+  private readonly signupModeSubject = new BehaviorSubject<boolean>(false);
 
-  public wrongPassword = false;
+  private readonly wrongPasswordSubject = new BehaviorSubject<boolean>(false);
+
+  public readonly dataStream$ = combineLatest([
+    this.showPasswordSubject,
+    this.signupModeSubject,
+    this.wrongPasswordSubject,
+  ]).pipe(
+    map(([showPassword, signupMode, wrongPassword]) => ({
+      showPassword,
+      signupMode,
+      wrongPassword,
+    })),
+  );
 
   public togglePasswordVisibility(): void {
-    this.showPassword = this.showPassword ? false : true;
+    this.showPasswordSubject.next(!this.showPasswordSubject.value);
   }
 
   private createUser(formData = this.loginForm.value as ILoginFormValue) {
@@ -51,7 +67,23 @@ export class DnbhubLoginDialogComponent {
   private authenticateUser(formData = this.loginForm.value as ILoginFormValue) {
     const email = formData.email;
     const password = formData.password;
-    void this.store.dispatch(new firebaseActions.emailSignIn({ email, password })).subscribe();
+    void this.store
+      .dispatch(new firebaseActions.emailSignIn({ email, password }))
+      .pipe(
+        tap(() => {
+          void this.store
+            .select(DnbhubFirebaseState.getState)
+            .pipe(
+              filter(state => state.userInfo !== null),
+              tap(() => {
+                this.dialogRef.close();
+                void this.store.dispatch(new Navigate(['/user']));
+              }),
+            )
+            .subscribe();
+        }),
+      )
+      .subscribe();
   }
 
   /**
@@ -59,7 +91,7 @@ export class DnbhubLoginDialogComponent {
    * Either creates a new user or authenticates an existing user.
    */
   private submitAction() {
-    return !this.signupMode ? this.authenticateUser() : this.createUser();
+    return !this.signupModeSubject.value ? this.authenticateUser() : this.createUser();
   }
 
   public submitForm(): void {
