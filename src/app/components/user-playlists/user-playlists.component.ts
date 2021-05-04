@@ -1,15 +1,17 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Store } from '@ngxs/store';
 import { of, throwError } from 'rxjs';
 import { first, switchMap, tap } from 'rxjs/operators';
-import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
-import { ISoundcloudPlaylist } from 'src/app/interfaces/index';
-import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
-import { TIMEOUT } from 'src/app/utils';
 
+import { IFirebaseUserRecord } from '../../interfaces/firebase';
 import { IFirebaseUserSubmittedPlaylists } from '../../interfaces/firebase/firebase-user.interface';
+import { ISoundcloudPlaylist } from '../../interfaces/soundcloud/soundcloud-playlist.config';
 import { TExtendedUserInfo } from '../../state/firebase/firebase.interface';
+import { DnbhubFirebaseService } from '../../state/firebase/firebase.service';
+import { userActions } from '../../state/user/user.actions';
 import { IDnbhubUserStateModel } from '../../state/user/user.interface';
+import { TIMEOUT } from '../../utils/constants';
 
 @Component({
   selector: 'dnbhub-user-playlists',
@@ -25,6 +27,7 @@ export class DnbhubUserPlaylistsComponent {
   @Input() public dnbhubUser: IDnbhubUserStateModel | null = null;
 
   constructor(
+    private readonly store: Store,
     private readonly firebase: DnbhubFirebaseService,
     private readonly snackBar: MatSnackBar,
   ) {}
@@ -54,6 +57,9 @@ export class DnbhubUserPlaylistsComponent {
                 tap(() => {
                   const message = `Playlist ${playlist.title} was successfully submitted.`;
                   this.displayMessage(message);
+                  void this.store.dispatch(
+                    new userActions.setDnbhubUserState({ firebaseUser: userDbRecord }),
+                  );
                 }),
               );
           }
@@ -94,6 +100,9 @@ export class DnbhubUserPlaylistsComponent {
                 tap(() => {
                   const message = `Playlist ${playlist.title} was successfully unsubmitted.`;
                   this.displayMessage(message);
+                  void this.store.dispatch(
+                    new userActions.setDnbhubUserState({ firebaseUser: userDbRecord }),
+                  );
                 }),
               );
             }

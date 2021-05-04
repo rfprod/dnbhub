@@ -3,9 +3,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngxs/store';
 import { of } from 'rxjs';
 import { concatMap, filter, mapTo } from 'rxjs/operators';
-import { DnbhubSoundcloudService } from 'src/app/state/soundcloud/soundcloud.service';
 
 import { DnbhubFirebaseState } from '../../state/firebase/firebase.store';
+import { DnbhubSoundcloudService } from '../../state/soundcloud/soundcloud.service';
 import { DnbhubUserState } from '../../state/user/user.store';
 
 @UntilDestroy()

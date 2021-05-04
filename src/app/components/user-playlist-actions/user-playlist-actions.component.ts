@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { IDnbhubUserStateModel } from 'src/app/state/user/user.interface';
 
 import { ISoundcloudPlaylist } from '../../interfaces/soundcloud/soundcloud-playlist.config';
+import { IDnbhubUserStateModel } from '../../state/user/user.interface';
 
 @Component({
   selector: 'dnbhub-user-playlist-actions',
