@@ -193,16 +193,14 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
   public getUserTracks(userId: number): Observable<ISoundcloudTracksLinkedPartitioning> {
     let observable = of({ ...linkedPartitioningDefaultValues });
     if (!Boolean(this.tracksLinkedPartNextHref)) {
-      const promise: Promise<ISoundcloudTracksLinkedPartitioning> = SC.get<ISoundcloudTracksLinkedPartitioning>(
-        `/users/${userId}/tracks`,
-        getTracksOptions,
-      )
-        .then(data => {
-          this.tracksLinkedPartNextHref = data.next_href;
-          const tracks = this.processTracksCollection(data);
-          return tracks;
-        })
-        .catch(error => error);
+      const promise: Promise<ISoundcloudTracksLinkedPartitioning> =
+        SC.get<ISoundcloudTracksLinkedPartitioning>(`/users/${userId}/tracks`, getTracksOptions)
+          .then(data => {
+            this.tracksLinkedPartNextHref = data.next_href;
+            const tracks = this.processTracksCollection(data);
+            return tracks;
+          })
+          .catch(error => error);
       observable = from(promise);
     } else {
       observable = this.getTracksNextHref();

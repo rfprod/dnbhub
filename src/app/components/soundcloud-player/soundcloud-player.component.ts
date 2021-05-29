@@ -159,7 +159,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
   /**
    * Current Soundcloud player object.
    */
-  public player?: ISoundcloudPlayer;
+  public player: ISoundcloudPlayer | null = null;
 
   /**
    * Waveform progress timer.
@@ -223,7 +223,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
    * Kills player.
    */
   private playerKill(): void {
-    if (typeof this.player !== 'undefined') {
+    if (this.player !== null) {
       this.player.kill();
     }
   }
@@ -233,7 +233,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
    * @param track Track object
    */
   public playTrack(track: ISoundcloudTrack): void {
-    if (typeof this.player !== 'undefined') {
+    if (this.player === null) {
       if (this.selectedTrack.value.id !== track.id) {
         this.playerKill();
         this.selectedTrack.next(track);
@@ -254,10 +254,14 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
             }),
           )
           .subscribe();
-      } else if (Boolean(this.player.isActuallyPlaying())) {
-        void this.player.pause();
+      }
+    }
+    if (this.player !== null) {
+      const player = this.player;
+      if (player.isActuallyPlaying()) {
+        void player.pause();
       } else {
-        const promise = this.player.play();
+        const promise = player.play();
         void from(promise)
           .pipe(concatMap(() => this.reportWaveformProgress()))
           .subscribe();
@@ -276,7 +280,7 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
           this.window.document.getElementsByClassName(`waveform-${id}`)[0],
         );
         const visibleWaveformElement: HTMLElement = visibleWaveform.nativeElement;
-        if (Boolean(visibleWaveformElement) && typeof this.player !== 'undefined') {
+        if (Boolean(visibleWaveformElement) && this.player !== null) {
           const dividend = 100;
           const playbackProgress: number = Math.floor(
             (this.player.currentTime() * dividend) / this.player.getDuration(),
@@ -287,10 +291,9 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
       }),
       takeWhile(
         () =>
-          typeof this.player !== 'undefined' &&
-          this.player.isActuallyPlaying() &&
-          !this.player.isDead() &&
-          !this.player.isEnded(),
+          (this.player?.isActuallyPlaying() ?? false) &&
+          !(this.player?.isDead() ?? false) &&
+          !(this.player?.isEnded() ?? false),
       ),
     );
   }
@@ -307,8 +310,8 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
       const offsetX: number = event.offsetX;
       const dividend = 100;
       const percent: number = (offsetX * dividend) / waveformWidth;
-      const newProgress: number = (this.player.getDuration() * percent) / dividend;
-      void this.player.seek(newProgress);
+      const newProgress: number = ((this.player?.getDuration() ?? 0) * percent) / dividend;
+      void this.player?.seek(newProgress);
     }
   }
 

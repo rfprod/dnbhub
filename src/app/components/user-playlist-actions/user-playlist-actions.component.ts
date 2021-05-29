@@ -40,14 +40,20 @@ export class DnbhubUserPlaylistActionsComponent {
   }
 
   public submit() {
-    this.submitPlaylist.next(this.playlist);
+    if (typeof this.playlist !== 'undefined') {
+      this.submitPlaylist.next(this.playlist);
+    }
   }
 
   public unsubmit() {
-    this.unsubmitPlaylist.next(this.playlist);
+    if (typeof this.playlist !== 'undefined') {
+      this.unsubmitPlaylist.next(this.playlist);
+    }
   }
 
   public preview() {
-    this.previewPlaylist.next(this.playlist);
+    if (typeof this.playlist !== 'undefined') {
+      this.previewPlaylist.next(this.playlist);
+    }
   }
 }
