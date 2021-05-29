@@ -228,11 +228,18 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
     }
   }
 
+  private resetPlayerOnNextTrackPlay(nextTrackId?: number) {
+    if (this.selectedTrack.value.id !== nextTrackId) {
+      this.player = null;
+    }
+  }
+
   /**
    * Triggers player playback/pause.
    * @param track Track object
    */
   public playTrack(track: ISoundcloudTrack): void {
+    this.resetPlayerOnNextTrackPlay(track.id);
     if (this.player === null) {
       if (this.selectedTrack.value.id !== track.id) {
         this.playerKill();

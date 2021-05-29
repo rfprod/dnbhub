@@ -19,7 +19,7 @@
       *ngFor="let track of renderTracks$ | async"
       fxLayout="row wrap"
       fxLayoutAlign="start stretch"
-      [ngStyle]="{ 'border-bottom': '1px solid grey' }"
+      [ngStyle]="{ 'border-bottom': '1px solid grey', padding: '5px' }"
     >
       <div fxFlex="100" matTooltip="{{ track.title }}" matTooltipPosition="below" fxLayout="row">
         <div fxFlex="5px"></div>
