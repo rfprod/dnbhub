@@ -1,24 +1,25 @@
 /* Angular Material Theme, and Typography customization */
+@use '~@angular/material' as mat;
 @import 'node_modules/@angular/material/_theming.scss';
 
 /*
   *	Define a custom typography config that overrides font-family, and all levels.
   */
-$custom-typography: mat-typography-config(
+$custom-typography: mat.define-typography-config(
   $font-family: 'Roboto, monospace, "Helvetica Neue", sans-serif',
-  $display-4: mat-typography-level(112px, 112px, 300),
-  $display-3: mat-typography-level(56px, 56px, 400),
-  $display-2: mat-typography-level(45px, 48px, 400),
-  $display-1: mat-typography-level(34px, 40px, 400),
-  $headline: mat-typography-level(24px, 32px, 400),
-  $title: mat-typography-level(20px, 32px, 500),
-  $subheading-2: mat-typography-level(16px, 28px, 400),
-  $subheading-1: mat-typography-level(15px, 24px, 400),
-  $body-2: mat-typography-level(14px, 24px, 500),
-  $body-1: mat-typography-level(14px, 20px, 400),
-  $caption: mat-typography-level(12px, 20px, 400),
-  $button: mat-typography-level(14px, 14px, 500),
-  $input: mat-typography-level(inherit, 1.125, 400),
+  $display-4: mat.define-typography-level(112px, 112px, 300),
+  $display-3: mat.define-typography-level(56px, 56px, 400),
+  $display-2: mat.define-typography-level(45px, 48px, 400),
+  $display-1: mat.define-typography-level(34px, 40px, 400),
+  $headline: mat.define-typography-level(24px, 32px, 400),
+  $title: mat.define-typography-level(20px, 32px, 500),
+  $subheading-2: mat.define-typography-level(16px, 28px, 400),
+  $subheading-1: mat.define-typography-level(15px, 24px, 400),
+  $body-2: mat.define-typography-level(14px, 24px, 500),
+  $body-1: mat.define-typography-level(14px, 20px, 400),
+  $caption: mat.define-typography-level(12px, 20px, 400),
+  $button: mat.define-typography-level(14px, 14px, 500),
+  $input: mat.define-typography-level(inherit, 1.125, 400),
 );
 
 /*
@@ -27,16 +28,16 @@ $custom-typography: mat-typography-config(
   * Be sure to include this mixin once!
   * Custom typography config is passed to mat-core.
   */
-@include mat-core($custom-typography);
+@include mat.core($custom-typography);
 
 // Define a custom light theme.
-$candy-app-primary: mat-palette($mat-teal, 700);
-$candy-app-accent: mat-palette($mat-yellow, 400);
-$candy-app-warn: mat-palette($mat-red, 'A700');
-$candy-app-theme: mat-light-theme($candy-app-primary, $candy-app-accent, $candy-app-warn);
+$candy-app-primary: mat.define-palette(mat.$teal-palette, 700);
+$candy-app-accent: mat.define-palette(mat.$yellow-palette, 400);
+$candy-app-warn: mat.define-palette(mat.$red-palette, 'A700');
+$candy-app-theme: mat.define-light-theme($candy-app-primary, $candy-app-accent, $candy-app-warn);
 
 // Include the custom light theme styles.
-@include angular-material-theme($candy-app-theme);
+@include mat.all-component-themes($candy-app-theme);
 
 /* Angular Material Theme, and Typography customization */
 
@@ -54,7 +55,7 @@ $yellow: #ffed00;
 /* General colours */
 
 $black: #000000;
-$primary: mat-color($mat-teal, 700);
+$primary: mat.get-color-from-palette(mat.$teal-palette, 700);
 
 .material-icons {
   display: inline-block;

@@ -24,8 +24,7 @@ export const ENV = {
   gapi: {
     browserKey: 'GOOGLE_APIS_BROWSER_KEY',
     channelId: 'UC2HOUBVyZw9mPM3joMShYKQ',
-    part:
-      'snippet,contentDetails,statistics,topicDetails,status,brandingSettings,invideoPromotion,contentOwnerDetails',
+    part: 'snippet,contentDetails,statistics,topicDetails,status,brandingSettings,invideoPromotion,contentOwnerDetails',
     order: 'date',
     maxResults: '50',
   },
@@ -53,8 +52,7 @@ export class DnbhubEnvironmentConfig {
   public gapi: IGoogleApiEnvInterface = {
     browserKey: 'GOOGLE_APIS_BROWSER_KEY',
     channelId: 'UC2HOUBVyZw9mPM3joMShYKQ',
-    part:
-      'snippet,contentDetails,statistics,topicDetails,status,brandingSettings,invideoPromotion,contentOwnerDetails',
+    part: 'snippet,contentDetails,statistics,topicDetails,status,brandingSettings,invideoPromotion,contentOwnerDetails',
     order: 'date',
     maxResults: '50',
   };

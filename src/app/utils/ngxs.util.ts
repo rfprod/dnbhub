@@ -14,18 +14,16 @@ export class DnbhubStoreAction<T extends IActionPayload = { payload: void }> {
   constructor(public payload: T['payload']) {}
 }
 
-export const getActionCreator = (actionScope: string) => <
-  T extends IActionPayload = { payload: void }
->(
-  actionName: string,
-) =>
-  class extends DnbhubStoreAction<T> {
-    public static readonly type: string = `[${actionScope}]: ${actionName}`;
+export const getActionCreator =
+  (actionScope: string) =>
+  <T extends IActionPayload = { payload: void }>(actionName: string) =>
+    class extends DnbhubStoreAction<T> {
+      public static readonly type: string = `[${actionScope}]: ${actionName}`;
 
-    constructor(public payload: T['payload']) {
-      super(payload);
-    }
-  } as ActionDef<T['payload'], DnbhubStoreAction<T>>;
+      constructor(public payload: T['payload']) {
+        super(payload);
+      }
+    } as ActionDef<T['payload'], DnbhubStoreAction<T>>;
 
 export type TEmptyPayload = IActionPayload<undefined>;
 
