@@ -79,7 +79,10 @@ export class DnbhubFirebaseService {
       mode === 'email'
         ? from(promise)
         : throwError(
-            'TODO: Twitter authentication - https://firebase.google.com/docs/auth/web/twitter-login?authuser=0',
+            () =>
+              new Error(
+                'TODO: Twitter authentication - https://firebase.google.com/docs/auth/web/twitter-login?authuser=0',
+              ),
           );
     return this.handlers.pipeHttpRequest(observable);
   }
@@ -98,9 +101,7 @@ export class DnbhubFirebaseService {
   }
 
   /**
-   * Creates a user
-   * @param email user email
-   * @param password user password
+   * Creates a user.
    */
   public create(email: string, password: string) {
     const promise = this.fireAuth.createUserWithEmailAndPassword(email, password);
@@ -124,9 +125,7 @@ export class DnbhubFirebaseService {
   }
 
   /**
-   * Deletes a user
-   * @param email user email
-   * @param password user password
+   * Deletes a user.
    */
   public delete(email: string, password: string) {
     const observable = from(this.fireAuth.signInWithEmailAndPassword(email, password));
@@ -137,7 +136,7 @@ export class DnbhubFirebaseService {
       switchMap(({ credential, user }) => {
         return user !== null && credential.credential !== null
           ? from(user.reauthenticateWithCredential(credential.credential)).pipe(mapTo(user))
-          : throwError(new Error('Firebase user is undefined or auth credential is null.'));
+          : throwError(() => new Error('Firebase user is undefined or auth credential is null.'));
       }),
       switchMap(user => from(this.getList(`users/${user.uid}`).remove()).pipe(mapTo(user))),
       switchMap(user => {
@@ -179,7 +178,6 @@ export class DnbhubFirebaseService {
 
   /**
    * Sets new values for database user.
-   * @param valuesObj new values object
    */
   public setDBuserNewValues(valuesObj: Partial<IFirebaseUserRecord>) {
     const observable = this.checkDBuserUID().pipe(
@@ -195,7 +193,6 @@ export class DnbhubFirebaseService {
 
   /**
    * Adds blog post to database.
-   * @param valuesObj blog post model
    */
   public addBlogPost(valuesObj: DnbhubBlogPost) {
     const observable = this.checkDBuserUID().pipe(

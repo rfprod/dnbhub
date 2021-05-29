@@ -25,7 +25,6 @@ import { DnbhubFirebaseService } from './firebase.service';
 @Injectable()
 export class DnbhubFirebaseState {
   public readonly user$ = this.fireAuth.user.pipe(
-    untilDestroyed(this),
     switchMap(user => {
       return user !== null
         ? this.store
@@ -55,6 +54,7 @@ export class DnbhubFirebaseState {
             mapTo(user),
           );
     }),
+    untilDestroyed(this),
   );
 
   constructor(

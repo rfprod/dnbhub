@@ -42,7 +42,7 @@ export class DnbhubUserState {
   }
 
   @Action(userActions.getUserRecord)
-  public getUser(ctx: StateContext<IDnbhubUserStateModel>, { payload }: TGetUserPayload) {
+  public getUserRecord(ctx: StateContext<IDnbhubUserStateModel>, { payload }: TGetUserPayload) {
     void this.api
       .getUserRecord(payload.userInfo.uid)
       .pipe(

@@ -1,12 +1,13 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { DnbhubAboutComponent } from 'src/app/components/about/about.component';
-import { DnbhubAdminComponent } from 'src/app/components/admin/admin.component';
-import { DnbhubBlogComponent } from 'src/app/components/blog/blog.component';
-import { DnbhubIndexComponent } from 'src/app/components/index/index.component';
-import { DnbhubPlaylistsComponent } from 'src/app/components/playlists/playlists.component';
-import { DnbhubUserComponent } from 'src/app/components/user/user.component';
-import { DnbhubAuthenticatedGuard } from 'src/app/guards/authenticated/authenticated.guard';
+import { ExtraOptions, RouterModule, Routes } from '@angular/router';
+
+import { DnbhubAboutComponent } from './components/about/about.component';
+import { DnbhubAdminComponent } from './components/admin/admin.component';
+import { DnbhubBlogComponent } from './components/blog/blog.component';
+import { DnbhubIndexComponent } from './components/index/index.component';
+import { DnbhubPlaylistsComponent } from './components/playlists/playlists.component';
+import { DnbhubUserComponent } from './components/user/user.component';
+import { DnbhubAuthenticatedGuard } from './guards/authenticated/authenticated.guard';
 
 export const APP_ROUTES: Routes = [
   { path: 'index', component: DnbhubIndexComponent },
@@ -19,11 +20,12 @@ export const APP_ROUTES: Routes = [
   { path: '**', redirectTo: 'index' },
 ];
 
-/**
- * Application routing module.
- */
 @NgModule({
-  imports: [RouterModule.forRoot(APP_ROUTES, { relativeLinkResolution: 'legacy' })],
+  imports: [
+    RouterModule.forRoot(APP_ROUTES, <ExtraOptions>{
+      relativeLinkResolution: 'legacy',
+    }),
+  ],
   exports: [RouterModule],
 })
 export class DnbhubRoutingModule {}
