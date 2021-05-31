@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterState } from '@ngxs/router-plugin';
 import { Store } from '@ngxs/store';
-import { map } from 'rxjs/operators';
+import { first, map, tap } from 'rxjs/operators';
 import { DnbhubLoginDialogComponent } from 'src/app/components/login-dialog/login-dialog.component';
 import {
   ISupportedLanguage,
@@ -47,7 +47,25 @@ export class DnbhubNavbarComponent {
   public supportedLanguages: ISupportedLanguage[] = [...supportedLanguages];
 
   public goBack(): void {
-    this.location.back();
+    void this.store
+      .select(RouterState.state)
+      .pipe(
+        first(),
+        tap(state => {
+          const hasQueryParams = state?.url?.match(/.*[?].*/);
+          if (
+            typeof hasQueryParams !== 'undefined' &&
+            hasQueryParams !== null &&
+            hasQueryParams.length > 0
+          ) {
+            this.location.back();
+            this.location.back();
+          } else {
+            this.location.back();
+          }
+        }),
+      )
+      .subscribe();
   }
 
   public selectLanguage(key: SUPPORTED_LANGUAGE_KEY = SUPPORTED_LANGUAGE_KEY.ENGLISH): void {
