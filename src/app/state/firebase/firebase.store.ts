@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Navigate } from '@ngxs/router-plugin';
+import { Navigate, RouterState } from '@ngxs/router-plugin';
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import { mapTo, switchMap, tap } from 'rxjs/operators';
 
@@ -49,7 +49,18 @@ export class DnbhubFirebaseState {
             )
         : this.store.dispatch(new firebaseActions.setState({ userInfo: null })).pipe(
             tap(() => {
-              void this.store.dispatch(new Navigate(['/index']));
+              void this.store
+                .selectOnce(RouterState.url)
+                .pipe(
+                  tap(url => {
+                    if (typeof url !== 'undefined') {
+                      if (/(user|admin)/.test(url)) {
+                        void this.store.dispatch(new Navigate(['/index']));
+                      }
+                    }
+                  }),
+                )
+                .subscribe();
             }),
             mapTo(user),
           );
