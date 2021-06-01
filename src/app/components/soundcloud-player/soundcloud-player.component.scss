@@ -5,3 +5,20 @@
   height: 100%;
   overflow-y: auto;
 }
+
+.scroll-viewport {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: stretch;
+  width: 100%;
+  height: 83vh;
+}
+
+.track-image {
+  width: 100px;
+  height: 100px;
+
+  &:hover {
+    cursor: pointer;
+  }
+}

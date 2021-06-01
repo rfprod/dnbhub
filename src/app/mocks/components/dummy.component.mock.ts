@@ -6,6 +6,6 @@ import { Component } from '@angular/core';
  */
 @Component({
   selector: 'dnbhub-dummy-component',
-  template: '<span>summy component</span>',
+  template: '<span dnbhubTooltip>summy component</span>',
 })
 export class DummyComponent {}
