@@ -14,83 +14,79 @@
     fxLayoutAlign="start start"
     *ngIf="selectedTrack$ | async as currentTrack"
   >
-    <div
-      fxFlex="100"
-      *ngFor="let track of renderTracks$ | async"
-      fxLayout="row wrap"
-      fxLayoutAlign="start stretch"
-      [ngStyle]="{ 'border-bottom': '1px solid grey', padding: '5px' }"
-    >
-      <div fxFlex="100" matTooltip="{{ track.title }}" matTooltipPosition="below" fxLayout="row">
-        <div fxFlex="5px"></div>
-        <div fxFlex="1 1 auto" class="clamp-flex">{{ track.title }}</div>
-        <div fxFlex="5px"></div>
-      </div>
-      <div fxFlex="0 1 auto" fxLayout="column" fxLayoutAlign="start center">
-        <img
-          appImageLoaded
-          [ngStyle]="{ width: '120px', height: '120px' }"
-          [src]="track.artwork_url"
-          (click)="playTrack(track)"
-          matTooltip="Play / Pause"
-          matTooltipPosition="after"
-        />
-        <div fxFlex="1 1 auto">{{ track.genre }}</div>
-        <div fxFlex="1 1 auto">{{ track.license }}</div>
-      </div>
-      <div fxFlex fxLayout="row" fxLayoutAlign="center stretch">
-        <div fxFlex="10px"></div>
-        <div fxFlex="1 1 auto">
+    <cdk-virtual-scroll-viewport #scrollViewport itemSize="223.5" class="scroll-viewport">
+      <div
+        *ngFor="let track of renderTracks$ | async"
+        fxLayout="row wrap"
+        fxLayoutAlign="start stretch"
+        [ngStyle]="{ 'border-bottom': '1px solid grey', padding: '5px' }"
+      >
+        <div fxFlex="100" fxLayout="row">
+          <div fxFlex="5px"></div>
+          <div fxFlex="1 1 auto" class="clamp-flex">{{ track.title }}</div>
+          <div fxFlex="5px"></div>
+        </div>
+        <div fxFlex="0 1 auto" fxLayout="column" fxLayoutAlign="start center">
           <img
             appImageLoaded
-            [ngStyle]="{ 'max-width': '100%', 'min-width': '150px', 'min-height': '150px' }"
-            src="{{ track.waveform_url }}"
-            [class]="'waveform-' + track.id?.toString()"
-            (click)="waveformClick($event, track.id)"
+            class="track-image"
+            [src]="track.artwork_url"
+            (click)="playTrack(track)"
+            dnbhubTooltip="Play / Pause"
           />
+          <div fxFlex="1 1 auto">{{ track.genre }}</div>
+          <div fxFlex="1 1 auto">{{ track.license }}</div>
         </div>
-        <div fxFlex="10px"></div>
-      </div>
-      <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start center">
-        <span fxFlex="130px">
-          <button mat-button disabled="true">
-            <mat-icon>favorite</mat-icon>
-            <span *ngIf="track.favoritings_count">{{ track.favoritings_count }}</span>
+        <div fxFlex fxLayout="row" fxLayoutAlign="center stretch">
+          <div fxFlex="10px"></div>
+          <div fxFlex="1 1 auto">
+            <img
+              appImageLoaded
+              [ngStyle]="{ 'max-width': '100%', 'min-width': '150px', 'min-height': '150px' }"
+              src="{{ track.waveform_url }}"
+              [class]="'waveform-' + track.id?.toString()"
+              (click)="waveformClick($event, track.id)"
+            />
+          </div>
+          <div fxFlex="10px"></div>
+        </div>
+        <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start center">
+          <span fxFlex="130px">
+            <button mat-button disabled="true">
+              <mat-icon>favorite</mat-icon>
+              <span *ngIf="track.favoritings_count">{{ track.favoritings_count }}</span>
+            </button>
+          </span>
+
+          <button
+            mat-button
+            (click)="playTrack(track)"
+            dnbhubTooltip="{{ 'action.play' | translate }} ({{ track.playback_count }})"
+          >
+            <mat-icon>play_arrow</mat-icon> / <mat-icon>pause</mat-icon>
           </button>
-        </span>
 
-        <button
-          mat-button
-          (click)="playTrack(track)"
-          matTooltip="{{ 'action.play' | translate }} ({{ track.playback_count }})"
-          matTooltipPosition="above"
-        >
-          <mat-icon>play_arrow</mat-icon> / <mat-icon>pause</mat-icon>
-        </button>
+          <a
+            mat-button
+            *ngIf="track.downloadable"
+            href="{{ getLinkWithId(track.download_url) }}"
+            dnbhubTooltip="{{ 'action.download' | translate }} ({{ track.download_count }})"
+            target="_blank"
+          >
+            <mat-icon>save</mat-icon>
+          </a>
 
-        <a
-          mat-button
-          *ngIf="track.downloadable"
-          href="{{ getLinkWithId(track.download_url) }}"
-          matTooltip="{{ 'action.download' | translate }} ({{ track.download_count }})"
-          matTooltipPosition="above"
-          target="_blank"
-        >
-          <mat-icon>save</mat-icon>
-        </a>
-
-        <a
-          mat-button
-          *ngIf="track.purchase_url"
-          href="{{ track.purchase_url }}"
-          matTooltip="{{ track.purchase_title }}"
-          matTooltipPosition="above"
-          target="_blank"
-        >
-          <mat-icon>save</mat-icon>
-        </a>
+          <a
+            mat-button
+            *ngIf="track.purchase_url"
+            href="{{ track.purchase_url }}"
+            dnbhubTooltip="{{ track.purchase_title }}"
+            target="_blank"
+          >
+            <mat-icon>save</mat-icon>
+          </a>
+        </div>
       </div>
-    </div>
-    <span id="list-end" fxFlex="100"></span>
+    </cdk-virtual-scroll-viewport>
   </div>
 </div>

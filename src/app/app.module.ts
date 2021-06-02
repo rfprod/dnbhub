@@ -35,6 +35,8 @@ import { DnbhubBrandDialogComponent } from './components/brand-dialog/brand-dial
 import { DnbhubPlaylistsComponent } from './components/playlists/playlists.component';
 import { DnbhubProgressBarComponent } from './components/progress-bar/progress-bar.component';
 import { DnbhubToolbarComponent } from './components/toolbar/toolbar.component';
+import { DnbhubTooltipComponent } from './components/tooltip/tooltip.component';
+import { DnbhubTooltipDirective } from './components/tooltip/tooltip.directive';
 import { DnbhubUserMeComponent } from './components/user-me/user-me.component';
 import { DnbhubUserPlaylistActionsComponent } from './components/user-playlist-actions/user-playlist-actions.component';
 import { DnbhubUserPlaylistsComponent } from './components/user-playlists/user-playlists.component';
@@ -79,6 +81,8 @@ const ngxsLoggerPluginOptions: NgxsLoggerPluginOptions = {
     DnbhubBottomSheetTextDetailsComponent,
     DnbhubProgressBarComponent,
     DnbhubUserPlaylistActionsComponent,
+    DnbhubTooltipComponent,
+    DnbhubTooltipDirective,
   ],
   entryComponents: [
     DnbhubContactDialogComponent,
@@ -86,6 +90,7 @@ const ngxsLoggerPluginOptions: NgxsLoggerPluginOptions = {
     DnbhubBottomSheetTextDetailsComponent,
     DnbhubProgressBarComponent,
     DnbhubBrandDialogComponent,
+    DnbhubTooltipComponent,
   ],
   imports: [
     BrowserModule,

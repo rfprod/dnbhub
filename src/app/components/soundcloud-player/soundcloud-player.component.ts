@@ -1,17 +1,19 @@
+import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  HostListener,
   Inject,
   Input,
   OnChanges,
   OnDestroy,
   SimpleChange,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject, combineLatest, from, of, timer } from 'rxjs';
+import { BehaviorSubject, combineLatest, from, Observable, of, timer } from 'rxjs';
 import { concatMap, first, map, mapTo, takeWhile, tap } from 'rxjs/operators';
 import { IEventTargetWithPosition, IEventWithPosition } from 'src/app/interfaces/index';
 import { ISoundcloudPlayer } from 'src/app/interfaces/soundcloud/soundcloud-player.interface';
@@ -62,7 +64,11 @@ export type TSoundcloudPlayerMode =
   styleUrls: ['./soundcloud-player.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
+export class DnbhubSoundcloudPlayerComponent implements AfterViewInit, OnChanges, OnDestroy {
+  @ViewChild('scrollViewport') public scrollViewport?: CdkVirtualScrollViewport;
+
+  public elementScrolled?: Observable<Event>;
+
   /**
    * Default config.
    */
@@ -396,17 +402,20 @@ export class DnbhubSoundcloudPlayerComponent implements OnChanges, OnDestroy {
     this.resetPlayer();
   }
 
-  /**
-   * Host element scroll listener.
-   * @param event scroll event
-   */
-  @HostListener('scroll', ['$event'])
-  public scrollHandler(event: Event): void {
-    const target = event.target as IEventTargetWithPosition;
-    const scrollFromBottom = target.scrollHeight - target.scrollTop - target.clientHeight;
-    const loadMoreOffset = 20;
-    if (scrollFromBottom < loadMoreOffset) {
-      this.loadMoreTracks();
+  public ngAfterViewInit(): void {
+    const elementScrolled = this.scrollViewport?.elementScrolled().pipe(
+      tap(scroll => {
+        const target = scroll.target as IEventTargetWithPosition;
+        const scrollFromBottom = target.scrollHeight - target.scrollTop - target.clientHeight;
+        const loadMoreOffset = 20;
+        if (scrollFromBottom < loadMoreOffset) {
+          this.loadMoreTracks();
+        }
+      }),
+    );
+    if (typeof elementScrolled !== 'undefined') {
+      this.elementScrolled = elementScrolled;
+      this.elementScrolled?.subscribe();
     }
   }
 }
