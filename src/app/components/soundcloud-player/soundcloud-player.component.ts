@@ -396,6 +396,7 @@ export class DnbhubSoundcloudPlayerComponent implements AfterViewInit, OnChanges
     } else if (Boolean(changes.playlistId)) {
       this.playlistIdChangeHandler(changes);
     }
+    this.scrollViewport?.scrollToOffset(0);
   }
 
   public ngOnDestroy(): void {
