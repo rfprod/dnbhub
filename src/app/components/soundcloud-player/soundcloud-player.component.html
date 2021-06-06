@@ -14,7 +14,12 @@
     fxLayoutAlign="start start"
     *ngIf="selectedTrack$ | async as currentTrack"
   >
-    <cdk-virtual-scroll-viewport #scrollViewport itemSize="223.5" class="scroll-viewport">
+    <cdk-virtual-scroll-viewport
+      #scrollViewport
+      itemSize="223.5"
+      class="scroll-viewport"
+      [ngStyle]="virtualScrollHeight ? { height: virtualScrollHeight ?? '83vh' } : {}"
+    >
       <div
         *ngFor="let track of renderTracks$ | async"
         fxLayout="row wrap"

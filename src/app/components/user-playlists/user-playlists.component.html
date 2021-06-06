@@ -7,14 +7,18 @@
     *ngFor="let playlist of playlists"
   >
     <mat-card-content class="playlist__content">
-      <dnbhub-soundcloud-player [mode]="'playlist'" [playlistId]="playlist.id">
+      <dnbhub-soundcloud-player
+        [mode]="'playlist'"
+        [playlistId]="playlist.id"
+        [virtualScrollHeight]="'210px'"
+      >
       </dnbhub-soundcloud-player>
     </mat-card-content>
 
     <mat-card-actions>
       <dnbhub-user-playlist-actions
         [playlist]="playlist"
-        [dnbhubUser]="dnbhubUser"
+        [userRecord]="userRecord"
         (submitPlaylist)="submitPlaylist($event)"
         (unsubmitPlaylist)="unsubmitPlaylist($event)"
         (previewPlaylist)="previewPlaylist($event)"

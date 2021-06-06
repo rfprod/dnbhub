@@ -85,25 +85,15 @@ export class DnbhubSoundcloudPlayerComponent implements AfterViewInit, OnChanges
     },
   };
 
-  /**
-   * Soundcloud player mode.
-   */
   @Input() public mode: TSoundcloudPlayerMode = 'dnbhub';
 
-  /**
-   * Indicates if description should be shown.
-   */
   @Input() public displayDescription = false;
 
-  /**
-   * Soundcloud user id.
-   */
-  @Input() private userId: number = this.defaultConfig.user.dnbhub;
+  @Input() public userId: number = this.defaultConfig.user.dnbhub;
 
-  /**
-   * Soundcloud playlist id.
-   */
-  @Input() private playlistId: number = this.defaultConfig.playlist.everything;
+  @Input() public playlistId: number = this.defaultConfig.playlist.everything;
+
+  @Input() public virtualScrollHeight: string | null = '83vh';
 
   private readonly loading$ = this.store.select(DnbhubHttpProgressState.mainViewProgress);
 

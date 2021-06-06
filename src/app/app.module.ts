@@ -48,7 +48,6 @@ import { DnbhubHttpProgressStoreModule } from './state/http-progress/http-progre
 import { DnbhubSoundcloudStoreModule } from './state/soundcloud/soundcloud.module';
 import { DnbhubToasterStoreModule } from './state/toaster/toaster.module';
 import { DnbhubUiStoreModule } from './state/ui/ui.module';
-import { DnbhubUserStoreModule } from './state/user/user.module';
 import { APP_ENV, getWindow, WINDOW } from './utils';
 import { getDocument } from './utils/providers';
 
@@ -114,7 +113,6 @@ const ngxsLoggerPluginOptions: NgxsLoggerPluginOptions = {
     DnbhubBlogStoreModule,
     DnbhubAboutStoreModule,
     DnbhubAdminStoreModule,
-    DnbhubUserStoreModule,
     DnbhubToasterStoreModule,
     DnbhubFirebaseStoreModule,
     DnbhubRoutingModule,

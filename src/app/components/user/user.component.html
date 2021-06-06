@@ -4,8 +4,6 @@
   </div>
 </ng-template>
 
-<ng-container *ngIf="userDbRecord$ | async"></ng-container>
-
 <div
   fxFlex="100"
   fxLayout="row wrap"
@@ -27,6 +25,6 @@
     fxFlex="100"
     [playlists]="myPlaylists$ | async"
     [firebaseUser]="firebaseUser"
-    [dnbhubUser]="dnbhubUser$ | async"
+    [userRecord]="userRecord$ | async"
   ></dnbhub-user-playlists>
 </div>

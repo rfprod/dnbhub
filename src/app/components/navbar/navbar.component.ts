@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { RouterState } from '@ngxs/router-plugin';
+import { Navigate, RouterState } from '@ngxs/router-plugin';
 import { Store } from '@ngxs/store';
 import { first, map, tap } from 'rxjs/operators';
 import { DnbhubLoginDialogComponent } from 'src/app/components/login-dialog/login-dialog.component';
@@ -25,7 +25,7 @@ import { DnbhubFirebaseState } from '../../state/firebase/firebase.store';
 export class DnbhubNavbarComponent {
   public readonly userInfo$ = this.store
     .select(DnbhubFirebaseState.getState)
-    .pipe(map(state => state.userInfo));
+    .pipe(map(state => state.userRecord));
 
   public readonly language$ = this.ui.language$;
 
@@ -77,6 +77,8 @@ export class DnbhubNavbarComponent {
   }
 
   public logout(): void {
+    void this.store.dispatch(new firebaseActions.setState({ userRecord: null, userInfo: null }));
     void this.store.dispatch(new firebaseActions.signOut()).subscribe();
+    void this.store.dispatch(new Navigate(['/index']));
   }
 }
