@@ -7,16 +7,17 @@
   "bugs": "https://github.com/rfprod/dnbhub/issues",
   "repository": "https://github.com/rfprod/dnbhub",
   "license": "MIT",
-  "author": "rfprod <support@dnbhub.com> (https://github.com/rfprod)",
+  "author": "rfprod <connect@rfprod.tk> (https://github.com/rfprod)",
   "main": "server.js",
   "scripts": {
     "analyze:app": "ng build --stats-json --configuration analyze-bundle; npx webpack-bundle-analyzer ./dist/stats.json",
     "build": "bash shell/build.sh",
     "build:prod": "bash shell/build.sh prod",
     "e2e": "ng e2e",
-    "postinstall": "husky install && npx sort-package-json && npm run ngcc",
     "install:global": "bash shell/install.sh global",
     "install:project": "bash shell/install.sh project",
+    "install:safe": "yarn install --ignore-scripts",
+    "postinstall:safe": "husky install && npx sort-package-json && yarn ngcc",
     "lint": "ng run dnbhub:lint && ng run dnbhub:e2e-lint",
     "lint:fix": "ng run dnbhub:lint --fix && ng run dnbhub:e2e-lint --fix",
     "lint:html": "npx prettier -c src/**/*.html",
@@ -25,19 +26,14 @@
     "ng": "ng",
     "ngcc": "ngcc --tsconfig tsconfig.json",
     "ngcc:ci": "ngcc --tsconfig tsconfig.json --async false",
+    "postinstall": "husky install && npx sort-package-json && npm run ngcc",
+    "prestart": "npm run set-client-app-env",
+    "start": "node server.js & ng serve",
     "reset-client-app-env": "npx ts-node -O '{ \"module\": \"commonjs\", \"typeRoots\": [\"node_modules/@types\"] }' src/set-env.ts --reset=true && ng lint --fix",
     "set-client-app-env": "npx ts-node -O '{ \"module\": \"commonjs\", \"typeRoots\": [\"node_modules/@types\"] }' src/set-env.ts",
     "set-env": "bash shell/set-env.sh",
-    "prestart": "npm run set-client-app-env",
-    "start": "node server.js & ng serve",
     "start:express:prod": "node server.js prod",
     "test": "ng test"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint:precommit",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
   },
   "dependencies": {
     "@angular/animations": "12.0.2",
