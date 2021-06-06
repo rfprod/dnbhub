@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Navigate, RouterState } from '@ngxs/router-plugin';
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
+import { of } from 'rxjs';
 import { mapTo, switchMap, tap } from 'rxjs/operators';
 
-import { userActions } from '../user/user.actions';
 import { firebaseActions } from './firebase.actions';
 import {
   FIREBASE_STATE_TOKEN,
@@ -14,6 +13,7 @@ import {
   TDnbhubFirebasePayload,
   TEmailSignInPayload,
   TResetPasswordPayload,
+  TSetUserRecordPayload,
 } from './firebase.interface';
 import { DnbhubFirebaseService } from './firebase.service';
 
@@ -24,46 +24,46 @@ import { DnbhubFirebaseService } from './firebase.service';
 })
 @Injectable()
 export class DnbhubFirebaseState {
-  public readonly user$ = this.fireAuth.user.pipe(
-    switchMap(user => {
-      return user !== null
-        ? this.store
-            .dispatch(
-              new userActions.getUserRecord({
-                userInfo: {
-                  displayName: user.displayName,
-                  email: user.email,
-                  phoneNumber: user.phoneNumber,
-                  photoURL: user.photoURL,
-                  providerId: user.providerId,
-                  uid: user.uid,
-                  emailVerified: user.emailVerified,
-                },
-              }),
-            )
-            .pipe(
-              tap(() => {
-                void this.store.dispatch(new Navigate(['/user']));
-              }),
-              mapTo(user),
-            )
-        : this.store.dispatch(new firebaseActions.setState({ userInfo: null })).pipe(
-            tap(() => {
-              void this.store
-                .selectOnce(RouterState.url)
-                .pipe(
-                  tap(url => {
-                    if (typeof url !== 'undefined') {
-                      if (/(user|admin)/.test(url)) {
-                        void this.store.dispatch(new Navigate(['/index']));
-                      }
-                    }
+  public readonly user$ = this.fireAuth.authState.pipe(
+    switchMap(userData => {
+      return userData !== null
+        ? of(userData).pipe(
+            switchMap(user =>
+              this.store
+                .dispatch(
+                  new firebaseActions.setState({
+                    userInfo: {
+                      displayName: user.displayName,
+                      email: user.email,
+                      phoneNumber: user.phoneNumber,
+                      photoURL: user.photoURL,
+                      providerId: user.providerId,
+                      uid: user.uid,
+                      emailVerified: user.emailVerified,
+                    },
                   }),
                 )
-                .subscribe();
+                .pipe(mapTo(userData)),
+            ),
+            switchMap(user => {
+              const userInfo = {
+                displayName: user.displayName,
+                email: user.email,
+                phoneNumber: user.phoneNumber,
+                photoURL: user.photoURL,
+                providerId: user.providerId,
+                uid: user.uid,
+                emailVerified: user.emailVerified,
+              };
+              return this.api.getUserRecord(user.uid).pipe(
+                tap(userRecord => {
+                  void this.store.dispatch(new firebaseActions.setState({ userRecord }));
+                }),
+                mapTo(userInfo),
+              );
             }),
-            mapTo(user),
-          );
+          )
+        : of(userData);
     }),
     untilDestroyed(this),
   );
@@ -71,7 +71,7 @@ export class DnbhubFirebaseState {
   constructor(
     private readonly store: Store,
     private readonly fireAuth: AngularFireAuth,
-    private readonly fireSrv: DnbhubFirebaseService,
+    private readonly api: DnbhubFirebaseService,
   ) {
     void this.user$.subscribe();
   }
@@ -79,6 +79,11 @@ export class DnbhubFirebaseState {
   @Selector()
   public static getState(state: IDnbhubFirebaseStateModel) {
     return state;
+  }
+
+  @Selector()
+  public static userRecord(state: IDnbhubFirebaseStateModel) {
+    return state.userRecord;
   }
 
   @Selector()
@@ -99,12 +104,20 @@ export class DnbhubFirebaseState {
     return ctx.patchState(payload);
   }
 
+  @Action(firebaseActions.setUserRecord)
+  public setUserRecord(
+    ctx: StateContext<IDnbhubFirebaseStateModel>,
+    { payload }: TSetUserRecordPayload,
+  ) {
+    return ctx.patchState({ userRecord: payload.userRecord });
+  }
+
   @Action(firebaseActions.sendPasswordResetEmail)
   public sendPasswordResetEmail(
     ctx: StateContext<IDnbhubFirebaseStateModel>,
     { payload }: TResetPasswordPayload,
   ) {
-    return this.fireSrv.sendPasswordResetEmail(payload.email);
+    return this.api.sendPasswordResetEmail(payload.email);
   }
 
   @Action(firebaseActions.emailSignIn)
@@ -112,11 +125,11 @@ export class DnbhubFirebaseState {
     ctx: StateContext<IDnbhubFirebaseStateModel>,
     { payload }: TEmailSignInPayload,
   ) {
-    return this.fireSrv.authenticate('email', payload.email, payload.password);
+    return this.api.authenticate('email', payload.email, payload.password);
   }
 
   @Action(firebaseActions.signOut)
   public signOut() {
-    return this.fireSrv.signOut();
+    return this.api.signOut();
   }
 }

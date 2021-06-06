@@ -20,7 +20,6 @@ import { DnbhubSoundcloudService } from 'src/app/state/soundcloud/soundcloud.ser
 import { TIMEOUT } from 'src/app/utils';
 
 import { TExtendedUserInfo } from '../../state/firebase/firebase.interface';
-import { userActions } from '../../state/user/user.actions';
 
 interface IComponentChanges extends SimpleChanges {
   me: SimpleChange;
@@ -158,7 +157,9 @@ export class DnbhubUserMeComponent implements OnChanges {
 
   public updateProfile(): void {
     void this.store.dispatch(
-      new userActions.updateFirebaseProfile({ displayName: this.profileForm.controls.name.value }),
+      new firebaseActions.updateFirebaseProfile({
+        displayName: this.profileForm.controls.name.value,
+      }),
     );
   }
 

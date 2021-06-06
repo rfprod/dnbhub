@@ -99,12 +99,7 @@
             The're are no brands yet, create one.
           </div>
 
-          <div
-            fxFlex="100"
-            fxLayout="row wrap"
-            fxLayoutAlign="space-between start"
-            *ngIf="brands$ | async"
-          >
+          <div fxFlex="100" fxLayout="row wrap" *ngIf="brands$ | async">
             <mat-card
               *ngFor="let brand of brands$ | async"
               fxFlex.xs="100"
@@ -114,63 +109,49 @@
               }"
             >
               <mat-card-header>
-                <mat-card-title>
-                  {{ brand.key }}
-                </mat-card-title>
+                <mat-card-title> {{ brand.name }} </mat-card-title>
               </mat-card-header>
 
               <mat-card-content>
-                <span fxFlex="100" class="mat-body-1">
-                  <div fxFlex fxLayout="row wrap">
-                    <a
-                      mat-button
-                      href="{{ brand.bandcamp }}"
-                      target="_blank"
-                      *ngIf="brand.bandcamp"
-                    >
-                      Bandcamp
-                      <mat-icon>open_in_new</mat-icon>
-                    </a>
-                    <a
-                      mat-button
-                      href="{{ brand.facebook }}"
-                      target="_blank"
-                      *ngIf="brand.facebook"
-                    >
-                      Facebook
-                      <mat-icon>open_in_new</mat-icon>
-                    </a>
-                    <a
-                      mat-button
-                      href="{{ brand.instagram }}"
-                      target="_blank"
-                      *ngIf="brand.instagram"
-                    >
-                      Instagram
-                      <mat-icon>open_in_new</mat-icon>
-                    </a>
-                    <a
-                      mat-button
-                      href="{{ brand.soundcloud }}"
-                      target="_blank"
-                      *ngIf="brand.soundcloud"
-                    >
-                      Soundcloud
-                      <mat-icon>open_in_new</mat-icon>
-                    </a>
-                    <a mat-button href="{{ brand.twitter }}" target="_blank" *ngIf="brand.twitter">
-                      Twitter
-                      <mat-icon>open_in_new</mat-icon>
-                    </a>
-                    <a mat-button href="{{ brand.website }}" target="_blank" *ngIf="brand.website">
-                      Website
-                      <mat-icon>open_in_new</mat-icon>
-                    </a>
-                    <a mat-button href="{{ brand.youtube }}" target="_blank" *ngIf="brand.youtube">
-                      Youtube
-                      <mat-icon>open_in_new</mat-icon>
-                    </a>
-                  </div>
+                <span fxFlex="100" fxLayout="row wrap" class="mat-body-1">
+                  <a mat-button href="{{ brand.bandcamp }}" target="_blank" *ngIf="brand.bandcamp">
+                    Bandcamp
+                    <mat-icon>open_in_new</mat-icon>
+                  </a>
+                  <a mat-button href="{{ brand.facebook }}" target="_blank" *ngIf="brand.facebook">
+                    Facebook
+                    <mat-icon>open_in_new</mat-icon>
+                  </a>
+                  <a
+                    mat-button
+                    href="{{ brand.instagram }}"
+                    target="_blank"
+                    *ngIf="brand.instagram"
+                  >
+                    Instagram
+                    <mat-icon>open_in_new</mat-icon>
+                  </a>
+                  <a
+                    mat-button
+                    href="{{ brand.soundcloud }}"
+                    target="_blank"
+                    *ngIf="brand.soundcloud"
+                  >
+                    Soundcloud
+                    <mat-icon>open_in_new</mat-icon>
+                  </a>
+                  <a mat-button href="{{ brand.twitter }}" target="_blank" *ngIf="brand.twitter">
+                    Twitter
+                    <mat-icon>open_in_new</mat-icon>
+                  </a>
+                  <a mat-button href="{{ brand.website }}" target="_blank" *ngIf="brand.website">
+                    Website
+                    <mat-icon>open_in_new</mat-icon>
+                  </a>
+                  <a mat-button href="{{ brand.youtube }}" target="_blank" *ngIf="brand.youtube">
+                    Youtube
+                    <mat-icon>open_in_new</mat-icon>
+                  </a>
                 </span>
               </mat-card-content>
 
@@ -253,12 +234,13 @@
                         [ngStyle]="{
                           height: '200px',
                           overflow: 'hidden',
-                          border: '1px solid'
+                          border: '1px dotted #cecece'
                         }"
                       >
                         <dnbhub-soundcloud-player
                           [mode]="'playlist'"
                           [playlistId]="submittedPlaylistId"
+                          [virtualScrollHeight]="'198px'"
                         >
                         </dnbhub-soundcloud-player>
                       </span>

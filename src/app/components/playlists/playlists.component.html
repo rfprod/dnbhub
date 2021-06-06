@@ -42,6 +42,10 @@
   </mat-radio-group>
 </mat-card>
 
-<div fxFlex="100" fxLayout="row">
-  <dnbhub-soundcloud-player fxFlex="100" [mode]="playlistSelector.value"></dnbhub-soundcloud-player>
+<div fxFlex="100" fxLayout="row" #virtualScrollContainer>
+  <dnbhub-soundcloud-player
+    fxFlex="100"
+    [mode]="playlistSelector.value"
+    [virtualScrollHeight]="playerHeight$ | async"
+  ></dnbhub-soundcloud-player>
 </div>

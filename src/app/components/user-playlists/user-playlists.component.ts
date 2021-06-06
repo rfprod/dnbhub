@@ -7,10 +7,9 @@ import { first, switchMap, tap } from 'rxjs/operators';
 import { IFirebaseUserRecord } from '../../interfaces/firebase';
 import { IFirebaseUserSubmittedPlaylists } from '../../interfaces/firebase/firebase-user.interface';
 import { ISoundcloudPlaylist } from '../../interfaces/soundcloud/soundcloud-playlist.config';
+import { firebaseActions } from '../../state/firebase/firebase.actions';
 import { TExtendedUserInfo } from '../../state/firebase/firebase.interface';
 import { DnbhubFirebaseService } from '../../state/firebase/firebase.service';
-import { userActions } from '../../state/user/user.actions';
-import { IDnbhubUserStateModel } from '../../state/user/user.interface';
 import { TIMEOUT } from '../../utils/constants';
 
 @Component({
@@ -24,7 +23,7 @@ export class DnbhubUserPlaylistsComponent {
 
   @Input() public firebaseUser: TExtendedUserInfo | null = null;
 
-  @Input() public dnbhubUser: IDnbhubUserStateModel | null = null;
+  @Input() public userRecord?: IFirebaseUserRecord | null = null;
 
   constructor(
     private readonly store: Store,
@@ -58,7 +57,7 @@ export class DnbhubUserPlaylistsComponent {
                   const message = `Playlist ${playlist.title} was successfully submitted.`;
                   this.displayMessage(message);
                   void this.store.dispatch(
-                    new userActions.setDnbhubUserState({ firebaseUser: userDbRecord }),
+                    new firebaseActions.setUserRecord({ userRecord: userDbRecord }),
                   );
                 }),
               );
@@ -83,7 +82,7 @@ export class DnbhubUserPlaylistsComponent {
             if (!Boolean(playlists)) {
               const message = 'No playlists to unsubmit.';
               this.displayMessage(message);
-              return throwError(new Error(message));
+              return throwError(() => new Error(message));
             } else if (!playlists[unsubmitPlaylistId]) {
               const userDbRecord = userRecord;
               const playListKeys = Object.keys(playlists);
@@ -101,7 +100,7 @@ export class DnbhubUserPlaylistsComponent {
                   const message = `Playlist ${playlist.title} was successfully unsubmitted.`;
                   this.displayMessage(message);
                   void this.store.dispatch(
-                    new userActions.setDnbhubUserState({ firebaseUser: userDbRecord }),
+                    new firebaseActions.setState({ userRecord: userDbRecord }),
                   );
                 }),
               );

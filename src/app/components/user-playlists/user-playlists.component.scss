@@ -2,7 +2,7 @@
   display: block;
   width: 100%;
   height: auto !important;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .playlist {
@@ -11,6 +11,6 @@
   &__content {
     height: 210px;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: hidden;
   }
 }

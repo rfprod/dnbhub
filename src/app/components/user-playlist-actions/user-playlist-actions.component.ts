@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
+import { IFirebaseUserRecord } from '../../interfaces/firebase/firebase-user.interface';
 import { ISoundcloudPlaylist } from '../../interfaces/soundcloud/soundcloud-playlist.config';
-import { IDnbhubUserStateModel } from '../../state/user/user.interface';
 
 @Component({
   selector: 'dnbhub-user-playlist-actions',
@@ -12,7 +12,7 @@ import { IDnbhubUserStateModel } from '../../state/user/user.interface';
 export class DnbhubUserPlaylistActionsComponent {
   @Input() public playlist?: ISoundcloudPlaylist;
 
-  @Input() public dnbhubUser: IDnbhubUserStateModel | null = null;
+  @Input() public userRecord?: IFirebaseUserRecord | null = null;
 
   @Output() public readonly submitPlaylist = new EventEmitter<ISoundcloudPlaylist>();
 
@@ -24,19 +24,14 @@ export class DnbhubUserPlaylistActionsComponent {
    * Resolves if a playlist is already added.
    */
   public get alreadyAdded() {
-    return (
-      typeof this.dnbhubUser?.firebaseUser?.submittedPlaylists[this.playlist?.id ?? -1] ===
-      'boolean'
-    );
+    return typeof this.userRecord?.submittedPlaylists[this.playlist?.id ?? -1] === 'boolean';
   }
 
   /**
    * Resolves if a playlist is already submitted.
    */
   public get alreadySubmitted() {
-    return Boolean(this.dnbhubUser?.firebaseUser?.submittedPlaylists[this.playlist?.id ?? -1])
-      ? true
-      : false;
+    return Boolean(this.userRecord?.submittedPlaylists[this.playlist?.id ?? -1]) ? true : false;
   }
 
   public submit() {

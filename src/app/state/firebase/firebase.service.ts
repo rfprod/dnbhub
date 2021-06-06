@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFireDatabase, QueryFn } from '@angular/fire/database';
-import { QueryReference } from '@angular/fire/database/interfaces';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Store } from '@ngxs/store';
 import firebase from 'firebase';
 import { from, of, throwError } from 'rxjs';
-import { concatMap, first, map, mapTo, switchMap } from 'rxjs/operators';
-import { DnbhubBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
-import { IFirebaseUserRecord, newFirebaseUserRecord } from 'src/app/interfaces/firebase';
+import { concatMap, first, map, mapTo, switchMap, tap } from 'rxjs/operators';
 
+import { DnbhubBlogPost } from '../../interfaces/blog/blog-post.interface';
+import { IFirebaseUserRecord, newFirebaseUserRecord } from '../../interfaces/firebase';
 import { DnbhubHttpHandlersService } from '../../services/http-handlers/http-handlers.service';
+import { httpProgressActions } from '../../state/http-progress/http-progress.actions';
+import { toasterActions } from '../toaster/toaster.actions';
 import { queries } from './firebase.queries';
 
 type TFirebaseDbCollection =
@@ -27,6 +29,7 @@ type TFirebaseDbCollection =
 })
 export class DnbhubFirebaseService {
   constructor(
+    private readonly store: Store,
     public readonly fireDb: AngularFireDatabase,
     public readonly fireAuth: AngularFireAuth,
     private readonly handlers: DnbhubHttpHandlersService,
@@ -34,14 +37,14 @@ export class DnbhubFirebaseService {
   ) {}
 
   public getListStream<T = unknown>(collection: TFirebaseDbCollection, query?: QueryFn) {
-    return this.fireDb.list<T>('/' + collection, query).valueChanges();
+    return this.fireDb.list<T>(`/${collection}`, query).valueChanges();
   }
 
   public getList<T = unknown>(collection: TFirebaseDbCollection, query?: QueryFn) {
-    return this.fireDb.list<T>('/' + collection, query);
+    return this.fireDb.list<T>(`/${collection}`, query);
   }
 
-  public getListItem<T = unknown>(path: QueryReference | string) {
+  public getListItem<T = unknown>(path: TFirebaseDbCollection | string) {
     return this.fireDb.object<T>(`/${path}`);
   }
 
@@ -208,5 +211,51 @@ export class DnbhubFirebaseService {
       }),
     );
     return observable;
+  }
+
+  public getUserRecord(id: string) {
+    const observable = this.getListItem<IFirebaseUserRecord>(`users/${id}`)
+      .valueChanges()
+      .pipe(
+        first(),
+        map(user => <IFirebaseUserRecord>user),
+      );
+    return this.handlers.pipeHttpRequest<IFirebaseUserRecord>(observable);
+  }
+
+  public updateProfile(options: { displayName: string }) {
+    const firebaseUser = this.fireAuth.user;
+    if (firebaseUser !== null) {
+      void this.store.dispatch(new httpProgressActions.startProgress({ mainView: true }));
+      const observable = firebaseUser.pipe(
+        switchMap(user => {
+          return user !== null
+            ? from(user.updateProfile({ displayName: options.displayName }))
+            : of(null);
+        }),
+      );
+      return this.handlers.pipeHttpRequest<void | null>(observable).pipe(
+        tap({
+          next: () => {
+            void this.store.dispatch(
+              new toasterActions.showToaster({
+                show: true,
+                message: 'Your profile was updated.',
+                type: 'success',
+              }),
+            );
+          },
+          error: (error: Error) => {
+            void this.store.dispatch(
+              new toasterActions.showToaster({ show: true, message: error.message, type: 'error' }),
+            );
+          },
+          complete: () => {
+            void this.store.dispatch(new httpProgressActions.startProgress({ mainView: false }));
+          },
+        }),
+      );
+    }
+    return of(null);
   }
 }
