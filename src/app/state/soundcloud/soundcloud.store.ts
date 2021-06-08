@@ -33,6 +33,11 @@ export class DnbhubSoundcloudState {
   }
 
   @Selector()
+  public static getSpotlight(state: IDnbhubSoundcloudStateModel) {
+    return state.spotlight;
+  }
+
+  @Selector()
   public static getTracks(state: IDnbhubSoundcloudStateModel) {
     return state.tracks;
   }

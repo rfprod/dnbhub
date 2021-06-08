@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { concatMap, map, mapTo } from 'rxjs/operators';
 
+import { soundcloudPlayerConfigDefaults } from '../../components/soundcloud-player/soundcloud-player.component';
 import { soundcloudActions } from './soundcloud.actions';
 import { IDnbhubSoundcloudService } from './soundcloud.interface';
 import { DnbhubSoundcloudState } from './soundcloud.store';
@@ -16,6 +17,8 @@ export class DnbhubSoundcloudService implements IDnbhubSoundcloudService {
   public readonly me$ = this.store.select(DnbhubSoundcloudState.getMe);
 
   public readonly myPlaylists$ = this.store.select(DnbhubSoundcloudState.getMyPlaylists);
+
+  public readonly spotlight$ = this.store.select(DnbhubSoundcloudState.getSpotlight);
 
   public readonly tracks$ = this.store.select(DnbhubSoundcloudState.getTracks);
 
@@ -60,6 +63,18 @@ export class DnbhubSoundcloudService implements IDnbhubSoundcloudService {
           this.store
             .dispatch(new soundcloudActions.setDnbhubSoundcloudState({ tracks }))
             .pipe(mapTo(tracks)),
+        ),
+      );
+  }
+
+  public getSpotlight(userId: number = soundcloudPlayerConfigDefaults.user.dnbhub) {
+    return this.api
+      .getSpotlight(userId)
+      .pipe(
+        concatMap(spotlight =>
+          this.store
+            .dispatch(new soundcloudActions.setDnbhubSoundcloudState({ spotlight }))
+            .pipe(mapTo(spotlight)),
         ),
       );
   }

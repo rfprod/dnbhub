@@ -18,6 +18,7 @@ import {
 import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
 import { APP_ENV } from 'src/app/utils/injection-tokens';
 
+import { soundcloudPlayerConfigDefaults } from '../../components/soundcloud-player/soundcloud-player.component';
 import { ISoundcloudPlayer } from '../../interfaces/soundcloud/soundcloud-player.interface';
 import { soundcloudActions } from './soundcloud.actions';
 
@@ -177,9 +178,7 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
   public getMyPlaylists(userScId: number): Observable<ISoundcloudPlaylist[]> {
     const promise: Promise<ISoundcloudPlaylist[]> = SC.get<ISoundcloudPlaylist[]>(
       `users/${userScId}/playlists`,
-    ).then(playlists => {
-      return playlists;
-    });
+    ).then(playlists => playlists);
     const observable = from(promise);
     return this.handlers.pipeHttpRequest<ISoundcloudPlaylist[]>(observable);
   }
@@ -195,6 +194,35 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
     if (!Boolean(this.tracksLinkedPartNextHref)) {
       const promise: Promise<ISoundcloudTracksLinkedPartitioning> =
         SC.get<ISoundcloudTracksLinkedPartitioning>(`/users/${userId}/tracks`, getTracksOptions)
+          .then(data => {
+            this.tracksLinkedPartNextHref = data.next_href;
+            const tracks = this.processTracksCollection(data);
+            return tracks;
+          })
+          .catch(error => error);
+      observable = from(promise);
+    } else {
+      observable = this.getTracksNextHref();
+    }
+    return this.handlers.pipeHttpRequest<ISoundcloudTracksLinkedPartitioning>(observable);
+  }
+
+  /**
+   * Gets user tracks.
+   * Performs initial request if data.tracksLinkedPartNextHref is falsy.
+   * Calls getTracksNextHref if data.tracksLinkedPartNextHref is truthy.
+   * @param userId Soundcloud user id
+   */
+  public getSpotlight(
+    userId = soundcloudPlayerConfigDefaults.user.dnbhub,
+  ): Observable<ISoundcloudTracksLinkedPartitioning> {
+    let observable = of({ ...linkedPartitioningDefaultValues });
+    if (!Boolean(this.tracksLinkedPartNextHref)) {
+      const promise: Promise<ISoundcloudTracksLinkedPartitioning> =
+        SC.get<ISoundcloudTracksLinkedPartitioning>(
+          `/users/${userId}/likes/tracks`,
+          getTracksOptions,
+        )
           .then(data => {
             this.tracksLinkedPartNextHref = data.next_href;
             const tracks = this.processTracksCollection(data);

@@ -39,8 +39,8 @@
           (click)="playTrack(track)"
           dnbhubTooltip="Play / Pause"
         />
-        <div fxFlex="1 1 auto">{{ track.genre }}</div>
         <div fxFlex="1 1 auto">{{ track.license }}</div>
+        <div fxFlex="1 1 auto" class="clamp-flex">{{ track.genre }}</div>
       </div>
       <div fxFlex fxLayout="row" fxLayoutAlign="center stretch">
         <div fxFlex="10px"></div>
