@@ -8,17 +8,14 @@
         [routerLink]="[section.link]"
         fxLayout="row wrap"
         fxLayoutAlign="center center"
-        [dnbhubTooltip]="section.description"
+        [dnbhubTooltip]="section.subtitle + ': ' + section.description"
         [flexibleConnectedPositions]="[
           { originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'top' }
         ]"
       >
-        <p fxFlex="100" fxLayout="row" fxLayoutAlign="center center" class="mat-h3">
+        <span fxFlex="100" fxLayout="row" fxLayoutAlign="center center" class="mat-body-2">
           {{ section.title }}
-        </p>
-        <p fxFlex="100" fxLayout="row" fxLayoutAlign="center center" class="mat-caption">
-          {{ section.subtitle }}
-        </p>
+        </span>
       </div>
     </div>
 
