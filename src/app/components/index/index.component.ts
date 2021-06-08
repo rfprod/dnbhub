@@ -1,5 +1,13 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { BehaviorSubject } from 'rxjs';
 import { DnbhubTwitterService } from 'src/app/services/twitter/twitter.service';
 
 @UntilDestroy()
@@ -10,6 +18,8 @@ import { DnbhubTwitterService } from 'src/app/services/twitter/twitter.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DnbhubIndexComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('virtualScrollContainer') public virtualScrollContainer?: ElementRef<HTMLDivElement>;
+
   public readonly sections = [
     {
       title: 'Playlists',
@@ -31,10 +41,19 @@ export class DnbhubIndexComponent implements AfterViewInit, OnDestroy {
     },
   ];
 
+  private readonly playerHeightSubject = new BehaviorSubject<string>('150px');
+
+  public readonly playerHeight$ = this.playerHeightSubject.asObservable();
+
   constructor(private readonly twitter: DnbhubTwitterService) {}
 
   public ngAfterViewInit(): void {
     this.twitter.initTwitterJsSDK();
+
+    const playerHeight =
+      `${this.virtualScrollContainer?.nativeElement.clientHeight ?? 0}px` ??
+      this.playerHeightSubject.value;
+    this.playerHeightSubject.next(playerHeight);
   }
 
   public ngOnDestroy(): void {

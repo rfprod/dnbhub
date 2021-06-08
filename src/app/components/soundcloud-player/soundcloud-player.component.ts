@@ -41,6 +41,19 @@ export interface ISoundcloudPlayerConfig {
   };
 }
 
+export const soundcloudPlayerConfigDefaults = {
+  user: {
+    dnbhub: 1275637,
+  },
+  playlist: {
+    everything: 21086473,
+    reposts1: 108170272,
+    reposts2: 502780338,
+    freedownloads: 79430766,
+    samplepacks: 234463958,
+  },
+};
+
 export interface ISoundcloudPlayerChanges extends SimpleChanges {
   mode: SimpleChange;
   displayDescription: SimpleChange;
@@ -56,7 +69,8 @@ export type TSoundcloudPlayerMode =
   | 'pl-reposts2'
   | 'pl-freedownloads'
   | 'pl-samplepacks'
-  | 'playlist';
+  | 'playlist'
+  | 'spotlight';
 
 @Component({
   selector: 'dnbhub-soundcloud-player',
@@ -73,16 +87,7 @@ export class DnbhubSoundcloudPlayerComponent implements AfterViewInit, OnChanges
    * Default config.
    */
   private readonly defaultConfig: ISoundcloudPlayerConfig = {
-    user: {
-      dnbhub: 1275637,
-    },
-    playlist: {
-      everything: 21086473,
-      reposts1: 108170272,
-      reposts2: 502780338,
-      freedownloads: 79430766,
-      samplepacks: 234463958,
-    },
+    ...soundcloudPlayerConfigDefaults,
   };
 
   @Input() public mode: TSoundcloudPlayerMode = 'dnbhub';
@@ -115,6 +120,13 @@ export class DnbhubSoundcloudPlayerComponent implements AfterViewInit, OnChanges
     .pipe(map(tracks => tracks.collection));
 
   /**
+   * Soundcloud user tracks.
+   */
+  public spotlight$ = this.store
+    .select(DnbhubSoundcloudState.getSpotlight)
+    .pipe(map(tracks => tracks.collection));
+
+  /**
    * Soundcloud playlist.
    */
   public playlist$ = this.store
@@ -139,7 +151,11 @@ export class DnbhubSoundcloudPlayerComponent implements AfterViewInit, OnChanges
 
   public readonly renderTracks$ = this.playerMode$.pipe(
     concatMap(mode => {
-      return mode === 'dnbhub' || mode === 'user' ? this.tracks$ : this.playlistTracks$;
+      return mode === 'dnbhub' || mode === 'user'
+        ? this.tracks$
+        : mode === 'spotlight'
+        ? this.spotlight$
+        : this.playlistTracks$;
     }),
   );
 
@@ -178,7 +194,15 @@ export class DnbhubSoundcloudPlayerComponent implements AfterViewInit, OnChanges
         first(),
         concatMap(loading => {
           if (!this.noMoreTracks.value) {
-            if (/(dnbhub|user)/.test(this.mode)) {
+            if (/(spotlight)/.test(this.mode)) {
+              return this.soundcloud.getSpotlight(this.defaultConfig.user.dnbhub).pipe(
+                tap(data => {
+                  if (!Boolean(data.next_href)) {
+                    this.noMoreTracks.next(true);
+                  }
+                }),
+              );
+            } else if (/(dnbhub|user)/.test(this.mode)) {
               return this.soundcloud.getTracks(this.userId).pipe(
                 tap(data => {
                   if (!Boolean(data.next_href)) {
@@ -338,7 +362,7 @@ export class DnbhubSoundcloudPlayerComponent implements AfterViewInit, OnChanges
    * @param changes input changes
    */
   private modeChangeHandler(changes: ISoundcloudPlayerChanges): void {
-    if (changes.mode.currentValue === 'dnbhub') {
+    if (changes.mode.currentValue === 'dnbhub' || changes.mode.currentValue === 'spotlight') {
       this.resetPlayer();
       this.userId = this.defaultConfig.user.dnbhub;
       this.loadMoreTracks();

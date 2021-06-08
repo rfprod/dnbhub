@@ -13,6 +13,7 @@ import { meDefaultValues } from '../../interfaces/soundcloud/soundcloud-me.confi
 export interface IDnbhubSoundcloudStateModel {
   me: ISoundcloudMe;
   myPlaylists: ISoundcloudPlaylist[];
+  spotlight: ISoundcloudTracksLinkedPartitioning;
   tracks: ISoundcloudTracksLinkedPartitioning;
   playlists: ISoundcloudPlaylist[];
 }
@@ -22,6 +23,7 @@ export type TDnbhubSoundcloudPayload = IActionPayload<Partial<IDnbhubSoundcloudS
 export interface IDnbhubSoundcloudService {
   me$: Observable<ISoundcloudMe>;
   myPlaylists$: Observable<ISoundcloudPlaylist[]>;
+  spotlight$: Observable<ISoundcloudTracksLinkedPartitioning>;
   tracks$: Observable<ISoundcloudTracksLinkedPartitioning>;
   playlists$: Observable<ISoundcloudPlaylist[]>;
 }
@@ -29,6 +31,7 @@ export interface IDnbhubSoundcloudService {
 export const soundcloudStoreInitialState: IDnbhubSoundcloudStateModel = {
   me: { ...meDefaultValues },
   myPlaylists: [],
+  spotlight: { ...linkedPartitioningDefaultValues },
   tracks: { ...linkedPartitioningDefaultValues },
   playlists: [],
 };

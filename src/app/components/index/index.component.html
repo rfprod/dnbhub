@@ -1,30 +1,43 @@
-<div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start stretch">
-  <div fxShow fxHide.lt-md fxFlex="1 1 auto" fxLayout="row wrap" fxLayoutAlign="space-around start">
-    <button
-      [ngStyle]="{ width: '17vw', margin: '1em 0' }"
-      *ngFor="let section of sections"
-      fxFlex="0 1 auto"
-      mat-stroked-button
-      [routerLink]="[section.link]"
-    >
-      <div>
-        <p class="mat-h3">{{ section.title }}</p>
-        <p class="mat-caption">{{ section.subtitle }}</p>
-      </div>
-      <div class="mat-body">
-        <p>
-          {{ section.description }}
+<div fxFlex="100" fxLayout="row">
+  <div fxFlex="65" fxFlex.lt-md="100" fxLayout="column" fxLayoutAlign="start stretch">
+    <div fxFlex="0 1 auto" fxLayout="row wrap" fxLayoutAlign="space-around start">
+      <div
+        class="section-switch"
+        *ngFor="let section of sections"
+        fxFlex="0 1 auto"
+        [routerLink]="[section.link]"
+        fxLayout="row wrap"
+        fxLayoutAlign="center center"
+        [dnbhubTooltip]="section.description"
+        [flexibleConnectedPositions]="[
+          { originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'top' }
+        ]"
+      >
+        <p fxFlex="100" fxLayout="row" fxLayoutAlign="center center" class="mat-h3">
+          {{ section.title }}
+        </p>
+        <p fxFlex="100" fxLayout="row" fxLayoutAlign="center center" class="mat-caption">
+          {{ section.subtitle }}
         </p>
       </div>
-    </button>
+    </div>
+
+    <div fxFlex="1 1 auto" #virtualScrollContainer>
+      <dnbhub-soundcloud-player
+        [mode]="'spotlight'"
+        [virtualScrollHeight]="playerHeight$ | async"
+      ></dnbhub-soundcloud-player>
+    </div>
   </div>
 
   <div
-    fxFlex="35"
+    fxFlex="0"
     fxFlex.lt-md="100"
     [ngStyle]="{ 'overflow-y': 'auto', height: '100%', 'max-height': '100%' }"
     fxLayout="row"
     fxLayoutAlign="start stretch"
+    fxShow
+    fxHide.lt-md
   >
     <a
       fxFlex
