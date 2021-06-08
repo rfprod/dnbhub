@@ -65,6 +65,14 @@ export class DnbhubSoundcloudState {
     ctx: StateContext<IDnbhubSoundcloudStateModel>,
     { payload }: TDnbhubSoundcloudPayload,
   ) {
+    const state = ctx.getState();
+    const nextValue = { ...payload };
+    if (typeof nextValue.spotlight !== 'undefined' && state.spotlight.next_href !== null) {
+      nextValue.spotlight.collection = [
+        ...state.spotlight.collection,
+        ...nextValue.spotlight.collection,
+      ];
+    }
     return ctx.patchState(payload);
   }
 }
