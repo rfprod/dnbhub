@@ -6,10 +6,10 @@ import { ISoundcloudTrack } from './soundcloud-track.config';
  */
 export interface ISoundcloudTracksLinkedPartitioning {
   collection: ISoundcloudTrack[];
-  next_href: string;
+  next_href: string | null;
 }
 
 export const linkedPartitioningDefaultValues: ISoundcloudTracksLinkedPartitioning = {
   collection: [],
-  next_href: '',
+  next_href: null,
 };

@@ -195,8 +195,9 @@ export class DnbhubSoundcloudPlayerComponent implements AfterViewInit, OnChanges
         concatMap(loading => {
           if (!this.noMoreTracks.value) {
             if (/(spotlight)/.test(this.mode)) {
-              return this.soundcloud.getSpotlight(this.defaultConfig.user.dnbhub).pipe(
+              return this.soundcloud.getSpotlight(this.userId).pipe(
                 tap(data => {
+                  console.warn('data.next_href', data.next_href);
                   if (!Boolean(data.next_href)) {
                     this.noMoreTracks.next(true);
                   }

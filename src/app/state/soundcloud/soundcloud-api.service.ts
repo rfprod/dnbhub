@@ -118,8 +118,10 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
   /**
    * Returns link with id.
    */
-  public getLinkWithId(href: string): string {
-    return `${href}?client_id=${this.options.client_id}`;
+  public getLinkWithId(href: string, addLastPatam = false): string {
+    return addLastPatam
+      ? `${href}&client_id=${this.options.client_id}`
+      : `${href}?client_id=${this.options.client_id}`;
   }
 
   /**
@@ -141,10 +143,12 @@ export class DnbhubSoundcloudApiService implements OnDestroy {
       track.description = this.processDescription(track.description);
       return track;
     });
-    this.tracksLinkedPartNextHref = data.next_href;
+    this.tracksLinkedPartNextHref =
+      data.next_href !== null ? this.getLinkWithId(data.next_href, true) : data.next_href;
     const processedLinkedPartitioning: ISoundcloudTracksLinkedPartitioning = {
       collection,
-      next_href: data.next_href,
+      next_href:
+        data.next_href !== null ? this.getLinkWithId(data.next_href, true) : data.next_href,
     };
     return processedLinkedPartitioning;
   }
