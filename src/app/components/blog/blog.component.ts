@@ -1,7 +1,14 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  AfterViewChecked,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  HostListener,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Select } from '@ngxs/store';
-import { Observable, of } from 'rxjs';
+import { Store } from '@ngxs/store';
+import { BehaviorSubject, of } from 'rxjs';
 import { concatMap, filter, first, tap } from 'rxjs/operators';
 import { DnbhubBlogService } from 'src/app/state/blog/blog.service';
 import { DnbhubBlogState } from 'src/app/state/blog/blog.store';
@@ -12,12 +19,16 @@ import { DnbhubBlogState } from 'src/app/state/blog/blog.store';
   styleUrls: ['./blog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DnbhubBlogComponent {
-  @Select(DnbhubBlogState.listStartReached)
-  public readonly listStartReached$!: Observable<boolean>;
+export class DnbhubBlogComponent implements AfterViewChecked {
+  @ViewChild('virtualScrollContainer') public virtualScrollContainer?: ElementRef<HTMLDivElement>;
 
-  @Select(DnbhubBlogState.listEndReached)
-  public readonly listEndReached$!: Observable<boolean>;
+  private readonly playerHeightSubject = new BehaviorSubject<string>('150px');
+
+  public readonly playerHeight$ = this.playerHeightSubject.asObservable();
+
+  public readonly listStartReached$ = this.store.select(DnbhubBlogState.listStartReached);
+
+  public readonly listEndReached$ = this.store.select(DnbhubBlogState.listEndReached);
 
   public readonly posts$ = this.blog.posts$.pipe(
     concatMap(storedPosts => {
@@ -48,10 +59,13 @@ export class DnbhubBlogComponent {
     tap(post => {
       const code = post?.code;
       void this.router.navigate(['/blog'], { queryParams: { code } });
+
+      this.setPlayerHeight();
     }),
   );
 
   constructor(
+    private readonly store: Store,
     private readonly blog: DnbhubBlogService,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
@@ -69,5 +83,21 @@ export class DnbhubBlogComponent {
    */
   public previousBlogPost(): void {
     void this.blog.selectPreviousPost().subscribe();
+  }
+
+  private setPlayerHeight() {
+    const playerHeight =
+      `${this.virtualScrollContainer?.nativeElement.clientHeight ?? 0}px` ??
+      this.playerHeightSubject.value;
+    this.playerHeightSubject.next(playerHeight);
+  }
+
+  public ngAfterViewChecked() {
+    this.setPlayerHeight();
+  }
+
+  @HostListener('window:resize')
+  public windowResizeHandler(): void {
+    this.setPlayerHeight();
   }
 }

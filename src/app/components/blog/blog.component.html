@@ -1,8 +1,4 @@
-<div
-  fxFlex="100"
-  fxLayout="column"
-  *ngIf="(posts$ | async) && selectedBlogPost$ | async as selectedBlogPost"
->
+<ng-container *ngIf="(posts$ | async) && selectedBlogPost$ | async as selectedBlogPost">
   <mat-toolbar color="primary" fxLayout="row" fxLayoutAlign="center center">
     <button
       mat-button
@@ -108,11 +104,13 @@
     </a>
   </div>
 
-  <dnbhub-soundcloud-player
-    fxFlex="0 1 auto"
-    [mode]="'playlist'"
-    *ngIf="selectedBlogPost.playlistId"
-    [playlistId]="selectedBlogPost.playlistId"
-    [displayDescription]="true"
-  ></dnbhub-soundcloud-player>
-</div>
+  <div fxFlex="100" #virtualScrollContainer>
+    <dnbhub-soundcloud-player
+      [mode]="'playlist'"
+      *ngIf="selectedBlogPost.playlistId"
+      [playlistId]="selectedBlogPost.playlistId"
+      [displayDescription]="true"
+      [virtualScrollHeight]="playerHeight$ | async"
+    ></dnbhub-soundcloud-player>
+  </div>
+</ng-container>
