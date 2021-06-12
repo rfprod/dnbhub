@@ -1,17 +1,18 @@
 <div
+  fxShow
+  fxHide.lt-md
   fxFlex.lt-md="100"
   fxFlex.gt-sm="50"
+  class="description"
   *ngIf="mode === 'playlist' && displayDescription && $any(playlist$ | async)"
-  [ngStyle]="{ padding: '0 10px 0 10px', 'overflow-y': 'auto' }"
+  [ngStyle]="virtualScrollHeight ? { height: virtualScrollHeight ?? '83vh' } : {}"
 >
-  <div fxFlex="100" [innerHTML]="(playlist$ | async)?.description"></div>
+  <div [innerHTML]="(playlist$ | async)?.description"></div>
 </div>
 
 <div
   fxFlex.lt-md="100"
   fxFlex.gt-sm="{{ displayDescription ? 50 : 100 }}"
-  fxLayout="row wrap"
-  fxLayoutAlign="start start"
   *ngIf="selectedTrack$ | async as currentTrack"
 >
   <cdk-virtual-scroll-viewport
