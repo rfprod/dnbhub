@@ -1,5 +1,4 @@
-import { getActionCreator } from 'src/app/utils/ngxs.util';
-
+import { getActionCreator } from '../../utils/ngxs.util';
 import {
   FIREBASE_STATE_TOKEN,
   TDnbhubFirebasePayload,

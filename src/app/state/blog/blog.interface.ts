@@ -1,7 +1,8 @@
 import { StateToken } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { DnbhubBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
-import { IActionPayload } from 'src/app/utils/ngxs.util';
+
+import { DnbhubBlogPost } from '../../interfaces/blog/blog-post.interface';
+import { IActionPayload } from '../../utils/ngxs.util';
 
 export interface IDnbhubBlogStateModel {
   posts: DnbhubBlogPost[];

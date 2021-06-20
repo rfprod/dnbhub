@@ -8,7 +8,8 @@ import {
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { BehaviorSubject } from 'rxjs';
-import { DnbhubTwitterService } from 'src/app/services/twitter/twitter.service';
+
+import { DnbhubTwitterService } from '../../services/twitter/twitter.service';
 
 @UntilDestroy()
 @Component({

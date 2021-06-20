@@ -3,8 +3,8 @@ import { ComponentPortal } from '@angular/cdk/portal';
 import { Injectable, Provider } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { tap } from 'rxjs/operators';
-import { DnbhubProgressBarComponent } from 'src/app/components/progress-bar/progress-bar.component';
 
+import { DnbhubProgressBarComponent } from '../../components/progress-bar/progress-bar.component';
 import { httpProgressActions } from './http-progress.actions';
 import {
   IDnbhubHttpProgressService,

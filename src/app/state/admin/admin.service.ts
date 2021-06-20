@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { concatMap, first, map, mapTo, tap } from 'rxjs/operators';
-import { ISoundcloudPlaylist } from 'src/app/interfaces';
 
+import { ISoundcloudPlaylist } from '../../interfaces';
 import { adminActions } from './admin.actions';
 import { IDnbhubAdminService } from './admin.interface';
 import { DnbhubAdminState } from './admin.store';

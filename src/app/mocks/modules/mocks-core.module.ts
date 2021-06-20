@@ -11,19 +11,19 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { NgxsFormPluginModule } from '@ngxs/form-plugin';
 import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { NgxsModule } from '@ngxs/store';
-import { DnbhubEnvironmentConfig } from 'src/app/app.environment';
-import { DnbhubMaterialModule } from 'src/app/modules/material/custom-material.module';
-import { DnbhubTranslateModule } from 'src/app/modules/translate/translate.module';
-import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
-import { DnbhubAboutStoreModule } from 'src/app/state/about/about.module';
-import { DnbhubBlogStoreModule } from 'src/app/state/blog/blog.module';
-import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
-import { DnbhubHttpProgressStoreModule } from 'src/app/state/http-progress/http-progress.module';
-import { DnbhubHttpProgressService } from 'src/app/state/http-progress/http-progress.service';
-import { DnbhubSoundcloudStoreModule } from 'src/app/state/soundcloud/soundcloud.module';
-import { DnbhubUiStoreModule } from 'src/app/state/ui/ui.module';
-import { APP_ENV, getWindow, WINDOW } from 'src/app/utils';
 
+import { DnbhubEnvironmentConfig } from '../../app.environment';
+import { DnbhubMaterialModule } from '../../modules/material/custom-material.module';
+import { DnbhubTranslateModule } from '../../modules/translate/translate.module';
+import { DnbhubHttpHandlersService } from '../../services/http-handlers/http-handlers.service';
+import { DnbhubAboutStoreModule } from '../../state/about/about.module';
+import { DnbhubBlogStoreModule } from '../../state/blog/blog.module';
+import { DnbhubFirebaseService } from '../../state/firebase/firebase.service';
+import { DnbhubHttpProgressStoreModule } from '../../state/http-progress/http-progress.module';
+import { DnbhubHttpProgressService } from '../../state/http-progress/http-progress.service';
+import { DnbhubSoundcloudStoreModule } from '../../state/soundcloud/soundcloud.module';
+import { DnbhubUiStoreModule } from '../../state/ui/ui.module';
+import { APP_ENV, getWindow, WINDOW } from '../../utils';
 import { DummyComponent } from '../components/dummy.component.mock';
 
 /**

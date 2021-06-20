@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { first, map, tap } from 'rxjs/operators';
-import { DnbhubBrand } from 'src/app/interfaces';
-import { IEmailMessage } from 'src/app/interfaces/admin';
-import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
-import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
-import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
+
+import { DnbhubBrand } from '../../interfaces';
+import { IEmailMessage } from '../../interfaces/admin';
+import { IFirebaseUserRecord } from '../../interfaces/firebase';
+import { DnbhubHttpHandlersService } from '../../services/http-handlers/http-handlers.service';
+import { DnbhubFirebaseService } from '../../state/firebase/firebase.service';
 
 @Injectable({
   providedIn: 'root',

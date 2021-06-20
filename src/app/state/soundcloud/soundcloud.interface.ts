@@ -1,14 +1,14 @@
 import { StateToken } from '@ngxs/store';
 import { Observable } from 'rxjs';
+
 import {
   ISoundcloudMe,
   ISoundcloudPlaylist,
   ISoundcloudTracksLinkedPartitioning,
   linkedPartitioningDefaultValues,
-} from 'src/app/interfaces';
-import { IActionPayload } from 'src/app/utils/ngxs.util';
-
+} from '../../interfaces';
 import { meDefaultValues } from '../../interfaces/soundcloud/soundcloud-me.config';
+import { IActionPayload } from '../../utils/ngxs.util';
 
 export interface IDnbhubSoundcloudStateModel {
   me: ISoundcloudMe;

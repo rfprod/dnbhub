@@ -1,5 +1,4 @@
-import { getActionCreator, TEmptyPayload } from 'src/app/utils/ngxs.util';
-
+import { getActionCreator, TEmptyPayload } from '../../utils/ngxs.util';
 import {
   BLOG_STATE_TOKEN,
   TDnbhubBlogPayload,

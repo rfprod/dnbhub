@@ -5,10 +5,10 @@ import { Navigate } from '@ngxs/router-plugin';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
-import { ILoginForm, ILoginFormValue } from 'src/app/interfaces';
-import { firebaseActions } from 'src/app/state/firebase/firebase.actions';
-import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
 
+import { ILoginForm, ILoginFormValue } from '../../interfaces';
+import { firebaseActions } from '../../state/firebase/firebase.actions';
+import { DnbhubFirebaseService } from '../../state/firebase/firebase.service';
 import { DnbhubFirebaseState } from '../../state/firebase/firebase.store';
 
 @Component({

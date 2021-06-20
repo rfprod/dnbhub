@@ -2,10 +2,11 @@ import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { tap } from 'rxjs/operators';
-import { IEmailForm, IEmailFormValue } from 'src/app/interfaces/forms/email-form.interface';
-import { DnbhubTranslateService } from 'src/app/modules/translate/translate.service';
-import { DnbhubSendEmailService } from 'src/app/services/send-email/send-email.service';
-import { TIMEOUT, WINDOW } from 'src/app/utils';
+
+import { IEmailForm, IEmailFormValue } from '../../interfaces/forms/email-form.interface';
+import { DnbhubTranslateService } from '../../modules/translate/translate.service';
+import { DnbhubSendEmailService } from '../../services/send-email/send-email.service';
+import { TIMEOUT, WINDOW } from '../../utils';
 
 @Component({
   selector: 'dnbhub-contact-dialog',

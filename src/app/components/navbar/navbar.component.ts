@@ -4,17 +4,17 @@ import { MatDialog } from '@angular/material/dialog';
 import { Navigate, RouterState } from '@ngxs/router-plugin';
 import { Store } from '@ngxs/store';
 import { first, map, tap } from 'rxjs/operators';
-import { DnbhubLoginDialogComponent } from 'src/app/components/login-dialog/login-dialog.component';
+
+import { DnbhubLoginDialogComponent } from '../../components/login-dialog/login-dialog.component';
 import {
   ISupportedLanguage,
   SUPPORTED_LANGUAGE_KEY,
   supportedLanguages,
-} from 'src/app/modules/translate/index';
-import { firebaseActions } from 'src/app/state/firebase/firebase.actions';
-import { DnbhubUiService } from 'src/app/state/ui/ui.service';
-import { INxgsRouterState } from 'src/app/utils/ngxs.util';
-
+} from '../../modules/translate/index';
+import { firebaseActions } from '../../state/firebase/firebase.actions';
 import { DnbhubFirebaseState } from '../../state/firebase/firebase.store';
+import { DnbhubUiService } from '../../state/ui/ui.service';
+import { INxgsRouterState } from '../../utils/ngxs.util';
 
 @Component({
   selector: 'dnbhub-nav',

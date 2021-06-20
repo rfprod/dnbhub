@@ -1,6 +1,7 @@
 import { StateToken } from '@ngxs/store';
 import { MonoTypeOperatorFunction, Observable } from 'rxjs';
-import { IActionPayload } from 'src/app/utils/ngxs.util';
+
+import { IActionPayload } from '../../utils/ngxs.util';
 
 export interface IDnbhubHttpProgressStateModel {
   mainView: boolean;

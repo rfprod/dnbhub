@@ -1,7 +1,7 @@
 import { NgModule, Provider } from '@angular/core';
 import { NgxsModule } from '@ngxs/store';
-import { DnbhubTranslateModule } from 'src/app/modules/translate/translate.module';
 
+import { DnbhubTranslateModule } from '../../modules/translate/translate.module';
 import { DnbhubUiService } from './ui.service';
 import { DnbhubUiState } from './ui.store';
 

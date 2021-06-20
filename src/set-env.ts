@@ -19,7 +19,7 @@ let envConfigFile = `import {
   IFirebaseEnvInterface,
   IGoogleApiEnvInterface,
   ISoundcloudEnvInterface,
-} from 'src/app/interfaces/index';
+} from './interfaces/index';
 
 /**
  * Application environment as a constant.
@@ -94,7 +94,7 @@ if (!Boolean(reset)) {
   ISoundcloudEnvInterface,
   IFirebaseEnvInterface,
   IGoogleApiEnvInterface
-} from 'src/app/interfaces/index';
+} from './interfaces/index';
 
 /**
  * Application environment as a constant.

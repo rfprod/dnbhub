@@ -1,6 +1,7 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { DnbhubTranslatePipe } from 'src/app/modules/translate/translate.pipe';
-import { translationProviders } from 'src/app/modules/translate/translations';
+
+import { DnbhubTranslatePipe } from '../../modules/translate/translate.pipe';
+import { translationProviders } from '../../modules/translate/translations';
 
 /**
  * Translate module.
