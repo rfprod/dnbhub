@@ -1,6 +1,6 @@
 import { TestBed, TestModuleMetadata, waitForAsync } from '@angular/core/testing';
-import { getTestBedConfig, newTestBedMetadata } from 'src/app/mocks/utils/test-bed-config.mock';
 
+import { getTestBedConfig, newTestBedMetadata } from '../../mocks/utils/test-bed-config.mock';
 import { DnbhubAdminService } from './admin.service';
 
 describe('DnbhubAdminService', () => {

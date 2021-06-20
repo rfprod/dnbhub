@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { DnbhubUiService } from 'src/app/state/ui/ui.service';
-import { DnbhubUiState } from 'src/app/state/ui/ui.store';
 
+import { DnbhubUiService } from '../../state/ui/ui.service';
+import { DnbhubUiState } from '../../state/ui/ui.store';
 import { DnbhubContactDialogComponent } from '../contact-dialog/contact-dialog.component';
 
 @Component({

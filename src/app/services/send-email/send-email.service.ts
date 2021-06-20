@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { IEmailFormValue } from 'src/app/interfaces';
-import { DnbhubHttpHandlersService } from 'src/app/services/http-handlers/http-handlers.service';
-import { WINDOW } from 'src/app/utils';
+
+import { IEmailFormValue } from '../../interfaces';
+import { DnbhubHttpHandlersService } from '../../services/http-handlers/http-handlers.service';
+import { WINDOW } from '../../utils';
 
 /**
  * Send email service.

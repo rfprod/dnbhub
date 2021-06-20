@@ -2,8 +2,9 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
-import { DnbhubContactDialogComponent } from 'src/app/components/contact-dialog/contact-dialog.component';
-import { DnbhubAboutService } from 'src/app/state/about/about.service';
+
+import { DnbhubContactDialogComponent } from '../../components/contact-dialog/contact-dialog.component';
+import { DnbhubAboutService } from '../../state/about/about.service';
 
 @Component({
   selector: 'dnbhub-about',

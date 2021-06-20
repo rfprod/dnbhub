@@ -1,9 +1,10 @@
 import { StateToken } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { DnbhubBrand, ISoundcloudPlaylist } from 'src/app/interfaces';
-import { IEmailMessage } from 'src/app/interfaces/admin';
-import { IFirebaseUserRecord } from 'src/app/interfaces/firebase';
-import { IActionPayload } from 'src/app/utils/ngxs.util';
+
+import { DnbhubBrand, ISoundcloudPlaylist } from '../../interfaces';
+import { IEmailMessage } from '../../interfaces/admin';
+import { IFirebaseUserRecord } from '../../interfaces/firebase';
+import { IActionPayload } from '../../utils/ngxs.util';
 
 export interface IDnbhubAdminStateModel {
   emails: IEmailMessage[];

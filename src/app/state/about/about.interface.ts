@@ -1,8 +1,8 @@
 import { StateToken } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { IActionPayload } from 'src/app/utils/ngxs.util';
 
 import { DnbhubAboutDetails } from '../../interfaces/about/about-details.interface';
+import { IActionPayload } from '../../utils/ngxs.util';
 
 export interface IDnbhubAboutStateModel {
   details: DnbhubAboutDetails;

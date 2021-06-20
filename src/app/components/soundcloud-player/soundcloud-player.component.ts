@@ -15,17 +15,17 @@ import {
 import { Store } from '@ngxs/store';
 import { BehaviorSubject, combineLatest, from, Observable, of, timer } from 'rxjs';
 import { concatMap, first, map, mapTo, takeWhile, tap } from 'rxjs/operators';
-import { IEventTargetWithPosition, IEventWithPosition } from 'src/app/interfaces/index';
-import { ISoundcloudPlayer } from 'src/app/interfaces/soundcloud/soundcloud-player.interface';
+
+import { IEventTargetWithPosition, IEventWithPosition } from '../../interfaces/index';
+import { ISoundcloudPlayer } from '../../interfaces/soundcloud/soundcloud-player.interface';
 import {
   ISoundcloudTrack,
   trackDefaultValues,
-} from 'src/app/interfaces/soundcloud/soundcloud-track.config';
-import { DnbhubHttpProgressState } from 'src/app/state/http-progress/http-progress.store';
-import { DnbhubSoundcloudState } from 'src/app/state/soundcloud/soundcloud.store';
-import { TIMEOUT, WINDOW } from 'src/app/utils';
-
+} from '../../interfaces/soundcloud/soundcloud-track.config';
+import { DnbhubHttpProgressState } from '../../state/http-progress/http-progress.store';
 import { DnbhubSoundcloudService } from '../../state/soundcloud/soundcloud.service';
+import { DnbhubSoundcloudState } from '../../state/soundcloud/soundcloud.store';
+import { TIMEOUT, WINDOW } from '../../utils';
 
 const renderPlaylistTracksDefault = 10;
 const renderPlaylistTracksIncrement = 25;

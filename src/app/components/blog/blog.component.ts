@@ -10,8 +10,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject, of } from 'rxjs';
 import { concatMap, filter, first, tap } from 'rxjs/operators';
-import { DnbhubBlogService } from 'src/app/state/blog/blog.service';
-import { DnbhubBlogState } from 'src/app/state/blog/blog.store';
+
+import { DnbhubBlogService } from '../../state/blog/blog.service';
+import { DnbhubBlogState } from '../../state/blog/blog.store';
 
 @Component({
   selector: 'dnbhub-blog',

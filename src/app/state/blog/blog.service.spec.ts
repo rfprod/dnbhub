@@ -1,8 +1,8 @@
 import { TestBed, TestModuleMetadata, waitForAsync } from '@angular/core/testing';
 import { Store } from '@ngxs/store';
 import { of } from 'rxjs';
-import { getTestBedConfig, newTestBedMetadata } from 'src/app/mocks/utils/test-bed-config.mock';
 
+import { getTestBedConfig, newTestBedMetadata } from '../../mocks/utils/test-bed-config.mock';
 import { DnbhubBlogService } from './blog.service';
 import { DnbhubBlogApiService } from './blog-api.service';
 

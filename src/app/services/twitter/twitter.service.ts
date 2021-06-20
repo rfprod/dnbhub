@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
-import { WINDOW } from 'src/app/utils';
+
+import { WINDOW } from '../../utils';
 
 const rootId = 'twttr-root';
 const jssdkId = 'twitter-wjs';

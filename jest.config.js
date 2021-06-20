@@ -3,23 +3,25 @@ module.exports = {
   globals: {
     'ts-jest': {
       tsconfig: '<rootDir>/src/tsconfig.spec.json',
-      stringifyContentPathRegex: '\\.html$',
-      astTransformers: {
-        before: [
-          'jest-preset-angular/build/InlineFilesTransformer',
-          'jest-preset-angular/build/StripStylesTransformer',
-        ],
-      },
+      stringifyContentPathRegex: '\\.(html|svg)$',
     },
   },
-  setupFilesAfterEnv: [`${__dirname}/src/test-setup.ts`],
   transform: {
-    '^.+\\.(ts|js|html)$': 'ts-jest',
+    '^.+\\.(ts|js|html)$': 'jest-preset-angular',
   },
+  setupFilesAfterEnv: [`${__dirname}/src/test-setup.ts`],
   transformIgnorePatterns: ['node_modules/(?!@ngrx|@ngxs)'],
   moduleFileExtensions: ['ts', 'html', 'js', 'json'],
-  coverageReporters: ['html-spa'],
+  coverageReporters: ['html-spa', 'json-summary'],
+  coverageThreshold: {
+    global: {
+      branches: 0,
+      functions: 0,
+      lines: 0,
+      statements: 0,
+    },
+  },
   collectCoverage: true,
-  cacheDirectory: '/tmp/jest_rs/dnbhub',
   noStackTrace: true,
+  cacheDirectory: '/tmp/jest_rs/dnbhub',
 };

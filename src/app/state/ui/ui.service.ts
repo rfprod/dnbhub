@@ -3,9 +3,9 @@ import { Injectable } from '@angular/core';
 import { DateAdapter } from '@angular/material/core';
 import { Store } from '@ngxs/store';
 import { concatMap, filter, tap } from 'rxjs/operators';
-import { DnbhubTranslateService } from 'src/app/modules/translate/translate.service';
-import { SUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate/translations.interface';
 
+import { DnbhubTranslateService } from '../../modules/translate/translate.service';
+import { SUPPORTED_LANGUAGE_KEY } from '../../modules/translate/translations.interface';
 import { uiActions } from './ui.actions';
 import { IDnbhubUiService } from './ui.interface';
 import { DnbhubUiState } from './ui.store';

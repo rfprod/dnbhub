@@ -11,21 +11,21 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store } from '@ngxs/store';
 import { combineLatest, from } from 'rxjs';
 import { concatMap, first, map, switchMap, take, tap } from 'rxjs/operators';
-import { IEmailMessage } from 'src/app/interfaces/admin';
-import { DnbhubBlogPost, DnbhubBlogPostLinks } from 'src/app/interfaces/blog/blog-post.interface';
-import { DnbhubBrand } from 'src/app/interfaces/brand/brand.interface';
-import { IBrandForm } from 'src/app/interfaces/brand/brand-form.interface';
-import { DnbhubAdminService } from 'src/app/state/admin/admin.service';
-import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
-import { DnbhubFirebaseState } from 'src/app/state/firebase/firebase.store';
-import { DnbhubSoundcloudApiService } from 'src/app/state/soundcloud/soundcloud-api.service';
-import { TIMEOUT } from 'src/app/utils';
-import { regExpPatterns } from 'src/app/utils/regexp.util';
 
+import { IEmailMessage } from '../../interfaces/admin';
+import { DnbhubBlogPost, DnbhubBlogPostLinks } from '../../interfaces/blog/blog-post.interface';
+import { DnbhubBrand } from '../../interfaces/brand/brand.interface';
+import { IBrandForm } from '../../interfaces/brand/brand-form.interface';
 import {
   ISoundcloudPlaylist,
   playlistDefaultValues,
 } from '../../interfaces/soundcloud/soundcloud-playlist.config';
+import { DnbhubAdminService } from '../../state/admin/admin.service';
+import { DnbhubFirebaseService } from '../../state/firebase/firebase.service';
+import { DnbhubFirebaseState } from '../../state/firebase/firebase.store';
+import { DnbhubSoundcloudApiService } from '../../state/soundcloud/soundcloud-api.service';
+import { TIMEOUT } from '../../utils';
+import { regExpPatterns } from '../../utils/regexp.util';
 import { DnbhubBottomSheetTextDetailsComponent } from '../bottom-sheet-text-details/bottom-sheet-text-details.component';
 import { DnbhubBrandDialogComponent } from '../brand-dialog/brand-dialog.component';
 

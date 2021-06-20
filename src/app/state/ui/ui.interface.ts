@@ -1,7 +1,8 @@
 import { StateToken } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { SUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate/translations.interface';
-import { IActionPayload } from 'src/app/utils/ngxs.util';
+
+import { SUPPORTED_LANGUAGE_KEY } from '../../modules/translate/translations.interface';
+import { IActionPayload } from '../../utils/ngxs.util';
 
 export interface IDnbhubUiStateModel {
   darkThemeEnabled: boolean;

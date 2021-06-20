@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DnbhubBlogPost } from 'src/app/interfaces/blog/blog-post.interface';
-import { queries } from 'src/app/state/firebase/firebase.queries';
-import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
 
+import { DnbhubBlogPost } from '../../interfaces/blog/blog-post.interface';
+import { queries } from '../../state/firebase/firebase.queries';
+import { DnbhubFirebaseService } from '../../state/firebase/firebase.service';
 import { blogActions } from './blog.actions';
 
 @Injectable({

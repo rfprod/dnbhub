@@ -4,7 +4,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import firebase from 'firebase';
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize, take, timeout } from 'rxjs/operators';
-import { DnbhubHttpProgressService } from 'src/app/state/http-progress/http-progress.service';
+
+import { DnbhubHttpProgressService } from '../../state/http-progress/http-progress.service';
 
 /**
  * Custom http handlers service.

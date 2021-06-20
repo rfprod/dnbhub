@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { SUPPORTED_LANGUAGE_KEY } from 'src/app/modules/translate/translations.interface';
 
+import { SUPPORTED_LANGUAGE_KEY } from '../../modules/translate/translations.interface';
 import { uiActions } from './ui.actions';
 import { IDnbhubUiStateModel, TDnbhubUiPayload, UI_STATE_TOKEN } from './ui.interface';
 

@@ -1,8 +1,8 @@
 import { StateToken } from '@ngxs/store';
 import firebase from 'firebase';
-import { IFirebaseEnvInterface } from 'src/app/interfaces';
 
 import { DnbhubEnvironmentConfig } from '../../app.environment';
+import { IFirebaseEnvInterface } from '../../interfaces';
 import { IFirebaseUserRecord } from '../../interfaces/firebase/firebase-user.interface';
 import { IActionPayload } from '../../utils/ngxs.util';
 

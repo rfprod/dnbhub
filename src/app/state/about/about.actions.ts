@@ -1,5 +1,4 @@
-import { getActionCreator } from 'src/app/utils/ngxs.util';
-
+import { getActionCreator } from '../../utils/ngxs.util';
 import { ABOUT_STATE_TOKEN, TDnbhubAboutPayload } from './about.interface';
 
 const createAction = getActionCreator(ABOUT_STATE_TOKEN.toString());

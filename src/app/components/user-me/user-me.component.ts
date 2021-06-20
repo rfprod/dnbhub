@@ -12,14 +12,14 @@ import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject } from 'rxjs';
 import { concatMap, mapTo, take, tap } from 'rxjs/operators';
-import { setDBuserNewValuesOptions } from 'src/app/interfaces/firebase';
-import { ISoundcloudMe, IUserProfile, IUserProfileForm } from 'src/app/interfaces/index';
-import { firebaseActions } from 'src/app/state/firebase/firebase.actions';
-import { DnbhubFirebaseService } from 'src/app/state/firebase/firebase.service';
-import { DnbhubSoundcloudService } from 'src/app/state/soundcloud/soundcloud.service';
-import { TIMEOUT } from 'src/app/utils';
 
+import { setDBuserNewValuesOptions } from '../../interfaces/firebase';
+import { ISoundcloudMe, IUserProfile, IUserProfileForm } from '../../interfaces/index';
+import { firebaseActions } from '../../state/firebase/firebase.actions';
 import { TExtendedUserInfo } from '../../state/firebase/firebase.interface';
+import { DnbhubFirebaseService } from '../../state/firebase/firebase.service';
+import { DnbhubSoundcloudService } from '../../state/soundcloud/soundcloud.service';
+import { TIMEOUT } from '../../utils';
 
 interface IComponentChanges extends SimpleChanges {
   me: SimpleChange;
