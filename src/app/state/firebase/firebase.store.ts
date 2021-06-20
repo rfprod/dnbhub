@@ -12,8 +12,10 @@ import {
   IDnbhubFirebaseStateModel,
   TDnbhubFirebasePayload,
   TEmailSignInPayload,
+  TExtendedUserInfo,
   TResetPasswordPayload,
   TSetUserRecordPayload,
+  TUpdateFirebaseProfilePayload,
 } from './firebase.interface';
 import { DnbhubFirebaseService } from './firebase.service';
 
@@ -131,5 +133,18 @@ export class DnbhubFirebaseState {
   @Action(firebaseActions.signOut)
   public signOut() {
     return this.api.signOut();
+  }
+
+  @Action(firebaseActions.updateFirebaseProfile)
+  public updateFirebaseProfile(
+    ctx: StateContext<IDnbhubFirebaseStateModel>,
+    { payload }: TUpdateFirebaseProfilePayload,
+  ) {
+    void this.api.updateProfile(payload).subscribe();
+    const userInfo = <TExtendedUserInfo | null | undefined>{ ...ctx.getState().userInfo };
+    if (userInfo !== null && typeof userInfo !== 'undefined') {
+      userInfo.displayName = payload.displayName;
+    }
+    return ctx.patchState({ userInfo });
   }
 }
