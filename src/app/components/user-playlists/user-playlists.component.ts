@@ -77,7 +77,7 @@ export class DnbhubUserPlaylistsComponent {
         switchMap(userRecord => {
           if (userRecord !== null) {
             const playlists = userRecord.submittedPlaylists;
-            const unsubmitPlaylistId = playlist.id.toString();
+            const unsubmitPlaylistId = playlist.id;
 
             if (!Boolean(playlists)) {
               const message = 'No playlists to unsubmit.';
@@ -89,7 +89,7 @@ export class DnbhubUserPlaylistsComponent {
               const submittedPlaylists: IFirebaseUserSubmittedPlaylists = {};
 
               for (const key of playListKeys) {
-                if (key !== unsubmitPlaylistId) {
+                if (key !== unsubmitPlaylistId.toString()) {
                   submittedPlaylists[key] = playlists[key];
                 }
               }

@@ -1,0 +1,147 @@
+<div fxLayout="row wrap">
+  <mat-form-field fxFlex="100">
+    <input
+      matInput
+      type="text"
+      placeholder="Select brand"
+      aria-label="Select brand"
+      [formControl]="brandAutocompleteControl"
+      [matAutocomplete]="brandAuto"
+    />
+
+    <mat-autocomplete #brandAuto="matAutocomplete" (optionSelected)="selectBrandFromList($event)">
+      <mat-option *ngFor="let option of matchedBrands$ | async" [value]="option.key">
+        {{ option.key }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center stretch">
+    <mat-card
+      *ngFor="let user of users"
+      fxFlex.lt-lg="100"
+      fxFlex="48"
+      fxLayout="row wrap"
+      fxLayoutAlign="center start"
+    >
+      <mat-card-header>
+        <mat-card-title fxFlex="100" class="mat-body-2">{{ user.key }} </mat-card-title>
+      </mat-card-header>
+      <mat-card-content
+        fxFlex="100"
+        class="mat-body-1"
+        fxLayout="row wrap"
+        fxLayoutAlign="start start"
+      >
+        <span fxFlex="100" *ngIf="user.created"> Created {{ user.created | date }} </span>
+        <span fxFlex="100" *ngIf="user.sc_id"> Soundcloud ID {{ user.sc_id }} </span>
+        <span fxFlex="100" fxLayout="row wrap">
+          <h3 fxFlex="100">Submitted Playlists</h3>
+
+          <div
+            fxFlex="49"
+            fxFlex.lt-lg="100"
+            *ngFor="let submittedPlaylistId of $any($any(user.submittedPlaylists) | mapToIterable)"
+            fxLayout="row wrap"
+          >
+            <span
+              fxFlex="100"
+              *ngIf="submittedPlaylistId"
+              fxLayout="row wrap"
+              fxLayoutAlign="start start"
+            >
+              <span
+                fxFlex
+                [ngStyle]="{
+                  height: '200px',
+                  overflow: 'hidden',
+                  border: '1px dotted #cecece'
+                }"
+              >
+                <dnbhub-soundcloud-player
+                  [mode]="'playlist'"
+                  [playlistId]="submittedPlaylistId"
+                  [virtualScrollHeight]="'198px'"
+                >
+                </dnbhub-soundcloud-player>
+              </span>
+
+              <span fxFlex="100" fxLayout="row" fxLayoutAlign="start center">
+                <button
+                  mat-icon-button
+                  type="button"
+                  [attr.aria-label]="'Playlist ID: ' + submittedPlaylistId"
+                  matTooltip="Playlist ID: {{ submittedPlaylistId }}"
+                >
+                  <mat-icon>info</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  type="button"
+                  [disabled]="submissionAlreadyAdded(submittedPlaylistId)"
+                  *ngIf="selectedBrand?.key"
+                  (click)="approveUserSubmission(submittedPlaylistId)"
+                  aria-label="approve post"
+                  title="approve post"
+                >
+                  <mat-icon>check_circle</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  type="button"
+                  *ngIf="!submissionAlreadyAdded(submittedPlaylistId)"
+                  (click)="rejectSubmission(submittedPlaylistId)"
+                  aria-label="reject post"
+                  title="reject post"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </span>
+            </span>
+          </div>
+        </span>
+      </mat-card-content>
+    </mat-card>
+
+    <div
+      [ngStyle]="{ position: 'fixed', top: '1em', width: '100%', 'z-index': 10000 }"
+      *ngIf="selectedBrand"
+      fxLayout="row"
+      fxLayoutAlign="center center"
+    >
+      <mat-card fxFlex="80" class="mat-body-1">
+        <mat-card-header>
+          <mat-card-title>Selected brand</mat-card-title>
+        </mat-card-header>
+        <mat-card-content fxLayout="row wrap">
+          <div
+            fxFlex="0 1 auto"
+            *ngFor="let key of $any($any(selectedBrand) | mapToIterable: ['string'])"
+          >
+            <a
+              mat-button
+              *ngIf="selectedBrand[key]"
+              href="{{ selectedBrand[key] }}"
+              target="_blank"
+            >
+              <mat-icon>link</mat-icon>
+              <span>{{ key }}</span>
+            </a>
+
+            <button mat-button [disabled]="true" *ngIf="selectedBrand[key] === ''">
+              <mat-icon>link</mat-icon>
+              <span>{{ key }}</span>
+            </button>
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <span fxFlex="1 1 auto"></span>
+          <button mat-button color="accent" (click)="selectBrand()">
+            <mat-icon>remove_circle</mat-icon>
+            Deselect
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+<div
+  fxFlex
+  fxLayoutFill
+  fxLayout="row"
+  fxLayoutAlign="center start"
+  *ngIf="!emails || emails.length === 0"
+>
+  The're are no email messags.
+</div>
+
+<div
+  fxFlex
+  fxLayoutFill
+  fxLayout="row wrap"
+  fxLayoutAlign="start stretch"
+  *ngIf="emails && emails.length > 0"
+>
+  <div
+    *ngFor="let emailMessage of emails"
+    fxFlex.xs="100"
+    fxFlex="33"
+    fxLayout="row wrap"
+    fxLayoutAlign="start stretch"
+    [ngStyle]="{ padding: '0 10px 0 10px' }"
+  >
+    <span fxFlex="100" class="mat-body-2">{{ emailMessage.header }} </span>
+    <span fxFlex="100" class="mat-body-1" fxLayout="row wrap">
+      <p fxFlex="100">From: {{ emailMessage.name }} < {{ emailMessage.email }} ></p>
+      <p fxFlex="100">Sent from domain: {{ emailMessage.domain }}</p>
+    </span>
+    <span fxFlex fxLayout="row wrap" fxLayoutAlign="start center">
+      <button
+        mat-icon-button
+        (click)="deleteMessage(emailMessage)"
+        aria-label="delete message"
+        title="delete message"
+      >
+        <mat-icon>delete_forever</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        (click)="showMessageContent(emailMessage)"
+        aria-label="show message content"
+        title="show message content"
+      >
+        <mat-icon>email</mat-icon>
+      </button>
+    </span>
+  </div>
+</div>
