@@ -161,6 +161,7 @@ export class DnbhubUserMeComponent implements OnChanges {
         displayName: this.profileForm.controls.name.value,
       }),
     );
+    this.toggleEditMode();
   }
 
   public deleteProfile(): void {
