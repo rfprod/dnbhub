@@ -70,7 +70,7 @@ export class DnbhubAdminService implements IDnbhubAdminService {
     );
   }
 
-  public selectSubmission(selectedSubmission?: ISoundcloudPlaylist) {
+  public selectSubmission(selectedSubmission: ISoundcloudPlaylist | null) {
     return this.store
       .dispatch(new adminActions.setDnbhubAdminState({ selectedSubmission }))
       .pipe(mapTo(selectedSubmission));

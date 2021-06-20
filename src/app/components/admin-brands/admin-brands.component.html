@@ -1,0 +1,85 @@
+<div fxLayout="row wrap">
+  <div fxFlex="100" fxLayout="row" fxLayoutAlign="center center">
+    <button
+      mat-button
+      fxFlex="100"
+      type="button"
+      (click)="createBrand()"
+      aria-label="add a new brand"
+      title="add a new brand"
+    >
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+
+  <div
+    fxFlex
+    fxLayoutFill
+    fxLayout="row"
+    fxLayoutAlign="center start"
+    *ngIf="!brands || brands.length === 0"
+  >
+    The're are no brands yet, create one.
+  </div>
+
+  <div fxFlex="100" fxLayout="row wrap" *ngIf="brands && brands.length > 0">
+    <mat-card
+      *ngFor="let brand of brands"
+      fxFlex.xs="100"
+      fxFlex="30"
+      [ngStyle]="{
+        margin: '0.5em'
+      }"
+    >
+      <mat-card-header>
+        <mat-card-title> {{ brand.name }} </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <span fxFlex="100" fxLayout="row wrap" class="mat-body-1">
+          <a mat-button href="{{ brand.bandcamp }}" target="_blank" *ngIf="brand.bandcamp">
+            Bandcamp
+            <mat-icon>open_in_new</mat-icon>
+          </a>
+          <a mat-button href="{{ brand.facebook }}" target="_blank" *ngIf="brand.facebook">
+            Facebook
+            <mat-icon>open_in_new</mat-icon>
+          </a>
+          <a mat-button href="{{ brand.instagram }}" target="_blank" *ngIf="brand.instagram">
+            Instagram
+            <mat-icon>open_in_new</mat-icon>
+          </a>
+          <a mat-button href="{{ brand.soundcloud }}" target="_blank" *ngIf="brand.soundcloud">
+            Soundcloud
+            <mat-icon>open_in_new</mat-icon>
+          </a>
+          <a mat-button href="{{ brand.twitter }}" target="_blank" *ngIf="brand.twitter">
+            Twitter
+            <mat-icon>open_in_new</mat-icon>
+          </a>
+          <a mat-button href="{{ brand.website }}" target="_blank" *ngIf="brand.website">
+            Website
+            <mat-icon>open_in_new</mat-icon>
+          </a>
+          <a mat-button href="{{ brand.youtube }}" target="_blank" *ngIf="brand.youtube">
+            Youtube
+            <mat-icon>open_in_new</mat-icon>
+          </a>
+        </span>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <span fxFlex="1 1 auto"></span>
+        <button
+          mat-icon-button
+          type="button"
+          (click)="editBrand(brand)"
+          aria-label="edit brand links"
+          title="edit brand links"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

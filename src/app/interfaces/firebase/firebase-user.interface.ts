@@ -1,5 +1,5 @@
 export interface IFirebaseUserSubmittedPlaylists {
-  [key: string]: boolean;
+  [key: number]: boolean;
 }
 
 export interface IFirebaseUserRecord {

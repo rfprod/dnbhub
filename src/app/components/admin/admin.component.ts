@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import {
   MatBottomSheet,
@@ -12,10 +11,9 @@ import { Store } from '@ngxs/store';
 import { combineLatest, from } from 'rxjs';
 import { concatMap, first, map, switchMap, take, tap } from 'rxjs/operators';
 
-import { IEmailMessage } from '../../interfaces/admin';
+import { IEmailMessage } from '../../interfaces/admin/email.interface';
 import { DnbhubBlogPost, DnbhubBlogPostLinks } from '../../interfaces/blog/blog-post.interface';
 import { DnbhubBrand } from '../../interfaces/brand/brand.interface';
-import { IBrandForm } from '../../interfaces/brand/brand-form.interface';
 import {
   ISoundcloudPlaylist,
   playlistDefaultValues,
@@ -44,39 +42,11 @@ export class DnbhubAdminComponent implements OnInit {
 
   public readonly brands$ = this.admin.brands$;
 
-  public brandAutocompleteControl: FormControl = new FormControl();
-
-  public readonly matchedBrands$ = this.brandAutocompleteControl.valueChanges.pipe(
-    concatMap(changes =>
-      this.brands$.pipe(
-        first(),
-        map(brands => ({ changes, brands })),
-      ),
-    ),
-    map(({ changes, brands }) => {
-      const matchedKeys = brands.filter(item =>
-        new RegExp(this.brandAutocompleteControl.value, 'i').test(item.key ?? ''),
-      );
-      return matchedKeys;
-    }),
-  );
-
   public readonly users$ = this.admin.users$;
-
-  public editBrandForm?: IBrandForm;
 
   public readonly blogEntriesIDs$ = this.admin.blogEntriesIDs$;
 
   public readonly selectedBrand$ = this.admin.selectedBrand$;
-
-  public readonly selectedSubmission$ = this.admin.selectedSubmission$.pipe(
-    map(submission => {
-      const widgetLink =
-        submission !== null ? this.soundcloud.widgetLink.playlist(submission.id) : '#';
-      const showWidget = widgetLink !== '#' ? true : false;
-      return { submission, widgetLink, showWidget };
-    }),
-  );
 
   constructor(
     private readonly store: Store,
@@ -110,13 +80,13 @@ export class DnbhubAdminComponent implements OnInit {
     void this.admin.getBlogEntriesIDs().subscribe();
   }
 
-  public editBrand(key?: string): void {
+  public editBrand(brand: DnbhubBrand): void {
     void this.admin
-      .selectBrand(key)
+      .selectBrand(brand.key)
       .pipe(
-        tap(brand => {
-          if (typeof brand !== 'undefined') {
-            this.showBrandDialog(brand);
+        tap(value => {
+          if (typeof value !== 'undefined') {
+            this.showBrandDialog(value);
           }
         }),
       )
@@ -154,8 +124,8 @@ export class DnbhubAdminComponent implements OnInit {
       .subscribe();
   }
 
-  public deleteMessage(dbKey: string) {
-    const promise = this.firebase.getList(`email/messages/${dbKey}`).remove();
+  public deleteMessage(email: IEmailMessage) {
+    const promise = this.firebase.getList(`email/messages/${email.key}`).remove();
     void from(promise)
       .pipe(
         tap(() => {
@@ -178,7 +148,6 @@ export class DnbhubAdminComponent implements OnInit {
    * Selects brand from list.
    */
   public selectBrandFromList(event: MatAutocompleteSelectedEvent): void {
-    console.warn('selectBrandFromList', event);
     const key = event.option.value;
     void this.selectBrand(key);
   }
@@ -187,10 +156,10 @@ export class DnbhubAdminComponent implements OnInit {
    * Shows email message text.
    * @param emailMessage email message
    */
-  public showMessageText(emailMessage: IEmailMessage): void {
+  public showMessageContent(email: IEmailMessage): void {
     this.bottomSheetRef = this.bottomSheet.open(DnbhubBottomSheetTextDetailsComponent, {
       data: {
-        text: emailMessage.message,
+        text: email.message,
       },
     } as MatBottomSheetConfig);
 
@@ -202,35 +171,8 @@ export class DnbhubAdminComponent implements OnInit {
       });
   }
 
-  /**
-   * Shows blog post submission preview.
-   * TODO: check if this method is currently used and use it if it is not.
-   */
-  public showSubmissionPreview(playlistId: number) {
-    const promise = this.soundcloud.sc
-      .get<ISoundcloudPlaylist>(`/playlists/${playlistId}`)
-      .then(data => {
-        const submittedPlaylist = data;
-        submittedPlaylist.description = this.soundcloud.processDescription(
-          submittedPlaylist.description,
-        );
-        void this.admin.selectSubmission(submittedPlaylist);
-        return data;
-      });
-    const observable = from(promise);
-    void observable.subscribe();
-  }
-
   public hideSubmissionPreview(): void {
-    void this.admin.selectSubmission(void 0);
-  }
-
-  public submissionAlreadyAdded$(key: string) {
-    return this.admin.blogEntriesIDs$.pipe(
-      map(existingIDs => {
-        return existingIDs.includes(parseInt(key, 10));
-      }),
-    );
+    void this.admin.selectSubmission(null);
   }
 
   public approveUserSubmission(playlistId: number) {
@@ -307,17 +249,17 @@ export class DnbhubAdminComponent implements OnInit {
           console.warn('valuesObj', valuesObj);
           return this.firebase.addBlogPost(valuesObj);
         }),
-        tap(
-          () => {
+        tap({
+          next: () => {
             this.getUsers();
             this.getBlogEntriesIDs();
             this.selectBrand();
             void this.deleteUserSubmission(selectedSubmission.id).subscribe();
           },
-          () => {
+          error: () => {
             this.selectBrand();
           },
-        ),
+        }),
       )
       .subscribe();
   }

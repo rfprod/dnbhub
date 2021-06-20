@@ -19,6 +19,9 @@ import { DnbhubEnvironmentConfig, ENV } from './app.environment';
 import { DnbhubRoutingModule } from './app-routing.module';
 import { DnbhubAboutComponent } from './components/about/about.component';
 import { DnbhubAdminComponent } from './components/admin/admin.component';
+import { DnbhubAdminBrandsComponent } from './components/admin-brands/admin-brands.component';
+import { DnbhubAdminEmailsComponent } from './components/admin-emails/admin-emails.component';
+import { DnbhubAdminUsersComponent } from './components/admin-users/admin-users.component';
 import { DnbhubBlogComponent } from './components/blog/blog.component';
 import { DnbhubBottomSheetTextDetailsComponent } from './components/bottom-sheet-text-details/bottom-sheet-text-details.component';
 import { DnbhubBrandDialogComponent } from './components/brand-dialog/brand-dialog.component';
@@ -82,6 +85,9 @@ const ngxsLoggerPluginOptions: NgxsLoggerPluginOptions = {
     DnbhubUserPlaylistActionsComponent,
     DnbhubTooltipComponent,
     DnbhubTooltipDirective,
+    DnbhubAdminEmailsComponent,
+    DnbhubAdminBrandsComponent,
+    DnbhubAdminUsersComponent,
   ],
   entryComponents: [
     DnbhubContactDialogComponent,
@@ -90,6 +96,9 @@ const ngxsLoggerPluginOptions: NgxsLoggerPluginOptions = {
     DnbhubProgressBarComponent,
     DnbhubBrandDialogComponent,
     DnbhubTooltipComponent,
+    DnbhubAdminEmailsComponent,
+    DnbhubAdminBrandsComponent,
+    DnbhubAdminUsersComponent,
   ],
   imports: [
     BrowserModule,
