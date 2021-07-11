@@ -1,4 +1,5 @@
 import {
+  AfterViewChecked,
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
@@ -18,7 +19,7 @@ import { DnbhubTwitterService } from '../../services/twitter/twitter.service';
   styleUrls: ['./index.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DnbhubIndexComponent implements AfterViewInit, OnDestroy {
+export class DnbhubIndexComponent implements AfterViewInit, AfterViewChecked, OnDestroy {
   @ViewChild('virtualScrollContainer') public virtualScrollContainer?: ElementRef<HTMLDivElement>;
 
   public readonly sections = [
@@ -50,11 +51,15 @@ export class DnbhubIndexComponent implements AfterViewInit, OnDestroy {
 
   public ngAfterViewInit(): void {
     this.twitter.initTwitterJsSDK();
+  }
 
+  public ngAfterViewChecked(): void {
     const playerHeight =
       `${this.virtualScrollContainer?.nativeElement.clientHeight ?? 0}px` ??
       this.playerHeightSubject.value;
-    this.playerHeightSubject.next(playerHeight);
+    if (playerHeight !== this.playerHeightSubject.value) {
+      this.playerHeightSubject.next(playerHeight);
+    }
   }
 
   public ngOnDestroy(): void {
